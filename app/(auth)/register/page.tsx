@@ -28,7 +28,7 @@ export default function RegisterPage() {
             options: {
                 data: {
                     full_name: fullName,
-                    role: 'vendor', // Default role
+                    role: 'VENDOR', // Default role
                 },
             },
         })
