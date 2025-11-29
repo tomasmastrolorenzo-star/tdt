@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabase/client'
+import { createClient } from '@/lib/supabase/client'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Order, OrderStatus } from '@/lib/supabase/types'
 
 export default function OperatorOrdersPage() {
+    const supabase = createClient()
     const [orders, setOrders] = useState<Order[]>([])
     const [loading, setLoading] = useState(true)
 

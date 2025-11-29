@@ -1,0 +1,3 @@
+module.exports=[22360,a=>{a.n(a.i(72898))},63240,a=>{a.n(a.i(87305))},18686,a=>{a.n(a.i(56615))},9002,a=>{a.n(a.i(39028))},72636,a=>{a.n(a.i(88455))},39028,(a,b,c)=>{"use strict";Object.defineProperty(c,"__esModule",{value:!0}),Object.defineProperty(c,"default",{enumerable:!0,get:function(){return f}});let d=a.r(34375),e=a.r(64394);function f(){return(0,d.jsx)(e.HTTPAccessErrorFallback,{status:401,message:"You're not authorized to access this page."})}("function"==typeof c.default||"object"==typeof c.default&&null!==c.default)&&void 0===c.default.__esModule&&(Object.defineProperty(c.default,"__esModule",{value:!0}),Object.assign(c.default,c),b.exports=c.default)}];
+
+//# sourceMappingURL=tdt-platform_e511ad95._.js.map

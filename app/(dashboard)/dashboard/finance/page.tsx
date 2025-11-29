@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabase/client'
+import { createClient } from '@/lib/supabase/client'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
@@ -18,6 +18,7 @@ interface FinancialOrder {
 }
 
 export default function FinancePage() {
+    const supabase = createClient()
     const [orders, setOrders] = useState<FinancialOrder[]>([])
     const [stats, setStats] = useState({
         totalRevenue: 0,

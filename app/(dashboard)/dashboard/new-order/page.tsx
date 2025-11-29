@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase/client'
+import { createClient } from '@/lib/supabase/client'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -11,6 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Service } from '@/lib/supabase/types'
 
 export default function NewOrderPage() {
+    const supabase = createClient()
     const [services, setServices] = useState<Service[]>([])
     const [selectedServiceId, setSelectedServiceId] = useState<string>('')
     const [link, setLink] = useState('')
