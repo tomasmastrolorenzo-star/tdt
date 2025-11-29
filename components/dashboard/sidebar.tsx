@@ -15,9 +15,19 @@ const sidebarItems = [
         icon: PlusCircle,
     },
     {
+        title: "Traffic (Operator)",
+        href: "/dashboard/operator/orders",
+        icon: ShoppingCart,
+    },
+    {
         title: "Orders",
         href: "/dashboard/orders",
         icon: ShoppingCart,
+    },
+    {
+        title: "Finance",
+        href: "/dashboard/finance",
+        icon: Wallet,
     },
     {
         title: "Wallet",
