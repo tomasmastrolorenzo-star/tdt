@@ -1,0 +1,11 @@
+{
+  "/(dashboard)/dashboard/page": "app/(dashboard)/dashboard/page.js",
+  "/(dashboard)/finance/page": "app/(dashboard)/finance/page.js",
+  "/(dashboard)/operator/orders/page": "app/(dashboard)/operator/orders/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/page": "app/page.js",
+  "/services/instagram/followers/page": "app/services/instagram/followers/page.js",
+  "/services/instagram/likes/page": "app/services/instagram/likes/page.js",
+  "/services/instagram/views/page": "app/services/instagram/views/page.js",
+  "/services/tiktok/followers/page": "app/services/tiktok/followers/page.js"
+}
