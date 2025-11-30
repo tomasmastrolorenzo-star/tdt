@@ -159,21 +159,10 @@ export function DashboardContent({ user, userData, wallet, orders, levels, servi
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <Link href="/dashboard/add-funds">
-              <Button variant="outline" className="border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10 bg-transparent">
-                <Wallet className="w-4 h-4 mr-2" />
-                <span className="hidden sm:inline">Recargar</span>
-              </Button>
-            </Link>
             <Link href="/dashboard/new-order">
               <Button className="bg-emerald-600 hover:bg-emerald-700 text-white">
                 <Plus className="w-4 h-4 mr-2" />
-                <span className="hidden sm:inline">Nuevo Pedido</span>
-              </Button>
-            </Link>
-            <Link href="/dashboard/profile">
-              <Button variant="ghost" size="icon" className="text-slate-400 hover:text-white hover:bg-slate-800">
-                <Settings className="w-5 h-5" />
+                Nuevo Pedido
               </Button>
             </Link>
             {isOperator && (
@@ -207,33 +196,27 @@ export function DashboardContent({ user, userData, wallet, orders, levels, servi
       <main className="max-w-7xl mx-auto px-4 py-8 space-y-8">
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <Link href="/dashboard/add-funds">
-            <Card className="bg-slate-900/50 border-slate-800 hover:border-emerald-500/50 transition-colors cursor-pointer group">
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium text-slate-400 group-hover:text-emerald-400 transition-colors">Balance Disponible</CardTitle>
-                <Wallet className="w-5 h-5 text-cyan-400 group-hover:text-emerald-400 transition-colors" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-white">${walletBalance.toFixed(2)}</div>
-                <p className="text-xs text-slate-500 mt-1 flex items-center gap-1">
-                  <Plus className="w-3 h-3" /> Agregar fondos
-                </p>
-              </CardContent>
-            </Card>
-          </Link>
+          <Card className="bg-slate-900/50 border-slate-800">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium text-slate-400">Balance Disponible</CardTitle>
+              <Wallet className="w-5 h-5 text-cyan-400" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold text-white">${walletBalance.toFixed(2)}</div>
+              <p className="text-xs text-slate-500 mt-1">Disponible para retiro</p>
+            </CardContent>
+          </Card>
 
-          <Link href="/dashboard/orders">
-            <Card className="bg-slate-900/50 border-slate-800 hover:border-blue-500/50 transition-colors cursor-pointer group">
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium text-slate-400 group-hover:text-blue-400 transition-colors">Ventas Totales</CardTitle>
-                <ShoppingCart className="w-5 h-5 text-green-400 group-hover:text-blue-400 transition-colors" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-white">{totalSales}</div>
-                <p className="text-xs text-slate-500 mt-1">Ver historial de órdenes</p>
-              </CardContent>
-            </Card>
-          </Link>
+          <Card className="bg-slate-900/50 border-slate-800">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium text-slate-400">Ventas Totales</CardTitle>
+              <ShoppingCart className="w-5 h-5 text-green-400" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold text-white">{totalSales}</div>
+              <p className="text-xs text-slate-500 mt-1">{orders.length} órdenes registradas</p>
+            </CardContent>
+          </Card>
 
           <Card className="bg-slate-900/50 border-slate-800">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -334,10 +317,11 @@ export function DashboardContent({ user, userData, wallet, orders, levels, servi
                     return (
                       <div
                         key={level.id}
-                        className={`flex items-center justify-between p-3 rounded-lg border transition-all ${isCurrentLevel
+                        className={`flex items-center justify-between p-3 rounded-lg border transition-all ${
+                          isCurrentLevel
                             ? "bg-cyan-500/10 border-cyan-500/30"
                             : "bg-slate-800/30 border-slate-700/50 hover:bg-slate-800/50"
-                          }`}
+                        }`}
                       >
                         <div className="flex items-center gap-3">
                           <div className={`p-2 rounded-lg ${isCurrentLevel ? "bg-cyan-500/20" : "bg-slate-700/50"}`}>
