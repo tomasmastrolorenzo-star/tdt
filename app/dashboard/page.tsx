@@ -14,10 +14,21 @@ export default async function DashboardPage() {
     redirect("/login")
   }
 
+  // Check user role and redirect OPERATOR/CEO to their dashboard
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single()
+
+  if (profile?.role === "OPERATOR" || profile?.role === "CEO") {
+    redirect("/dashboard/operator/orders")
+  }
+
   try {
     const { data: userData, error: userError } = await supabase
-      .from("users")
-      .select("*, levels(*)")
+      .from("profiles")
+      .select("*")
       .eq("id", user.id)
       .single()
 
