@@ -61,7 +61,9 @@ export const translations = {
       titleHighlight: "Digital",
       subtitle:
         "Seguidores reales, engagement auténtico. Crece en Instagram, TikTok y más con la plataforma de confianza de miles de creadores.",
-      cta: "Ver Paquetes",
+      trustLine: "Más de 50,000 creadores confían en nosotros",
+      guarantee: "💯 Garantía de satisfacción o te devolvemos tu dinero",
+      cta: "Ver Paquetes Ahora",
       ctaSecondary: "Cómo Funciona",
       stats: {
         clients: "Clientes Satisfechos",
@@ -85,6 +87,10 @@ export const translations = {
       guarantee: "Garantía",
       support: "Soporte",
       buyNow: "Comprar Ahora",
+      getOffer: "Obtener Oferta",
+      guaranteeTitle: "Garantía de Reemplazo de por Vida",
+      guaranteeText:
+        "Si pierdes seguidores, los reponemos automáticamente sin costo adicional. Tu inversión está 100% protegida.",
     },
     // Trust section
     trust: {
@@ -222,15 +228,25 @@ export const translations = {
       days: "días",
       unlimited: "Ilimitada",
     },
+    // Urgency and social proof
+    urgency: {
+      banner: "🔥 OFERTA BLACK FRIDAY - 50% OFF EN TODOS LOS PAQUETES - SOLO HOY 🔥",
+    },
+    socialProof: {
+      purchased: "compró",
+    },
   },
   en: {
+    // Hero
     hero: {
-      badge: "#1 Service in Latin America",
+      badge: "#1 Social Media Growth Service",
       title: "Boost Your",
       titleHighlight: "Digital Presence",
       subtitle:
         "Real followers, authentic engagement. Grow on Instagram, TikTok and more with the platform trusted by thousands of creators.",
-      cta: "View Packages",
+      trustLine: "Trusted by over 50,000 creators worldwide",
+      guarantee: "💯 Satisfaction guarantee or your money back",
+      cta: "View Packages Now",
       ctaSecondary: "How It Works",
       stats: {
         clients: "Satisfied Clients",
@@ -238,9 +254,11 @@ export const translations = {
         support: "Support Available",
       },
     },
+    // Platform selector
     platform: {
       title: "Select Your Platform",
     },
+    // Packages
     packages: {
       title: "Choose Your",
       followers: "Followers",
@@ -252,13 +270,18 @@ export const translations = {
       guarantee: "Guarantee",
       support: "Support",
       buyNow: "Buy Now",
+      getOffer: "Get Offer",
+      guaranteeTitle: "Lifetime Replacement Guarantee",
+      guaranteeText:
+        "If you lose followers, we replace them automatically at no extra cost. Your investment is 100% protected.",
     },
+    // Trust section
     trust: {
       title: "Why Choose",
       subtitle: "Thousands of creators trust us to boost their social media presence",
       elements: {
         clients: "+50,000 clients",
-        clientsDesc: "Satisfied across Latin America",
+        clientsDesc: "Satisfied worldwide",
         guaranteed: "Guaranteed delivery",
         guaranteedDesc: "Or your money back",
         real: "Real followers",
@@ -271,6 +294,7 @@ export const translations = {
         refundDesc: "No questions in 30 days",
       },
     },
+    // Testimonials
     testimonials: [
       {
         name: "María García",
@@ -288,6 +312,7 @@ export const translations = {
         platform: "YouTube",
       },
     ],
+    // How it works
     howItWorks: {
       title: "How It",
       titleHighlight: "Works",
@@ -307,6 +332,7 @@ export const translations = {
         },
       ],
     },
+    // FAQ
     faq: {
       title: "Frequently",
       titleHighlight: "Asked Questions",
@@ -342,6 +368,7 @@ export const translations = {
         },
       ],
     },
+    // Final CTA
     finalCta: {
       title: "Ready to grow?",
       subtitle:
@@ -349,6 +376,7 @@ export const translations = {
       cta: "Start Now",
       disclaimer: "No commitments. Satisfaction guaranteed.",
     },
+    // Footer
     footer: {
       tagline: "Boost your digital presence",
       terms: "Terms",
@@ -357,6 +385,7 @@ export const translations = {
       login: "Log In",
       copyright: "All rights reserved.",
     },
+    // Package qualities
     qualities: {
       real: "Real followers",
       quality: "Quality followers",
@@ -369,25 +398,37 @@ export const translations = {
       eliteSubs: "Elite subscribers",
       vipSubs: "VIP subscribers",
     },
+    // Support levels
     supportLevels: {
       email: "Email",
       priority: "Priority",
       dedicated: "24/7 Dedicated",
       vip: "24/7 VIP",
     },
+    // Time units
     time: {
       days: "days",
       unlimited: "Unlimited",
     },
+    // Urgency and social proof
+    urgency: {
+      banner: "🔥 BLACK FRIDAY DEAL - 50% OFF ALL PACKAGES - TODAY ONLY 🔥",
+    },
+    socialProof: {
+      purchased: "purchased",
+    },
   },
   pt: {
+    // Hero
     hero: {
-      badge: "Serviço #1 na América Latina",
+      badge: "Serviço #1 nas Américas",
       title: "Impulsione sua Presença",
       titleHighlight: "Digital",
       subtitle:
         "Seguidores reais, engajamento autêntico. Cresça no Instagram, TikTok e mais com a plataforma de confiança de milhares de criadores.",
-      cta: "Ver Pacotes",
+      trustLine: "Mais de 50.000 criadores confiam em nós",
+      guarantee: "💯 Garantia de satisfação ou seu dinheiro de volta",
+      cta: "Ver Pacotes Agora",
       ctaSecondary: "Como Funciona",
       stats: {
         clients: "Clientes Satisfeitos",
@@ -395,9 +436,11 @@ export const translations = {
         support: "Suporte Disponível",
       },
     },
+    // Platform selector
     platform: {
       title: "Selecione sua Plataforma",
     },
+    // Packages
     packages: {
       title: "Escolha seu Pacote de",
       followers: "Seguidores",
@@ -409,13 +452,18 @@ export const translations = {
       guarantee: "Garantia",
       support: "Suporte",
       buyNow: "Comprar Agora",
+      getOffer: "Obter Oferta",
+      guaranteeTitle: "Garantia de Reposição Vitalícia",
+      guaranteeText:
+        "Se você perder seguidores, repomos automaticamente sem custo adicional. Seu investimento está 100% protegido.",
     },
+    // Trust section
     trust: {
       title: "Por que escolher",
       subtitle: "Milhares de criadores confiam em nós para impulsionar sua presença nas redes sociais",
       elements: {
         clients: "+50.000 clientes",
-        clientsDesc: "Satisfeitos em toda América Latina",
+        clientsDesc: "Satisfeitos em todo o continente",
         guaranteed: "Entrega garantida",
         guaranteedDesc: "Ou devolvemos seu dinheiro",
         real: "Seguidores reais",
@@ -428,6 +476,7 @@ export const translations = {
         refundDesc: "Sem perguntas em 30 dias",
       },
     },
+    // Testimonials
     testimonials: [
       {
         name: "María García",
@@ -445,6 +494,7 @@ export const translations = {
         platform: "YouTube",
       },
     ],
+    // How it works
     howItWorks: {
       title: "Como",
       titleHighlight: "Funciona",
@@ -464,6 +514,7 @@ export const translations = {
         },
       ],
     },
+    // FAQ
     faq: {
       title: "Perguntas",
       titleHighlight: "Frequentes",
@@ -500,6 +551,7 @@ export const translations = {
         },
       ],
     },
+    // Final CTA
     finalCta: {
       title: "Pronto para crescer?",
       subtitle:
@@ -507,6 +559,7 @@ export const translations = {
       cta: "Começar Agora",
       disclaimer: "Sem compromissos. Garantia de satisfação.",
     },
+    // Footer
     footer: {
       tagline: "Impulsione sua presença digital",
       terms: "Termos",
@@ -515,6 +568,7 @@ export const translations = {
       login: "Entrar",
       copyright: "Todos os direitos reservados.",
     },
+    // Package qualities
     qualities: {
       real: "Seguidores reais",
       quality: "Seguidores de qualidade",
@@ -527,15 +581,24 @@ export const translations = {
       eliteSubs: "Inscritos elite",
       vipSubs: "Inscritos VIP",
     },
+    // Support levels
     supportLevels: {
       email: "Email",
       priority: "Prioritário",
       dedicated: "24/7 Dedicado",
       vip: "24/7 VIP",
     },
+    // Time units
     time: {
       days: "dias",
       unlimited: "Ilimitada",
+    },
+    // Urgency and social proof
+    urgency: {
+      banner: "🔥 OFERTA BLACK FRIDAY - 50% OFF EM TODOS OS PACOTES - SÓ HOJE 🔥",
+    },
+    socialProof: {
+      purchased: "comprou",
     },
   },
 }
