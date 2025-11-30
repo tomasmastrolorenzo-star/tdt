@@ -9,8 +9,10 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, User, Mail, Shield, Trophy, Save, Loader2 } from "lucide-react"
+import { ArrowLeft, User as UserIcon, Mail, Shield, Trophy, Save, Loader2 } from "lucide-react"
 import Link from "next/link"
+import type { User } from "@/lib/supabase/types"
+import type { User as SupabaseUser } from "@supabase/supabase-js"
 
 export default function ProfilePage() {
     const router = useRouter()
@@ -18,8 +20,8 @@ export default function ProfilePage() {
 
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
-    const [user, setUser] = useState<any>(null)
-    const [userData, setUserData] = useState<any>(null)
+    const [user, setUser] = useState<SupabaseUser | null>(null)
+    const [userData, setUserData] = useState<User | null>(null)
 
     // Form state
     const [name, setName] = useState("")
@@ -129,7 +131,7 @@ export default function ProfilePage() {
                     <Card className="bg-zinc-900 border-zinc-800">
                         <CardHeader>
                             <CardTitle className="text-xl text-white flex items-center gap-2">
-                                <User className="w-5 h-5 text-emerald-500" />
+                                <UserIcon className="w-5 h-5 text-emerald-500" />
                                 Información Personal
                             </CardTitle>
                             <CardDescription className="text-zinc-400">
@@ -155,7 +157,7 @@ export default function ProfilePage() {
                                 <div className="space-y-2">
                                     <Label htmlFor="name" className="text-zinc-300">Nombre Completo</Label>
                                     <div className="relative">
-                                        <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+                                        <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
                                         <Input
                                             id="name"
                                             value={name}
