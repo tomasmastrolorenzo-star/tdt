@@ -7,35 +7,66 @@ export default async function DashboardPage() {
 
   const {
     data: { user },
+    error: authError,
   } = await supabase.auth.getUser()
 
-  if (!user) {
+  if (authError || !user) {
     redirect("/login")
   }
 
-  const { data: userData } = await supabase.from("users").select("*, levels(*)").eq("id", user.id).single()
+  try {
+    const { data: userData, error: userError } = await supabase
+      .from("users")
+      .select("*, levels(*)")
+      .eq("id", user.id)
+      .single()
 
-  const { data: wallet } = await supabase.from("wallets").select("*").eq("user_id", user.id).single()
+    if (userError) {
+      console.log("[v0] User query error:", userError.message)
+    }
 
-  const { data: orders } = await supabase
-    .from("orders")
-    .select("*, services(name)")
-    .eq("seller_id", user.id)
-    .order("created_at", { ascending: false })
-    .limit(10)
+    const { data: wallet, error: walletError } = await supabase
+      .from("wallets")
+      .select("*")
+      .eq("user_id", user.id)
+      .single()
 
-  const { data: levels } = await supabase.from("levels").select("*").order("min_sales", { ascending: true })
+    if (walletError) {
+      console.log("[v0] Wallet query error:", walletError.message)
+    }
 
-  const { data: services } = await supabase.from("services").select("*").order("base_price", { ascending: true })
+    const { data: orders, error: ordersError } = await supabase
+      .from("orders")
+      .select("*, services(name)")
+      .eq("seller_id", user.id)
+      .order("created_at", { ascending: false })
+      .limit(10)
 
-  return (
-    <DashboardContent
-      user={user}
-      userData={userData}
-      wallet={wallet}
-      orders={orders || []}
-      levels={levels || []}
-      services={services || []}
-    />
-  )
+    if (ordersError) {
+      console.log("[v0] Orders query error:", ordersError.message)
+    }
+
+    const { data: levels } = await supabase.from("levels").select("*").order("min_sales", { ascending: true })
+
+    const { data: services } = await supabase
+      .from("services")
+      .select("*")
+      .eq("is_active", true)
+      .order("base_price", { ascending: true })
+
+    return (
+      <DashboardContent
+        user={user}
+        userData={userData}
+        wallet={wallet}
+        orders={orders || []}
+        levels={levels || []}
+        services={services || []}
+      />
+    )
+  } catch (error) {
+    console.log("[v0] Dashboard error:", error)
+    // Return with empty data if queries fail
+    return <DashboardContent user={user} userData={null} wallet={null} orders={[]} levels={[]} services={[]} />
+  }
 }

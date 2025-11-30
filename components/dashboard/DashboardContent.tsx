@@ -25,28 +25,30 @@ import {
   Award,
   Target,
   Zap,
+  Plus,
+  Settings,
 } from "lucide-react"
+import Link from "next/link"
 import type { User } from "@supabase/supabase-js"
 
 interface Level {
   id: string
   name: string
   min_sales: number
-  commission_rate: string
+  commission_rate: number
 }
 
 interface WalletData {
   id: string
   user_id: string
-  balance: string
-  pending_balance: string
+  balance: number
 }
 
 interface Order {
   id: string
   status: string
-  sale_price: string
-  seller_commission: string
+  price_final: number
+  seller_commission: number
   created_at: string
   services?: { name: string }
 }
@@ -54,16 +56,16 @@ interface Order {
 interface Service {
   id: string
   name: string
-  base_price: string
+  base_price: number
   description?: string
 }
 
 interface UserData {
   id: string
   email: string
-  name: string
+  name: string | null
   role: string
-  total_sales: number
+  nda_signed: boolean
   levels?: Level
 }
 
@@ -91,38 +93,54 @@ export function DashboardContent({ user, userData, wallet, orders, levels, servi
 
   const getStatusBadge = (status: string) => {
     const styles: Record<string, string> = {
-      PENDING: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
-      CONFIRMED: "bg-blue-500/20 text-blue-400 border-blue-500/30",
-      PAID: "bg-green-500/20 text-green-400 border-green-500/30",
-      CANCELLED: "bg-red-500/20 text-red-400 border-red-500/30",
+      PENDING_PAYMENT: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
+      PAYMENT_REJECTED: "bg-red-500/20 text-red-400 border-red-500/30",
+      PAYMENT_CONFIRMED: "bg-blue-500/20 text-blue-400 border-blue-500/30",
+      PROCESSING: "bg-purple-500/20 text-purple-400 border-purple-500/30",
+      COMPLETED: "bg-green-500/20 text-green-400 border-green-500/30",
     }
-    return styles[status] || styles.PENDING
+    return styles[status] || styles.PENDING_PAYMENT
   }
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case "PAID":
+      case "COMPLETED":
         return <CheckCircle className="w-4 h-4" />
-      case "CANCELLED":
+      case "PAYMENT_REJECTED":
         return <XCircle className="w-4 h-4" />
-      case "CONFIRMED":
+      case "PROCESSING":
         return <Loader2 className="w-4 h-4 animate-spin" />
+      case "PAYMENT_CONFIRMED":
+        return <CheckCircle className="w-4 h-4" />
       default:
         return <Clock className="w-4 h-4" />
     }
   }
 
-  // Calculate commission based on current level
+  const getStatusLabel = (status: string) => {
+    const labels: Record<string, string> = {
+      PENDING_PAYMENT: "Pago Pendiente",
+      PAYMENT_REJECTED: "Rechazado",
+      PAYMENT_CONFIRMED: "Pago Confirmado",
+      PROCESSING: "En Proceso",
+      COMPLETED: "Completado",
+    }
+    return labels[status] || status
+  }
+
   const currentLevel = userData?.levels
-  const commissionRate = Number.parseFloat(currentLevel?.commission_rate || "10") / 100
-  const calculatedCommission = calcPrice * commissionRate
+  const commissionRate = (currentLevel?.commission_rate || 10) / 100
   const trenzoMargin = calcPrice * 0.4
   const sellerMargin = calcPrice * 0.6 * commissionRate
 
-  // Calculate total earnings
+  const totalSales = orders.filter((o) => o.status === "COMPLETED").length
   const totalEarnings = orders
-    .filter((o) => o.status === "PAID")
-    .reduce((sum, o) => sum + Number.parseFloat(o.seller_commission || "0"), 0)
+    .filter((o) => o.status === "COMPLETED")
+    .reduce((sum, o) => sum + (o.seller_commission || 0), 0)
+
+  const walletBalance = wallet?.balance || 0
+
+  const isOperator = userData?.role === "OPERATOR" || userData?.role === "CEO"
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
@@ -140,22 +158,38 @@ export function DashboardContent({ user, userData, wallet, orders, levels, servi
               </Badge>
             </p>
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleLogout}
-            disabled={loggingOut}
-            className="border-slate-700 text-slate-300 hover:bg-slate-800 bg-transparent"
-          >
-            {loggingOut ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <>
-                <LogOut className="w-4 h-4 mr-2" />
-                Salir
-              </>
+          <div className="flex items-center gap-3">
+            <Link href="/dashboard/new-order">
+              <Button className="bg-emerald-600 hover:bg-emerald-700 text-white">
+                <Plus className="w-4 h-4 mr-2" />
+                Nuevo Pedido
+              </Button>
+            </Link>
+            {isOperator && (
+              <Link href="/dashboard/operator/orders">
+                <Button variant="outline" className="border-slate-700 text-slate-300 hover:bg-slate-800 bg-transparent">
+                  <Settings className="w-4 h-4 mr-2" />
+                  Panel Operador
+                </Button>
+              </Link>
             )}
-          </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleLogout}
+              disabled={loggingOut}
+              className="border-slate-700 text-slate-300 hover:bg-slate-800 bg-transparent"
+            >
+              {loggingOut ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <>
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Salir
+                </>
+              )}
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -168,12 +202,8 @@ export function DashboardContent({ user, userData, wallet, orders, levels, servi
               <Wallet className="w-5 h-5 text-cyan-400" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-white">
-                ${Number.parseFloat(wallet?.balance || "0").toFixed(2)}
-              </div>
-              <p className="text-xs text-slate-500 mt-1">
-                Pendiente: ${Number.parseFloat(wallet?.pending_balance || "0").toFixed(2)}
-              </p>
+              <div className="text-3xl font-bold text-white">${walletBalance.toFixed(2)}</div>
+              <p className="text-xs text-slate-500 mt-1">Disponible para retiro</p>
             </CardContent>
           </Card>
 
@@ -183,7 +213,7 @@ export function DashboardContent({ user, userData, wallet, orders, levels, servi
               <ShoppingCart className="w-5 h-5 text-green-400" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-white">{userData?.total_sales || 0}</div>
+              <div className="text-3xl font-bold text-white">{totalSales}</div>
               <p className="text-xs text-slate-500 mt-1">{orders.length} órdenes registradas</p>
             </CardContent>
           </Card>
@@ -194,7 +224,7 @@ export function DashboardContent({ user, userData, wallet, orders, levels, servi
               <TrendingUp className="w-5 h-5 text-purple-400" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-white">{currentLevel?.commission_rate || "10"}%</div>
+              <div className="text-3xl font-bold text-white">{currentLevel?.commission_rate || 10}%</div>
               <p className="text-xs text-slate-500 mt-1">Nivel {currentLevel?.name || "Novato"}</p>
             </CardContent>
           </Card>
@@ -247,7 +277,7 @@ export function DashboardContent({ user, userData, wallet, orders, levels, servi
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="p-4 rounded-lg bg-slate-800/50 border border-slate-700">
-                  <p className="text-xs text-slate-400 mb-1">Tu Comisión ({currentLevel?.commission_rate}%)</p>
+                  <p className="text-xs text-slate-400 mb-1">Tu Comisión ({currentLevel?.commission_rate || 10}%)</p>
                   <p className="text-2xl font-bold text-green-400">${sellerMargin.toFixed(2)}</p>
                 </div>
                 <div className="p-4 rounded-lg bg-slate-800/50 border border-slate-700">
@@ -276,43 +306,47 @@ export function DashboardContent({ user, userData, wallet, orders, levels, servi
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {levels.map((level, index) => {
-                  const isCurrentLevel = currentLevel?.id === level.id
-                  const icons = [Target, Star, Award, Trophy, Zap]
-                  const Icon = icons[index] || Star
+                {levels.length === 0 ? (
+                  <p className="text-slate-500 text-center py-4">Cargando niveles...</p>
+                ) : (
+                  levels.map((level, index) => {
+                    const isCurrentLevel = currentLevel?.id === level.id
+                    const icons = [Target, Star, Award, Trophy, Zap]
+                    const Icon = icons[index] || Star
 
-                  return (
-                    <div
-                      key={level.id}
-                      className={`flex items-center justify-between p-3 rounded-lg border transition-all ${
-                        isCurrentLevel
-                          ? "bg-cyan-500/10 border-cyan-500/30"
-                          : "bg-slate-800/30 border-slate-700/50 hover:bg-slate-800/50"
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className={`p-2 rounded-lg ${isCurrentLevel ? "bg-cyan-500/20" : "bg-slate-700/50"}`}>
-                          <Icon className={`w-4 h-4 ${isCurrentLevel ? "text-cyan-400" : "text-slate-400"}`} />
+                    return (
+                      <div
+                        key={level.id}
+                        className={`flex items-center justify-between p-3 rounded-lg border transition-all ${
+                          isCurrentLevel
+                            ? "bg-cyan-500/10 border-cyan-500/30"
+                            : "bg-slate-800/30 border-slate-700/50 hover:bg-slate-800/50"
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className={`p-2 rounded-lg ${isCurrentLevel ? "bg-cyan-500/20" : "bg-slate-700/50"}`}>
+                            <Icon className={`w-4 h-4 ${isCurrentLevel ? "text-cyan-400" : "text-slate-400"}`} />
+                          </div>
+                          <div>
+                            <p className={`font-medium ${isCurrentLevel ? "text-cyan-400" : "text-white"}`}>
+                              {level.name}
+                              {isCurrentLevel && (
+                                <Badge className="ml-2 bg-cyan-500/20 text-cyan-400 text-xs">Actual</Badge>
+                              )}
+                            </p>
+                            <p className="text-xs text-slate-500">{level.min_sales}+ ventas</p>
+                          </div>
                         </div>
-                        <div>
-                          <p className={`font-medium ${isCurrentLevel ? "text-cyan-400" : "text-white"}`}>
-                            {level.name}
-                            {isCurrentLevel && (
-                              <Badge className="ml-2 bg-cyan-500/20 text-cyan-400 text-xs">Actual</Badge>
-                            )}
+                        <div className="text-right">
+                          <p className={`text-lg font-bold ${isCurrentLevel ? "text-cyan-400" : "text-white"}`}>
+                            {level.commission_rate}%
                           </p>
-                          <p className="text-xs text-slate-500">{level.min_sales}+ ventas</p>
+                          <p className="text-xs text-slate-500">comisión</p>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <p className={`text-lg font-bold ${isCurrentLevel ? "text-cyan-400" : "text-white"}`}>
-                          {level.commission_rate}%
-                        </p>
-                        <p className="text-xs text-slate-500">comisión</p>
-                      </div>
-                    </div>
-                  )
-                })}
+                    )
+                  })
+                )}
               </div>
             </CardContent>
           </Card>
@@ -363,7 +397,7 @@ export function DashboardContent({ user, userData, wallet, orders, levels, servi
           </CardHeader>
           <CardContent>
             {orders.length === 0 ? (
-              <div className="text-center py-8 text-slate-500">No tienes órdenes aún</div>
+              <div className="text-center py-8 text-slate-500">No tienes órdenes aún. ¡Comienza a vender!</div>
             ) : (
               <div className="space-y-4">
                 {orders.map((order) => (
@@ -376,15 +410,11 @@ export function DashboardContent({ user, userData, wallet, orders, levels, servi
                       <p className="text-sm text-slate-400">{new Date(order.created_at).toLocaleDateString()}</p>
                     </div>
                     <div className="text-right">
-                      <p className="font-semibold text-white">
-                        ${Number.parseFloat(order.sale_price || "0").toFixed(2)}
-                      </p>
-                      <p className="text-xs text-green-400">
-                        +${Number.parseFloat(order.seller_commission || "0").toFixed(2)}
-                      </p>
+                      <p className="font-semibold text-white">${(order.price_final || 0).toFixed(2)}</p>
+                      <p className="text-xs text-green-400">+${(order.seller_commission || 0).toFixed(2)}</p>
                       <Badge className={getStatusBadge(order.status)}>
                         {getStatusIcon(order.status)}
-                        <span className="ml-1">{order.status}</span>
+                        <span className="ml-1">{getStatusLabel(order.status)}</span>
                       </Badge>
                     </div>
                   </div>

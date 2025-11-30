@@ -1,144 +1,188 @@
--- TABLAS EXISTENTES EN SUPABASE:
+-- =============================================
+-- TREND DIGITAL TRADE - Database Schema
+-- =============================================
 
--- 1. LEVELS (5 registros)
-CREATE TABLE levels (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name TEXT NOT NULL,           -- 'Novato', 'Intermedio', 'Avanzado', 'Experto', 'Master'
-  min_sales INTEGER NOT NULL,   -- 0, 10, 50, 100, 500
-  commission_rate DECIMAL(5,2), -- 10.00, 15.00, 20.00, 25.00, 30.00
-  created_at TIMESTAMPTZ DEFAULT now()
+-- Enable UUID extension
+create extension if not exists "uuid-ossp";
+
+-- =============================================
+-- TABLES
+-- =============================================
+
+-- PROFILES (Extends Supabase Auth)
+create table if not exists public.profiles (
+  id uuid references auth.users not null primary key,
+  email text,
+  full_name text,
+  role text default 'user' check (role in ('user', 'admin', 'reseller')),
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
--- 2. USERS (1 registro - Tomas como OPERATOR)
-CREATE TABLE users (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  email TEXT UNIQUE NOT NULL,
-  name TEXT NOT NULL,
-  role TEXT NOT NULL,           -- 'CEO', 'OPERATOR', 'VENDOR'
-  level_id UUID REFERENCES levels(id),
-  referral_code TEXT UNIQUE,
-  referred_by UUID REFERENCES users(id),
-  total_sales INTEGER DEFAULT 0,
-  is_active BOOLEAN DEFAULT true,
-  created_at TIMESTAMPTZ DEFAULT now()
+-- CREDITS (User Balances)
+create table if not exists public.credits (
+  id uuid default uuid_generate_v4() primary key,
+  user_id uuid references public.profiles(id) not null unique,
+  balance decimal(10, 2) default 0.00 not null check (balance >= 0),
+  updated_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
--- 3. WALLETS (1 registro)
-CREATE TABLE wallets (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID REFERENCES users(id),
-  balance DECIMAL(10,2) DEFAULT 0,
-  pending_balance DECIMAL(10,2) DEFAULT 0,
-  total_earned DECIMAL(10,2) DEFAULT 0,
-  created_at TIMESTAMPTZ DEFAULT now()
+-- TRANSACTIONS (History of all movements)
+create table if not exists public.transactions (
+  id uuid default uuid_generate_v4() primary key,
+  user_id uuid references public.profiles(id) not null,
+  amount decimal(10, 2) not null,
+  type text not null check (type in ('deposit', 'purchase', 'refund', 'adjustment')),
+  description text,
+  reference_id text,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
--- 4. WALLET_MOVEMENTS
-CREATE TABLE wallet_movements (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  wallet_id UUID REFERENCES wallets(id),
-  type TEXT NOT NULL,           -- 'COMMISSION', 'WITHDRAWAL', 'ADJUSTMENT', 'AFFILIATE_BONUS'
-  amount DECIMAL(10,2) NOT NULL,
-  description TEXT,
-  order_id UUID,
-  created_at TIMESTAMPTZ DEFAULT now()
-);
-
--- 5. SERVICES (6 registros)
-CREATE TABLE services (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name TEXT NOT NULL,
-  description TEXT,
-  base_price DECIMAL(10,2) NOT NULL,
-  category TEXT,
-  is_active BOOLEAN DEFAULT true,
-  created_at TIMESTAMPTZ DEFAULT now()
-);
-
--- 6. ORDERS (0 registros)
-CREATE TABLE orders (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  vendor_id UUID REFERENCES users(id),
-  service_id UUID REFERENCES services(id),
-  client_name TEXT NOT NULL,
-  client_email TEXT,
-  client_phone TEXT,
-  sale_price DECIMAL(10,2) NOT NULL,
-  cost_price DECIMAL(10,2) NOT NULL,
-  vendor_commission DECIMAL(10,2),
-  trenzo_margin DECIMAL(10,2),
-  status TEXT DEFAULT 'PENDING', -- 'PENDING', 'CONFIRMED', 'PAID', 'CANCELLED'
-  notes TEXT,
-  created_at TIMESTAMPTZ DEFAULT now(),
-  confirmed_at TIMESTAMPTZ,
-  paid_at TIMESTAMPTZ
-);
-
--- 7. COMMISSIONS
-CREATE TABLE commissions (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  order_id UUID REFERENCES orders(id),
-  user_id UUID REFERENCES users(id),
-  type TEXT NOT NULL,           -- 'SALE', 'AFFILIATE', 'BONUS'
-  amount DECIMAL(10,2) NOT NULL,
-  status TEXT DEFAULT 'PENDING',-- 'PENDING', 'APPROVED', 'PAID'
-  created_at TIMESTAMPTZ DEFAULT now()
-);
-
--- 8. AFFILIATES
-CREATE TABLE affiliates (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  referrer_id UUID REFERENCES users(id),
-  referred_id UUID REFERENCES users(id),
-  first_sale_commission DECIMAL(10,2),
-  is_first_sale_paid BOOLEAN DEFAULT false,
-  created_at TIMESTAMPTZ DEFAULT now()
-);
-
--- 9. RANKINGS
-CREATE TABLE rankings (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID REFERENCES users(id),
-  period TEXT NOT NULL,         -- '2024-01', '2024-W01'
-  total_sales INTEGER DEFAULT 0,
-  total_revenue DECIMAL(10,2) DEFAULT 0,
-  total_commission DECIMAL(10,2) DEFAULT 0,
-  created_at TIMESTAMPTZ DEFAULT now()
+-- ORDERS (Service Orders)
+create table if not exists public.orders (
+  id uuid default uuid_generate_v4() primary key,
+  user_id uuid references public.profiles(id) not null,
+  service_id integer not null,
+  service_name text,
+  link text not null,
+  quantity integer not null,
+  cost decimal(10, 2) not null,
+  status text default 'pending' check (status in ('pending', 'processing', 'completed', 'partial', 'canceled', 'refunded')),
+  jap_order_id integer,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  updated_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
 -- =============================================
--- TRIGGERS & FUNCTIONS
+-- ROW LEVEL SECURITY (RLS)
 -- =============================================
 
--- Function to handle new user signup
+alter table public.profiles enable row level security;
+alter table public.credits enable row level security;
+alter table public.transactions enable row level security;
+alter table public.orders enable row level security;
+
+-- Profiles policies
+create policy "Users can view own profile" on public.profiles
+  for select using (auth.uid() = id);
+
+create policy "Users can update own profile" on public.profiles
+  for update using (auth.uid() = id);
+
+-- Credits policies
+create policy "Users can view own balance" on public.credits
+  for select using (auth.uid() = user_id);
+
+-- Transactions policies
+create policy "Users can view own transactions" on public.transactions
+  for select using (auth.uid() = user_id);
+
+-- Orders policies
+create policy "Users can view own orders" on public.orders
+  for select using (auth.uid() = user_id);
+
+create policy "Users can create orders" on public.orders
+  for insert with check (auth.uid() = user_id);
+
+-- =============================================
+-- FUNCTIONS & TRIGGERS
+-- =============================================
+
+-- Auto-create profile and credit entry on signup
 create or replace function public.handle_new_user()
 returns trigger as $$
-declare
-  default_level_id uuid;
 begin
-  -- Get the ID for the 'Novato' level
-  select id into default_level_id from public.levels where name = 'Novato' limit 1;
-
-  -- Insert into public.users
-  insert into public.users (id, email, name, role, level_id)
-  values (
-    new.id,
-    new.email,
-    coalesce(new.raw_user_meta_data->>'full_name', 'New User'),
-    coalesce(new.raw_user_meta_data->>'role', 'VENDOR'),
-    default_level_id
-  );
-
-  -- Create a wallet for the user
-  insert into public.wallets (user_id)
-  values (new.id);
-
+  insert into public.profiles (id, email, full_name)
+  values (new.id, new.email, new.raw_user_meta_data->>'full_name');
+  
+  insert into public.credits (user_id, balance)
+  values (new.id, 0.00);
+  
   return new;
 end;
 $$ language plpgsql security definer;
 
--- Trigger
+-- Trigger for new user signup
 drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure public.handle_new_user();
+
+-- =============================================
+-- INDEXES (Performance)
+-- =============================================
+
+create index if not exists idx_profiles_role on public.profiles(role);
+create index if not exists idx_credits_user_id on public.credits(user_id);
+create index if not exists idx_transactions_user_id on public.transactions(user_id);
+create index if not exists idx_orders_user_id on public.orders(user_id);
+create index if not exists idx_orders_status on public.orders(status);
+
+-- =============================================
+-- ATOMIC FUNCTIONS (Financial Integrity)
+-- =============================================
+
+-- Function to safely deduct balance
+create or replace function public.deduct_balance(
+  p_user_id uuid,
+  p_amount decimal,
+  p_description text,
+  p_service_id integer default null,
+  p_order_id uuid default null
+)
+returns boolean
+language plpgsql
+security definer
+as $$
+declare
+  current_bal decimal;
+begin
+  select balance into current_bal from public.credits where user_id = p_user_id for update;
+  
+  if not found then
+    raise exception 'User credits not found';
+  end if;
+
+  if current_bal < p_amount then
+    return false;
+  end if;
+
+  update public.credits
+  set balance = balance - p_amount,
+      updated_at = now()
+  where user_id = p_user_id;
+
+  insert into public.transactions (user_id, amount, type, description, reference_id)
+  values (p_user_id, -p_amount, 'purchase', p_description, p_order_id::text);
+
+  return true;
+end;
+$$;
+
+-- Function to add balance
+create or replace function public.add_balance(
+  p_user_id uuid,
+  p_amount decimal,
+  p_description text,
+  p_type text default 'deposit',
+  p_reference_id text default null
+)
+returns boolean
+language plpgsql
+security definer
+as $$
+begin
+  update public.credits
+  set balance = balance + p_amount,
+      updated_at = now()
+  where user_id = p_user_id;
+
+  if not found then
+    return false;
+  end if;
+
+  insert into public.transactions (user_id, amount, type, description, reference_id)
+  values (p_user_id, p_amount, p_type, p_description, p_reference_id);
+
+  return true;
+end;
+$$;
