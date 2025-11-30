@@ -15,6 +15,13 @@ export default function HeroSection() {
     document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" })
   }
 
+  const avatars = [
+    "/latina-professional-headshot.png",
+    "/young-man-smiling-professional-headshot.jpg",
+    "/young-european-woman-blonde-professional.jpg",
+    "/middle-eastern-man-professional-headshot.jpg",
+  ]
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
       {/* Animated gradient background */}
@@ -44,13 +51,12 @@ export default function HeroSection() {
         </h1>
 
         <div className="flex items-center justify-center gap-2 mb-4">
-          <div className="flex -space-x-2">
-            {[1, 2, 3, 4].map((i) => (
-              <div
-                key={i}
-                className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-500 to-purple-500 border-2 border-slate-950"
-              />
-            ))}
+          <div className="flex items-center gap-1">
+            <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
+            <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
+            <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
+            <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
+            <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
           </div>
           <p className="text-slate-300 text-sm font-medium">{t.hero.trustLine}</p>
         </div>
