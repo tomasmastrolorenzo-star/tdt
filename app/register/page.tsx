@@ -28,7 +28,7 @@ export default function RegisterPage() {
 
     try {
       const supabase = createClient()
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -40,13 +40,16 @@ export default function RegisterPage() {
       })
 
       if (error) {
-        setError(error.message)
+        console.error("Supabase signup error:", error)
+        setError(`Error: ${error.message}`)
         return
       }
 
+      console.log("Signup successful:", data)
       setSuccess(true)
-    } catch {
-      setError("Error al registrarse")
+    } catch (err) {
+      console.error("Unexpected registration error:", err)
+      setError(`Error inesperado: ${err instanceof Error ? err.message : "Error al registrarse"}`)
     } finally {
       setLoading(false)
     }
