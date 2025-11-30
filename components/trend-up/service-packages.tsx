@@ -10,13 +10,13 @@ import {
   Shield,
   Lock,
   Star,
-  Rocket,
   Gift,
   Eye,
   Heart,
   TrendingUp,
   Users,
   Award,
+  RefreshCw,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -34,20 +34,12 @@ const benefitIcons: Record<string, React.ElementType> = {
   eliteFollowers: Award,
   vipFollowers: Crown,
   gradualDelivery: TrendingUp,
-  guarantee30: Shield,
-  guarantee60: Shield,
-  guarantee90: Shield,
-  guarantee120: Shield,
-  guaranteeLifetime: Shield,
   emailSupport: Users,
   prioritySupport: Zap,
   dedicatedSupport: Star,
   vipSupport: Crown,
-  bonusLikes: Heart,
-  bonusViews: Eye,
   freeGuide: Gift,
   accountProtection: Lock,
-  engagementPack: Rocket,
   aiStrategy: Zap,
   exploreBoost: TrendingUp,
   fypBoost: TrendingUp,
@@ -57,7 +49,7 @@ const benefitIcons: Record<string, React.ElementType> = {
 }
 
 export default function ServicePackages({ packages, platform }: ServicePackagesProps) {
-  const { t, formatPrice } = useI18n()
+  const { t, formatPrice, language } = useI18n()
 
   const getFollowerLabel = (platform: string) => {
     switch (platform) {
@@ -68,6 +60,10 @@ export default function ServicePackages({ packages, platform }: ServicePackagesP
     }
   }
 
+  const formatNumber = (num: number) => {
+    return num.toLocaleString(language === "es" ? "es-ES" : language === "pt" ? "pt-BR" : "en-US")
+  }
+
   const getBenefitText = (benefit: string): string => {
     const benefitTexts: Record<string, Record<string, string>> = {
       es: {
@@ -76,20 +72,12 @@ export default function ServicePackages({ packages, platform }: ServicePackagesP
         eliteFollowers: "Seguidores elite verificados",
         vipFollowers: "Seguidores VIP exclusivos",
         gradualDelivery: "Entrega gradual y natural",
-        guarantee30: "Garantía de 30 días",
-        guarantee60: "Garantía de 60 días",
-        guarantee90: "Garantía de 90 días",
-        guarantee120: "Garantía de 120 días",
-        guaranteeLifetime: "Garantía de por vida",
         emailSupport: "Soporte por email",
-        prioritySupport: "Soporte prioritario",
-        dedicatedSupport: "Soporte 24/7 dedicado",
+        prioritySupport: "Soporte prioritario 24/7",
+        dedicatedSupport: "Soporte dedicado personal",
         vipSupport: "Soporte VIP exclusivo",
-        bonusLikes: "+250 Likes de bonus",
-        bonusViews: "+1,000 Views de bonus",
         freeGuide: "Guía GRATIS: 'Monetiza tu Cuenta'",
         accountProtection: "$100K Protección de cuenta",
-        engagementPack: "Pack de Engagement 7 días",
         aiStrategy: "Estrategia de crecimiento con IA",
         exploreBoost: "Impulso en página Explorar",
         fypBoost: "Impulso en For You Page",
@@ -103,20 +91,12 @@ export default function ServicePackages({ packages, platform }: ServicePackagesP
         eliteFollowers: "Verified elite followers",
         vipFollowers: "Exclusive VIP followers",
         gradualDelivery: "Gradual and natural delivery",
-        guarantee30: "30-day guarantee",
-        guarantee60: "60-day guarantee",
-        guarantee90: "90-day guarantee",
-        guarantee120: "120-day guarantee",
-        guaranteeLifetime: "Lifetime guarantee",
         emailSupport: "Email support",
-        prioritySupport: "Priority support",
-        dedicatedSupport: "24/7 dedicated support",
+        prioritySupport: "24/7 Priority support",
+        dedicatedSupport: "Personal dedicated support",
         vipSupport: "Exclusive VIP support",
-        bonusLikes: "+250 Bonus Likes",
-        bonusViews: "+1,000 Bonus Views",
         freeGuide: "FREE Guide: 'Monetize Your Account'",
         accountProtection: "$100K Account Protection",
-        engagementPack: "7-day Engagement Pack",
         aiStrategy: "AI-powered growth strategy",
         exploreBoost: "Explore page boost",
         fypBoost: "For You Page boost",
@@ -130,20 +110,12 @@ export default function ServicePackages({ packages, platform }: ServicePackagesP
         eliteFollowers: "Seguidores elite verificados",
         vipFollowers: "Seguidores VIP exclusivos",
         gradualDelivery: "Entrega gradual e natural",
-        guarantee30: "Garantia de 30 dias",
-        guarantee60: "Garantia de 60 dias",
-        guarantee90: "Garantia de 90 dias",
-        guarantee120: "Garantia de 120 dias",
-        guaranteeLifetime: "Garantia vitalícia",
         emailSupport: "Suporte por email",
-        prioritySupport: "Suporte prioritário",
-        dedicatedSupport: "Suporte 24/7 dedicado",
+        prioritySupport: "Suporte prioritário 24/7",
+        dedicatedSupport: "Suporte dedicado pessoal",
         vipSupport: "Suporte VIP exclusivo",
-        bonusLikes: "+250 Likes de bônus",
-        bonusViews: "+1.000 Views de bônus",
         freeGuide: "Guia GRÁTIS: 'Monetize sua Conta'",
         accountProtection: "$100K Proteção de conta",
-        engagementPack: "Pack de Engagement 7 dias",
         aiStrategy: "Estratégia de crescimento com IA",
         exploreBoost: "Impulso na página Explorar",
         fypBoost: "Impulso no For You Page",
@@ -153,8 +125,25 @@ export default function ServicePackages({ packages, platform }: ServicePackagesP
       },
     }
 
-    const lang = t.hero.badge.includes("Latinoamérica") ? "es" : t.hero.badge.includes("Américas") ? "pt" : "en"
-    return benefitTexts[lang][benefit] || benefit
+    return benefitTexts[language][benefit] || benefit
+  }
+
+  const getEngagementText = (percent: number) => {
+    const texts: Record<string, string> = {
+      es: `+${percent}% Engagement incluido`,
+      en: `+${percent}% Engagement included`,
+      pt: `+${percent}% Engagement incluído`,
+    }
+    return texts[language] || texts.en
+  }
+
+  const getGuaranteeText = (days: number) => {
+    const texts: Record<string, string> = {
+      es: `${days} días de reposición`,
+      en: `${days}-day refill guarantee`,
+      pt: `${days} dias de reposição`,
+    }
+    return texts[language] || texts.en
   }
 
   const getTierColor = (tier: string, isPopular: boolean, isBestValue: boolean) => {
@@ -227,14 +216,8 @@ export default function ServicePackages({ packages, platform }: ServicePackagesP
                     <div className="text-3xl mb-1">{pkg.emoji}</div>
                     <h3 className="text-lg font-black text-white uppercase tracking-wide">{pkg.name}</h3>
 
-                    {/* Crossed out original price */}
-                    <div className="text-slate-500 text-sm line-through mt-2">
-                      {(pkg.followers / 1000).toFixed(pkg.followers >= 1000 ? 0 : 1)}K
-                    </div>
-
-                    {/* Followers count */}
-                    <div className="text-4xl font-black bg-gradient-to-r from-pink-400 via-purple-400 to-red-400 bg-clip-text text-transparent">
-                      {((pkg.followers * 2) / 1000).toFixed(0)}K
+                    <div className="text-4xl font-black bg-gradient-to-r from-pink-400 via-purple-400 to-red-400 bg-clip-text text-transparent mt-2">
+                      {formatNumber(pkg.followers)}
                     </div>
                     <div className="text-slate-400 text-sm font-semibold">{getFollowerLabel(platform)}</div>
                   </div>
@@ -245,7 +228,21 @@ export default function ServicePackages({ packages, platform }: ServicePackagesP
                     <div className="text-3xl font-black text-white">{formatPrice(pkg.price)}</div>
                     <div className="inline-flex items-center gap-1 bg-red-500/20 border border-red-500/50 text-red-400 px-3 py-1 rounded-full text-xs font-bold mt-2">
                       <Zap className="w-3 h-3" />
-                      2x {getFollowerLabel(platform).toUpperCase()}
+                      50% OFF
+                    </div>
+                  </div>
+
+                  <div className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30 rounded-lg p-2 mb-3 text-center">
+                    <div className="flex items-center justify-center gap-1 text-green-400 text-xs font-bold">
+                      <Heart className="w-3 h-3" />
+                      {getEngagementText(pkg.engagementPercent)}
+                    </div>
+                  </div>
+
+                  <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-2 mb-3 text-center">
+                    <div className="flex items-center justify-center gap-1 text-amber-400 text-xs font-bold">
+                      <RefreshCw className="w-3 h-3" />
+                      {getGuaranteeText(pkg.guaranteeDays)}
                     </div>
                   </div>
 

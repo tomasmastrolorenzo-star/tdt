@@ -1,6 +1,6 @@
 "use client"
 
-import { Shield, Users, Headphones, CreditCard, RefreshCw, Star } from "lucide-react"
+import { Shield, Users, Headphones, CreditCard, RefreshCw, Star, MapPin } from "lucide-react"
 import { useI18n } from "@/lib/i18n/context"
 
 export default function TrustSection() {
@@ -9,10 +9,37 @@ export default function TrustSection() {
   const trustElements = [
     { icon: Users, title: t.trust.elements.clients, description: t.trust.elements.clientsDesc },
     { icon: Shield, title: t.trust.elements.guaranteed, description: t.trust.elements.guaranteedDesc },
-    { icon: Users, title: t.trust.elements.real, description: t.trust.elements.realDesc },
+    { icon: MapPin, title: t.trust.elements.segmented, description: t.trust.elements.segmentedDesc },
     { icon: Headphones, title: t.trust.elements.support, description: t.trust.elements.supportDesc },
     { icon: CreditCard, title: t.trust.elements.secure, description: t.trust.elements.secureDesc },
     { icon: RefreshCw, title: t.trust.elements.refund, description: t.trust.elements.refundDesc },
+  ]
+
+  const testimonials = [
+    {
+      name: "Maria Garcia",
+      platform: "Instagram",
+      comment: t.testimonials[0]?.comment || "Increible servicio!",
+      avatar: "/latina-professional-headshot.png",
+      country: "Mexico",
+      flag: "🇲🇽",
+    },
+    {
+      name: "James Wilson",
+      platform: "TikTok",
+      comment: t.testimonials[1]?.comment || "Best SMM service!",
+      avatar: "/young-man-professional-headshot-smiling.jpg",
+      country: "USA",
+      flag: "🇺🇸",
+    },
+    {
+      name: "Sophie Laurent",
+      platform: "YouTube",
+      comment: t.testimonials[2]?.comment || "My channel grew fast!",
+      avatar: "/young-european-woman-professional-headshot.jpg",
+      country: "France",
+      flag: "🇫🇷",
+    },
   ]
 
   return (
@@ -46,19 +73,24 @@ export default function TrustSection() {
           })}
         </div>
 
-        {/* Testimonials */}
+        {/* Testimonials with real photos */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {t.testimonials.map((testimonial, index) => (
+          {testimonials.map((testimonial, index) => (
             <div
               key={index}
               className="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl p-6 hover:bg-slate-800 transition-all duration-300"
             >
               <div className="flex items-center gap-4 mb-4">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-r from-pink-500 to-purple-500 flex items-center justify-center text-white font-bold">
-                  {testimonial.name.charAt(0)}
-                </div>
+                <img
+                  src={testimonial.avatar || "/placeholder.svg"}
+                  alt={testimonial.name}
+                  className="w-12 h-12 rounded-full object-cover border-2 border-pink-500/50"
+                />
                 <div>
-                  <div className="text-white font-semibold">{testimonial.name}</div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-white font-semibold">{testimonial.name}</span>
+                    <span className="text-lg">{testimonial.flag}</span>
+                  </div>
                   <div className="text-slate-400 text-sm">{testimonial.platform}</div>
                 </div>
               </div>
