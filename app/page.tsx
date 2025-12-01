@@ -6,45 +6,39 @@ import LanguageSelector from "@/components/trend-up/language-selector"
 import UrgencyBanner from "@/components/trend-up/urgency-banner"
 import SocialProofTicker from "@/components/trend-up/social-proof-ticker"
 import HeroSection from "@/components/trend-up/hero-section"
-import PlatformSelector from "@/components/trend-up/platform-selector"
-import ServicePackages from "@/components/trend-up/service-packages"
-import TrustSection from "@/components/trend-up/trust-section"
+import ProfileAnalyzer from "@/components/trend-up/profile-analyzer"
+import StatsGrid from "@/components/trend-up/stats-grid"
+import NicheSelector from "@/components/trend-up/niche-selector"
+import BeforeAfter from "@/components/trend-up/before-after"
 import HowItWorks from "@/components/trend-up/how-it-works"
+import ComparisonSection from "@/components/trend-up/comparison-section"
+import FeaturesGrid from "@/components/trend-up/features-grid"
+import AIEngineSection from "@/components/trend-up/ai-engine-section"
+import ImpactSection from "@/components/trend-up/impact-section"
+import TestimonialsSection from "@/components/trend-up/testimonials-section"
+import PricingSection from "@/components/trend-up/pricing-section"
 import FAQSection from "@/components/trend-up/faq-section"
-import FinalCTA from "@/components/trend-up/final-cta"
 import TrendUpFooter from "@/components/trend-up/footer"
-import {
-  instagramFollowersPackages,
-  tiktokFollowersPackages,
-  youtubeSubscribersPackages,
-} from "@/lib/trend-up/packages"
 
 function LandingContent() {
-  const [selectedPlatform, setSelectedPlatform] = useState("instagram")
-
-  const getPackages = () => {
-    switch (selectedPlatform) {
-      case "tiktok":
-        return tiktokFollowersPackages
-      case "youtube":
-        return youtubeSubscribersPackages
-      default:
-        return instagramFollowersPackages
-    }
-  }
-
   return (
     <>
       <UrgencyBanner />
       <SocialProofTicker />
       <LanguageSelector />
       <HeroSection />
-      <PlatformSelector selectedPlatform={selectedPlatform} onSelect={setSelectedPlatform} />
-      <ServicePackages packages={getPackages()} platform={selectedPlatform} />
-      <TrustSection />
+      <ProfileAnalyzer />
+      <StatsGrid />
+      <NicheSelector />
+      <BeforeAfter />
       <HowItWorks />
+      <ComparisonSection />
+      <FeaturesGrid />
+      <AIEngineSection />
+      <ImpactSection />
+      <TestimonialsSection />
+      <PricingSection />
       <FAQSection />
-      <FinalCTA />
       <TrendUpFooter />
     </>
   )
