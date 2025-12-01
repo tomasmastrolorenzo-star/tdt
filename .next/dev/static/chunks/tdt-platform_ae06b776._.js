@@ -150,7 +150,7 @@ var _s = __turbopack_context__.k.signature();
 ;
 ;
 ;
-function CheckoutPage() {
+function CheckoutContent() {
     _s();
     const searchParams = (0, __TURBOPACK__imported__module__$5b$project$5d2f$tdt$2d$platform$2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useSearchParams"])();
     const [selectedPlan, setSelectedPlan] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$tdt$2d$platform$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])("turbo");
@@ -166,7 +166,7 @@ function CheckoutPage() {
         goal: ""
     });
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$tdt$2d$platform$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
-        "CheckoutPage.useEffect": ()=>{
+        "CheckoutContent.useEffect": ()=>{
             setUserData({
                 username: searchParams.get("username") || "",
                 email: searchParams.get("email") || "",
@@ -175,7 +175,7 @@ function CheckoutPage() {
             setSelectedPlan(searchParams.get("plan") || "turbo");
             setBillingCycle(searchParams.get("billing") || "annual");
         }
-    }["CheckoutPage.useEffect"], [
+    }["CheckoutContent.useEffect"], [
         searchParams
     ]);
     // Pricing
@@ -1163,14 +1163,60 @@ function CheckoutPage() {
         columnNumber: 9
     }, this);
 }
-_s(CheckoutPage, "gyZU047jIlTKrgCQYcuzrPDasgY=", false, function() {
+_s(CheckoutContent, "gyZU047jIlTKrgCQYcuzrPDasgY=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$tdt$2d$platform$2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useSearchParams"]
     ];
 });
-_c = CheckoutPage;
-var _c;
-__turbopack_context__.k.register(_c, "CheckoutPage");
+_c = CheckoutContent;
+function CheckoutPage() {
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$tdt$2d$platform$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$tdt$2d$platform$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Suspense"], {
+        fallback: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$tdt$2d$platform$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+            className: "min-h-screen flex items-center justify-center",
+            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$tdt$2d$platform$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                className: "text-center",
+                children: [
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$tdt$2d$platform$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "w-16 h-16 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"
+                    }, void 0, false, {
+                        fileName: "[project]/tdt-platform/app/checkout/page.tsx",
+                        lineNumber: 375,
+                        columnNumber: 21
+                    }, void 0),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$tdt$2d$platform$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                        className: "text-slate-600",
+                        children: "Cargando checkout..."
+                    }, void 0, false, {
+                        fileName: "[project]/tdt-platform/app/checkout/page.tsx",
+                        lineNumber: 376,
+                        columnNumber: 21
+                    }, void 0)
+                ]
+            }, void 0, true, {
+                fileName: "[project]/tdt-platform/app/checkout/page.tsx",
+                lineNumber: 374,
+                columnNumber: 17
+            }, void 0)
+        }, void 0, false, {
+            fileName: "[project]/tdt-platform/app/checkout/page.tsx",
+            lineNumber: 373,
+            columnNumber: 13
+        }, void 0),
+        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$tdt$2d$platform$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(CheckoutContent, {}, void 0, false, {
+            fileName: "[project]/tdt-platform/app/checkout/page.tsx",
+            lineNumber: 380,
+            columnNumber: 13
+        }, this)
+    }, void 0, false, {
+        fileName: "[project]/tdt-platform/app/checkout/page.tsx",
+        lineNumber: 372,
+        columnNumber: 9
+    }, this);
+}
+_c1 = CheckoutPage;
+var _c, _c1;
+__turbopack_context__.k.register(_c, "CheckoutContent");
+__turbopack_context__.k.register(_c1, "CheckoutPage");
 if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
     __turbopack_context__.k.registerExports(__turbopack_context__.m, globalThis.$RefreshHelpers$);
 }

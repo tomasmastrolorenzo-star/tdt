@@ -1996,6 +1996,10 @@
     }
   }
 
+  .border-t-transparent {
+    border-top-color: #0000;
+  }
+
   .bg-amber-500 {
     background-color: var(--color-amber-500);
   }

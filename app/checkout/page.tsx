@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 import { Check, Sparkles, Shield, CreditCard, Bitcoin, MessageCircle, Lock, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -15,7 +15,7 @@ interface UpsellOption {
     icon: any
 }
 
-export default function CheckoutPage() {
+function CheckoutContent() {
     const searchParams = useSearchParams()
     const [selectedPlan, setSelectedPlan] = useState("turbo")
     const [billingCycle, setBillingCycle] = useState("annual")
@@ -170,8 +170,8 @@ export default function CheckoutPage() {
                                     <div
                                         key={upsell.id}
                                         className={`border-2 rounded-2xl p-6 transition-all ${(index === 0 && autoLikes) || (index === 1 && autoViews)
-                                                ? "border-orange-500 bg-orange-50"
-                                                : "border-slate-200 bg-white"
+                                            ? "border-orange-500 bg-orange-50"
+                                            : "border-slate-200 bg-white"
                                             }`}
                                     >
                                         <div className="flex items-start justify-between gap-4">
@@ -262,8 +262,8 @@ export default function CheckoutPage() {
                                         <button
                                             onClick={() => setPaymentMethod("crypto")}
                                             className={`relative p-4 rounded-xl border-2 transition-all ${paymentMethod === "crypto"
-                                                    ? "border-green-500 bg-green-50"
-                                                    : "border-slate-200 hover:border-slate-300"
+                                                ? "border-green-500 bg-green-50"
+                                                : "border-slate-200 hover:border-slate-300"
                                                 }`}
                                         >
                                             {paymentMethod === "crypto" && (
@@ -279,8 +279,8 @@ export default function CheckoutPage() {
                                         <button
                                             onClick={() => setPaymentMethod("manual")}
                                             className={`p-4 rounded-xl border-2 transition-all ${paymentMethod === "manual"
-                                                    ? "border-blue-500 bg-blue-50"
-                                                    : "border-slate-200 hover:border-slate-300"
+                                                ? "border-blue-500 bg-blue-50"
+                                                : "border-slate-200 hover:border-slate-300"
                                                 }`}
                                         >
                                             <MessageCircle className="w-6 h-6 mx-auto mb-2 text-blue-500" />
@@ -364,5 +364,20 @@ export default function CheckoutPage() {
                 </div>
             </div>
         </main>
+    )
+}
+
+export default function CheckoutPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="text-center">
+                    <div className="w-16 h-16 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                    <p className="text-slate-600">Cargando checkout...</p>
+                </div>
+            </div>
+        }>
+            <CheckoutContent />
+        </Suspense>
     )
 }

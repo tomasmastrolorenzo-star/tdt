@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 import { Check, Sparkles, Zap } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -8,7 +8,7 @@ import TestimonialsWall from "@/components/trend-up/testimonials-wall"
 import FAQAccordion from "@/components/trend-up/faq-accordion"
 import ProfessionalFooter from "@/components/trend-up/professional-footer"
 
-export default function PricingPage() {
+function PricingContent() {
     const searchParams = useSearchParams()
     const [isAnnual, setIsAnnual] = useState(true)
     const [userData, setUserData] = useState({
@@ -312,5 +312,20 @@ export default function PricingPage() {
             {/* Professional Footer */}
             <ProfessionalFooter />
         </main>
+    )
+}
+
+export default function PricingPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="text-center">
+                    <div className="w-16 h-16 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                    <p className="text-slate-600">Cargando precios...</p>
+                </div>
+            </div>
+        }>
+            <PricingContent />
+        </Suspense>
     )
 }
