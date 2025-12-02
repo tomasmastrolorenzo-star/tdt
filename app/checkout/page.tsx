@@ -74,13 +74,17 @@ function CheckoutContent() {
 
     const handleCheckout = () => {
         if (paymentMethod === "crypto") {
-            // Redirect to Cryptomus payment
+            // Redirect to Cryptomus payment (Simulation)
             console.log("Processing crypto payment:", { total, plan: selectedPlan, upsells: { autoLikes, autoViews } })
-            // TODO: Integrate Cryptomus API
+            // Simulate success redirect for demo
+            window.location.href = `/checkout/success?order_id=CRYPTO-${Math.floor(Math.random() * 10000)}&email=${userData.email}`
         } else {
             // Open WhatsApp
             const message = `Hola! Quiero contratar el plan ${selectedPlan.toUpperCase()} (${billingCycle}) por ARS $${total.toLocaleString()}. Usuario: @${userData.username}`
             window.open(`https://wa.me/5491234567890?text=${encodeURIComponent(message)}`, '_blank')
+
+            // Redirect to success page to close the loop
+            window.location.href = `/checkout/success?order_id=MANUAL-${Math.floor(Math.random() * 10000)}&email=${userData.email}`
         }
     }
 

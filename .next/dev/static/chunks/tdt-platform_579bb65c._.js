@@ -1360,7 +1360,7 @@ var _s = __turbopack_context__.k.signature();
 ;
 ;
 ;
-function PricingPage() {
+function PricingContent() {
     _s();
     const searchParams = (0, __TURBOPACK__imported__module__$5b$project$5d2f$tdt$2d$platform$2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useSearchParams"])();
     const [isAnnual, setIsAnnual] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$tdt$2d$platform$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(true);
@@ -1370,14 +1370,14 @@ function PricingPage() {
         followers: 0
     });
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$tdt$2d$platform$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
-        "PricingPage.useEffect": ()=>{
+        "PricingContent.useEffect": ()=>{
             setUserData({
                 username: searchParams.get("username") || "",
                 goal: searchParams.get("goal") || "",
                 followers: parseInt(searchParams.get("followers") || "0")
             });
         }
-    }["PricingPage.useEffect"], [
+    }["PricingContent.useEffect"], [
         searchParams
     ]);
     const standardFeatures = [
@@ -2222,14 +2222,60 @@ function PricingPage() {
         columnNumber: 9
     }, this);
 }
-_s(PricingPage, "/f02Cuutwe+HL/B9tzqwouzw3Cw=", false, function() {
+_s(PricingContent, "/f02Cuutwe+HL/B9tzqwouzw3Cw=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$tdt$2d$platform$2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useSearchParams"]
     ];
 });
-_c = PricingPage;
-var _c;
-__turbopack_context__.k.register(_c, "PricingPage");
+_c = PricingContent;
+function PricingPage() {
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$tdt$2d$platform$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$tdt$2d$platform$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Suspense"], {
+        fallback: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$tdt$2d$platform$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+            className: "min-h-screen flex items-center justify-center",
+            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$tdt$2d$platform$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                className: "text-center",
+                children: [
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$tdt$2d$platform$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "w-16 h-16 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"
+                    }, void 0, false, {
+                        fileName: "[project]/tdt-platform/app/pricing/page.tsx",
+                        lineNumber: 323,
+                        columnNumber: 21
+                    }, void 0),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$tdt$2d$platform$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                        className: "text-slate-600",
+                        children: "Cargando precios..."
+                    }, void 0, false, {
+                        fileName: "[project]/tdt-platform/app/pricing/page.tsx",
+                        lineNumber: 324,
+                        columnNumber: 21
+                    }, void 0)
+                ]
+            }, void 0, true, {
+                fileName: "[project]/tdt-platform/app/pricing/page.tsx",
+                lineNumber: 322,
+                columnNumber: 17
+            }, void 0)
+        }, void 0, false, {
+            fileName: "[project]/tdt-platform/app/pricing/page.tsx",
+            lineNumber: 321,
+            columnNumber: 13
+        }, void 0),
+        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$tdt$2d$platform$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(PricingContent, {}, void 0, false, {
+            fileName: "[project]/tdt-platform/app/pricing/page.tsx",
+            lineNumber: 328,
+            columnNumber: 13
+        }, this)
+    }, void 0, false, {
+        fileName: "[project]/tdt-platform/app/pricing/page.tsx",
+        lineNumber: 320,
+        columnNumber: 9
+    }, this);
+}
+_c1 = PricingPage;
+var _c, _c1;
+__turbopack_context__.k.register(_c, "PricingContent");
+__turbopack_context__.k.register(_c1, "PricingPage");
 if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
     __turbopack_context__.k.registerExports(__turbopack_context__.m, globalThis.$RefreshHelpers$);
 }

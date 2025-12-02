@@ -13,6 +13,7 @@ export interface PackageTier {
   engagementPercent: number
   guaranteeDays: number
   benefits: string[]
+  japServiceId?: string // ID of the service in JAP
 }
 
 export const instagramFollowersPackages: PackageTier[] = [
@@ -31,6 +32,7 @@ export const instagramFollowersPackages: PackageTier[] = [
     engagementPercent: 5,
     guaranteeDays: 15,
     benefits: ["realFollowers", "gradualDelivery", "emailSupport"],
+    japServiceId: "101",
   },
   {
     id: "growth",
@@ -47,6 +49,7 @@ export const instagramFollowersPackages: PackageTier[] = [
     engagementPercent: 10,
     guaranteeDays: 30,
     benefits: ["realFollowers", "gradualDelivery", "prioritySupport"],
+    japServiceId: "102",
   },
   {
     id: "viral",
@@ -63,6 +66,7 @@ export const instagramFollowersPackages: PackageTier[] = [
     engagementPercent: 15,
     guaranteeDays: 60,
     benefits: ["premiumFollowers", "gradualDelivery", "prioritySupport", "freeGuide"],
+    japServiceId: "103",
   },
   {
     id: "influencer",
@@ -79,6 +83,7 @@ export const instagramFollowersPackages: PackageTier[] = [
     engagementPercent: 20,
     guaranteeDays: 90,
     benefits: ["eliteFollowers", "gradualDelivery", "dedicatedSupport", "freeGuide", "accountProtection"],
+    japServiceId: "104",
   },
   {
     id: "celebrity",
@@ -104,6 +109,7 @@ export const instagramFollowersPackages: PackageTier[] = [
       "exploreBoost",
       "exclusivePerks",
     ],
+    japServiceId: "105",
   },
 ]
 
@@ -123,6 +129,7 @@ export const tiktokFollowersPackages: PackageTier[] = [
     engagementPercent: 5,
     guaranteeDays: 15,
     benefits: ["realFollowers", "gradualDelivery", "emailSupport"],
+    japServiceId: "201",
   },
   {
     id: "growth",
@@ -139,6 +146,7 @@ export const tiktokFollowersPackages: PackageTier[] = [
     engagementPercent: 10,
     guaranteeDays: 30,
     benefits: ["realFollowers", "gradualDelivery", "prioritySupport"],
+    japServiceId: "202",
   },
   {
     id: "viral",
@@ -155,6 +163,7 @@ export const tiktokFollowersPackages: PackageTier[] = [
     engagementPercent: 15,
     guaranteeDays: 60,
     benefits: ["premiumFollowers", "gradualDelivery", "prioritySupport", "freeGuide"],
+    japServiceId: "203",
   },
   {
     id: "influencer",
@@ -171,6 +180,7 @@ export const tiktokFollowersPackages: PackageTier[] = [
     engagementPercent: 20,
     guaranteeDays: 90,
     benefits: ["eliteFollowers", "gradualDelivery", "dedicatedSupport", "freeGuide", "accountProtection"],
+    japServiceId: "204",
   },
   {
     id: "celebrity",
@@ -196,6 +206,7 @@ export const tiktokFollowersPackages: PackageTier[] = [
       "fypBoost",
       "exclusivePerks",
     ],
+    japServiceId: "205",
   },
 ]
 
@@ -215,6 +226,7 @@ export const youtubeSubscribersPackages: PackageTier[] = [
     engagementPercent: 5,
     guaranteeDays: 15,
     benefits: ["realFollowers", "gradualDelivery", "emailSupport"],
+    japServiceId: "301",
   },
   {
     id: "growth",
@@ -231,6 +243,7 @@ export const youtubeSubscribersPackages: PackageTier[] = [
     engagementPercent: 10,
     guaranteeDays: 30,
     benefits: ["realFollowers", "gradualDelivery", "prioritySupport"],
+    japServiceId: "302",
   },
   {
     id: "viral",
@@ -247,6 +260,7 @@ export const youtubeSubscribersPackages: PackageTier[] = [
     engagementPercent: 15,
     guaranteeDays: 60,
     benefits: ["premiumFollowers", "gradualDelivery", "prioritySupport", "freeGuide"],
+    japServiceId: "303",
   },
   {
     id: "influencer",
@@ -270,6 +284,7 @@ export const youtubeSubscribersPackages: PackageTier[] = [
       "accountProtection",
       "watchTimeBoost",
     ],
+    japServiceId: "304",
   },
   {
     id: "celebrity",
@@ -296,6 +311,7 @@ export const youtubeSubscribersPackages: PackageTier[] = [
       "monetizationHelp",
       "exclusivePerks",
     ],
+    japServiceId: "305",
   },
 ]
 

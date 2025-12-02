@@ -276,17 +276,22 @@ function ServiciosContent() {
                     </ul>
 
                     {/* CTA */}
-                    <Button
-                      className={cn(
-                        "w-full font-bold",
-                        isPopular
-                          ? "bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600"
-                          : "bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600",
-                      )}
+                    <Link
+                      href={`/checkout/service?platform=${selectedPlatform}&service=${currentService}&package=${item.id}`}
+                      className="w-full"
                     >
-                      {text.action}
-                      <ArrowRight className="w-4 h-4 ml-2" />
-                    </Button>
+                      <Button
+                        className={cn(
+                          "w-full font-bold",
+                          isPopular
+                            ? "bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600"
+                            : "bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600",
+                        )}
+                      >
+                        {text.action}
+                        <ArrowRight className="w-4 h-4 ml-2" />
+                      </Button>
+                    </Link>
                   </div>
                 </div>
               )

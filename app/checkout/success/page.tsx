@@ -15,7 +15,39 @@ function SuccessContent() {
         // Simulate generating an order ID if one isn't provided
         const id = searchParams.get("order_id") || `TDT-${Math.floor(Math.random() * 1000000)}`
         setOrderId(id)
-        setEmail(searchParams.get("email") || "tu correo")
+        const userEmail = searchParams.get("email") || "tu correo"
+        setEmail(userEmail)
+
+        // Process order (Email + JAP)
+        const processOrder = async () => {
+            try {
+                const orderDetails = {
+                    serviceName: searchParams.get("service") || "Servicio de Instagram",
+                    amount: searchParams.get("amount") || "1000",
+                    price: searchParams.get("price") || "$9.99"
+                }
+
+                const japId = searchParams.get("jap_id")
+                const link = searchParams.get("link")
+
+                await fetch('/api/process-order', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: userEmail,
+                        orderDetails,
+                        japId,
+                        link
+                    })
+                })
+            } catch (error) {
+                console.error('Failed to process order:', error)
+            }
+        }
+
+        if (userEmail !== "tu correo") {
+            processOrder()
+        }
     }, [searchParams])
 
     const handleCopyOrderId = () => {
