@@ -85,3 +85,9 @@ export class JapClient {
         });
     }
 }
+
+// Singleton instance for easy importing
+export const japClient = new JapClient(
+    process.env.JAP_API_KEY || '',
+    process.env.JAP_API_URL || 'https://justanotherpanel.com/api/v2'
+);
