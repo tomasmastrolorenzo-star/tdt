@@ -145,7 +145,7 @@ export default function PricingSection() {
                     <span className="text-xl">→</span>
                 </Link>
             </div>
-        </div>
+
         </section >
     )
 }
