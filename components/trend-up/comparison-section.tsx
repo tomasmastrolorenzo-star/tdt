@@ -11,7 +11,7 @@ export default function ComparisonSection() {
                         ¿Cómo funciona?
                     </div>
                     <h2 className="text-3xl md:text-5xl font-bold text-slate-900 mb-4">
-                        Cómo <span className="inline-flex items-center gap-2 bg-slate-900 text-white px-3 py-1 rounded-lg text-2xl"><span className="text-orange-500">🔥</span> Crowd Ignite</span> puede
+                        Cómo <span className="inline-flex items-center gap-2 bg-slate-900 text-white px-3 py-1 rounded-lg text-2xl"><span className="text-orange-500">🔥</span> Trend Up</span> puede
                     </h2>
                     <h3 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6">
                         impulsar tu promoción en Instagram
@@ -22,17 +22,20 @@ export default function ComparisonSection() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-                    {/* With Crowd Ignite */}
+                    {/* With Trend Up */}
                     <div className="border-4 border-orange-500 rounded-[2.5rem] overflow-hidden shadow-2xl transform hover:scale-[1.02] transition-transform">
                         <div className="h-64 bg-slate-200 relative overflow-hidden">
-                            {/* Placeholder for Leo Meme */}
-                            <div className="absolute inset-0 flex items-center justify-center bg-slate-800 text-white text-lg font-bold">
-                                [Leo DiCaprio Pointing Meme]
+                            <img
+                                src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2426&auto=format&fit=crop"
+                                alt="Growth Success"
+                                className="w-full h-full object-cover"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent flex items-end p-6">
+                                <p className="text-white font-bold text-lg">Crecimiento Exponencial 🚀</p>
                             </div>
-                            <img src="https://media.giphy.com/media/kd9Bl17qMa84/giphy.gif" alt="Success Meme" className="w-full h-full object-cover opacity-80" />
                         </div>
                         <div className="p-8 bg-white">
-                            <h3 className="text-2xl font-bold text-orange-600 mb-8">Usted con Crowd Ignite</h3>
+                            <h3 className="text-2xl font-bold text-orange-600 mb-8">Usted con Trend Up</h3>
                             <ul className="space-y-6">
                                 {[
                                     "Amplías tu presencia de marca",
@@ -52,17 +55,20 @@ export default function ComparisonSection() {
                         </div>
                     </div>
 
-                    {/* Without Crowd Ignite */}
+                    {/* Without Trend Up */}
                     <div className="border border-slate-200 rounded-[2.5rem] overflow-hidden bg-slate-50 hover:shadow-lg transition-shadow">
                         <div className="h-64 bg-slate-200 relative overflow-hidden">
-                            {/* Placeholder for Jim Carrey Meme */}
-                            <div className="absolute inset-0 flex items-center justify-center bg-slate-300 text-slate-600 text-lg font-bold">
-                                [Jim Carrey Confused Meme]
+                            <img
+                                src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=2370&auto=format&fit=crop"
+                                alt="Struggle"
+                                className="w-full h-full object-cover grayscale"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent flex items-end p-6">
+                                <p className="text-white font-bold text-lg">Estancamiento y Frustración 📉</p>
                             </div>
-                            <img src="https://media.giphy.com/media/j6uK36y32LxQs/giphy.gif" alt="Confused Meme" className="w-full h-full object-cover opacity-80" />
                         </div>
                         <div className="p-8">
-                            <h3 className="text-2xl font-bold text-slate-900 mb-8">Usted sin Crowd Ignite</h3>
+                            <h3 className="text-2xl font-bold text-slate-900 mb-8">Usted sin Trend Up</h3>
                             <ul className="space-y-6">
                                 {[
                                     "Dificultades con el conocimiento de la marca",

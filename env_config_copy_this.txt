@@ -1,28 +1,25 @@
-# Environment Variables
-
 # Supabase
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url_here
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key_here
+NEXT_PUBLIC_SUPABASE_URL=https://hvgawmcwzsgmhagpqgin.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_H4nDauPhsQ4liN5Fs5Eipw_PRygShN2
 
 # Instagram API (RapidAPI)
-# Get your API key from: https://rapidapi.com/hub
-RAPIDAPI_KEY=your_rapidapi_key_here
+RAPIDAPI_KEY=b3f8d26681msh591240419c64bfbp149aedjsn0b86a8fd85b2
 INSTAGRAM_API_URL=https://instagram-scraper-stable-api.p.rapidapi.com
 
 # JAP Provider (JustAnotherPanel)
+# Waiting for API Key from support ticket
 JAP_API_KEY=your_jap_api_key_here
 JAP_API_URL=https://justanotherpanel.com/api/v2
 
 # Cryptomus Payment Gateway
-# Merchant ID: 08b80940-7728-4fbc-a098-a51f166d74a8
 CRYPTOMUS_MERCHANT_ID=08b80940-7728-4fbc-a098-a51f166d74a8
 CRYPTOMUS_API_KEY=yzDC5t15NxyigoJ0xdmREGeUrWrs7lsmOi8YC1cWc7jRzZndpGzvwvOO6OUbwrmO1SiS7K2729PiFxsibt4I859OKN97kIC1nh6hk7ajduqpYwkTfrH0rXhV5jCAwOUl
 CRYPTOMUS_PAYMENT_KEY=yzDC5t15NxyigoJ0xdmREGeUrWrs7lsmOi8YC1cWc7jRzZndpGzvwvOO6OUbwrmO1SiS7K2729PiFxsibt4I859OKN97kIC1nh6hk7ajduqpYwkTfrH0rXhV5jCAwOUl
 NEXT_PUBLIC_CRYPTOMUS_MERCHANT_ID=08b80940-7728-4fbc-a098-a51f166d74a8
 
-# App URL (for webhooks and redirects)
+# App URL
 NEXT_PUBLIC_APP_URL=https://panel.trenddigitaltrade.com
 
-# Zoho Mail (Email Automation)
+# Zoho Mail
 ZOHO_EMAIL=your_zoho_email@trenddigitaltrade.com
 ZOHO_PASSWORD=your_zoho_app_password_here

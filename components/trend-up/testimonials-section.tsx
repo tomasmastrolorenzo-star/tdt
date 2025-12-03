@@ -16,7 +16,7 @@ export default function TestimonialsSection() {
                         redes sociales.
                     </h2>
                     <p className="text-slate-600 max-w-2xl mx-auto">
-                        Descubre por qué los influencers y las marcas confían en Crowd Ignite con su crecimiento y éxito en las redes sociales
+                        Descubre por qué los influencers y las marcas confían en Trend Up con su crecimiento y éxito en las redes sociales
                     </p>
                 </div>
 
@@ -39,7 +39,7 @@ export default function TestimonialsSection() {
                     </h3>
 
                     <p className="text-slate-600 leading-relaxed">
-                        Crowd Ignite es imprescindible si te gusta la gastronomía y quieres ampliar tu alcance en Instagram. He probado varias plataformas, pero Crowd Ignite's La innovadora tecnología me ha ayudado a duplicar mi número de seguidores en semanas. Ha sido una forma estupenda...
+                        Trend Up es imprescindible si te gusta la gastronomía y quieres ampliar tu alcance en Instagram. He probado varias plataformas, pero Trend Up's La innovadora tecnología me ha ayudado a duplicar mi número de seguidores en semanas. Ha sido una forma estupenda...
                     </p>
                 </div>
             </div>

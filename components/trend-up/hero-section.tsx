@@ -33,7 +33,7 @@ export default function HeroSection() {
         {/* Badge */}
         <div className="inline-flex items-center gap-2 bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-full px-4 py-1.5 mb-8">
           <span className="flex h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-          <span className="text-sm text-slate-300 font-medium">Crowd Ignite Powered by GPT-4o</span>
+          <span className="text-sm text-slate-300 font-medium">Trend Up Powered by GPT-4o</span>
         </div>
 
         {/* Headline */}

@@ -21,15 +21,15 @@ export default function StatsGrid() {
         },
         {
             icon: CheckCircle,
-            value: "1.94/5",
+            value: "4.9/5",
             label: "Basado en opiniones reales de clientes",
             color: "text-blue-500",
             bg: "bg-blue-500/10"
         },
         {
             icon: Users,
-            value: "31,274+",
-            label: "Base actual de usuarios de Crowd Ignite",
+            value: "15,000+",
+            label: "Base actual de usuarios de Trend Up",
             color: "text-purple-500",
             bg: "bg-purple-500/10"
         }

@@ -122,7 +122,7 @@ export default function ProfileAnalyzer() {
                                 {/* Input Section */}
                                 <div className="mb-6">
                                     <h3 className="font-bold text-xl text-slate-900 mb-4">
-                                        Grow with Crowd Ignite
+                                        Grow with Trend Up
                                     </h3>
                                     <p className="text-slate-600 text-sm mb-4">
                                         Enter your Instagram to get started
@@ -138,23 +138,13 @@ export default function ProfileAnalyzer() {
                                                 onChange={(e) => setUsername(e.target.value)}
                                                 placeholder="tuusuariodeinstagram"
                                                 className="pl-8 h-12 rounded-xl border-slate-200 focus:border-orange-500"
-                                                onKeyDown={(e) => e.key === "Enter" && !email && document.getElementById('email-input')?.focus()}
+                                                onKeyDown={(e) => e.key === "Enter" && handleLoadProfile()}
                                             />
                                         </div>
 
-                                        <Input
-                                            id="email-input"
-                                            type="email"
-                                            value={email}
-                                            onChange={(e) => setEmail(e.target.value)}
-                                            placeholder="tu@email.com"
-                                            className="h-12 rounded-xl border-slate-200 focus:border-orange-500"
-                                            onKeyDown={(e) => e.key === "Enter" && handleLoadProfile()}
-                                        />
-
                                         <Button
                                             onClick={handleLoadProfile}
-                                            disabled={loading || !username || !email}
+                                            disabled={loading || !username}
                                             className="w-full bg-orange-500 hover:bg-orange-600 text-white h-12 rounded-xl font-bold disabled:opacity-50"
                                         >
                                             {loading ? (

@@ -6,6 +6,7 @@ import LanguageSelector from "@/components/trend-up/language-selector"
 import UrgencyBanner from "@/components/trend-up/urgency-banner"
 import SocialProofTicker from "@/components/trend-up/social-proof-ticker"
 import HeroSection from "@/components/trend-up/hero-section"
+import DirectServices from "@/components/trend-up/direct-services"
 import ProfileAnalyzer from "@/components/trend-up/profile-analyzer"
 import StatsGrid from "@/components/trend-up/stats-grid"
 import NicheSelector from "@/components/trend-up/niche-selector"
@@ -27,6 +28,7 @@ function LandingContent() {
       <SocialProofTicker />
       <LanguageSelector />
       <HeroSection />
+      <DirectServices />
       <ProfileAnalyzer />
       <StatsGrid />
       <NicheSelector />

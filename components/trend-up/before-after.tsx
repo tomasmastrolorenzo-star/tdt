@@ -24,7 +24,7 @@ export default function BeforeAfter() {
                             className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${isAfter ? "bg-green-500 text-white shadow-lg shadow-green-500/20" : "text-slate-400 hover:text-white"
                                 }`}
                         >
-                            Después Crowd Ignite
+                            Después Trend Up
                         </button>
                     </div>
                 </div>

@@ -4,6 +4,7 @@ import { useState } from "react"
 import { Check, Flame } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
+import Link from "next/link"
 
 export default function PricingSection() {
     const [isAnnual, setIsAnnual] = useState(true)
@@ -136,6 +137,15 @@ export default function PricingSection() {
                     </div>
                 </div>
             </div>
-        </section>
+
+            <div className="mt-12 text-center">
+                <p className="text-slate-600 mb-4">¿Buscas algo más específico?</p>
+                <Link href="/servicios" className="inline-flex items-center gap-2 text-orange-600 font-bold hover:text-orange-700 transition-colors border-b-2 border-orange-200 hover:border-orange-600 pb-1">
+                    Ver todos los servicios y paquetes disponibles
+                    <span className="text-xl">→</span>
+                </Link>
+            </div>
+        </div>
+        </section >
     )
 }

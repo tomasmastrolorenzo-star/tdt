@@ -15,7 +15,7 @@ export default function FeaturesGrid() {
                         </div>
                         <h3 className="text-xl font-bold text-slate-900 mb-4">Crecimiento sin riesgo</h3>
                         <p className="text-slate-600">
-                            Crowd Ignite nunca le pide la contraseña de su cuenta como otras empresas, evitando cualquier riesgo de ser suspendido. Cumplimos todas las directrices de IG.
+                            Trend Up nunca le pide la contraseña de su cuenta como otras empresas, evitando cualquier riesgo de ser suspendido. Cumplimos todas las directrices de IG.
                         </p>
                     </div>
 
@@ -25,7 +25,7 @@ export default function FeaturesGrid() {
                         </div>
                         <h3 className="text-xl font-bold text-slate-900 mb-4">Nuevos seguidores comprometidos</h3>
                         <p className="text-slate-600">
-                            Crowd Ignite se asegura de que tus nuevos fans no sólo te sigan, sino que disfruten de lo que compartes y quieran ver más.
+                            Trend Up se asegura de que tus nuevos fans no sólo te sigan, sino que disfruten de lo que compartes y quieran ver más.
                         </p>
                     </div>
 
@@ -35,7 +35,7 @@ export default function FeaturesGrid() {
                         </div>
                         <h3 className="text-xl font-bold text-slate-900 mb-4">Sin spam ni bots</h3>
                         <p className="text-slate-600">
-                            Solo crecimiento inteligente en redes sociales. Verás un crecimiento inmediato gracias a la tecnología GPT4 de Crowd Ignite.
+                            Solo crecimiento inteligente en redes sociales. Verás un crecimiento inmediato gracias a la tecnología GPT4 de Trend Up.
                         </p>
                     </div>
                 </div>
