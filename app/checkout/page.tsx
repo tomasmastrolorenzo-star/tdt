@@ -96,7 +96,7 @@ function CheckoutContent() {
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                             <Sparkles className="w-6 h-6 text-orange-500" />
-                            <span className="font-bold text-xl">Trend Up</span>
+                            <span className="font-bold text-xl">TDT</span>
                         </div>
                         <div className="flex items-center gap-2 text-sm text-slate-600">
                             <Shield className="w-4 h-4 text-green-500" />
