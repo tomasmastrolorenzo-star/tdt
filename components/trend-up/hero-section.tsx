@@ -41,8 +41,18 @@ export default function HeroSection() {
           <div className="flex flex-wrap items-center justify-center gap-6 mb-10 text-sm text-slate-400">
             <div className="flex items-center gap-2">
               <div className="flex -space-x-2">
-                {[1, 2, 3, 4].map((i) => (
-                  <div key={i} className="w-8 h-8 rounded-full border-2 border-slate-950 bg-slate-800" />
+                {[
+                  "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=64&h=64&fit=crop&crop=faces",
+                  "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=64&h=64&fit=crop&crop=faces",
+                  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=64&h=64&fit=crop&crop=faces",
+                  "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&h=64&fit=crop&crop=faces"
+                ].map((src, i) => (
+                  <img
+                    key={i}
+                    src={src}
+                    alt="User"
+                    className="w-8 h-8 rounded-full border-2 border-slate-950 object-cover"
+                  />
                 ))}
               </div>
               <span>{t.hero.trustLine}</span>

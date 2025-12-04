@@ -30,7 +30,7 @@ export default function LanguageSelector() {
   const currentCurr = currencies.find((c) => c.code === currency)
 
   return (
-    <div className="fixed bottom-4 left-4 md:top-4 md:right-4 md:bottom-auto md:left-auto z-50 flex items-center gap-2">
+    <div className="fixed bottom-4 left-4 md:top-4 md:right-4 md:bottom-auto md:left-auto z-[60] flex items-center gap-2">
       {/* Language Selector */}
       <div className="relative">
         <button
@@ -38,7 +38,7 @@ export default function LanguageSelector() {
             setIsLangOpen(!isLangOpen)
             setIsCurrOpen(false)
           }}
-          className="flex items-center gap-2 bg-slate-900/80 backdrop-blur-lg border border-slate-700 rounded-full px-3 py-2 text-white hover:bg-slate-800 transition-all duration-300"
+          className="flex items-center gap-2 bg-slate-900/80 backdrop-blur-lg border border-slate-700 rounded-full px-3 py-2 text-white hover:bg-slate-800 transition-all duration-300 shadow-lg"
         >
           <span className="text-xl">{currentLang?.flag}</span>
           <span className="text-sm hidden sm:inline">{currentLang?.name}</span>
@@ -46,7 +46,7 @@ export default function LanguageSelector() {
         </button>
 
         {isLangOpen && (
-          <div className="absolute top-full right-0 mt-2 bg-slate-900/95 backdrop-blur-lg border border-slate-700 rounded-xl overflow-hidden shadow-xl min-w-[150px]">
+          <div className="absolute bottom-full mb-2 md:bottom-auto md:top-full md:mt-2 left-0 md:left-auto md:right-0 bg-slate-900/95 backdrop-blur-lg border border-slate-700 rounded-xl overflow-hidden shadow-xl min-w-[150px]">
             {languages.map((lang) => (
               <button
                 key={lang.code}
@@ -74,7 +74,7 @@ export default function LanguageSelector() {
             setIsCurrOpen(!isCurrOpen)
             setIsLangOpen(false)
           }}
-          className="flex items-center gap-2 bg-slate-900/80 backdrop-blur-lg border border-slate-700 rounded-full px-3 py-2 text-white hover:bg-slate-800 transition-all duration-300"
+          className="flex items-center gap-2 bg-slate-900/80 backdrop-blur-lg border border-slate-700 rounded-full px-3 py-2 text-white hover:bg-slate-800 transition-all duration-300 shadow-lg"
         >
           <span className="font-semibold">{currentCurr?.symbol}</span>
           <span className="text-sm hidden sm:inline">{currentCurr?.code}</span>
@@ -82,7 +82,7 @@ export default function LanguageSelector() {
         </button>
 
         {isCurrOpen && (
-          <div className="absolute top-full right-0 mt-2 bg-slate-900/95 backdrop-blur-lg border border-slate-700 rounded-xl overflow-hidden shadow-xl min-w-[150px]">
+          <div className="absolute bottom-full mb-2 md:bottom-auto md:top-full md:mt-2 left-0 md:left-auto md:right-0 bg-slate-900/95 backdrop-blur-lg border border-slate-700 rounded-xl overflow-hidden shadow-xl min-w-[150px]">
             {currencies.map((curr) => (
               <button
                 key={curr.code}

@@ -36,31 +36,31 @@ export default function ImpactSection() {
                 </div>
 
                 {/* Impact Card */}
-                <div className="max-w-md mx-auto bg-white rounded-[2rem] p-6 shadow-2xl">
+                <div className="max-w-md mx-auto bg-white rounded-[2rem] p-6 shadow-2xl transform hover:scale-105 transition-transform duration-300">
                     <div className="flex flex-col items-center mb-6">
-                        <div className="w-16 h-16 rounded-full bg-slate-200 mb-3 overflow-hidden">
-                            <img src="https://i.pravatar.cc/150?img=45" alt="Profile" className="w-full h-full object-cover" />
+                        <div className="w-16 h-16 rounded-full bg-slate-200 mb-3 overflow-hidden border-4 border-orange-100">
+                            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=faces" alt="Profile" className="w-full h-full object-cover" />
                         </div>
-                        <div className="font-bold text-lg text-slate-900">thebubbl_ygirl</div>
-                        <div className="text-slate-500 font-medium">3,7k Seguidores</div>
+                        <div className="font-bold text-lg text-slate-900">@sofia.digital</div>
+                        <div className="text-slate-500 font-medium">15.2k Seguidores</div>
                     </div>
 
-                    <div className="bg-green-500 text-white rounded-xl p-4 mb-6 flex items-center justify-center gap-2 font-bold shadow-lg shadow-green-500/30">
-                        Aumento de seguidores: +3.4k <ArrowUp className="w-5 h-5" />
+                    <div className="bg-green-500 text-white rounded-xl p-4 mb-6 flex items-center justify-center gap-2 font-bold shadow-lg shadow-green-500/30 animate-pulse">
+                        Crecimiento: +12.5k <ArrowUp className="w-5 h-5" />
                     </div>
 
                     <div className="space-y-3">
-                        <div className="bg-slate-50 rounded-xl p-4 flex justify-between items-center">
-                            <span className="text-slate-600 text-sm font-medium">Aumento del número de clientes</span>
-                            <span className="text-green-500 font-bold">200+</span>
+                        <div className="bg-slate-50 rounded-xl p-4 flex justify-between items-center hover:bg-slate-100 transition-colors">
+                            <span className="text-slate-600 text-sm font-medium">Alcance de cuenta</span>
+                            <span className="text-green-600 font-bold">+245%</span>
                         </div>
-                        <div className="bg-slate-50 rounded-xl p-4 flex justify-between items-center">
-                            <span className="text-slate-600 text-sm font-medium">Aumenta la venta de libros</span>
-                            <span className="text-green-500 font-bold">+843%</span>
+                        <div className="bg-slate-50 rounded-xl p-4 flex justify-between items-center hover:bg-slate-100 transition-colors">
+                            <span className="text-slate-600 text-sm font-medium">Engagement</span>
+                            <span className="text-green-600 font-bold">+180%</span>
                         </div>
-                        <div className="bg-slate-50 rounded-xl p-4 flex justify-between items-center">
-                            <span className="text-slate-600 text-sm font-medium">Aumento del tráfico</span>
-                            <span className="text-green-500 font-bold">+652%</span>
+                        <div className="bg-slate-50 rounded-xl p-4 flex justify-between items-center hover:bg-slate-100 transition-colors">
+                            <span className="text-slate-600 text-sm font-medium">Ventas mensuales</span>
+                            <span className="text-green-600 font-bold">+320%</span>
                         </div>
                     </div>
                 </div>

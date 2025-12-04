@@ -230,7 +230,7 @@ export const translations = {
     },
     // Urgency and social proof
     urgency: {
-      banner: "🔥 OFERTA BLACK FRIDAY - 50% OFF EN TODOS LOS PAQUETES - SOLO HOJE 🔥",
+      banner: "🎄 OFERTA DE NAVIDAD - 50% OFF EN TODOS LOS PAQUETES - SOLO POR HOY 🎅",
     },
     socialProof: {
       purchased: "compró",
@@ -453,7 +453,7 @@ export const translations = {
     },
     // Urgency and social proof
     urgency: {
-      banner: "🔥 BLACK FRIDAY DEAL - 50% OFF ALL PACKAGES - TODAY ONLY 🔥",
+      banner: "🎄 CHRISTMAS DEAL - 50% OFF ALL PACKAGES - TODAY ONLY 🎅",
     },
     socialProof: {
       purchased: "purchased",
@@ -677,7 +677,7 @@ export const translations = {
     },
     // Urgency and social proof
     urgency: {
-      banner: "🔥 OFERTA BLACK FRIDAY - 50% OFF EM TODOS OS PACOTES - SÓ HOJE 🔥",
+      banner: "🎄 OFERTA DE NATAL - 50% OFF EM TODOS OS PACOTES - SÓ HOJE 🎅",
     },
     socialProof: {
       purchased: "comprou",

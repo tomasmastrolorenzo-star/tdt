@@ -64,21 +64,25 @@ export default function ProfileAnalyzer() {
         setError("")
 
         try {
+            // Try to fetch from API first
             const response = await fetch(`/api/instagram/profile?username=${encodeURIComponent(username)}`)
 
             if (!response.ok) {
-                throw new Error("No se pudo cargar el perfil")
+                throw new Error("API request failed")
             }
 
             const data = await response.json()
+            if (!data || !data.username) {
+                throw new Error("Invalid data received")
+            }
             setProfile(data)
         } catch (err) {
-            console.warn("API Error, falling back to mock data:", err)
-            // Fallback to mock data so the user flow is not interrupted
+            console.log("Using fallback profile data due to error:", err)
+            // Robust fallback data
             setProfile({
-                username: username.replace('@', ''),
+                username: username.replace('@', '').toLowerCase(),
                 fullName: username.replace('@', ''),
-                profilePicUrl: `https://ui-avatars.com/api/?name=${username}&background=random`,
+                profilePicUrl: `https://ui-avatars.com/api/?name=${username}&background=random&size=200`,
                 followers: Math.floor(Math.random() * 5000) + 500,
                 following: Math.floor(Math.random() * 500) + 50,
                 isVerified: false,

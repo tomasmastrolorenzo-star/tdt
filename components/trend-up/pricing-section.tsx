@@ -65,9 +65,11 @@ export default function PricingSection() {
                             Ideal para pequeñas cuentas de Instagram que necesitan nuevos seguidores rápidamente.
                         </p>
 
-                        <Button className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold py-6 rounded-xl mb-8 shadow-lg shadow-orange-500/20">
-                            Pruebe Standard
-                        </Button>
+                        <Link href="/checkout?plan=standard" className="w-full block">
+                            <Button className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold py-6 rounded-xl mb-8 shadow-lg shadow-orange-500/20">
+                                Pruebe Standard
+                            </Button>
+                        </Link>
 
                         <div className="space-y-4">
                             <h4 className="font-bold text-slate-900">Qué incluye:</h4>
@@ -109,9 +111,11 @@ export default function PricingSection() {
                             Crecimiento más rápido y más funciones de IA, ideal para todos los usuarios que necesitan un impulso adicional.
                         </p>
 
-                        <Button className="w-full bg-white text-green-600 hover:bg-slate-50 font-bold py-6 rounded-xl mb-8 shadow-lg">
-                            Pruebe Premium
-                        </Button>
+                        <Link href="/checkout?plan=premium" className="w-full block">
+                            <Button className="w-full bg-white text-green-600 hover:bg-slate-50 font-bold py-6 rounded-xl mb-8 shadow-lg">
+                                Pruebe Premium
+                            </Button>
+                        </Link>
 
                         <div className="space-y-4">
                             <h4 className="font-bold">Incluye el plan Standard y además:</h4>
