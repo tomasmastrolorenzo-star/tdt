@@ -10,7 +10,7 @@ export default function ImpactSection() {
                 <p className="text-white/90 font-handwriting text-xl mb-4 italic">Amado por más de 80.000 fans</p>
 
                 <h2 className="text-3xl md:text-5xl font-bold text-white mb-8">
-                    Trend Up impulsa los <br />
+                    TDT impulsa los <br />
                     resultados de su marca <br />
                     específica
                 </h2>

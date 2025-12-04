@@ -30,7 +30,7 @@ export default function LanguageSelector() {
   const currentCurr = currencies.find((c) => c.code === currency)
 
   return (
-    <div className="fixed top-4 right-4 z-50 flex items-center gap-2">
+    <div className="fixed bottom-4 left-4 md:top-4 md:right-4 md:bottom-auto md:left-auto z-50 flex items-center gap-2">
       {/* Language Selector */}
       <div className="relative">
         <button

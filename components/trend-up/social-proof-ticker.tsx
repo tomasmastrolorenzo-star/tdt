@@ -55,30 +55,29 @@ export default function SocialProofTicker() {
   }
 
   return (
-    <div className="fixed bottom-6 left-6 z-40 max-w-sm">
+    <div className="fixed bottom-4 left-4 right-4 md:right-auto md:bottom-6 md:left-6 z-40 max-w-sm mx-auto md:mx-0">
       <div
-        className={`bg-slate-900/95 backdrop-blur-lg border border-slate-700 shadow-xl rounded-xl p-4 transition-all duration-500 ${
-          isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-        }`}
+        className={`bg-slate-900/95 backdrop-blur-lg border border-slate-700 shadow-xl rounded-xl p-3 md:p-4 transition-all duration-500 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+          }`}
       >
         <div className="flex items-start gap-3">
           <div className="flex-shrink-0">
             <div
-              className={`w-12 h-12 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center ${iconColor}`}
+              className={`w-10 h-10 md:w-12 md:h-12 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center ${iconColor}`}
             >
-              <PackageIcon className="w-6 h-6" />
+              <PackageIcon className="w-5 h-5 md:w-6 md:h-6" />
             </div>
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
-              <span className="text-2xl">{current.flag}</span>
-              <span className="text-sm font-semibold text-white">{current.name}</span>
+              <span className="text-xl md:text-2xl">{current.flag}</span>
+              <span className="text-xs md:text-sm font-semibold text-white">{current.name}</span>
             </div>
-            <p className="text-xs text-slate-300 mt-1">
+            <p className="text-[10px] md:text-xs text-slate-300 mt-0.5 md:mt-1">
               {t.socialProof.purchased} <span className="text-amber-400 font-semibold">{current.package}</span> -{" "}
               {current.platform}
             </p>
-            <p className="text-xs text-slate-500 mt-1">{getTimeText(current.time)} ago</p>
+            <p className="text-[10px] md:text-xs text-slate-500 mt-0.5 md:mt-1">{getTimeText(current.time)} ago</p>
           </div>
         </div>
       </div>

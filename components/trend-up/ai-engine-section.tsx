@@ -32,7 +32,7 @@ export default function AIEngineSection() {
                             </div>
                         </div>
                         <div className="p-2">
-                            <img src="/dashboard-preview.png" alt="Dashboard Preview" className="w-full h-auto rounded-xl opacity-90" onError={(e) => e.currentTarget.src = 'https://placehold.co/1200x800/f1f5f9/94a3b8?text=Dashboard+Preview'} />
+                            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2070&auto=format&fit=crop" alt="Dashboard Preview" className="w-full h-auto rounded-xl" />
                         </div>
                     </div>
 

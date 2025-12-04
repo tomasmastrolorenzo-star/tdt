@@ -12,7 +12,7 @@ export default function ProfessionalFooter() {
                     <div>
                         <div className="flex items-center gap-2 mb-4">
                             <Sparkles className="w-6 h-6 text-orange-500" />
-                            <span className="font-bold text-xl text-white">Trend Up</span>
+                            <span className="font-bold text-xl text-white">TDT</span>
                         </div>
                         <p className="text-sm text-slate-400 mb-6">
                             La plataforma líder en crecimiento orgánico de Instagram. Más de 80,000 clientes confían en nosotros.
@@ -120,7 +120,7 @@ export default function ProfessionalFooter() {
             <div className="border-t border-slate-800">
                 <div className="container mx-auto px-4 py-6">
                     <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-slate-400">
-                        <p>© 2024 Trend Up. Todos los derechos reservados.</p>
+                        <p>© 2024 TDT. Todos los derechos reservados.</p>
                         <p>Hecho con ❤️ en Argentina</p>
                     </div>
                 </div>

@@ -13,11 +13,11 @@ export default function FAQAccordion() {
 
     const faqs: FAQItem[] = [
         {
-            question: "¿Cómo funciona Trend Up?",
-            answer: "Trend Up utiliza inteligencia artificial avanzada para identificar y conectar con tu audiencia objetivo en Instagram. Nuestro sistema analiza patrones de comportamiento, intereses y demografía para atraer seguidores reales y comprometidos a tu cuenta de forma orgánica y segura."
+            question: "¿Cómo funciona TDT?",
+            answer: "TDT utiliza inteligencia artificial avanzada para identificar y conectar con tu audiencia objetivo en Instagram. Nuestro sistema analiza patrones de comportamiento, intereses y demografía para atraer seguidores reales y comprometidos a tu cuenta de forma orgánica y segura."
         },
         {
-            question: "¿Es Trend Up compatible con las normas de servicio de Instagram?",
+            question: "¿Es TDT compatible con las normas de servicio de Instagram?",
             answer: "Sí, absolutamente. Utilizamos únicamente métodos orgánicos aprobados por Instagram. No usamos bots, automatización agresiva ni prácticas que violen los términos de servicio. Tu cuenta está 100% segura con nosotros."
         },
         {

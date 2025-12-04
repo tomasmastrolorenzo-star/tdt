@@ -58,7 +58,7 @@ export default function TestimonialsWall() {
             name: "Carlos M.",
             initials: "CM",
             rating: 5,
-            text: "Probé otros servicios antes y ninguno funcionó. Con Trend Up vi resultados en 48 horas.",
+            text: "Probé otros servicios antes y ninguno funcionó. Con TDT vi resultados en 48 horas.",
             service: "Standard Plan"
         },
         {

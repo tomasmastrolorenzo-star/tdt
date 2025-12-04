@@ -235,6 +235,47 @@ export const translations = {
     socialProof: {
       purchased: "compró",
     },
+    // Profile Analyzer
+    profileAnalyzer: {
+      title: "Dispara tu Crecimiento en",
+      titleHighlight: "Redes Sociales",
+      subtitle: "y vuélvete Viral 🚀",
+      input: {
+        placeholder: "tuusuariodeinstagram",
+        button: "Continuar →",
+        loading: "Analizando...",
+        error: "Por favor ingresa un nombre de usuario",
+        errorFetch: "No se pudo cargar el perfil. Verifica el nombre de usuario.",
+      },
+      trust: {
+        organic: "Crecimiento Orgánico",
+        safe: "100% Seguro",
+        results: "Resultados en 24-48h",
+      },
+      goals: {
+        title: "¿Qué quieres lograr?",
+        subtitle: "Selecciona un objetivo y te mostraremos el mejor camino",
+        followers: {
+          title: "Ganar Seguidores",
+          desc: "Crece con seguidores reales y comprometidos",
+        },
+        viral: {
+          title: "Volverse Viral",
+          desc: "Aumenta tu alcance y visibilidad exponencialmente",
+        },
+        monetize: {
+          title: "Monetizar",
+          desc: "Monetiza tu contenido y trabaja con marcas",
+        },
+        recommended: "RECOMENDADO",
+        continue: "Continuar al Plan de Crecimiento →",
+      },
+      profile: {
+        analyze: "Analizar Perfil",
+        followers: "seguidores",
+        following: "siguiendo",
+      }
+    },
   },
   en: {
     // Hero
@@ -416,6 +457,47 @@ export const translations = {
     },
     socialProof: {
       purchased: "purchased",
+    },
+    // Profile Analyzer
+    profileAnalyzer: {
+      title: "Skyrocket Your",
+      titleHighlight: "Social Media Growth",
+      subtitle: "And Go Viral 🚀",
+      input: {
+        placeholder: "yourinstagramusername",
+        button: "Continue →",
+        loading: "Analyzing...",
+        error: "Please enter a username",
+        errorFetch: "Could not load profile. Check username.",
+      },
+      trust: {
+        organic: "Organic Growth",
+        safe: "100% Safe & Secure",
+        results: "Results in 24-48h",
+      },
+      goals: {
+        title: "What are you looking to achieve?",
+        subtitle: "Select a goal and we'll show you the best way to get there",
+        followers: {
+          title: "Gain Followers",
+          desc: "Grow with real and engaged followers",
+        },
+        viral: {
+          title: "Go Viral",
+          desc: "Increase your reach and visibility exponentially",
+        },
+        monetize: {
+          title: "Monetize",
+          desc: "Monetize your content and work with brands",
+        },
+        recommended: "RECOMMENDED",
+        continue: "Continue to Growth Plan →",
+      },
+      profile: {
+        analyze: "Analyze Profile",
+        followers: "followers",
+        following: "following",
+      }
     },
   },
   pt: {

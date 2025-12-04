@@ -29,7 +29,7 @@ export default function StatsGrid() {
         {
             icon: Users,
             value: "15,000+",
-            label: "Base actual de usuarios de Trend Up",
+            label: "Base actual de usuarios de TDT",
             color: "text-purple-500",
             bg: "bg-purple-500/10"
         }

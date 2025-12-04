@@ -11,7 +11,7 @@ export default function ComparisonSection() {
                         ¿Cómo funciona?
                     </div>
                     <h2 className="text-3xl md:text-5xl font-bold text-slate-900 mb-4">
-                        Cómo <span className="inline-flex items-center gap-2 bg-slate-900 text-white px-3 py-1 rounded-lg text-2xl"><span className="text-orange-500">🔥</span> Trend Up</span> puede
+                        Cómo <span className="inline-flex items-center gap-2 bg-slate-900 text-white px-3 py-1 rounded-lg text-2xl"><span className="text-orange-500">🔥</span> TDT</span> puede
                     </h2>
                     <h3 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6">
                         impulsar tu promoción en Instagram
@@ -35,7 +35,7 @@ export default function ComparisonSection() {
                             </div>
                         </div>
                         <div className="p-8 bg-white">
-                            <h3 className="text-2xl font-bold text-orange-600 mb-8">Usted con Trend Up</h3>
+                            <h3 className="text-2xl font-bold text-orange-600 mb-8">Usted con TDT</h3>
                             <ul className="space-y-6">
                                 {[
                                     "Amplías tu presencia de marca",
@@ -68,7 +68,7 @@ export default function ComparisonSection() {
                             </div>
                         </div>
                         <div className="p-8">
-                            <h3 className="text-2xl font-bold text-slate-900 mb-8">Usted sin Trend Up</h3>
+                            <h3 className="text-2xl font-bold text-slate-900 mb-8">Usted sin TDT</h3>
                             <ul className="space-y-6">
                                 {[
                                     "Dificultades con el conocimiento de la marca",

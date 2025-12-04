@@ -15,7 +15,7 @@ export default function HowItWorks() {
     {
       icon: Zap,
       title: "2. Nosotros nos ocupamos",
-      description: "Trend Up hace uso del aprendizaje automático, GPT4o y expertos estrategas en crecimiento para promocionar tu contenido entre los usuarios adecuados de forma orgánica.",
+      description: "TDT hace uso del aprendizaje automático, GPT4o y expertos estrategas en crecimiento para promocionar tu contenido entre los usuarios adecuados de forma orgánica.",
       color: "text-green-500",
       bg: "bg-green-500/10",
       border: "border-green-500/20"
