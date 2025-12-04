@@ -134,13 +134,12 @@ export default function ProfileAnalyzer() {
                     <div className="bg-white rounded-3xl shadow-2xl p-8 border border-slate-100">
                         {!profile ? (
                             <>
-                                {/* Input Section */}
                                 <div className="mb-6">
                                     <h3 className="font-bold text-xl text-slate-900 mb-4">
                                         Grow with TDT
                                     </h3>
                                     <p className="text-slate-600 text-sm mb-4">
-                                        {t.profileAnalyzer.input.placeholder}
+                                        Ingresa tu usuario de Instagram para comenzar
                                     </p>
 
                                     <div className="space-y-3">

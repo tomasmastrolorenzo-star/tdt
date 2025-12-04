@@ -99,12 +99,6 @@ export default function LoginPage() {
                 "Ingresar"
               )}
             </Button>
-            <p className="text-sm text-slate-400 text-center">
-              ¿No tienes cuenta?{" "}
-              <Link href="/register" className="text-cyan-400 hover:text-cyan-300">
-                Regístrate
-              </Link>
-            </p>
           </CardFooter>
         </form>
       </Card>
