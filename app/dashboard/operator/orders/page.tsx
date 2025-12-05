@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ArrowLeft, Loader2, RefreshCw, Search, Package, DollarSign, Users } from "lucide-react"
+import { ArrowLeft, Loader2, RefreshCw, Search, Package, DollarSign, Users, LogOut } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import Link from "next/link"
 import type { Order, OrderStatus } from "@/lib/supabase/types"
@@ -44,6 +44,14 @@ export default function OperatorOrdersPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState<string>("all")
   const [updatingId, setUpdatingId] = useState<string | null>(null)
+  const [loggingOut, setLoggingOut] = useState(false)
+
+  const handleLogout = async () => {
+    setLoggingOut(true)
+    await supabase.auth.signOut()
+    router.push("/login")
+    router.refresh()
+  }
 
   useEffect(() => {
     loadData()
@@ -171,6 +179,21 @@ export default function OperatorOrdersPage() {
           >
             <RefreshCw className="w-4 h-4 mr-2" />
             Actualizar
+          </Button>
+          <Button
+            variant="outline"
+            onClick={handleLogout}
+            disabled={loggingOut}
+            className="ml-2 border-red-500/30 text-red-400 hover:bg-red-500/10 bg-transparent"
+          >
+            {loggingOut ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <>
+                <LogOut className="w-4 h-4 mr-2" />
+                Salir
+              </>
+            )}
           </Button>
         </div>
 
