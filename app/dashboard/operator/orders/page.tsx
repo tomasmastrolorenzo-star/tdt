@@ -14,7 +14,7 @@ import type { Order, OrderStatus } from "@/lib/supabase/types"
 
 interface OrderWithRelations extends Order {
   services: { name: string; base_price: number } | null
-  users: { name: string | null; email: string } | null
+  profiles: { full_name: string | null; email: string } | null
 }
 
 const statusColors: Record<OrderStatus, string> = {
@@ -65,10 +65,11 @@ export default function OperatorOrdersPage() {
       return
     }
 
-    const { data: userData } = await supabase.from("users").select("role").eq("id", user.id).single()
+    const { data: userData } = await supabase.from("profiles").select("role").eq("id", user.id).single()
 
     if (!userData || (userData.role !== "OPERATOR" && userData.role !== "CEO")) {
-      router.push("/dashboard")
+      // User doesn't have permission - show error message instead of redirecting
+      setLoading(false)
       return
     }
 
@@ -80,7 +81,7 @@ export default function OperatorOrdersPage() {
       .select(`
         *,
         services(name, base_price),
-        users(name, email)
+        profiles!seller_id(full_name, email)
       `)
       .order("created_at", { ascending: false })
 
@@ -107,8 +108,8 @@ export default function OperatorOrdersPage() {
           o.client_name.toLowerCase().includes(term) ||
           o.client_email?.toLowerCase().includes(term) ||
           o.services?.name.toLowerCase().includes(term) ||
-          o.users?.name?.toLowerCase().includes(term) ||
-          o.users?.email.toLowerCase().includes(term),
+          o.profiles?.full_name?.toLowerCase().includes(term) ||
+          o.profiles?.email.toLowerCase().includes(term),
       )
     }
 
@@ -298,8 +299,8 @@ export default function OperatorOrdersPage() {
                         </td>
                         <td className="py-4 px-4">
                           <div>
-                            <p className="text-zinc-300">{order.users?.name || "Sin nombre"}</p>
-                            <p className="text-xs text-zinc-500">{order.users?.email}</p>
+                            <p className="text-zinc-300">{order.profiles?.full_name || "Sin nombre"}</p>
+                            <p className="text-xs text-zinc-500">{order.profiles?.email}</p>
                           </div>
                         </td>
                         <td className="py-4 px-4 text-right">
