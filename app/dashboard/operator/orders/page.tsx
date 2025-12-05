@@ -11,6 +11,7 @@ import { ArrowLeft, Loader2, RefreshCw, Search, Package, DollarSign, Users, LogO
 import { Input } from "@/components/ui/input"
 import Link from "next/link"
 import type { Order, OrderStatus } from "@/lib/supabase/types"
+import { OperatorNav } from "@/components/dashboard/OperatorNav"
 
 interface OrderWithRelations extends Omit<Order, 'services'> {
   services: { name: string; base_price: number } | null
@@ -159,13 +160,7 @@ export default function OperatorOrdersPage() {
   return (
     <div className="min-h-screen bg-zinc-950 text-white p-6">
       <div className="max-w-7xl mx-auto">
-        <Link
-          href="/dashboard"
-          className="inline-flex items-center gap-2 text-zinc-400 hover:text-white mb-6 transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Volver al Dashboard
-        </Link>
+        <OperatorNav />
 
         <div className="flex items-center justify-between mb-8">
           <div>
