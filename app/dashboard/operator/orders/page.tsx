@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input"
 import Link from "next/link"
 import type { Order, OrderStatus } from "@/lib/supabase/types"
 
-interface OrderWithRelations extends Order {
+interface OrderWithRelations extends Omit<Order, 'services'> {
   services: { name: string; base_price: number } | null
   profiles: { full_name: string | null; email: string } | null
 }
