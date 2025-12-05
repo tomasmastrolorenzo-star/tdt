@@ -21,8 +21,16 @@ export default async function DashboardPage() {
     .eq("id", user.id)
     .single()
 
-  if (profile?.role === "OPERATOR" || profile?.role === "CEO") {
+  if (profile?.role === "CEO") {
+    redirect("/dashboard/admin")
+  }
+
+  if (profile?.role === "OPERATOR") {
     redirect("/dashboard/operator/orders")
+  }
+
+  if (profile?.role === "VENDOR") {
+    redirect("/dashboard/vendor")
   }
 
   try {

@@ -77,14 +77,6 @@ export default function OrdersPage() {
         <div className="min-h-screen bg-zinc-950 text-white p-6">
             <div className="max-w-5xl mx-auto">
                 <div className="flex items-center justify-between mb-6">
-                    <Link
-                        href="/dashboard"
-                        className="inline-flex items-center gap-2 text-zinc-400 hover:text-white transition-colors"
-                    >
-                        <ArrowLeft className="w-4 h-4" />
-                        Volver al Dashboard
-                    </Link>
-
                     <Link href="/dashboard/new-order">
                         <Button className="bg-emerald-600 hover:bg-emerald-700 text-white">
                             Nuevo Pedido

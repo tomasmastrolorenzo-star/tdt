@@ -65,12 +65,12 @@ export default function HeroSection() {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-            <Link href="#pricing" className="w-full sm:w-auto">
+            <Link href="#packages" className="w-full sm:w-auto">
               <Button size="lg" className="w-full sm:w-auto bg-orange-500 hover:bg-orange-600 text-white h-14 px-8 rounded-full text-lg font-bold shadow-lg shadow-orange-500/20 transition-all hover:scale-105">
                 {t.hero.cta}
               </Button>
             </Link>
-            <Link href="#how-it-works" className="w-full sm:w-auto">
+            <Link href="#packages" className="w-full sm:w-auto">
               <Button variant="outline" size="lg" className="w-full sm:w-auto border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white h-14 px-8 rounded-full text-lg font-medium transition-all">
                 {t.hero.ctaSecondary}
               </Button>

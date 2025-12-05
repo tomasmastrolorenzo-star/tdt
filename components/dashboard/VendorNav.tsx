@@ -2,28 +2,28 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Package, Settings, LayoutDashboard, MessageSquare } from "lucide-react"
+import { LayoutDashboard, Calculator, TrendingUp, Package } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 
-export function OperatorNav() {
+export function VendorNav() {
     const pathname = usePathname()
 
     const items = [
         {
-            title: "Pedidos",
-            href: "/dashboard/operator/orders",
+            title: "Dashboard",
+            href: "/dashboard/vendor",
+            icon: LayoutDashboard,
+        },
+        {
+            title: "Calculadora",
+            href: "/dashboard/vendor/calculator",
+            icon: Calculator,
+        },
+        {
+            title: "Mis Pedidos",
+            href: "/dashboard/orders",
             icon: Package,
-        },
-        {
-            title: "Servicios",
-            href: "/dashboard/operator/services",
-            icon: Settings,
-        },
-        {
-            title: "Tickets",
-            href: "/dashboard/operator/tickets",
-            icon: MessageSquare,
         },
     ]
 

@@ -1,13 +1,35 @@
 "use client"
 
 import { useState } from "react"
-import { Check, Flame } from "lucide-react"
+import { Check, Flame, Zap, Crown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
+import { Slider } from "@/components/ui/slider"
 import Link from "next/link"
 
 export default function PricingSection() {
     const [isAnnual, setIsAnnual] = useState(true)
+    const [followersIndex, setFollowersIndex] = useState(0)
+
+    const quantities = [2000, 5000, 10000, 25000, 50000, 100000]
+    const quantityLabels = ["2k", "5k", "10k", "25k", "50k", "100k"]
+
+    // Base prices in ARS for monthly
+    const basePrices = {
+        standard: [24921, 59900, 109900, 249900, 449900, 849900],
+        premium: [49842, 119900, 219900, 499900, 899900, 1699900]
+    }
+
+    const currentQuantity = quantities[followersIndex]
+    const currentLabel = quantityLabels[followersIndex]
+
+    const getPrice = (type: 'standard' | 'premium') => {
+        let price = basePrices[type][followersIndex]
+        if (isAnnual) {
+            price = price * 0.5 // 50% discount
+        }
+        return price.toLocaleString('es-AR')
+    }
 
     return (
         <section id="packages" className="py-20 bg-slate-50">
@@ -17,126 +39,133 @@ export default function PricingSection() {
                         Descuento limitado
                     </div>
                     <h2 className="text-3xl md:text-5xl font-bold text-slate-900 mb-6">
-                        ¿Listo para unirte al 1% de los <br />
-                        creadores más influyentes?
+                        Elige tu crecimiento <br />
+                        <span className="text-orange-500">sin límites</span>
                     </h2>
                     <p className="text-slate-600 max-w-2xl mx-auto mb-8">
-                        ¡Sin seguidores falsos, sin bots, sin spam! <span className="font-bold">Garantía de reembolso</span> si no ves crecimiento. ¡No necesitas darnos tu contraseña de IG!
+                        Sin bots. Sin riesgos. Crecimiento real garantizado.
                     </p>
 
-                    <div className="flex items-center justify-center gap-4 mb-4">
-                        <span className={`text-sm font-bold ${!isAnnual ? "text-slate-900" : "text-slate-500"}`}>Mensual</span>
-                        <Switch checked={isAnnual} onCheckedChange={setIsAnnual} className="data-[state=checked]:bg-slate-900" />
-                        <span className={`text-sm font-bold ${isAnnual ? "text-slate-900" : "text-slate-500"}`}>Anual</span>
-                    </div>
-                    {isAnnual && (
-                        <div className="text-blue-500 text-sm font-handwriting transform -rotate-2">
-                            Black Friday 50% de descuento ⤵
+                    {/* Controls */}
+                    <div className="max-w-xl mx-auto bg-white p-6 rounded-3xl shadow-lg border border-slate-100 mb-12">
+                        {/* Selector de Cantidad */}
+                        <div className="mb-8">
+                            <label className="block text-slate-700 font-bold mb-4 text-lg">
+                                Quiero conseguir <span className="text-orange-500 text-2xl">{currentLabel}</span> seguidores reales
+                            </label>
+                            <div className="px-4">
+                                <Slider
+                                    defaultValue={[0]}
+                                    max={5}
+                                    step={1}
+                                    value={[followersIndex]}
+                                    onValueChange={(val) => setFollowersIndex(val[0])}
+                                    className="py-4"
+                                />
+                                <div className="flex justify-between text-xs text-slate-400 font-medium mt-2">
+                                    {quantityLabels.map((lbl, i) => (
+                                        <span key={i} className={i === followersIndex ? "text-orange-600 font-bold" : ""}>{lbl}</span>
+                                    ))}
+                                </div>
+                            </div>
                         </div>
-                    )}
+
+                        {/* Switch Anual/Mensual */}
+                        <div className="flex items-center justify-center gap-4 pt-4 border-t border-slate-100">
+                            <span className={`text-sm font-bold ${!isAnnual ? "text-slate-900" : "text-slate-500"}`}>Mensual</span>
+                            <Switch checked={isAnnual} onCheckedChange={setIsAnnual} className="data-[state=checked]:bg-green-500" />
+                            <span className={`text-sm font-bold ${isAnnual ? "text-slate-900" : "text-slate-500"}`}>
+                                Anual <span className="text-green-500 ml-1">(-50%)</span>
+                            </span>
+                        </div>
+                    </div>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
                     {/* Standard Plan */}
-                    <div className="bg-white rounded-[2.5rem] p-8 shadow-xl border border-slate-100 relative overflow-hidden">
-                        <div className="absolute top-0 right-0 bg-slate-100 px-4 py-1 rounded-bl-2xl text-xs font-bold text-slate-600">
-                            Facturación {isAnnual ? "anual" : "mensual"}
-                        </div>
-
-                        <div className="inline-flex items-center gap-2 bg-slate-100 px-4 py-2 rounded-full mb-6">
-                            <Flame className="w-4 h-4 text-orange-500 fill-orange-500" />
-                            <span className="font-bold text-slate-900">Standard Plan</span>
-                        </div>
-
-                        <div className="flex items-end gap-2 mb-2">
-                            <span className="text-sm text-slate-500 font-bold mb-4">ARS</span>
-                            <span className="text-5xl font-black text-slate-900">{isAnnual ? "24,921" : "49,842"}</span>
-                            <span className="text-slate-500 mb-4">/mes</span>
-                        </div>
-
-                        {isAnnual && (
-                            <div className="flex items-center gap-2 mb-6">
-                                <span className="text-slate-400 line-through text-sm">ARS:$51,309</span>
-                                <span className="bg-orange-500 text-white text-xs font-bold px-2 py-0.5 rounded">50% DE DESCUENTO</span>
+                    <div className="bg-white rounded-[2.5rem] p-8 shadow-xl border border-slate-100 relative overflow-hidden flex flex-col">
+                        <div className="mb-6">
+                            <div className="inline-flex items-center gap-2 bg-slate-100 px-4 py-2 rounded-full mb-4">
+                                <Flame className="w-4 h-4 text-orange-500 fill-orange-500" />
+                                <span className="font-bold text-slate-900">Standard Growth</span>
                             </div>
-                        )}
+                            <h3 className="text-4xl font-black text-slate-900 mb-2">
+                                ${getPrice('standard')}
+                                <span className="text-lg font-medium text-slate-500 ml-2">/mes</span>
+                            </h3>
+                            <p className="text-slate-500 text-sm">Ideal para comenzar a crecer de forma constante.</p>
+                        </div>
 
-                        <p className="text-slate-600 mb-8">
-                            Ideal para pequeñas cuentas de Instagram que necesitan nuevos seguidores rápidamente.
-                        </p>
-
-                        <Link href="/checkout?plan=standard" className="w-full block">
-                            <Button className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold py-6 rounded-xl mb-8 shadow-lg shadow-orange-500/20">
-                                Pruebe Standard
-                            </Button>
-                        </Link>
-
-                        <div className="space-y-4">
-                            <h4 className="font-bold text-slate-900">Qué incluye:</h4>
+                        <div className="space-y-4 flex-1 mb-8">
                             {[
-                                "Crecimiento De Entre 1500 Y 2500 Seguidores Orgánicos Al Mes.",
-                                "Opciones De Segmentación Personalizadas;",
-                                "Más Seguidores En 24 Horas;",
-                                "Panel De Control Web Personalizado:",
-                                "Análisis De Crecimiento En Tiempo Real;"
+                                `${currentLabel} Seguidores Reales`,
+                                "Velocidad de entrega natural",
+                                "Inicio en 24-48hs",
+                                "Garantía de reposición 30 días",
+                                "Soporte por Email"
                             ].map((item, i) => (
                                 <div key={i} className="flex items-start gap-3">
-                                    <div className="mt-0.5 w-5 h-5 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
-                                        <Check className="w-3 h-3 text-green-600" />
+                                    <div className="mt-0.5 w-5 h-5 rounded-full bg-slate-100 flex items-center justify-center flex-shrink-0">
+                                        <Check className="w-3 h-3 text-slate-600" />
                                     </div>
                                     <span className="text-slate-600 text-sm">{item}</span>
                                 </div>
                             ))}
                         </div>
+
+                        <Link href={`/checkout?plan=standard&followers=${currentQuantity}&billing=${isAnnual ? 'annual' : 'monthly'}`} className="w-full block mt-auto">
+                            <Button className="w-full bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold py-6 rounded-xl">
+                                Elegir Standard
+                            </Button>
+                        </Link>
                     </div>
 
                     {/* Premium Plan */}
-                    <div className="bg-gradient-to-b from-green-400 to-green-500 rounded-[2.5rem] p-8 shadow-xl relative overflow-hidden text-white">
-                        <div className="absolute top-0 left-1/2 -translate-x-1/2 bg-white text-slate-900 px-6 py-1 rounded-b-xl text-sm font-bold shadow-sm">
-                            ARS:$ 2,004 Por día
+                    <div className="bg-slate-900 rounded-[2.5rem] p-1 shadow-2xl relative overflow-hidden flex flex-col transform lg:-translate-y-4 lg:scale-105 transition-transform">
+                        <div className="absolute top-0 left-1/2 -translate-x-1/2 bg-gradient-to-r from-orange-500 to-pink-500 text-white px-6 py-1 rounded-b-xl text-xs font-bold shadow-lg z-10">
+                            RECOMENDADO POR IA
                         </div>
 
-                        <div className="mt-8 inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full mb-6 border border-white/30">
-                            <Flame className="w-4 h-4 text-white fill-white" />
-                            <span className="font-bold">Premium Plan</span>
-                        </div>
+                        <div className="bg-slate-900 rounded-[2.3rem] p-8 h-full flex flex-col relative z-0">
+                            {/* Background Glow */}
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-purple-500/20 rounded-full blur-3xl pointer-events-none" />
 
-                        <div className="flex items-end gap-2 mb-6">
-                            <span className="text-sm text-white/80 font-bold mb-4">ARS</span>
-                            <span className="text-5xl font-black">{isAnnual ? "60,105" : "120,210"}</span>
-                            <span className="text-white/80 mb-4">/mes</span>
-                        </div>
-
-                        <p className="text-white/90 mb-8 font-medium">
-                            Crecimiento más rápido y más funciones de IA, ideal para todos los usuarios que necesitan un impulso adicional.
-                        </p>
-
-                        <Link href="/checkout?plan=premium" className="w-full block">
-                            <Button className="w-full bg-white text-green-600 hover:bg-slate-50 font-bold py-6 rounded-xl mb-8 shadow-lg">
-                                Pruebe Premium
-                            </Button>
-                        </Link>
-
-                        <div className="space-y-4">
-                            <h4 className="font-bold">Incluye el plan Standard y además:</h4>
-                            {[
-                                "2.500 - 3.500 Seguidores Orgánicos /Mes",
-                                "Opciones De Segmentación Personalizadas;",
-                                "Más Seguidores En 24 Horas;",
-                                "Panel De Control Web Personalizado:",
-                                "Análisis De Crecimiento En Tiempo Real;",
-                                "Ventajas Adicionales De La Segmentación Por IA;",
-                                "Acceso A Un Gestor Personal Para Tu Cuenta;",
-                                "I.A.; Formación.",
-                                "Desarrollado Por GPT-4o"
-                            ].map((item, i) => (
-                                <div key={i} className="flex items-start gap-3">
-                                    <div className="mt-0.5 w-5 h-5 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
-                                        <Check className="w-3 h-3 text-white" />
-                                    </div>
-                                    <span className="text-white/90 text-sm">{item.replace("GPT-4o", "")} {item.includes("GPT-4o") && <span className="bg-slate-900/20 px-2 py-0.5 rounded text-xs font-bold">GPT-4o</span>}</span>
+                            <div className="mb-6 relative">
+                                <div className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-pink-500 px-4 py-2 rounded-full mb-4">
+                                    <Zap className="w-4 h-4 text-white fill-white" />
+                                    <span className="font-bold text-white">Turbo AI Growth</span>
                                 </div>
-                            ))}
+                                <h3 className="text-4xl font-black text-white mb-2">
+                                    ${getPrice('premium')}
+                                    <span className="text-lg font-medium text-slate-400 ml-2">/mes</span>
+                                </h3>
+                                <p className="text-slate-400 text-sm">Máxima velocidad y calidad con Inteligencia Artificial.</p>
+                            </div>
+
+                            <div className="space-y-4 flex-1 mb-8 relative">
+                                {[
+                                    `${currentLabel} Seguidores Premium (+Bonus)`,
+                                    "Velocidad Turbo (Prioridad Alta)",
+                                    "Inicio Instantáneo (<1h)",
+                                    "Garantía de por vida",
+                                    "Soporte VIP Prioritario 24/7",
+                                    "Segmentación por IA (GPT-4o)",
+                                    "Asesor de cuenta dedicado"
+                                ].map((item, i) => (
+                                    <div key={i} className="flex items-start gap-3">
+                                        <div className="mt-0.5 w-5 h-5 rounded-full bg-gradient-to-r from-orange-500 to-pink-500 flex items-center justify-center flex-shrink-0">
+                                            <Check className="w-3 h-3 text-white" />
+                                        </div>
+                                        <span className="text-slate-200 text-sm">{item}</span>
+                                    </div>
+                                ))}
+                            </div>
+
+                            <Link href={`/checkout?plan=premium&followers=${currentQuantity}&billing=${isAnnual ? 'annual' : 'monthly'}`} className="w-full block mt-auto relative">
+                                <Button className="w-full bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white font-bold py-6 rounded-xl shadow-lg shadow-orange-500/20">
+                                    Elegir Premium ⭐
+                                </Button>
+                            </Link>
                         </div>
                     </div>
                 </div>

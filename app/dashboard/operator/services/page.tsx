@@ -28,7 +28,6 @@ import {
     youtubeSubscribersPackages,
     type PackageTier
 } from "@/lib/trend-up/packages"
-import { OperatorNav } from "@/components/dashboard/OperatorNav"
 
 interface JapService {
     service: string
@@ -301,7 +300,6 @@ export default function AdminServicesPage() {
 
     return (
         <div className="container mx-auto p-6 space-y-6">
-            <OperatorNav />
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
