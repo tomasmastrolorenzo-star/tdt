@@ -18,11 +18,13 @@ import DirectServices from "@/components/trend-up/direct-services"
 import FAQSection from "@/components/trend-up/faq-section"
 import TrendUpFooter from "@/components/trend-up/footer"
 import ServicePackages from "@/components/trend-up/service-packages"
+import ChristmasSnow from "@/components/ui/christmas-snow"
 import { instagramFollowersPackages } from "@/lib/trend-up/packages"
 
 function LandingContent() {
   return (
     <>
+      <ChristmasSnow />
       <SocialProofTicker />
       <LanguageSelector />
       <HeroSection />

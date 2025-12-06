@@ -70,7 +70,7 @@ export default function HeroSection() {
                 {t.hero.cta}
               </Button>
             </Link>
-            <Link href="#packages" className="w-full sm:w-auto">
+            <Link href="#how-it-works" className="w-full sm:w-auto">
               <Button variant="outline" size="lg" className="w-full sm:w-auto border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white h-14 px-8 rounded-full text-lg font-medium transition-all">
                 {t.hero.ctaSecondary}
               </Button>
