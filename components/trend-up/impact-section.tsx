@@ -36,11 +36,11 @@ export default function ImpactSection() {
                 </div>
 
                 <h2 className="text-3xl md:text-5xl font-black text-white mb-8 leading-tight">
-                    {t.impact?.title} <br />
+                    {t.impact?.title || "TDT impulsa los"} <br />
                     <span className="bg-white/20 px-2 rounded-lg italic">
-                        {t.impact?.titleMiddle}
+                        {t.impact?.titleMiddle || "resultados de su marca"}
                     </span> <br />
-                    {t.impact?.titleEnd}
+                    {t.impact?.titleEnd || "específica"}
                 </h2>
 
                 <Link href="#packages" className="inline-block mb-16">

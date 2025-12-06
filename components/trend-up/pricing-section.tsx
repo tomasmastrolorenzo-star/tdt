@@ -33,10 +33,10 @@ export default function PricingSection() {
         return price.toLocaleString('es-AR')
     }
 
-    // Defensive check
-    if (!t || !t.pricing) {
-        return null;
-    }
+    // Removed strict check to prevent hiding section on minor translation errors
+    // if (!t || !t.pricing) {
+    //    return null;
+    // }
 
     return (
         <section id="packages" className="py-20 bg-slate-50">
