@@ -20,6 +20,7 @@ function ServiceCheckoutContent() {
     // User Input State
     const [email, setEmail] = useState("")
     const [link, setLink] = useState("") // Username or Link depending on service
+    const [segmentation, setSegmentation] = useState("") // New field for target audience/location
 
     // Get params
     const platformId = searchParams.get("platform")
@@ -81,6 +82,7 @@ function ServiceCheckoutContent() {
                 service: serviceData.name || `${serviceData.amount} ${serviceData.serviceType}`,
                 email,
                 link,
+                segmentation,
                 japServiceId: serviceData.japServiceId
             })
 
@@ -98,7 +100,9 @@ function ServiceCheckoutContent() {
             router.push(`/checkout/success?${params.toString()}`)
         } else {
             // Manual Payment (WhatsApp)
-            const message = `Hola! Quiero contratar el servicio: ${serviceData.name} (${serviceData.amount} ${serviceData.serviceType}) por $${formatPrice(total)}. Link: ${link}. Email: ${email}`
+            const segmentationText = segmentation ? `\n📍 Segmentación: ${segmentation}` : ""
+            const message = `Hola! Quiero contratar el servicio: ${serviceData.name} (${serviceData.amount} ${serviceData.serviceType}) por $${formatPrice(total)}.\n🔗 Link: ${link}\n📧 Email: ${email}${segmentationText}`
+
             window.open(`https://wa.me/5492212235170?text=${encodeURIComponent(message)}`, '_blank')
 
             // Redirect to success/pending
@@ -159,7 +163,7 @@ function ServiceCheckoutContent() {
                                         <Sparkles className="w-6 h-6" />
                                     </div>
                                     <div>
-                                        <h3 className="font-bold text-lg text-slate-900 capitalize">
+                                        <h3 className="font-bold text-slate-900 capitalize">
                                             {serviceData.platformId} {serviceData.serviceType}
                                         </h3>
                                         <p className="text-slate-500">
@@ -206,6 +210,23 @@ function ServiceCheckoutContent() {
                                     />
                                     <p className="text-xs text-slate-500 mt-1">
                                         Asegúrate de que la cuenta sea pública.
+                                    </p>
+                                </div>
+
+                                {/* Target Audience / Segmentation Input */}
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-900 mb-2">
+                                        País / Ubicación del público (Opcional)
+                                    </label>
+                                    <Input
+                                        type="text"
+                                        placeholder="Ej: Estados Unidos, España, México..."
+                                        value={segmentation}
+                                        onChange={(e) => setSegmentation(e.target.value)}
+                                        className="h-12"
+                                    />
+                                    <p className="text-xs text-slate-500 mt-1">
+                                        Ayúdanos a segmentar mejor tu audiencia (si aplica).
                                     </p>
                                 </div>
                             </div>
