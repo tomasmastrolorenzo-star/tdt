@@ -1,4 +1,4 @@
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
+import { createServerClient } from '@supabase/ssr'
 import { createClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
@@ -17,14 +17,32 @@ const supabaseAdmin = createClient(
 
 export async function POST(request: Request) {
   try {
-    const supabase = createRouteHandlerClient({ cookies })
-    
+    const cookieStore = await cookies()
+
+    // Crear cliente Supabase con SSR
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          getAll() {
+            return cookieStore.getAll()
+          },
+          setAll(cookiesToSet) {
+            cookiesToSet.forEach(({ name, value, options }) => {
+              cookieStore.set(name, value, options)
+            })
+          },
+        },
+      }
+    )
+
     // 1. Verificar que quien hace la petición es Admin
     const { data: { user } } = await supabase.auth.getUser()
-    
+
     if (!user) {
       return NextResponse.json(
-        { error: 'No autenticado' }, 
+        { error: 'No autenticado' },
         { status: 401 }
       )
     }
@@ -38,7 +56,7 @@ export async function POST(request: Request) {
 
     if (profile?.role !== 'admin') {
       return NextResponse.json(
-        { error: 'No tienes permisos para crear usuarios' }, 
+        { error: 'No tienes permisos para crear usuarios' },
         { status: 403 }
       )
     }
@@ -121,10 +139,10 @@ export async function POST(request: Request) {
 
     if (profileError) {
       console.error('Error creating profile:', profileError)
-      
+
       // Si falla la creación del perfil, eliminar usuario de Auth
       await supabaseAdmin.auth.admin.deleteUser(newUser.user.id)
-      
+
       return NextResponse.json(
         { error: `Error al crear perfil: ${profileError.message}` },
         { status: 400 }
@@ -134,7 +152,7 @@ export async function POST(request: Request) {
     // 8. Si es vendor, crear entrada en vendor_stats con nivel inicial
     if (role === 'vendor') {
       const vendorLevel = initial_level || 'novato' // Default a novato si no se especifica
-      
+
       const { error: statsError } = await supabase
         .from('vendor_stats')
         .insert({
