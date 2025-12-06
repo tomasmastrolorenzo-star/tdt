@@ -96,6 +96,23 @@ function ServiceCheckoutContent() {
                 link: link
             })
             router.push(`/checkout/success?${params.toString()}`)
+        } else {
+            // Manual Payment (WhatsApp)
+            const message = `Hola! Quiero contratar el servicio: ${serviceData.name} (${serviceData.amount} ${serviceData.serviceType}) por $${formatPrice(total)}. Link: ${link}. Email: ${email}`
+            window.open(`https://wa.me/5491122334455?text=${encodeURIComponent(message)}`, '_blank')
+
+            // Redirect to success/pending
+            const params = new URLSearchParams({
+                order_id: orderId,
+                email: email,
+                service: serviceData.name || `${serviceData.amount} ${serviceData.serviceType}`,
+                amount: serviceData.amount?.toString() || serviceData.followers?.toString(),
+                price: formatPrice(total),
+                jap_id: serviceData.japServiceId || "",
+                link: link,
+                status: 'pending' // Indicate pending payment
+            })
+            router.push(`/checkout/success?${params.toString()}`)
         }
     }
 

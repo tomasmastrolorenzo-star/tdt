@@ -49,30 +49,7 @@ export default function ImpactSection() {
                     </Button>
                 </Link>
 
-                {/* Floating/Grid Stats */}
-                <div className="max-w-md mx-auto bg-white rounded-3xl p-6 shadow-2xl transform rotate-1 hover:rotate-0 transition-transform duration-300 text-left">
-                    <div className="bg-slate-900 rounded-2xl p-4 mb-4 text-white flex justify-between items-center">
-                        <span className="font-bold">{t.impact?.card?.growth}</span>
-                        <div className="flex items-center text-green-400 font-bold">
-                            +12.5k <ArrowUp className="w-5 h-5 ml-1" />
-                        </div>
-                    </div>
-
-                    <div className="space-y-3">
-                        <div className="bg-slate-50 rounded-xl p-4 flex justify-between items-center hover:bg-slate-100 transition-colors">
-                            <span className="text-slate-600 text-sm font-medium">{t.impact?.card?.reach}</span>
-                            <span className="text-green-600 font-bold">+245%</span>
-                        </div>
-                        <div className="bg-slate-50 rounded-xl p-4 flex justify-between items-center hover:bg-slate-100 transition-colors">
-                            <span className="text-slate-600 text-sm font-medium">{t.impact?.card?.engagement}</span>
-                            <span className="text-green-600 font-bold">+180%</span>
-                        </div>
-                        <div className="bg-slate-50 rounded-xl p-4 flex justify-between items-center hover:bg-slate-100 transition-colors">
-                            <span className="text-slate-600 text-sm font-medium">{t.impact?.card?.sales}</span>
-                            <span className="text-green-600 font-bold">+320%</span>
-                        </div>
-                    </div>
-                </div>
+                {/* Floating/Grid Stats removed per user feedback */}
             </div>
 
             {/* Decor */}

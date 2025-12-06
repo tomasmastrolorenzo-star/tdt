@@ -24,7 +24,6 @@ import TrendUpFooter from "@/components/trend-up/footer"
 function LandingContent() {
   return (
     <>
-      <UrgencyBanner />
       <SocialProofTicker />
       <LanguageSelector />
       <HeroSection />
@@ -33,7 +32,7 @@ function LandingContent() {
       <NicheSelector />
       <BeforeAfter />
       <HowItWorks />
-      <ComparisonSection />
+      {/* <ComparisonSection /> - Removed per user feedback */}
       <FeaturesGrid />
       {/* <AIEngineSection /> - Removed per user feedback about dashboard image */}
       <ImpactSection />
