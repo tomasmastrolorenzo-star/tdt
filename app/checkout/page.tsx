@@ -81,7 +81,7 @@ function CheckoutContent() {
         } else {
             // Open WhatsApp
             const message = `Hola! Quiero contratar el plan ${selectedPlan.toUpperCase()} (${billingCycle}) por ARS $${total.toLocaleString()}. Usuario: @${userData.username}`
-            window.open(`https://wa.me/5491234567890?text=${encodeURIComponent(message)}`, '_blank')
+            window.open(`https://wa.me/5492212235170?text=${encodeURIComponent(message)}`, '_blank')
 
             // Redirect to success page to close the loop
             window.location.href = `/checkout/success?order_id=MANUAL-${Math.floor(Math.random() * 10000)}&email=${userData.email}`
@@ -288,8 +288,8 @@ function CheckoutContent() {
                                                 }`}
                                         >
                                             <MessageCircle className="w-6 h-6 mx-auto mb-2 text-blue-500" />
-                                            <div className="text-xs font-bold text-slate-900">Manual</div>
-                                            <div className="text-xs text-slate-500">WhatsApp</div>
+                                            <div className="text-xs font-bold text-slate-900">WhatsApp</div>
+                                            <div className="text-[10px] text-slate-500">Transferencia</div>
                                         </button>
                                     </div>
 

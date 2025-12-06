@@ -99,7 +99,7 @@ function ServiceCheckoutContent() {
         } else {
             // Manual Payment (WhatsApp)
             const message = `Hola! Quiero contratar el servicio: ${serviceData.name} (${serviceData.amount} ${serviceData.serviceType}) por $${formatPrice(total)}. Link: ${link}. Email: ${email}`
-            window.open(`https://wa.me/5491122334455?text=${encodeURIComponent(message)}`, '_blank')
+            window.open(`https://wa.me/5492212235170?text=${encodeURIComponent(message)}`, '_blank')
 
             // Redirect to success/pending
             const params = new URLSearchParams({
@@ -241,7 +241,8 @@ function ServiceCheckoutContent() {
                                             }`}
                                     >
                                         <MessageCircle className="w-6 h-6 mx-auto mb-2 text-blue-500" />
-                                        <div className="text-xs font-bold text-slate-900">Manual</div>
+                                        <div className="text-xs font-bold text-slate-900">WhatsApp</div>
+                                        <div className="text-[10px] text-slate-500">Transferencia/Efectivo</div>
                                     </button>
                                 </div>
 
@@ -267,7 +268,7 @@ function ServiceCheckoutContent() {
                                     onClick={handleCheckout}
                                     className="w-full h-14 text-lg font-bold bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 shadow-lg"
                                 >
-                                    {paymentMethod === "crypto" ? "Pagar con Crypto" : "Contactar Agente"}
+                                    {paymentMethod === "crypto" ? "Pagar con Crypto" : "Finalizar en WhatsApp"}
                                     <ArrowRight className="w-5 h-5 ml-2" />
                                 </Button>
 
