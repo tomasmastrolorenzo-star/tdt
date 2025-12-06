@@ -56,7 +56,7 @@ export default function TrendUpFooter() {
               <Youtube className="w-5 h-5" />
             </a>
             <a
-              href="mailto:support@trenddigitaltrade.com"
+              href="mailto:hola@trenddigitaltrade.com"
               className="w-10 h-10 bg-slate-800 hover:bg-purple-500 rounded-full flex items-center justify-center text-slate-400 hover:text-white transition-all duration-300"
             >
               <Mail className="w-5 h-5" />

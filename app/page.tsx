@@ -28,18 +28,19 @@ function LandingContent() {
       <SocialProofTicker />
       <LanguageSelector />
       <HeroSection />
-      <DirectServices />
-      <ProfileAnalyzer />
+      {/* <ProfileAnalyzer /> - Removed per user feedback */}
       <StatsGrid />
       <NicheSelector />
       <BeforeAfter />
       <HowItWorks />
       <ComparisonSection />
       <FeaturesGrid />
-      <AIEngineSection />
+      {/* <AIEngineSection /> - Removed per user feedback about dashboard image */}
       <ImpactSection />
       <TestimonialsSection />
       <PricingSection />
+      {/* Moved Services here as fallback */}
+      <DirectServices />
       <FAQSection />
       <TrendUpFooter />
     </>

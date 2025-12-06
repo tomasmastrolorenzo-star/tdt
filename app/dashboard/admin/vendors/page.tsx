@@ -35,6 +35,157 @@ interface Vendor {
     total_sales?: number
 }
 
+// Componente de formulario para crear vendedor
+function CreateVendorForm({ onSuccess }: { onSuccess: () => void }) {
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        password: '',
+        role: 'vendor' as 'vendor' | 'operator' | 'admin',
+        initial_level: 'novato' as 'novato' | 'pro' | 'experto' | 'elite'
+    })
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState('')
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault()
+        setError('')
+        setLoading(true)
+
+        try {
+            const response = await fetch('/api/admin/create-user', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            })
+
+            const data = await response.json()
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Error al crear usuario')
+            }
+
+            // Mostrar mensaje de éxito
+            alert(`✅ ${data.message}`)
+
+            // Resetear formulario
+            setFormData({ name: '', email: '', password: '', role: 'vendor', initial_level: 'novato' })
+
+            // Llamar callback de éxito
+            onSuccess()
+
+        } catch (err: any) {
+            setError(err.message)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    return (
+        <form onSubmit={handleSubmit} className="space-y-4 py-4">
+            {error && (
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+                    {error}
+                </div>
+            )}
+
+            <div className="space-y-2">
+                <Label htmlFor="name">Nombre Completo *</Label>
+                <Input
+                    id="name"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    placeholder="Juan Pérez"
+                    required
+                />
+            </div>
+
+            <div className="space-y-2">
+                <Label htmlFor="email">Email *</Label>
+                <Input
+                    id="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    placeholder="juan@ejemplo.com"
+                    required
+                />
+            </div>
+
+            <div className="space-y-2">
+                <Label htmlFor="password">Contraseña *</Label>
+                <Input
+                    id="password"
+                    type="password"
+                    value={formData.password}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    placeholder="Mínimo 6 caracteres"
+                    minLength={6}
+                    required
+                />
+                <p className="text-xs text-muted-foreground">
+                    El usuario podrá cambiar su contraseña después de iniciar sesión
+                </p>
+            </div>
+
+            <div className="space-y-2">
+                <Label htmlFor="role">Rol *</Label>
+                <select
+                    id="role"
+                    value={formData.role}
+                    onChange={(e) => setFormData({ ...formData, role: e.target.value as any })}
+                    className="w-full px-3 py-2 border border-input bg-background rounded-md"
+                    required
+                >
+                    <option value="vendor">Vendedor</option>
+                    <option value="operator">Operador</option>
+                    <option value="admin">Administrador</option>
+                </select>
+                <p className="text-xs text-muted-foreground">
+                    {formData.role === 'vendor' && '• Puede ver sus ventas y comisiones'}
+                    {formData.role === 'operator' && '• Puede gestionar órdenes y tickets'}
+                    {formData.role === 'admin' && '• Acceso completo al sistema'}
+                </p>
+            </div>
+
+            {/* Selector de Nivel Inicial - Solo para Vendedores */}
+            {formData.role === 'vendor' && (
+                <div className="space-y-2 border-t pt-4">
+                    <Label htmlFor="initial_level">Nivel Inicial *</Label>
+                    <select
+                        id="initial_level"
+                        value={formData.initial_level}
+                        onChange={(e) => setFormData({ ...formData, initial_level: e.target.value as any })}
+                        className="w-full px-3 py-2 border border-input bg-background rounded-md"
+                        required
+                    >
+                        <option value="novato">🌱 Novato (10% comisión)</option>
+                        <option value="pro">⚡ Pro (15% comisión)</option>
+                        <option value="experto">🔥 Experto (20% comisión)</option>
+                        <option value="elite">👑 Elite (25% comisión)</option>
+                    </select>
+                    <p className="text-xs text-muted-foreground">
+                        {formData.initial_level === 'novato' && '• Nivel inicial estándar para nuevos vendedores'}
+                        {formData.initial_level === 'pro' && '• Para vendedores con experiencia comprobada'}
+                        {formData.initial_level === 'experto' && '• Para vendedores top con historial de ventas'}
+                        {formData.initial_level === 'elite' && '• Nivel máximo, solo para vendedores excepcionales'}
+                    </p>
+                </div>
+            )}
+
+            <DialogFooter>
+                <Button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full sm:w-auto"
+                >
+                    {loading ? 'Creando...' : 'Crear Usuario'}
+                </Button>
+            </DialogFooter>
+        </form>
+    )
+}
+
 export default function AdminVendorsPage() {
     const [vendors, setVendors] = useState<Vendor[]>([])
     const [loading, setLoading] = useState(true)
@@ -52,7 +203,7 @@ export default function AdminVendorsPage() {
             const { data, error } = await supabase
                 .from("profiles")
                 .select("*")
-                .eq("role", "VENDOR")
+                .eq("role", "vendor")
                 .order('created_at', { ascending: false })
 
             if (error) throw error
@@ -84,31 +235,19 @@ export default function AdminVendorsPage() {
                             Invitar Vendedor
                         </Button>
                     </DialogTrigger>
-                    <DialogContent>
+                    <DialogContent className="sm:max-w-[500px]">
                         <DialogHeader>
-                            <DialogTitle>Invitar Nuevo Vendedor</DialogTitle>
+                            <DialogTitle>Crear Nuevo Vendedor</DialogTitle>
                             <DialogDescription>
-                                Envía una invitación por correo electrónico para unirse al equipo.
+                                Completa los datos para crear una cuenta de vendedor en el sistema.
                             </DialogDescription>
                         </DialogHeader>
-                        <div className="grid gap-4 py-4">
-                            <div className="grid grid-cols-4 items-center gap-4">
-                                <Label htmlFor="name" className="text-right">
-                                    Nombre
-                                </Label>
-                                <Input id="name" className="col-span-3" />
-                            </div>
-                            <div className="grid grid-cols-4 items-center gap-4">
-                                <Label htmlFor="email" className="text-right">
-                                    Email
-                                </Label>
-                                <Input id="email" className="col-span-3" />
-                            </div>
-                        </div>
-                        <DialogFooter>
-                            <Button variant="outline" onClick={() => setIsInviteOpen(false)}>Cancelar</Button>
-                            <Button onClick={() => setIsInviteOpen(false)}>Enviar Invitación</Button>
-                        </DialogFooter>
+                        <CreateVendorForm
+                            onSuccess={() => {
+                                setIsInviteOpen(false)
+                                fetchVendors()
+                            }}
+                        />
                     </DialogContent>
                 </Dialog>
             </div>

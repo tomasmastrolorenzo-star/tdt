@@ -646,7 +646,7 @@ export const translations = {
       tagline: "Impulsione sua presença digital",
       terms: "Termos",
       privacy: "Privacidade",
-      contact: "Contato",
+      contact: "Contacto",
       login: "Entrar",
       copyright: "Todos os direitos reservados.",
     },
@@ -682,5 +682,199 @@ export const translations = {
     socialProof: {
       purchased: "comprou",
     },
+
+    // Services
+    services: {
+      instagram: {
+        followers: "Seguidores Instagram",
+        likes: "Likes Instagram",
+        views: "Vistas Instagram",
+      },
+      tiktok: {
+        followers: "Seguidores TikTok",
+        likes: "Likes TikTok",
+        views: "Vistas TikTok",
+      },
+    },
+    // Impact Section
+    impact: {
+      lovedBy: "Amado por más de 80.000 fans",
+      title: "TDT impulsa los",
+      titleMiddle: "resultados de su marca",
+      titleEnd: "específica",
+      cta: "Empieza ya",
+      card: {
+        followers: "Seguidores",
+        growth: "Crecimiento",
+        reach: "Alcance de cuenta",
+        engagement: "Engagement",
+        sales: "Ventas mensuales",
+      }
+    },
+    // Pricing Specifics used in Component
+    pricing: {
+      limitedDiscount: "Descuento limitado",
+      title: "Elige tu crecimiento",
+      titleHighlight: "sin límites",
+      subtitle: "Sin bots. Sin riesgos. Crecimiento real garantizado.",
+      want: "Quiero conseguir",
+      realFollowers: "seguidores reales",
+      monthly: "Mensual",
+      annual: "Anual",
+      standard: {
+        name: "Standard Growth",
+        desc: "Ideal para comenzar a crecer de forma constante.",
+        delivery: "Velocidad de entrega natural",
+        start: "Inicio en 24-48hs",
+        guarantee: "Garantía de reposición 30 días",
+        support: "Soporte por Email",
+        cta: "Elegir Standard",
+      },
+      premium: {
+        badge: "RECOMENDADO POR IA",
+        name: "Turbo AI Growth",
+        desc: "Máxima velocidad y calidad con Inteligencia Artificial.",
+        delivery: "Velocidad Turbo (Prioridad Alta)",
+        start: "Inicio Instantáneo (<1h)",
+        guarantee: "Garantía de por vida",
+        support: "Soporte VIP Prioritario 24/7",
+        ai: "Segmentación por IA (GPT-4o)",
+        advisor: "Asesor de cuenta dedicado",
+        cta: "Elegir Premium ⭐",
+        bonus: "(+Bonus)",
+      },
+      moreSpecific: "¿Buscas algo más específico?",
+      viewAll: "Ver todos los servicios y paquetes disponibles",
+    },
   },
+  en: {
+    // Services
+    services: {
+      instagram: {
+        followers: "Instagram Followers",
+        likes: "Instagram Likes",
+        views: "Instagram Views",
+      },
+      tiktok: {
+        followers: "TikTok Followers",
+        likes: "TikTok Likes",
+        views: "TikTok Views",
+      },
+    },
+    // Impact Section
+    impact: {
+      lovedBy: "Loved by over 80,000 fans",
+      title: "TDT boosts your",
+      titleMiddle: "specific brand",
+      titleEnd: "results",
+      cta: "Start now",
+      card: {
+        followers: "Followers",
+        growth: "Growth",
+        reach: "Account reach",
+        engagement: "Engagement",
+        sales: "Monthly sales",
+      }
+    },
+    // Pricing Specifics used in Component
+    pricing: {
+      limitedDiscount: "Limited Discount",
+      title: "Choose your growth",
+      titleHighlight: "without limits",
+      subtitle: "No bots. No risks. Real growth guaranteed.",
+      want: "I want to get",
+      realFollowers: "real followers",
+      monthly: "Monthly",
+      annual: "Annual",
+      standard: {
+        name: "Standard Growth",
+        desc: "Ideal to start growing steadily.",
+        delivery: "Natural delivery speed",
+        start: "Start in 24-48hs",
+        guarantee: "30-day refill guarantee",
+        support: "Email Support",
+        cta: "Choose Standard",
+      },
+      premium: {
+        badge: "AI RECOMMENDED",
+        name: "Turbo AI Growth",
+        desc: "Maximum speed and quality with Artificial Intelligence.",
+        delivery: "Turbo Speed (High Priority)",
+        start: "Instant Start (<1h)",
+        guarantee: "Lifetime Guarantee",
+        support: "24/7 VIP Priority Support",
+        ai: "AI Segmentation (GPT-4o)",
+        advisor: "Dedicated Account Advisor",
+        cta: "Choose Premium ⭐",
+        bonus: "(+Bonus)",
+      },
+      moreSpecific: "Looking for something more specific?",
+      viewAll: "View all available services and packages",
+    },
+  },
+  pt: {
+    // Services
+    services: {
+      instagram: {
+        followers: "Seguidores Instagram",
+        likes: "Curtidas Instagram",
+        views: "Visualizações Instagram",
+      },
+      tiktok: {
+        followers: "Seguidores TikTok",
+        likes: "Curtidas TikTok",
+        views: "Visualizações TikTok",
+      },
+    },
+    // Impact Section
+    impact: {
+      lovedBy: "Amado por mais de 80.000 fãs",
+      title: "TDT impulsiona os",
+      titleMiddle: "resultados da sua marca",
+      titleEnd: "específica",
+      cta: "Comece agora",
+      card: {
+        followers: "Seguidores",
+        growth: "Crescimento",
+        reach: "Alcance da conta",
+        engagement: "Engajamento",
+        sales: "Vendas mensais",
+      }
+    },
+    // Pricing Specifics used in Component
+    pricing: {
+      limitedDiscount: "Desconto Limitado",
+      title: "Escolha seu crescimento",
+      titleHighlight: "sem limites",
+      subtitle: "Sem bots. Sem riscos. Crescimento real garantido.",
+      want: "Quero conseguir",
+      realFollowers: "seguidores reais",
+      monthly: "Mensal",
+      annual: "Anual",
+      standard: {
+        name: "Crescimento Padrão",
+        desc: "Ideal para começar a crescer de forma constante.",
+        delivery: "Velocidade de entrega natural",
+        start: "Início em 24-48hs",
+        guarantee: "Garantia de reposição 30 dias",
+        support: "Suporte por Email",
+        cta: "Escolher Padrão",
+      },
+      premium: {
+        badge: "RECOMENDADO POR IA",
+        name: "Crescimento Turbo IA",
+        desc: "Máxima velocidade e qualidade com Inteligência Artificial.",
+        delivery: "Velocidade Turbo (Prioridade Alta)",
+        start: "Início Imediato (<1h)",
+        guarantee: "Garantia Vitalícia",
+        support: "Suporte VIP Prioritário 24/7",
+        ai: "Segmentação por IA (GPT-4o)",
+        advisor: "Consultor de conta dedicado",
+        cta: "Escolher Premium ⭐",
+        bonus: "(+Bônus)",
+      },
+      moreSpecific: "Procurando algo mais específico?",
+      viewAll: "Ver todos os serviços e pacotes disponíveis",
+    },
+},
 }
