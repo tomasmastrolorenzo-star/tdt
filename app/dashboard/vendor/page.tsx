@@ -11,6 +11,7 @@ import { Progress } from "@/components/ui/progress"
 import { StatsCard } from "@/components/dashboard/StatsCard"
 import { LevelBadge } from "@/components/dashboard/LevelBadge"
 import { ProgressRing } from "@/components/dashboard/ProgressRing"
+import { VendorReferralCard } from "@/components/dashboard/VendorReferralCard"
 import { getVendorStats, type VendorStats } from "@/lib/dashboard/stats"
 import Link from "next/link"
 
@@ -200,6 +201,23 @@ export default function VendorDashboardPage() {
                             </CardDescription>
                         </CardHeader>
                     </Link>
+                </Card>
+            </div>
+
+            {/* Referral Section */}
+            <div className="grid gap-6 md:grid-cols-2">
+                <VendorReferralCard referralCode={stats.referralCode || "CODIGO-PENDIENTE"} />
+
+                {/* Tips Card could go here */}
+                <Card className="bg-slate-50 dark:bg-slate-900/50">
+                    <CardHeader>
+                        <CardTitle className="text-lg">Tips de Venta 🚀</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-2 text-sm text-muted-foreground">
+                        <p>• Comparte resultados de "Antes y Después" con tus clientes.</p>
+                        <p>• Usa el nuevo "El Faro" en el landing para análisis personalizados.</p>
+                        <p>• Ofrece el cupón del 5% como cierre de venta.</p>
+                    </CardContent>
                 </Card>
             </div>
 

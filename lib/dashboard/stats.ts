@@ -19,6 +19,7 @@ export interface VendorStats {
     salesUntilNextLevel: number
     rank: number | null
     totalVendors: number
+    referralCode?: string
 }
 
 export interface Achievement {
@@ -59,6 +60,7 @@ export async function getVendorStats(vendorId: string): Promise<VendorStats | nu
         .select(`
       total_sales,
       current_level_id,
+      referral_code,
       vendor_levels (*)
     `)
         .eq("id", vendorId)
@@ -113,7 +115,8 @@ export async function getVendorStats(vendorId: string): Promise<VendorStats | nu
         commissionRate: currentLevel?.commission_rate || 10,
         salesUntilNextLevel: Math.max(salesUntilNextLevel, 0),
         rank,
-        totalVendors
+        totalVendors,
+        referralCode: profile.referral_code || `VIP-${vendorId.substring(0, 6).toUpperCase()}`
     }
 }
 

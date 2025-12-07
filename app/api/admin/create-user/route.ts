@@ -41,22 +41,35 @@ export async function POST(request: Request) {
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) {
+      console.error("Create User API: No authenticated user found")
       return NextResponse.json(
-        { error: 'No autenticado' },
+        { error: 'No autenticado. Por favor inicie sesión nuevamente.' },
         { status: 401 }
       )
     }
 
+    console.log("Create User API: Authenticated User ID:", user.id)
+
     // 2. Verificar rol de admin
-    const { data: profile } = await supabase
+    const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select('role')
       .eq('id', user.id)
       .single()
 
-    if (profile?.role !== 'admin') {
+    if (profileError) {
+      console.error("Create User API: Error fetching profile:", profileError)
       return NextResponse.json(
-        { error: 'No tienes permisos para crear usuarios' },
+        { error: 'Error verificando permisos de administrador.' },
+        { status: 500 }
+      )
+    }
+
+    console.log("Create User API: User Role:", profile?.role)
+
+    if (profile?.role !== 'admin' && profile?.role !== 'ceo') { // Allow CEO as well if that role exists
+      return NextResponse.json(
+        { error: `No tienes permisos para crear usuarios. Tu rol es: ${profile?.role}` },
         { status: 403 }
       )
     }
