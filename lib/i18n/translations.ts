@@ -276,6 +276,14 @@ export const translations = {
         following: "siguiendo",
       }
     },
+    // Impact Section
+    impact: {
+      lovedBy: "Amado por creadores de todo el mundo",
+      title: "TDT impulsa los",
+      titleMiddle: "resultados de su marca",
+      titleEnd: "específica",
+      cta: "Empieza Ya",
+    },
   },
   en: {
     // Hero
@@ -498,6 +506,14 @@ export const translations = {
         followers: "followers",
         following: "following",
       }
+    },
+    // Impact Section
+    impact: {
+      lovedBy: "Loved by creators worldwide",
+      title: "TDT boosts your",
+      titleMiddle: "brand results",
+      titleEnd: "specifically",
+      cta: "Get Started",
     },
   },
   pt: {
@@ -876,5 +892,5 @@ export const translations = {
       moreSpecific: "Procurando algo mais específico?",
       viewAll: "Ver todos os serviços e pacotes disponíveis",
     },
-},
+  },
 }
