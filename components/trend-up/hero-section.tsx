@@ -26,16 +26,27 @@ export default function HeroSection() {
 
           {/* Headline */}
           <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight">
-            {t.hero.title} <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-green-500 to-red-500 animate-gradient-x">
-              {t.hero.titleHighlight}
+            Lleva tus Redes al <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-cyan-400">
+              Siguiente Nivel
             </span>
           </h1>
 
-          {/* Subheadline */}
-          <p className="text-lg md:text-xl text-slate-400 mb-10 max-w-2xl mx-auto leading-relaxed">
-            {t.hero.subtitle}
+          {/* Problem Statement */}
+          <p className="text-xl md:text-2xl text-orange-400 font-semibold mb-4">
+            ¿Cansado que el algoritmo esconda tu cuenta?
           </p>
+
+          {/* Solution */}
+          <p className="text-lg md:text-xl text-slate-300 mb-10 max-w-2xl mx-auto leading-relaxed">
+            <strong className="text-white">TDT usa Inteligencia Artificial</strong> para poner tu contenido en frente de <strong className="text-white">personas reales</strong> interesadas en contenido como el tuyo. Solo selecciona género, ubicación del público objetivo, y nuestra IA se encarga del resto. <span className="text-green-400 font-semibold">Empezarás a ver crecimiento real en horas.</span>
+          </p>
+
+          {/* Trust Badge */}
+          <div className="inline-flex items-center gap-2 bg-green-500/10 border border-green-500/30 rounded-full px-4 py-2 mb-10">
+            <CheckCircle2 className="w-5 h-5 text-green-400" />
+            <span className="text-sm text-green-300 font-medium">No son bots ni cuentas fake. Es gente real.</span>
+          </div>
 
           {/* Trust Indicators */}
           <div className="flex flex-wrap items-center justify-center gap-6 mb-10 text-sm text-slate-400">
@@ -66,8 +77,8 @@ export default function HeroSection() {
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
             <Link href="#consultant" className="w-full sm:w-auto">
-              <Button size="lg" className="w-full sm:w-auto bg-orange-500 hover:bg-orange-600 text-white h-14 px-8 rounded-full text-lg font-bold shadow-lg shadow-orange-500/20 transition-all hover:scale-105">
-                {t.hero.cta}
+              <Button size="lg" className="w-full sm:w-auto bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white h-14 px-8 rounded-full text-lg font-bold shadow-lg shadow-indigo-500/30 transition-all hover:scale-105">
+                Usar IA Ahora ✨
               </Button>
             </Link>
             <Link href="#how-it-works" className="w-full sm:w-auto">
