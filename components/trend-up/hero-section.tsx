@@ -65,7 +65,7 @@ export default function HeroSection() {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-            <Link href="#packages" className="w-full sm:w-auto">
+            <Link href="#consultant" className="w-full sm:w-auto">
               <Button size="lg" className="w-full sm:w-auto bg-orange-500 hover:bg-orange-600 text-white h-14 px-8 rounded-full text-lg font-bold shadow-lg shadow-orange-500/20 transition-all hover:scale-105">
                 {t.hero.cta}
               </Button>

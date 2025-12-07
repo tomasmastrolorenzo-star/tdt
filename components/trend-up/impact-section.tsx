@@ -43,7 +43,7 @@ export default function ImpactSection() {
                     {t.impact?.titleEnd || "específica"}
                 </h2>
 
-                <Link href="#packages" className="inline-block mb-16">
+                <Link href="#consultant" className="inline-block mb-16">
                     <Button size="lg" className="bg-white text-slate-900 hover:bg-slate-100 font-bold text-lg px-8 py-6 rounded-full shadow-lg transition-transform hover:scale-105">
                         {t.impact?.cta} <ArrowRight className="w-5 h-5 ml-2" />
                     </Button>
