@@ -5,16 +5,13 @@ import { Rocket, Crown, Zap, Star, TrendingUp } from "lucide-react"
 import { useI18n } from "@/lib/i18n/context"
 
 const recentPurchases = [
-  { name: "Carlos M.", package: "STARTER", platform: "Instagram", country: "MX", flag: "🇲🇽", time: 3 },
-  { name: "Emma S.", package: "VIRAL", platform: "TikTok", country: "US", flag: "🇺🇸", time: 8 },
-  { name: "Ahmed K.", package: "CELEBRITY", platform: "Instagram", country: "AE", flag: "🇦🇪", time: 15 },
-  { name: "Sophie L.", package: "GROWTH", platform: "Instagram", country: "FR", flag: "🇫🇷", time: 22 },
-  { name: "João P.", package: "INFLUENCER", platform: "TikTok", country: "BR", flag: "🇧🇷", time: 31 },
-  { name: "Michael R.", package: "VIRAL", platform: "YouTube", country: "US", flag: "🇺🇸", time: 45 },
-  { name: "Hans M.", package: "CELEBRITY", platform: "Instagram", country: "DE", flag: "🇩🇪", time: 52 },
-  { name: "Maria G.", package: "STARTER", platform: "TikTok", country: "ES", flag: "🇪🇸", time: 67 },
-  { name: "James W.", package: "INFLUENCER", platform: "Instagram", country: "GB", flag: "🇬🇧", time: 78 },
-  { name: "Lucia F.", package: "GROWTH", platform: "YouTube", country: "IT", flag: "🇮🇹", time: 89 },
+  { name: "Juan M.", action: "analyzed", niche: "Personal Brand", country: "US", flag: "🇺🇸", time: 2 },
+  { name: "Sofia R.", action: "requested", niche: "Fashion", country: "MX", flag: "🇲🇽", time: 5 },
+  { name: "Pedro L.", action: "analyzed", niche: "Fitness", country: "ES", flag: "🇪🇸", time: 12 },
+  { name: "Ana K.", action: "requested", niche: "Business", country: "CO", flag: "🇨🇴", time: 18 },
+  { name: "Lucas S.", action: "analyzed", niche: "Gaming", country: "AR", flag: "🇦🇷", time: 25 },
+  { name: "Emma W.", action: "requested", niche: "Lifestyle", country: "UK", flag: "🇬🇧", time: 32 },
+  { name: "David B.", action: "analyzed", niche: "Music", country: "BR", flag: "🇧🇷", time: 41 },
 ]
 
 const packageIcons: Record<string, { icon: typeof Rocket; color: string }> = {
@@ -43,15 +40,17 @@ export default function SocialProofTicker() {
   }, [])
 
   const current = recentPurchases[currentIndex]
-  const PackageIcon = packageIcons[current.package]?.icon || Rocket
-  const iconColor = packageIcons[current.package]?.color || "text-slate-400"
+
+  const getActionText = (action: string) => {
+    return action === "analyzed" ? "analizó su perfil 🔍" : "solicitó estrategia 📈"
+  }
 
   const getTimeText = (minutes: number) => {
     if (minutes < 60) {
-      return `${minutes} min`
+      return `hace ${minutes} min`
     }
     const hours = Math.floor(minutes / 60)
-    return `${hours}h ${minutes % 60}min`
+    return `hace ${hours}h ${minutes % 60}min`
   }
 
   return (
@@ -63,9 +62,9 @@ export default function SocialProofTicker() {
         <div className="flex items-start gap-3">
           <div className="flex-shrink-0">
             <div
-              className={`w-10 h-10 md:w-12 md:h-12 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center ${iconColor}`}
+              className={`w-10 h-10 md:w-12 md:h-12 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-purple-500`}
             >
-              <PackageIcon className="w-5 h-5 md:w-6 md:h-6" />
+              <TrendingUp className="w-5 h-5 md:w-6 md:h-6" />
             </div>
           </div>
           <div className="flex-1 min-w-0">
@@ -74,10 +73,9 @@ export default function SocialProofTicker() {
               <span className="text-xs md:text-sm font-semibold text-white">{current.name}</span>
             </div>
             <p className="text-[10px] md:text-xs text-slate-300 mt-0.5 md:mt-1">
-              {t.socialProof.purchased} <span className="text-amber-400 font-semibold">{current.package}</span> -{" "}
-              {current.platform}
+              {getActionText(current.action)} <span className="text-amber-400 font-semibold">• {current.niche}</span>
             </p>
-            <p className="text-[10px] md:text-xs text-slate-500 mt-0.5 md:mt-1">{getTimeText(current.time)} ago</p>
+            <p className="text-[10px] md:text-xs text-slate-500 mt-0.5 md:mt-1">{getTimeText(current.time)}</p>
           </div>
         </div>
       </div>

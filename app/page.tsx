@@ -24,29 +24,36 @@ import { instagramFollowersPackages } from "@/lib/trend-up/packages"
 
 function LandingContent() {
   return (
-    <>
       <ChristmasSnow />
       <SocialProofTicker />
       <LanguageSelector />
-      <HeroSection />
-      {/* <ProfileAnalyzer /> - Removed per user feedback */}
-      <StatsGrid />
-      <NicheSelector />
-      <BeforeAfter />
-      <HowItWorks />
-      {/* <ComparisonSection /> - Removed per user feedback */}
-      <FeaturesGrid />
-      {/* <AIEngineSection /> - Removed per user feedback about dashboard image */}
+      
+      {/* PHASE 1: HERO (Action & Entry) */ }
+  <HeroSection />
+
+  {/* PHASE 2: INFO & TRUST (Education, "No Bots") */ }
       <ImpactSection />
-      )
-}
+      <FeaturesGrid />
+
+  {/* PHASE 3: SOCIAL PROOF (Testimonials & Results) */ }
+      <StatsGrid />
+      <TestimonialsSection />
+
+  {/* PHASE 4: EL FARO (The Consultant) */ }
+  <SmartGrowthConsultant />
+
+  {/* Footer Area */ }
+      <DirectServices />
+      <FAQSection />
+      <TrendUpFooter />
+    </>
 
       export default function HomePage() {
-  return (
+    return (
       <I18nProvider>
         <main className="min-h-screen bg-slate-950">
           <LandingContent />
         </main>
       </I18nProvider>
-      )
-}
+    )
+  }
