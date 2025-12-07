@@ -19,6 +19,7 @@ import FAQSection from "@/components/trend-up/faq-section"
 import TrendUpFooter from "@/components/trend-up/footer"
 import ServicePackages from "@/components/trend-up/service-packages"
 import ChristmasSnow from "@/components/ui/christmas-snow"
+import SmartGrowthConsultant from "@/components/trend-up/smart-growth-consultant"
 import { instagramFollowersPackages } from "@/lib/trend-up/packages"
 
 function LandingContent() {
@@ -37,29 +38,15 @@ function LandingContent() {
       <FeaturesGrid />
       {/* <AIEngineSection /> - Removed per user feedback about dashboard image */}
       <ImpactSection />
-      <TestimonialsSection />
-
-      {/* Pricing Slider */}
-      <PricingSection />
-
-      {/* Detailed Gaming-style Packages */}
-      <ServicePackages packages={instagramFollowersPackages} platform="instagram" />
-
-      {/* Other Services - Moved to bottom per user request */}
-      <DirectServices />
-
-      <FAQSection />
-      <TrendUpFooter />
-    </>
-  )
+      )
 }
 
-export default function HomePage() {
+      export default function HomePage() {
   return (
-    <I18nProvider>
-      <main className="min-h-screen bg-slate-950">
-        <LandingContent />
-      </main>
-    </I18nProvider>
-  )
+      <I18nProvider>
+        <main className="min-h-screen bg-slate-950">
+          <LandingContent />
+        </main>
+      </I18nProvider>
+      )
 }
