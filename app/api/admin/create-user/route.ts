@@ -139,25 +139,38 @@ export async function POST(request: Request) {
       )
     }
 
+    // Helper para generar código
+    const generateReferralCode = (name: string) => {
+      const cleanName = name.split(' ')[0].toUpperCase().replace(/[^A-Z]/g, '')
+      const randomSuffix = Math.random().toString(36).substring(2, 6).toUpperCase()
+      return `${cleanName}-${randomSuffix}`
+    }
+
+    let referralCode = null
+    if (role === 'vendor') {
+      referralCode = generateReferralCode(name)
+    }
+
     // 7. Crear perfil en tabla profiles
-    const { error: profileError } = await supabase
+    const { error: insertProfileError } = await supabase
       .from('profiles')
       .insert({
         id: newUser.user.id,
         email,
         name,
         role,
+        referral_code: referralCode, // Insertar código generado
         created_at: new Date().toISOString(),
       })
 
-    if (profileError) {
-      console.error('Error creating profile:', profileError)
+    if (insertProfileError) {
+      console.error('Error creating profile:', insertProfileError)
 
       // Si falla la creación del perfil, eliminar usuario de Auth
       await supabaseAdmin.auth.admin.deleteUser(newUser.user.id)
 
       return NextResponse.json(
-        { error: `Error al crear perfil: ${profileError.message}` },
+        { error: `Error al crear perfil: ${insertProfileError.message}` },
         { status: 400 }
       )
     }
