@@ -39,8 +39,7 @@ export default function HeroSection() {
 
           {/* Solution */}
           <p className="text-lg md:text-xl text-slate-300 mb-10 max-w-2xl mx-auto leading-relaxed">
-            <strong className="text-white">{t.hero.solution.split('para poner')[0]}</strong>
-            {t.hero.solution.includes('para poner') ? 'para poner' + t.hero.solution.split('para poner')[1].split('.')[0] + '.' : t.hero.solution.split('.')[0] + '.'} <span className="text-green-400 font-semibold">{t.hero.solutionHighlight}</span>
+            {t.hero.solution} <span className="text-green-400 font-semibold">{t.hero.solutionHighlight}</span>
           </p>
 
           {/* Trust Badge */}
