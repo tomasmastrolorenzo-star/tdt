@@ -56,14 +56,18 @@ export const translations = {
   es: {
     // Hero
     hero: {
-      badge: "Servicio #1 en Latinoamérica",
-      title: "Impulsa tu Presencia",
-      titleHighlight: "Digital",
+      badge: "🎄 Navidad llegó a TDT",
+      title: "Lleva tus Redes al",
+      titleHighlight: "Siguiente Nivel",
       subtitle:
         "Seguidores reales, engagement auténtico. Crece en Instagram, TikTok y más con la plataforma de confianza de miles de creadores.",
+      problem: "¿Cansado que el algoritmo esconda tu cuenta?",
+      solution: "TDT usa Inteligencia Artificial para poner tu contenido en frente de personas reales interesadas en contenido como el tuyo. Solo selecciona género, ubicación del público objetivo, y nuestra IA se encarga del resto.",
+      solutionHighlight: "Empezarás a ver crecimiento real en horas.",
+      trustBadge: "No son bots ni cuentas fake. Es gente real.",
       trustLine: "Más de 50,000 creadores confían en nosotros",
       guarantee: "💯 Garantía de satisfacción o te devolvemos tu dinero",
-      cta: "Ver Paquetes Ahora",
+      cta: "Usar IA Ahora ✨",
       ctaSecondary: "Cómo Funciona",
       stats: {
         clients: "Clientes Satisfechos",
