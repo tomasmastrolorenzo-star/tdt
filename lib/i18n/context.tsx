@@ -61,7 +61,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     detectLocation()
   }, [isDetected])
 
-  const t = translations[language]
+  const t = translations[language] || translations.es
 
   const formatPrice = (priceUSD: number) => {
     const convertedPrice = priceUSD * currencyRates[currency]
