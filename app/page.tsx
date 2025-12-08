@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import { I18nProvider } from "@/lib/i18n/context"
 import LanguageSelector from "@/components/trend-up/language-selector"
 import UrgencyBanner from "@/components/trend-up/urgency-banner"
 import SocialProofTicker from "@/components/trend-up/social-proof-ticker"
@@ -22,9 +21,9 @@ import ChristmasSnow from "@/components/ui/christmas-snow"
 import SmartGrowthConsultant from "@/components/trend-up/smart-growth-consultant"
 import { instagramFollowersPackages } from "@/lib/trend-up/packages"
 
-function LandingContent() {
+export default function HomePage() {
   return (
-    <>
+    <main className="min-h-screen bg-slate-950">
       <ChristmasSnow />
       <SocialProofTicker />
       <LanguageSelector />
@@ -47,16 +46,6 @@ function LandingContent() {
       <DirectServices />
       <FAQSection />
       <TrendUpFooter />
-    </>
-  )
-}
-
-export default function HomePage() {
-  return (
-    <I18nProvider>
-      <main className="min-h-screen bg-slate-950">
-        <LandingContent />
-      </main>
-    </I18nProvider>
+    </main>
   )
 }

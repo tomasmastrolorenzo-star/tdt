@@ -9,19 +9,24 @@ const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Trend Digital Trade - Compra Seguidores de Instagram, TikTok y Más",
-  description:
-    "Aumenta tu presencia en redes sociales con seguidores reales. Paquetes desde $15 USD. Entrega garantizada, soporte 24/7.",
-  keywords: "comprar seguidores, instagram followers, tiktok followers, youtube subscribers, SMM panel",
-  generator: "v0.app",
-  openGraph: {
-    title: "Trend Digital Trade - Impulsa tu Presencia Digital",
-    description: "Seguidores reales, engagement auténtico. Crece en Instagram, TikTok y más.",
-    type: "website",
-  },
-  icons: {
-    icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>",
-  }
+  import type { Metadata } from "next"
+import { Geist, Geist_Mono } from "next/font/google"
+import "./globals.css"
+import { I18nProvider } from "@/lib/i18n/context"
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+})
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+})
+
+export const metadata: Metadata = {
+  title: "TDT - Trend Digital Trade",
+  description: "Impulsa tu presencia digital con seguidores reales",
 }
 
 export default function RootLayout({
@@ -31,10 +36,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body className={`font-sans antialiased`}>
-        {children}
-        <Analytics />
-        <SpeedInsights />
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <I18nProvider>
+          {children}
+        </I18nProvider>
       </body>
     </html>
   )
