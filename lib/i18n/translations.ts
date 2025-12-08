@@ -288,14 +288,18 @@ export const translations = {
   en: {
     // Hero
     hero: {
-      badge: "#1 Social Media Growth Service",
-      title: "Boost Your",
-      titleHighlight: "Digital Presence",
+      badge: "🎄 Christmas came to TDT",
+      title: "Take Your Socials to the",
+      titleHighlight: "Next Level",
       subtitle:
         "Real followers, authentic engagement. Grow on Instagram, TikTok and more with the platform trusted by thousands of creators.",
+      problem: "Tired of the algorithm hiding your account?",
+      solution: "TDT uses Artificial Intelligence to put your content in front of real people interested in content like yours. Just select gender, target audience location, and our AI takes care of the rest.",
+      solutionHighlight: "You'll start seeing real growth in hours.",
+      trustBadge: "Not bots or fake accounts. Real people.",
       trustLine: "Trusted by over 50,000 creators worldwide",
       guarantee: "💯 Satisfaction guarantee or your money back",
-      cta: "View Packages Now",
+      cta: "Use AI Now ✨",
       ctaSecondary: "How It Works",
       stats: {
         clients: "Satisfied Clients",
@@ -519,14 +523,18 @@ export const translations = {
   pt: {
     // Hero
     hero: {
-      badge: "Serviço #1 nas Américas",
-      title: "Impulsione sua Presença",
-      titleHighlight: "Digital",
+      badge: "🎄 O Natal chegou à TDT",
+      title: "Leve suas Redes ao",
+      titleHighlight: "Próximo Nível",
       subtitle:
         "Seguidores reais, engajamento autêntico. Cresça no Instagram, TikTok e mais com a plataforma de confiança de milhares de criadores.",
+      problem: "Cansado do algoritmo esconder sua conta?",
+      solution: "TDT usa Inteligência Artificial para colocar seu conteúdo na frente de pessoas reais interessadas em conteúdo como o seu. Apenas selecione gênero, localização do público-alvo, e nossa IA cuida do resto.",
+      solutionHighlight: "Você começará a ver crescimento real em horas.",
+      trustBadge: "Não são bots ou contas falsas. São pessoas reais.",
       trustLine: "Mais de 50.000 criadores confiam em nós",
       guarantee: "💯 Garantia de satisfação ou seu dinheiro de volta",
-      cta: "Ver Pacotes Agora",
+      cta: "Usar IA Agora ✨",
       ctaSecondary: "Como Funciona",
       stats: {
         clients: "Clientes Satisfeitos",

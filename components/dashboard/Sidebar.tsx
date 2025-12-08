@@ -10,9 +10,11 @@ import { createClient } from "@/lib/supabase/client"
 import { LevelBadge } from "./LevelBadge"
 import { getVendorStats } from "@/lib/dashboard/stats"
 
-interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> { }
+interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
+    onNavigate?: () => void
+}
 
-export function Sidebar({ className }: SidebarProps) {
+export function Sidebar({ className, onNavigate }: SidebarProps) {
     const pathname = usePathname()
     const [userRole, setUserRole] = useState<string | null>(null)
     const [vendorLevel, setVendorLevel] = useState<any>(null)
@@ -113,7 +115,7 @@ export function Sidebar({ className }: SidebarProps) {
 
                     <div className="space-y-1">
                         {routes.map((route) => (
-                            <Link key={route.href} href={route.href}>
+                            <Link key={route.href} href={route.href} onClick={onNavigate}>
                                 <Button
                                     variant={pathname === route.href ? "secondary" : "ghost"}
                                     className={cn(

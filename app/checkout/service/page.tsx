@@ -22,10 +22,16 @@ function ServiceCheckoutContent() {
     const [link, setLink] = useState("") // Username or Link depending on service
     const [segmentation, setSegmentation] = useState("") // New field for target audience/location
 
+    // Referral Code State
+    const [referralCode, setReferralCode] = useState<string | null>(null)
+    const [referralValid, setReferralValid] = useState(false)
+    const [referralVendor, setReferralVendor] = useState<string | null>(null)
+
     // Get params
     const platformId = searchParams.get("platform")
     const serviceType = searchParams.get("service")
     const packageId = searchParams.get("package")
+    const refParam = searchParams.get("ref")
 
     useEffect(() => {
         if (platformId && serviceType && packageId) {
@@ -47,6 +53,27 @@ function ServiceCheckoutContent() {
         setLoading(false)
     }, [platformId, serviceType, packageId])
 
+    // Validate referral code
+    useEffect(() => {
+        if (refParam) {
+            validateReferralCode(refParam)
+        }
+    }, [refParam])
+
+    const validateReferralCode = async (code: string) => {
+        try {
+            const response = await fetch(`/api/validate-referral?code=${code}`)
+            const data = await response.json()
+            if (data.valid) {
+                setReferralCode(code)
+                setReferralValid(true)
+                setReferralVendor(data.vendorName)
+            }
+        } catch (error) {
+            console.error("Error validating referral:", error)
+        }
+    }
+
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-slate-50">
@@ -65,7 +92,8 @@ function ServiceCheckoutContent() {
     }
 
     const cryptoDiscount = paymentMethod === "crypto" ? serviceData.price * 0.1 : 0
-    const total = serviceData.price - cryptoDiscount
+    const referralDiscount = referralValid ? serviceData.price * 0.05 : 0
+    const total = serviceData.price - cryptoDiscount - referralDiscount
 
     const handleCheckout = () => {
         if (!email || !link) {
@@ -277,6 +305,15 @@ function ServiceCheckoutContent() {
                                         <div className="flex justify-between text-sm text-green-600">
                                             <span>Descuento Crypto (10%)</span>
                                             <span className="font-medium">-{formatPrice(cryptoDiscount)}</span>
+                                        </div>
+                                    )}
+                                    {referralValid && (
+                                        <div className="flex justify-between text-sm text-indigo-600">
+                                            <span className="flex items-center gap-1">
+                                                <Check className="w-4 h-4" />
+                                                Código {referralCode} (5%)
+                                            </span>
+                                            <span className="font-medium">-{formatPrice(referralDiscount)}</span>
                                         </div>
                                     )}
                                     <div className="flex justify-between items-baseline pt-2">
