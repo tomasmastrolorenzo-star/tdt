@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { I18nProvider } from "@/lib/i18n/context"
+import { ErrorBoundary } from "@/components/ErrorBoundary"
 import "./globals.css"
 
 const _geist = Geist({ subsets: ["latin"] })
@@ -33,9 +34,11 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={`font-sans antialiased`}>
-        <I18nProvider>
-          {children}
-        </I18nProvider>
+        <ErrorBoundary>
+          <I18nProvider>
+            {children}
+          </I18nProvider>
+        </ErrorBoundary>
         <Analytics />
         <SpeedInsights />
       </body>

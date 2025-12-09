@@ -27,6 +27,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   const [language, setLanguage] = useState<Language>("es")
   const [currency, setCurrency] = useState<Currency>("USD")
   const [isDetected, setIsDetected] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     if (isDetected) return
@@ -34,7 +35,9 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     const detectLocation = async () => {
       try {
         // Try to get country from IP
-        const response = await fetch("https://ipapi.co/json/")
+        const response = await fetch("https://ipapi.co/json/", {
+          signal: AbortSignal.timeout(3000) // 3 second timeout
+        })
         const data = await response.json()
         const countryCode = data.country_code || "US"
 
@@ -49,34 +52,57 @@ export function I18nProvider({ children }: { children: ReactNode }) {
         setIsDetected(true)
       } catch (error) {
         // Fallback to browser language
-        const browserLang = navigator.language.split("-")[0]
-        if (browserLang === "es") setLanguage("es")
-        else if (browserLang === "pt") setLanguage("pt")
-        else setLanguage("en")
+        try {
+          const browserLang = navigator.language.split("-")[0]
+          if (browserLang === "es") setLanguage("es")
+          else if (browserLang === "pt") setLanguage("pt")
+          else setLanguage("en")
+        } catch {
+          setLanguage("en") // Ultimate fallback
+        }
 
         setIsDetected(true)
+      } finally {
+        setIsLoading(false)
       }
     }
 
     detectLocation()
   }, [isDetected])
 
-  const t = translations[language] || translations.es
+  // Always use a valid translation object
+  const t = translations[language] || translations.en || translations.es
 
   const formatPrice = (priceUSD: number) => {
-    const convertedPrice = priceUSD * currencyRates[currency]
-    const symbol = currencySymbols[currency]
+    try {
+      const convertedPrice = priceUSD * (currencyRates[currency] || 1)
+      const symbol = currencySymbols[currency] || "$"
 
-    // Format based on currency
-    if (currency === "BRL" || currency === "EUR") {
-      return `${symbol}${convertedPrice.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+      // Format based on currency
+      if (currency === "BRL" || currency === "EUR") {
+        return `${symbol}${convertedPrice.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+      }
+
+      if (["ARS", "COP", "CLP"].includes(currency)) {
+        return `${symbol}${Math.round(convertedPrice).toLocaleString()}`
+      }
+
+      return `${symbol}${convertedPrice.toFixed(2)}`
+    } catch {
+      return `$${priceUSD.toFixed(2)}` // Fallback to USD
     }
+  }
 
-    if (["ARS", "COP", "CLP"].includes(currency)) {
-      return `${symbol}${Math.round(convertedPrice).toLocaleString()}`
-    }
-
-    return `${symbol}${convertedPrice.toFixed(2)}`
+  // Show loading state while detecting location
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-slate-400">Loading...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -88,7 +114,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
         setCurrency,
         t,
         formatPrice,
-        currencySymbol: currencySymbols[currency],
+        currencySymbol: currencySymbols[currency] || "$",
       }}
     >
       {children}
