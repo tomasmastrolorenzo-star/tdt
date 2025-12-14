@@ -43,10 +43,10 @@ export default function ContactPage() {
                         </CardHeader>
                         <CardContent>
                             <a
-                                href="mailto:support@trenddigitaltrade.com"
+                                href="mailto:hola@trenddigitaltrade.com"
                                 className="text-pink-500 hover:text-pink-400 font-medium"
                             >
-                                support@trenddigitaltrade.com
+                                hola@trenddigitaltrade.com
                             </a>
                             <p className="text-sm text-slate-500 mt-2">
                                 Para consultas generales, problemas técnicos y soporte
@@ -69,10 +69,10 @@ export default function ContactPage() {
                         </CardHeader>
                         <CardContent>
                             <a
-                                href="mailto:sales@trenddigitaltrade.com"
+                                href="mailto:hola@trenddigitaltrade.com"
                                 className="text-purple-500 hover:text-purple-400 font-medium"
                             >
-                                sales@trenddigitaltrade.com
+                                hola@trenddigitaltrade.com
                             </a>
                             <p className="text-sm text-slate-500 mt-2">
                                 Para consultas sobre servicios, precios y paquetes personalizados
@@ -95,10 +95,10 @@ export default function ContactPage() {
                         </CardHeader>
                         <CardContent>
                             <a
-                                href="mailto:business@trenddigitaltrade.com"
+                                href="mailto:hola@trenddigitaltrade.com"
                                 className="text-blue-500 hover:text-blue-400 font-medium"
                             >
-                                business@trenddigitaltrade.com
+                                hola@trenddigitaltrade.com
                             </a>
                             <p className="text-sm text-slate-500 mt-2">
                                 Para propuestas de negocio, alianzas y colaboraciones

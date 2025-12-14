@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import LanguageSelector from "@/components/trend-up/language-selector"
+// import LanguageSelector from "@/components/trend-up/language-selector"
 import UrgencyBanner from "@/components/trend-up/urgency-banner"
 import SocialProofTicker from "@/components/trend-up/social-proof-ticker"
 import HeroSection from "@/components/trend-up/hero-section"
@@ -26,7 +26,7 @@ export default function HomePage() {
     <main className="min-h-screen bg-slate-950">
       <ChristmasSnow />
       <SocialProofTicker />
-      <LanguageSelector />
+      {/* <LanguageSelector /> */}
 
       {/* PHASE 1: HERO (Action & Entry) */}
       <HeroSection />

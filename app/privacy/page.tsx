@@ -121,8 +121,8 @@ export default function PrivacyPage() {
                         </ul>
                         <p className="mt-4">
                             Para ejercer estos derechos, contáctenos en{" "}
-                            <a href="mailto:privacy@trenddigitaltrade.com" className="text-pink-500 hover:text-pink-400">
-                                privacy@trenddigitaltrade.com
+                            <a href="mailto:hola@trenddigitaltrade.com" className="text-pink-500 hover:text-pink-400">
+                                hola@trenddigitaltrade.com
                             </a>
                         </p>
                     </section>
@@ -157,26 +157,6 @@ export default function PrivacyPage() {
 
                     <section>
                         <h2 className="text-2xl font-semibold text-white mb-4">11. Contacto</h2>
-                        <p>
-                            Para preguntas sobre esta Política de Privacidad o el manejo de sus datos:
-                        </p>
-                        <div className="mt-4 space-y-2">
-                            <p>
-                                Email:{" "}
-                                <a href="mailto:privacy@trenddigitaltrade.com" className="text-pink-500 hover:text-pink-400">
-                                    privacy@trenddigitaltrade.com
-                                </a>
-                            </p>
-                            <p>
-                                Soporte general:{" "}
-                                <a href="mailto:support@trenddigitaltrade.com" className="text-pink-500 hover:text-pink-400">
-                                    support@trenddigitaltrade.com
-                                </a>
-                            </p>
-                        </div>
-                    </section>
-
-                    <section className="mt-8 pt-8 border-t border-slate-800">
                         <p className="text-sm text-slate-500">
                             Última actualización: {new Date().toLocaleDateString("es-ES", { year: "numeric", month: "long", day: "numeric" })}
                         </p>

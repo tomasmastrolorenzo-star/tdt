@@ -107,8 +107,8 @@ export default function TermsPage() {
                         </p>
                         <p className="mt-2">
                             Email:{" "}
-                            <a href="mailto:support@trenddigitaltrade.com" className="text-pink-500 hover:text-pink-400">
-                                support@trenddigitaltrade.com
+                            <a href="mailto:hola@trenddigitaltrade.com" className="text-pink-500 hover:text-pink-400">
+                                hola@trenddigitaltrade.com
                             </a>
                         </p>
                     </section>
