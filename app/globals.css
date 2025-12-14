@@ -37,6 +37,11 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+  /* Christmas Theme */
+  --christmas-red: #D42426;
+  --christmas-green: #165B33;
+  --christmas-gold: #F8B229;
 }
 
 .dark {

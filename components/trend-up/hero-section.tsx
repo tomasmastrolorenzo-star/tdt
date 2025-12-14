@@ -19,32 +19,32 @@ export default function HeroSection() {
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-4xl mx-auto text-center">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-full px-4 py-1.5 mb-8">
-            <span className="flex h-2 w-2 rounded-full bg-red-500 animate-pulse" />
-            <span className="text-sm text-slate-300 font-medium">{t.hero.badge}</span>
+          <div className="inline-flex items-center gap-2 bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-full px-4 py-1.5 mb-8 hover:border-[#F8B229]/50 transition-colors">
+            <span className="flex h-2 w-2 rounded-full bg-[#D42426] animate-pulse shadow-[0_0_10px_#D42426]" />
+            <span className="text-sm text-slate-300 font-medium">{t.hero.badge} 🎄</span>
           </div>
 
           {/* Headline */}
           <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight">
             {t.hero.title} <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-cyan-400">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D42426] via-[#F8B229] to-[#D42426] animate-gradient-x bg-[length:200%_auto]">
               {t.hero.titleHighlight}
             </span>
           </h1>
 
           {/* Problem Statement */}
-          <p className="text-xl md:text-2xl text-orange-400 font-semibold mb-4">
+          <p className="text-xl md:text-2xl text-[#F8B229] font-semibold mb-4">
             {t.hero.problem}
           </p>
 
           {/* Solution */}
           <p className="text-lg md:text-xl text-slate-300 mb-10 max-w-2xl mx-auto leading-relaxed">
-            {t.hero.solution} <span className="text-green-400 font-semibold">{t.hero.solutionHighlight}</span>
+            {t.hero.solution} <span className="text-[#165B33] font-bold bg-green-900/20 px-1 rounded">{t.hero.solutionHighlight}</span>
           </p>
 
           {/* Trust Badge */}
-          <div className="inline-flex items-center gap-2 bg-green-500/10 border border-green-500/30 rounded-full px-4 py-2 mb-10">
-            <CheckCircle2 className="w-5 h-5 text-green-400" />
+          <div className="inline-flex items-center gap-2 bg-[#165B33]/10 border border-[#165B33]/30 rounded-full px-4 py-2 mb-10">
+            <CheckCircle2 className="w-5 h-5 text-[#F8B229]" />
             <span className="text-sm text-green-300 font-medium">{t.hero.trustBadge}</span>
           </div>
 
@@ -68,7 +68,7 @@ export default function HeroSection() {
               </div>
               <span>{t.hero.trustLine}</span>
             </div>
-            <div className="flex items-center gap-1 text-green-400">
+            <div className="flex items-center gap-1 text-[#F8B229]">
               <Star className="w-4 h-4 fill-current" />
               <span className="font-bold">4.9/5</span>
             </div>
@@ -77,12 +77,12 @@ export default function HeroSection() {
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
             <Link href="#consultant" className="w-full sm:w-auto">
-              <Button size="lg" className="w-full sm:w-auto bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white h-14 px-8 rounded-full text-lg font-bold shadow-lg shadow-indigo-500/30 transition-all hover:scale-105">
-                {t.hero.cta}
+              <Button size="lg" className="w-full sm:w-auto bg-gradient-to-r from-[#D42426] to-[#b91c1c] hover:from-[#b91c1c] hover:to-[#991b1b] text-white h-14 px-8 rounded-full text-lg font-bold shadow-[0_0_20px_rgba(212,36,38,0.4)] transition-all hover:scale-105 border border-white/10">
+                {t.hero.cta} 🎅
               </Button>
             </Link>
             <Link href="#how-it-works" className="w-full sm:w-auto">
-              <Button variant="outline" size="lg" className="w-full sm:w-auto border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white h-14 px-8 rounded-full text-lg font-medium transition-all">
+              <Button variant="outline" size="lg" className="w-full sm:w-auto border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white h-14 px-8 rounded-full text-lg font-medium transition-all hover:border-[#F8B229]/50">
                 {t.hero.ctaSecondary}
               </Button>
             </Link>

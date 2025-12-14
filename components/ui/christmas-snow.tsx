@@ -6,11 +6,13 @@ export default function ChristmasSnow() {
   const [snowflakes, setSnowflakes] = useState<Array<{ id: number; left: number; duration: number; delay: number }>>([])
 
   useEffect(() => {
-    const flakes = Array.from({ length: 50 }).map((_, i) => ({
+    const flakes = Array.from({ length: 75 }).map((_, i) => ({
       id: i,
       left: Math.random() * 100, // percentage
-      duration: Math.random() * 5 + 5, // 5-10s
-      delay: Math.random() * 5, // 0-5s
+      duration: Math.random() * 10 + 10, // 10-20s (smoother)
+      delay: Math.random() * 10, // 0-10s
+      size: Math.random() * 3 + 1, // 1-4px
+      opacity: Math.random() * 0.5 + 0.3, // 0.3-0.8
     }))
     setSnowflakes(flakes)
   }, [])
@@ -20,9 +22,12 @@ export default function ChristmasSnow() {
       {snowflakes.map((flake) => (
         <div
           key={flake.id}
-          className="absolute top-0 w-2 h-2 bg-white rounded-full opacity-60 animate-fall"
+          className="absolute top-[-10px] bg-white rounded-full animate-fall filter blur-[0.5px]"
           style={{
             left: `${flake.left}%`,
+            width: `${flake.size}px`,
+            height: `${flake.size}px`,
+            opacity: flake.opacity,
             animationDuration: `${flake.duration}s`,
             animationDelay: `${flake.delay}s`,
           }}
@@ -37,8 +42,11 @@ export default function ChristmasSnow() {
           10% {
             opacity: 0.8;
           }
+          90% {
+            opacity: 0.4;
+          }
           100% {
-            transform: translateY(100vh) translateX(20px);
+            transform: translateY(110vh) translateX(50px);
             opacity: 0;
           }
         }
