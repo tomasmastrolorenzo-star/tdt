@@ -157,7 +157,18 @@ export default function PrivacyPage() {
 
                     <section>
                         <h2 className="text-2xl font-semibold text-white mb-4">11. Contacto</h2>
-                        <p className="text-sm text-slate-500">
+                        <p>
+                            Para preguntas sobre esta Política de Privacidad o el manejo de sus datos:
+                        </p>
+                        <div className="mt-4 space-y-2">
+                            <p>
+                                Email:{" "}
+                                <a href="mailto:hola@trenddigitaltrade.com" className="text-pink-500 hover:text-pink-400">
+                                    hola@trenddigitaltrade.com
+                                </a>
+                            </p>
+                        </div>
+                        <p className="text-sm text-slate-500 mt-8 pt-8 border-t border-slate-800">
                             Última actualización: {new Date().toLocaleDateString("es-ES", { year: "numeric", month: "long", day: "numeric" })}
                         </p>
                     </section>
