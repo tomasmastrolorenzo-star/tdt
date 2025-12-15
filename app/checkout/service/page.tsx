@@ -39,7 +39,8 @@ function ServiceCheckoutContent() {
             const platformServices = allServices[platformId as keyof typeof allServices]
             if (platformServices) {
                 const services = platformServices[serviceType as keyof typeof platformServices] as any[]
-                const foundPackage = services?.find(p => p.id === packageId)
+                // Case-insensitive match for robustness
+                const foundPackage = services?.find(p => p.id.toLowerCase() === packageId.toLowerCase())
 
                 if (foundPackage) {
                     setServiceData({
