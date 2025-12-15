@@ -839,4 +839,3 @@ export const translations = {
     },
   },
 }
-  ```
