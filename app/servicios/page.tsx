@@ -26,9 +26,6 @@ function ServiciosContent() {
   const normalPrice = Math.round((followers / 2000) * 15)
   const premiumPrice = Math.round(normalPrice * 1.8)
 
-  import { allServices } from "@/lib/trend-up/packages"
-
-  // ... inside component ...
 
   const handleSelectPlan = (plan: "normal" | "premium") => {
     // Find the real package ID based on followers amount
