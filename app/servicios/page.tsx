@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Check, Sparkles, Zap, Clock, Users, TrendingUp, Shield, ArrowRight } from "lucide-react"
 import { LOCATIONS, INTERESTS, GENDERS } from "@/lib/el-faro/selectors"
+import { allServices } from "@/lib/trend-up/packages"
 
 function ServiciosContent() {
   const searchParams = useSearchParams()
@@ -25,12 +26,31 @@ function ServiciosContent() {
   const normalPrice = Math.round((followers / 2000) * 15)
   const premiumPrice = Math.round(normalPrice * 1.8)
 
+  import { allServices } from "@/lib/trend-up/packages"
+
+  // ... inside component ...
+
   const handleSelectPlan = (plan: "normal" | "premium") => {
+    // Find the real package ID based on followers amount
+    // Default to 'starter' if not found to avoid crash, but try to find match
+    let realPackageId = "starter"
+
+    // Type checking for platform to access allServices safely
+    const platformKey = platform as keyof typeof allServices
+    if (allServices[platformKey] && allServices[platformKey].followers) {
+      const packages = allServices[platformKey].followers
+      // Find package with closest follower count
+      const matched = packages.find(p => p.followers === followers)
+      if (matched) {
+        realPackageId = matched.id
+      }
+    }
+
     const price = plan === "premium" ? premiumPrice : normalPrice
     const params = new URLSearchParams({
       platform,
       service: "followers",
-      package: `${plan}-${followers}`,
+      package: realPackageId, // Use real ID (e.g., 'starter', 'growth')
       amount: followers.toString(),
       price: price.toString(),
       metadata: `Plan: ${plan}, Género: ${genderData?.name}, Ubicación: ${locationData?.name}, Interés: ${interestData?.name}`
