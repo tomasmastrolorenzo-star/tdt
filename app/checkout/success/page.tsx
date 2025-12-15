@@ -147,7 +147,7 @@ function SuccessContent() {
                     {/* Actions */}
                     <div className="grid md:grid-cols-2 gap-4 pt-4">
                         <Button
-                            onClick={() => window.open('https://wa.me/5491234567890', '_blank')}
+                            onClick={() => window.open('https://wa.me/5492212235170', '_blank')}
                             className="w-full bg-white border-2 border-slate-200 text-slate-700 hover:border-green-500 hover:text-green-600 hover:bg-green-50 h-14 rounded-xl font-bold text-base"
                         >
                             <MessageCircle className="w-5 h-5 mr-2" />
