@@ -579,7 +579,7 @@ export const translations = {
         guarantee: "Lifetime Guarantee",
         support: "24/7 VIP Priority Support",
         ai: "AI Segmentation (GPT-4o)",
-        advisor: "Dedicated Account Advisor",
+        advisor: "<b>Growth Consultant</b>",
         cta: "Choose Premium ⭐",
         bonus: "(+Bonus)",
       },
