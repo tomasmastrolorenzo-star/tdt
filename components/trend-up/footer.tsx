@@ -30,6 +30,9 @@ export default function TrendUpFooter() {
             <Link href="/contact" className="text-slate-400 hover:text-white text-sm transition-colors">
               {t.footer.contact}
             </Link>
+            <Link href="/refund" className="text-slate-400 hover:text-white text-sm transition-colors">
+              Política de Reembolso
+            </Link>
             <Link href="/login" className="text-slate-400 hover:text-white text-sm transition-colors">
               {t.footer.login}
             </Link>

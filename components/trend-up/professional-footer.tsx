@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { Sparkles, Instagram, Twitter, Facebook, Youtube } from "lucide-react"
 
 export default function ProfessionalFooter() {
@@ -64,7 +65,7 @@ export default function ProfessionalFooter() {
                             <li><a href="#" className="hover:text-orange-500 transition-colors">Términos de Servicio</a></li>
                             <li><a href="#" className="hover:text-orange-500 transition-colors">Política de Privacidad</a></li>
                             <li><a href="#" className="hover:text-orange-500 transition-colors">Política de Cookies</a></li>
-                            <li><a href="#" className="hover:text-orange-500 transition-colors">Política de Reembolso</a></li>
+                            <li><Link href="/refund" className="hover:text-orange-500 transition-colors">Política de Reembolso</Link></li>
                             <li><a href="#" className="hover:text-orange-500 transition-colors">GDPR</a></li>
                         </ul>
                     </div>
