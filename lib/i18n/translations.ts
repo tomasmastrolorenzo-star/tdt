@@ -523,6 +523,69 @@ export const translations = {
       titleEnd: "specifically",
       cta: "Get Started",
     },
+    // Services
+    services: {
+      instagram: {
+        followers: "Instagram Followers",
+        likes: "Instagram Likes",
+        views: "Instagram Views",
+      },
+      tiktok: {
+        followers: "TikTok Followers",
+        likes: "TikTok Likes",
+        views: "TikTok Views",
+      },
+    },
+    // Impact Section
+    impact: {
+      lovedBy: "Loved by over 80,000 fans",
+      title: "TDT boosts your",
+      titleMiddle: "specific brand",
+      titleEnd: "results",
+      cta: "Start now",
+      card: {
+        followers: "Followers",
+        growth: "Growth",
+        reach: "Account reach",
+        engagement: "Engagement",
+        sales: "Monthly sales",
+      }
+    },
+    // Pricing Specifics used in Component
+    pricing: {
+      limitedDiscount: "Limited Discount",
+      title: "Choose your growth",
+      titleHighlight: "without limits",
+      subtitle: "No bots. No risks. Real growth guaranteed.",
+      want: "I want to get",
+      realFollowers: "real followers",
+      monthly: "Monthly",
+      annual: "Annual",
+      standard: {
+        name: "Standard Growth",
+        desc: "Ideal to start growing steadily.",
+        delivery: "Natural delivery speed",
+        start: "Start in 24-48hs",
+        guarantee: "30-day refill guarantee",
+        support: "Email Support",
+        cta: "Choose Standard",
+      },
+      premium: {
+        badge: "AI RECOMMENDED",
+        name: "Turbo AI Growth",
+        desc: "Maximum speed and quality with Artificial Intelligence.",
+        delivery: "Turbo Speed (High Priority)",
+        start: "Instant Start (<1h)",
+        guarantee: "Lifetime Guarantee",
+        support: "24/7 VIP Priority Support",
+        ai: "AI Segmentation (GPT-4o)",
+        advisor: "Dedicated Account Advisor",
+        cta: "Choose Premium ⭐",
+        bonus: "(+Bonus)",
+      },
+      moreSpecific: "Looking for something more specific?",
+      viewAll: "View all available services and packages",
+    },
   },
   pt: {
     // Hero
@@ -715,136 +778,6 @@ export const translations = {
     services: {
       instagram: {
         followers: "Seguidores Instagram",
-        likes: "Likes Instagram",
-        views: "Vistas Instagram",
-      },
-      tiktok: {
-        followers: "Seguidores TikTok",
-        likes: "Likes TikTok",
-        views: "Vistas TikTok",
-      },
-    },
-    // Impact Section
-    impact: {
-      lovedBy: "Amado por más de 80.000 fans",
-      title: "TDT impulsa los",
-      titleMiddle: "resultados de su marca",
-      titleEnd: "específica",
-      cta: "Empieza ya",
-      card: {
-        followers: "Seguidores",
-        growth: "Crecimiento",
-        reach: "Alcance de cuenta",
-        engagement: "Engagement",
-        sales: "Ventas mensuales",
-      }
-    },
-    // Pricing Specifics used in Component
-    pricing: {
-      limitedDiscount: "Descuento limitado",
-      title: "Elige tu crecimiento",
-      titleHighlight: "sin límites",
-      subtitle: "Sin bots. Sin riesgos. Crecimiento real garantizado.",
-      want: "Quiero conseguir",
-      realFollowers: "seguidores reales",
-      monthly: "Mensual",
-      annual: "Anual",
-      standard: {
-        name: "Standard Growth",
-        desc: "Ideal para comenzar a crecer de forma constante.",
-        delivery: "Velocidad de entrega natural",
-        start: "Inicio en 24-48hs",
-        guarantee: "Garantía de reposición 30 días",
-        support: "Soporte por Email",
-        cta: "Elegir Standard",
-      },
-      premium: {
-        badge: "RECOMENDADO POR IA",
-        name: "Turbo AI Growth",
-        desc: "Máxima velocidad y calidad con Inteligencia Artificial.",
-        delivery: "Velocidad Turbo (Prioridad Alta)",
-        start: "Inicio Instantáneo (<1h)",
-        guarantee: "Garantía de por vida",
-        support: "Soporte VIP Prioritario 24/7",
-        ai: "Segmentación por IA (GPT-4o)",
-        advisor: "Asesor de cuenta dedicado",
-        cta: "Elegir Premium ⭐",
-        bonus: "(+Bonus)",
-      },
-      moreSpecific: "¿Buscas algo más específico?",
-      viewAll: "Ver todos los servicios y paquetes disponibles",
-    },
-  },
-  en: {
-    // Services
-    services: {
-      instagram: {
-        followers: "Instagram Followers",
-        likes: "Instagram Likes",
-        views: "Instagram Views",
-      },
-      tiktok: {
-        followers: "TikTok Followers",
-        likes: "TikTok Likes",
-        views: "TikTok Views",
-      },
-    },
-    // Impact Section
-    impact: {
-      lovedBy: "Loved by over 80,000 fans",
-      title: "TDT boosts your",
-      titleMiddle: "specific brand",
-      titleEnd: "results",
-      cta: "Start now",
-      card: {
-        followers: "Followers",
-        growth: "Growth",
-        reach: "Account reach",
-        engagement: "Engagement",
-        sales: "Monthly sales",
-      }
-    },
-    // Pricing Specifics used in Component
-    pricing: {
-      limitedDiscount: "Limited Discount",
-      title: "Choose your growth",
-      titleHighlight: "without limits",
-      subtitle: "No bots. No risks. Real growth guaranteed.",
-      want: "I want to get",
-      realFollowers: "real followers",
-      monthly: "Monthly",
-      annual: "Annual",
-      standard: {
-        name: "Standard Growth",
-        desc: "Ideal to start growing steadily.",
-        delivery: "Natural delivery speed",
-        start: "Start in 24-48hs",
-        guarantee: "30-day refill guarantee",
-        support: "Email Support",
-        cta: "Choose Standard",
-      },
-      premium: {
-        badge: "AI RECOMMENDED",
-        name: "Turbo AI Growth",
-        desc: "Maximum speed and quality with Artificial Intelligence.",
-        delivery: "Turbo Speed (High Priority)",
-        start: "Instant Start (<1h)",
-        guarantee: "Lifetime Guarantee",
-        support: "24/7 VIP Priority Support",
-        ai: "AI Segmentation (GPT-4o)",
-        advisor: "Dedicated Account Advisor",
-        cta: "Choose Premium ⭐",
-        bonus: "(+Bonus)",
-      },
-      moreSpecific: "Looking for something more specific?",
-      viewAll: "View all available services and packages",
-    },
-  },
-  pt: {
-    // Services
-    services: {
-      instagram: {
-        followers: "Seguidores Instagram",
         likes: "Curtidas Instagram",
         views: "Visualizações Instagram",
       },
@@ -906,3 +839,4 @@ export const translations = {
     },
   },
 }
+  ```
