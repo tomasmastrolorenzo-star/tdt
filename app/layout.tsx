@@ -4,7 +4,8 @@ import { Geist, Geist_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { I18nProvider } from "@/lib/i18n/context"
-import { ErrorBoundary } from "@/components/ErrorBoundary"
+import { Toaster } from "@/components/ui/toaster"
+import ErrorBoundary from "@/components/ErrorBoundary"
 import "./globals.css"
 
 const _geist = Geist({ subsets: ["latin"] })
@@ -52,6 +53,7 @@ export default function RootLayout({
         <ErrorBoundary>
           <I18nProvider>
             {children}
+            <Toaster />
           </I18nProvider>
         </ErrorBoundary>
         <Analytics />
