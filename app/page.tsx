@@ -34,6 +34,7 @@ export default function HomePage() {
       {/* PHASE 2: INFO & TRUST (Education, "No Bots") */}
       <ImpactSection />
       <FeaturesGrid />
+      <HowItWorks />
 
       {/* PHASE 3: SOCIAL PROOF (Testimonials & Results) */}
       <StatsGrid />
