@@ -40,8 +40,9 @@ export function Sidebar({ className, onNavigate }: SidebarProps) {
 
     const adminRoutes = [
         { title: "Overview", icon: LayoutDashboard, href: "/dashboard/admin" },
+        { title: "Usuarios", icon: Users, href: "/dashboard/admin/users" },
         { title: "Órdenes", icon: ShoppingBag, href: "/dashboard/admin/orders" },
-        { title: "Vendedores", icon: Users, href: "/dashboard/admin/vendors" },
+        { title: "Vendedores", icon: Shield, href: "/dashboard/admin/vendors" },
         { title: "Finanzas", icon: Wallet, href: "/dashboard/admin/finance" },
     ]
 
@@ -53,9 +54,11 @@ export function Sidebar({ className, onNavigate }: SidebarProps) {
 
     const vendorRoutes = [
         { title: "Dashboard", icon: LayoutDashboard, href: "/dashboard/vendor" },
+        { title: "Mis Servicios", icon: ShoppingBag, href: "/dashboard/vendor/services" },
+        { title: "Nuevo Pedido", icon: ShoppingBag, href: "/dashboard/vendor/new-order" },
         { title: "Ranking", icon: CrownIcon, href: "/dashboard/vendor/ranking" },
         { title: "Calculadora", icon: BarChart3, href: "/dashboard/vendor/calculator" },
-        { title: "Mis Pedidos", icon: ShoppingBag, href: "/dashboard/orders" },
+        { title: "Historial Pedidos", icon: ShoppingBag, href: "/dashboard/orders" },
     ]
 
     function CrownIcon(props: any) {

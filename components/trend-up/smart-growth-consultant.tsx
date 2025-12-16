@@ -7,8 +7,10 @@ import { Button } from "@/components/ui/button"
 import { motion, AnimatePresence } from "framer-motion"
 import { ArrowRight, Sparkles, Loader2 } from "lucide-react"
 import { LOCATIONS, INTERESTS, GENDERS, type LocationId, type InterestId, type GenderId } from "@/lib/el-faro/selectors"
+import { useI18n } from "@/lib/i18n/context"
 
 export default function SmartGrowthConsultant() {
+    const { t } = useI18n()
     const router = useRouter()
     const [step, setStep] = useState(1)
     const [isAnalyzing, setIsAnalyzing] = useState(false)
@@ -47,16 +49,16 @@ export default function SmartGrowthConsultant() {
                     {/* Header */}
                     <div className="text-center mb-12">
                         <span className="inline-block py-1 px-3 rounded-full bg-indigo-500/20 text-indigo-300 text-sm font-bold mb-4 border border-indigo-500/30">
-                            ✨ El Faro: Consultor de Crecimiento IA
+                            {t.consultant?.badge || "✨ TDT Lighthouse"}
                         </span>
                         <h2 className="text-4xl md:text-5xl font-black text-white mb-4">
-                            Diseña tu Estrategia <br />
+                            {t.consultant?.title} <br />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">
-                                Personalizada
+                                {t.consultant?.titleHighlight}
                             </span>
                         </h2>
                         <p className="text-slate-400 text-lg max-w-2xl mx-auto">
-                            Nuestra IA analiza tu perfil y diseña el plan perfecto para tu crecimiento. Solo selecciona tus preferencias.
+                            {t.consultant?.subtitle}
                         </p>
                     </div>
 
@@ -84,8 +86,8 @@ export default function SmartGrowthConsultant() {
                                     className="space-y-8"
                                 >
                                     <div className="text-center text-white mb-8">
-                                        <h3 className="text-2xl font-bold mb-2">1. ¿Cuál es tu objetivo de alcance?</h3>
-                                        <p className="text-slate-400">Selecciona cuántos seguidores nuevos quieres atraer.</p>
+                                        <h3 className="text-2xl font-bold mb-2">{t.consultant?.step1?.title}</h3>
+                                        <p className="text-slate-400">{t.consultant?.step1?.subtitle}</p>
                                     </div>
 
                                     {/* Platform Selector */}
@@ -107,7 +109,7 @@ export default function SmartGrowthConsultant() {
                                     <div className="px-4 py-8 bg-slate-800/50 rounded-2xl border border-slate-700">
                                         <div className="text-center mb-12">
                                             <span className="text-6xl font-black text-white">{followers[0].toLocaleString()}</span>
-                                            <span className="text-xl text-slate-400 ml-2">seguidores</span>
+                                            <span className="text-xl text-slate-400 ml-2">{t.consultant?.step1?.followers}</span>
                                         </div>
 
                                         <Slider
@@ -121,14 +123,14 @@ export default function SmartGrowthConsultant() {
                                         />
 
                                         <div className="flex justify-between text-slate-500 text-sm px-2">
-                                            <span>Micro (500)</span>
-                                            <span>Influencer (100k)</span>
+                                            <span>{t.consultant?.step1?.micro}</span>
+                                            <span>{t.consultant?.step1?.influencer}</span>
                                         </div>
                                     </div>
 
                                     <div className="flex justify-end">
                                         <Button onClick={handleNext} className="bg-white text-slate-900 hover:bg-slate-200 text-lg px-8 py-6 rounded-xl font-bold shadow-lg shadow-white/10">
-                                            Continuar <ArrowRight className="ml-2 w-5 h-5" />
+                                            {t.consultant?.step1?.continue} <ArrowRight className="ml-2 w-5 h-5" />
                                         </Button>
                                     </div>
                                 </motion.div>
@@ -144,13 +146,13 @@ export default function SmartGrowthConsultant() {
                                     className="space-y-6"
                                 >
                                     <div className="text-center text-white mb-4">
-                                        <h3 className="text-2xl font-bold mb-2">2. Define tu Audiencia Ideal</h3>
-                                        <p className="text-slate-400">Selecciona las características de tu público objetivo</p>
+                                        <h3 className="text-2xl font-bold mb-2">{t.consultant?.step2?.title}</h3>
+                                        <p className="text-slate-400">{t.consultant?.step2?.subtitle}</p>
                                     </div>
 
                                     {/* Gender Selector */}
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-300 mb-3">Género del Público</label>
+                                        <label className="block text-sm font-medium text-slate-300 mb-3">{t.consultant?.step2?.genderLabel}</label>
                                         <div className="grid grid-cols-3 gap-3">
                                             {GENDERS.map((g) => (
                                                 <button
@@ -167,7 +169,7 @@ export default function SmartGrowthConsultant() {
 
                                     {/* Location Selector */}
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-300 mb-3">Ubicación del Público</label>
+                                        <label className="block text-sm font-medium text-slate-300 mb-3">{t.consultant?.step2?.locationLabel}</label>
                                         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                                             {LOCATIONS.map((loc) => (
                                                 <button
@@ -184,7 +186,7 @@ export default function SmartGrowthConsultant() {
 
                                     {/* Interest Selector */}
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-300 mb-3">Nicho / Interés</label>
+                                        <label className="block text-sm font-medium text-slate-300 mb-3">{t.consultant?.step2?.interestLabel}</label>
                                         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 max-h-64 overflow-y-auto">
                                             {INTERESTS.map((int) => (
                                                 <button
@@ -200,9 +202,9 @@ export default function SmartGrowthConsultant() {
                                     </div>
 
                                     <div className="flex justify-between pt-4">
-                                        <button onClick={() => setStep(1)} className="text-slate-400 hover:text-white underline">Atrás</button>
+                                        <button onClick={() => setStep(1)} className="text-slate-400 hover:text-white underline">{t.consultant?.step2?.back}</button>
                                         <Button onClick={handleNext} className="bg-gradient-to-r from-indigo-500 to-cyan-500 hover:from-indigo-600 hover:to-cyan-600 text-white text-lg px-8 py-6 rounded-xl font-bold shadow-lg shadow-indigo-500/20">
-                                            Ver Opciones <Sparkles className="ml-2 w-5 h-5 animate-pulse" />
+                                            {t.consultant?.step2?.cta} <Sparkles className="ml-2 w-5 h-5 animate-pulse" />
                                         </Button>
                                     </div>
                                 </motion.div>
@@ -215,13 +217,13 @@ export default function SmartGrowthConsultant() {
                     {/* Social Proof */}
                     <div className="mt-8 flex justify-center gap-8 opacity-60">
                         <div className="flex items-center gap-2 text-slate-400 text-sm">
-                            <Sparkles className="w-4 h-4 text-green-500" /> Datos Encriptados
+                            <Sparkles className="w-4 h-4 text-green-500" /> {t.consultant?.trust?.encrypted}
                         </div>
                         <div className="flex items-center gap-2 text-slate-400 text-sm">
-                            <Sparkles className="w-4 h-4 text-green-500" /> Sin Contraseñas
+                            <Sparkles className="w-4 h-4 text-green-500" /> {t.consultant?.trust?.noPassword}
                         </div>
                         <div className="flex items-center gap-2 text-slate-400 text-sm">
-                            <Sparkles className="w-4 h-4 text-green-500" /> Garantía Total
+                            <Sparkles className="w-4 h-4 text-green-500" /> {t.consultant?.trust?.guarantee}
                         </div>
                     </div>
 

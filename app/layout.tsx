@@ -11,18 +11,33 @@ const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Trend Digital Trade - Compra Seguidores de Instagram, TikTok y Más",
+  title: "Trend Digital Trade | Crecimiento Real con IA para Redes Sociales",
   description:
-    "Aumenta tu presencia en redes sociales con seguidores reales. Paquetes desde $15 USD. Entrega garantizada, soporte 24/7.",
-  keywords: "comprar seguidores, instagram followers, tiktok followers, youtube subscribers, SMM panel",
-  generator: "v0.app",
+    "La primera plataforma que utiliza Inteligencia Artificial para potenciar tu crecimiento en Instagram, TikTok y YouTube. Seguidores reales, segmentados y garantizados.",
+  keywords: "crecimiento instagram, comprar seguidores reales, tiktok viral, ia para redes sociales, marketing digital, trend digital trade",
+  generator: "Next.js",
+  applicationName: "Trend Digital Trade",
   openGraph: {
-    title: "Trend Digital Trade - Impulsa tu Presencia Digital",
-    description: "Seguidores reales, engagement auténtico. Crece en Instagram, TikTok y más.",
+    title: "Trend Digital Trade 🚀 - Crecimiento con IA",
+    description: "¿Cansado del algoritmo? Usa nuestra IA para conectar con seguidores reales interesados en tu contenido.",
+    url: "https://trenddigitaltrade.com",
+    siteName: "Trend Digital Trade",
+    locale: "es_ES",
     type: "website",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Trend Digital Trade - AI Social Growth",
+      },
+    ],
   },
   icons: {
-    icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>",
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>", type: "image/svg+xml" }
+    ],
   }
 }
 

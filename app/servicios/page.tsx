@@ -7,7 +7,10 @@ import { Check, Sparkles, Zap, Clock, Users, TrendingUp, Shield, ArrowRight } fr
 import { LOCATIONS, INTERESTS, GENDERS } from "@/lib/el-faro/selectors"
 import { allServices } from "@/lib/trend-up/packages"
 
+import { useI18n } from "@/lib/i18n/context"
+
 function ServiciosContent() {
+  const { t } = useI18n()
   const searchParams = useSearchParams()
   const router = useRouter()
 
@@ -33,13 +36,25 @@ function ServiciosContent() {
     let realPackageId = "starter"
 
     // Type checking for platform to access allServices safely
+    // Type checking for platform to access allServices safely
     const platformKey = platform as keyof typeof allServices
-    if (allServices[platformKey] && allServices[platformKey].followers) {
-      const packages = allServices[platformKey].followers
+    const serviceData = allServices[platformKey]
+
+    if (serviceData) {
+      let packages: any[] = []
+      // Check for followers or subscribers array safely
+      if ('followers' in serviceData) {
+        packages = (serviceData as any).followers
+      } else if ('subscribers' in serviceData) {
+        packages = (serviceData as any).subscribers
+      }
+
       // Find package with closest follower count
-      const matched = packages.find(p => p.followers === followers)
-      if (matched) {
-        realPackageId = matched.id
+      if (packages.length > 0) {
+        const matched = packages.find((p: any) => p.followers === followers)
+        if (matched) {
+          realPackageId = matched.id
+        }
       }
     }
 
@@ -60,16 +75,16 @@ function ServiciosContent() {
       {/* Header */}
       <div className="container mx-auto px-4 py-8">
         <button onClick={() => router.back()} className="text-slate-400 hover:text-white flex items-center gap-2 mb-8">
-          ← Volver
+          ← {t.plan?.back || "Back"}
         </button>
 
         {/* Title */}
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-6xl font-black text-white mb-4">
-            Tu Plan <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">Personalizado</span>
+            {t.plan?.title} <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">{t.plan?.titleHighlight}</span>
           </h1>
           <p className="text-slate-400 text-lg max-w-2xl mx-auto">
-            Basado en tu perfil: {interestData?.icon} {interestData?.name} · {locationData?.flag} {locationData?.name} · {genderData?.icon} {genderData?.name}
+            {t.plan?.subtitle} {interestData?.icon} {interestData?.name} · {locationData?.flag} {locationData?.name} · {genderData?.icon} {genderData?.name}
           </p>
         </div>
 
@@ -79,8 +94,8 @@ function ServiciosContent() {
           {/* NORMAL PLAN */}
           <div className="bg-slate-900/80 backdrop-blur-xl border-2 border-slate-700 rounded-3xl p-8 relative">
             <div className="mb-6">
-              <h3 className="text-2xl font-bold text-white mb-2">Plan Normal</h3>
-              <p className="text-slate-400 text-sm">Crecimiento constante y seguro</p>
+              <h3 className="text-2xl font-bold text-white mb-2">{t.plan?.normal?.title}</h3>
+              <p className="text-slate-400 text-sm">{t.plan?.normal?.subtitle}</p>
             </div>
 
             <div className="mb-8">
@@ -88,29 +103,29 @@ function ServiciosContent() {
                 <span className="text-5xl font-black text-white">${normalPrice}</span>
                 <span className="text-slate-500">USD</span>
               </div>
-              <p className="text-slate-500 text-sm mt-2">{followers.toLocaleString()} seguidores</p>
+              <p className="text-slate-500 text-sm mt-2">{followers.toLocaleString()} {t.plan?.features?.realFollowers}</p>
             </div>
 
             <ul className="space-y-4 mb-8">
               <li className="flex items-start gap-3 text-slate-300">
                 <Check className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
-                <span>Entrega en <strong>7-10 días</strong></span>
+                <span dangerouslySetInnerHTML={{ __html: t.plan?.features?.delivery ? t.plan?.features?.delivery(t.plan?.features?.deliveryNormal) : "" }} />
               </li>
               <li className="flex items-start gap-3 text-slate-300">
                 <Check className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
-                <span>Seguidores reales y activos</span>
+                <span>{t.plan?.features?.realFollowers}</span>
               </li>
               <li className="flex items-start gap-3 text-slate-300">
                 <Check className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
-                <span>Soporte por email (24-48h)</span>
+                <span>{t.plan?.features?.supportEmail}</span>
               </li>
               <li className="flex items-start gap-3 text-slate-300">
                 <Check className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
-                <span>Garantía de reposición 30 días</span>
+                <span>{t.plan?.features?.guarantee30}</span>
               </li>
               <li className="flex items-start gap-3 text-slate-300">
                 <Check className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
-                <span>Engagement moderado (2-5% likes)</span>
+                <span>{t.plan?.features?.engagementNormal}</span>
               </li>
             </ul>
 
@@ -119,19 +134,19 @@ function ServiciosContent() {
               variant="outline"
               className="w-full h-14 text-lg font-bold border-2 border-slate-600 hover:bg-slate-800"
             >
-              Seleccionar Normal
+              {t.plan?.normal?.cta}
             </Button>
           </div>
 
           {/* PREMIUM PLAN */}
           <div className="bg-gradient-to-br from-indigo-900/50 to-purple-900/50 backdrop-blur-xl border-2 border-indigo-500 rounded-3xl p-8 relative shadow-2xl shadow-indigo-500/20">
             <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-indigo-500 to-purple-500 text-white px-6 py-2 rounded-full text-sm font-bold">
-              ⚡ RECOMENDADO
+              {t.plan?.premium?.badge}
             </div>
 
             <div className="mb-6 mt-4">
-              <h3 className="text-2xl font-bold text-white mb-2">Plan Premium</h3>
-              <p className="text-indigo-300 text-sm">Crecimiento acelerado con IA</p>
+              <h3 className="text-2xl font-bold text-white mb-2">{t.plan?.premium?.title}</h3>
+              <p className="text-indigo-300 text-sm">{t.plan?.premium?.subtitle}</p>
             </div>
 
             <div className="mb-8">
@@ -139,33 +154,33 @@ function ServiciosContent() {
                 <span className="text-5xl font-black text-white">${premiumPrice}</span>
                 <span className="text-indigo-300">USD</span>
               </div>
-              <p className="text-indigo-400 text-sm mt-2">{followers.toLocaleString()} seguidores + Bonus</p>
+              <p className="text-indigo-400 text-sm mt-2">{followers.toLocaleString()} {t.plan?.features?.premiumFollowers} {t.plan?.premium?.bonus}</p>
             </div>
 
             <ul className="space-y-4 mb-8">
               <li className="flex items-start gap-3 text-white">
                 <Zap className="w-5 h-5 text-yellow-400 mt-0.5 flex-shrink-0" />
-                <span>Entrega en <strong>2-4 días</strong> (3x más rápido)</span>
+                <span dangerouslySetInnerHTML={{ __html: (t.plan?.features?.delivery ? t.plan?.features?.delivery(t.plan?.features?.deliveryPremium) : "") + " " + (t.plan?.features?.deliverySpeedPremium || "") }} />
               </li>
               <li className="flex items-start gap-3 text-white">
                 <Sparkles className="w-5 h-5 text-yellow-400 mt-0.5 flex-shrink-0" />
-                <span>Seguidores premium de alta calidad</span>
+                <span>{t.plan?.features?.premiumFollowers}</span>
               </li>
               <li className="flex items-start gap-3 text-white">
                 <Users className="w-5 h-5 text-yellow-400 mt-0.5 flex-shrink-0" />
-                <span>+20% seguidores bonus gratis</span>
+                <span>{t.plan?.premium?.bonus}</span>
               </li>
               <li className="flex items-start gap-3 text-white">
                 <Shield className="w-5 h-5 text-yellow-400 mt-0.5 flex-shrink-0" />
-                <span>Soporte prioritario 24/7 (WhatsApp)</span>
+                <span>{t.plan?.features?.supportPriority}</span>
               </li>
               <li className="flex items-start gap-3 text-white">
                 <TrendingUp className="w-5 h-5 text-yellow-400 mt-0.5 flex-shrink-0" />
-                <span>Engagement alto (8-15% likes + comentarios)</span>
+                <span>{t.plan?.features?.engagementHigh}</span>
               </li>
               <li className="flex items-start gap-3 text-white">
                 <Check className="w-5 h-5 text-yellow-400 mt-0.5 flex-shrink-0" />
-                <span>Garantía de reposición 90 días</span>
+                <span>{t.plan?.features?.guarantee90}</span>
               </li>
             </ul>
 
@@ -173,41 +188,41 @@ function ServiciosContent() {
               onClick={() => handleSelectPlan("premium")}
               className="w-full h-14 text-lg font-bold bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 shadow-lg shadow-indigo-500/30"
             >
-              Seleccionar Premium <ArrowRight className="ml-2 w-5 h-5" />
+              {t.plan?.premium?.cta} <ArrowRight className="ml-2 w-5 h-5" />
             </Button>
           </div>
         </div>
 
         {/* Growth Timeline Visualization */}
         <div className="max-w-4xl mx-auto bg-slate-900/80 backdrop-blur-xl border border-slate-700 rounded-3xl p-8 mb-16">
-          <h3 className="text-2xl font-bold text-white mb-6 text-center">📈 Visualiza tu Crecimiento Mes a Mes</h3>
-          <p className="text-slate-400 text-center mb-8">Proyección estimada con Plan Premium</p>
+          <h3 className="text-2xl font-bold text-white mb-6 text-center">{t.plan?.visualization?.title}</h3>
+          <p className="text-slate-400 text-center mb-8">{t.plan?.visualization?.subtitle}</p>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="bg-slate-800/50 rounded-xl p-4 text-center border border-slate-700">
-              <div className="text-sm text-slate-500 mb-2">Mes 1</div>
+              <div className="text-sm text-slate-500 mb-2">{t.plan?.visualization?.month} 1</div>
               <div className="text-2xl font-bold text-white">{(followers * 1.2).toLocaleString()}</div>
               <div className="text-xs text-green-400 mt-1">+{Math.round((followers * 0.2) / 1000)}k</div>
             </div>
             <div className="bg-slate-800/50 rounded-xl p-4 text-center border border-slate-700">
-              <div className="text-sm text-slate-500 mb-2">Mes 2</div>
+              <div className="text-sm text-slate-500 mb-2">{t.plan?.visualization?.month} 2</div>
               <div className="text-2xl font-bold text-white">{(followers * 1.5).toLocaleString()}</div>
               <div className="text-xs text-green-400 mt-1">+{Math.round((followers * 0.3) / 1000)}k</div>
             </div>
             <div className="bg-slate-800/50 rounded-xl p-4 text-center border border-slate-700">
-              <div className="text-sm text-slate-500 mb-2">Mes 3</div>
+              <div className="text-sm text-slate-500 mb-2">{t.plan?.visualization?.month} 3</div>
               <div className="text-2xl font-bold text-white">{(followers * 2).toLocaleString()}</div>
               <div className="text-xs text-green-400 mt-1">+{Math.round((followers * 0.5) / 1000)}k</div>
             </div>
             <div className="bg-gradient-to-br from-indigo-900/50 to-purple-900/50 rounded-xl p-4 text-center border-2 border-indigo-500">
-              <div className="text-sm text-indigo-300 mb-2">Mes 6</div>
+              <div className="text-sm text-indigo-300 mb-2">{t.plan?.visualization?.month} 6</div>
               <div className="text-2xl font-bold text-white">{(followers * 3.5).toLocaleString()}</div>
               <div className="text-xs text-yellow-400 mt-1 font-bold">+{Math.round((followers * 2.5) / 1000)}k 🚀</div>
             </div>
           </div>
 
           <p className="text-xs text-slate-500 text-center mt-6">
-            * Proyección basada en crecimiento orgánico + servicios TDT. Resultados pueden variar según contenido y engagement.
+            {t.plan?.visualization?.disclaimer}
           </p>
         </div>
 
@@ -216,19 +231,19 @@ function ServiciosContent() {
           <div className="flex flex-wrap justify-center gap-8 text-slate-400 text-sm">
             <div className="flex items-center gap-2">
               <Shield className="w-5 h-5 text-green-500" />
-              <span>100% Seguro</span>
+              <span>{t.plan?.trust?.secure}</span>
             </div>
             <div className="flex items-center gap-2">
               <Users className="w-5 h-5 text-blue-500" />
-              <span>Seguidores Reales</span>
+              <span>{t.plan?.trust?.real}</span>
             </div>
             <div className="flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-purple-500" />
-              <span>Sin Bots</span>
+              <span>{t.plan?.trust?.noBots}</span>
             </div>
             <div className="flex items-center gap-2">
               <Check className="w-5 h-5 text-green-500" />
-              <span>Garantía Total</span>
+              <span>{t.plan?.trust?.guarantee}</span>
             </div>
           </div>
         </div>

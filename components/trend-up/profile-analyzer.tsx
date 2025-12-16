@@ -115,10 +115,10 @@ export default function ProfileAnalyzer() {
                                 {/* ... input form ... */}
                                 <div className="mb-6">
                                     <h3 className="font-bold text-xl text-slate-900 mb-4">
-                                        Grow with TDT
+                                        {t.profileAnalyzer?.formTitle || "Grow with TDT"}
                                     </h3>
                                     <p className="text-slate-600 text-sm mb-4">
-                                        Ingresa tu usuario de Instagram para comenzar
+                                        {t.profileAnalyzer?.formSubtitle || "Ingresa tu usuario de Instagram para comenzar"}
                                     </p>
 
                                     <div className="space-y-3">
@@ -143,7 +143,7 @@ export default function ProfileAnalyzer() {
                                             {loading ? (
                                                 <>
                                                     <Loader2 className="w-5 h-5 animate-spin mr-2" />
-                                                    Analizando perfil...
+                                                    {t.profileAnalyzer?.input?.analyzing}
                                                 </>
                                             ) : (
                                                 t.profileAnalyzer.input.button
@@ -184,7 +184,7 @@ export default function ProfileAnalyzer() {
                                                 className="w-16 h-16 rounded-full border-2 border-orange-500"
                                             />
                                             <div className="absolute -bottom-1 -right-1 bg-green-500 text-white text-[10px] px-1.5 py-0.5 rounded-full border border-white">
-                                                Online
+                                                {t.profileAnalyzer?.online}
                                             </div>
                                         </div>
                                         <div className="flex-1">
@@ -198,12 +198,12 @@ export default function ProfileAnalyzer() {
                                                     onClick={() => setProfile(null)}
                                                     className="text-slate-500 text-xs px-2 h-6"
                                                 >
-                                                    Cambiar
+                                                    {t.profileAnalyzer?.change}
                                                 </Button>
                                             </div>
                                             <p className="text-sm text-green-600 font-medium flex items-center gap-1">
                                                 <CheckCircle2 className="w-4 h-4" />
-                                                Perfil verificado y apto
+                                                {t.profileAnalyzer?.verified}
                                             </p>
                                         </div>
                                     </div>

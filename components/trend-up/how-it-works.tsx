@@ -1,29 +1,32 @@
 "use client"
 
 import { Target, Zap, TrendingUp } from "lucide-react"
+import { useI18n } from "@/lib/i18n/context"
 
 export default function HowItWorks() {
+  const { t } = useI18n()
+
   const steps = [
     {
       icon: Target,
-      title: "1. Establece tus objetivos",
-      description: "Utiliza nuestras opciones avanzadas de segmentación para encontrar a los seguidores que deseas por edad, grupo demográfico, ubicación, sexo, etc.",
+      title: t.howItWorks?.steps?.[0]?.title,
+      description: t.howItWorks?.steps?.[0]?.description,
       color: "text-orange-500",
       bg: "bg-orange-500/10",
       border: "border-orange-500/20"
     },
     {
       icon: Zap,
-      title: "2. Nosotros nos ocupamos",
-      description: "TDT hace uso del aprendizaje automático, GPT4o y expertos estrategas en crecimiento para promocionar tu contenido entre los usuarios adecuados de forma orgánica.",
+      title: t.howItWorks?.steps?.[1]?.title,
+      description: t.howItWorks?.steps?.[1]?.description,
       color: "text-green-500",
       bg: "bg-green-500/10",
       border: "border-green-500/20"
     },
     {
       icon: TrendingUp,
-      title: "3. Crecimiento orgánico dirigido",
-      description: "Conseguirás seguidores segmentados y que interactúen con tu contenido según tu nicho, que, además disfrutarán de él y lo apreciarán.",
+      title: t.howItWorks?.steps?.[2]?.title,
+      description: t.howItWorks?.steps?.[2]?.description,
       color: "text-purple-500",
       bg: "bg-purple-500/10",
       border: "border-purple-500/20"
@@ -35,11 +38,11 @@ export default function HowItWorks() {
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <div className="inline-block bg-orange-100 text-orange-600 px-4 py-1 rounded-full text-sm font-bold mb-6">
-            ¿Cómo funciona?
+            {t.howItWorks?.badge}
           </div>
           <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
-            Planes personalizados para el <br />
-            <span className="text-slate-200">crecimiento orgánico 🤝</span>
+            {t.howItWorks?.title} <br />
+            <span className="text-slate-200">{t.howItWorks?.titleHighlight}</span>
           </h2>
         </div>
 

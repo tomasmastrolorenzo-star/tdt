@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
-import { Check, Sparkles, Shield, CreditCard, Bitcoin, MessageCircle, Lock, X, ArrowRight } from "lucide-react"
+import { Check, Sparkles, Shield, CreditCard, Bitcoin, MessageCircle, Lock, X, ArrowRight, Instagram, Music, Youtube, Video } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { allServices, platforms } from "@/lib/trend-up/packages"
@@ -11,7 +11,7 @@ import { useI18n } from "@/lib/i18n/context"
 function ServiceCheckoutContent() {
     const searchParams = useSearchParams()
     const router = useRouter()
-    const { formatPrice } = useI18n()
+    const { t, formatPrice } = useI18n()
 
     const [loading, setLoading] = useState(true)
     const [serviceData, setServiceData] = useState<any>(null)
@@ -86,8 +86,8 @@ function ServiceCheckoutContent() {
     if (!serviceData) {
         return (
             <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 p-4">
-                <h1 className="text-2xl font-bold text-slate-900 mb-4">Paquete no encontrado</h1>
-                <Button onClick={() => router.push("/servicios")}>Volver a Servicios</Button>
+                <h1 className="text-2xl font-bold text-slate-900 mb-4">{t.checkout?.notFound}</h1>
+                <Button onClick={() => router.push("/servicios")}>{t.checkout?.backToServices}</Button>
             </div>
         )
     }
@@ -98,7 +98,7 @@ function ServiceCheckoutContent() {
 
     const handleCheckout = () => {
         if (!email || !link) {
-            alert("Por favor completa todos los campos")
+            alert(t.checkout?.form?.fillAll)
             return
         }
 
@@ -116,7 +116,6 @@ function ServiceCheckoutContent() {
             })
 
             // Redirect to success page with params
-            // Also redirect to success for demo flow
             const params = new URLSearchParams({
                 order_id: orderId,
                 email: email,
@@ -130,7 +129,14 @@ function ServiceCheckoutContent() {
         } else {
             // Manual Payment (WhatsApp)
             const segmentationText = segmentation ? `\n📍 Segmentación: ${segmentation}` : ""
-            const message = `Hola! Quiero contratar el servicio: ${serviceData.name} (${serviceData.amount} ${serviceData.serviceType}) por $${formatPrice(total)}.\n🔗 Link: ${link}\n📧 Email: ${email}${segmentationText}`
+            const messageTemplate = t.checkout?.whatsappMessage || "Hola! Quiero contratar el servicio: {service} por {price}. Link: {link} Email: {email} {segmentation}"
+
+            const message = messageTemplate
+                .replace("{service}", `${serviceData.name} (${serviceData.amount} ${serviceData.serviceType})`)
+                .replace("{price}", `$${formatPrice(total)}`)
+                .replace("{link}", link)
+                .replace("{email}", email)
+                .replace("{segmentation}", segmentationText)
 
             window.open(`https://wa.me/5492212235170?text=${encodeURIComponent(message)}`, '_blank')
 
@@ -151,9 +157,18 @@ function ServiceCheckoutContent() {
 
     const getInputLabel = () => {
         if (serviceData.serviceType === "followers" || serviceData.serviceType === "subscribers") {
-            return "Nombre de usuario / Link del canal"
+            return t.checkout?.form?.username
         }
-        return "Link de la publicación / video"
+        return t.checkout?.form?.postLink
+    }
+
+    const getServiceIcon = () => {
+        switch (serviceData.platformId) {
+            case 'instagram': return <Instagram className="w-6 h-6" />
+            case 'tiktok': return <Music className="w-6 h-6" />
+            case 'youtube': return <Youtube className="w-6 h-6" />
+            default: return <Sparkles className="w-6 h-6" />
+        }
     }
 
     return (
@@ -168,7 +183,7 @@ function ServiceCheckoutContent() {
                         </div>
                         <div className="flex items-center gap-2 text-sm text-slate-600">
                             <Shield className="w-4 h-4 text-green-500" />
-                            <span>Pago 100% Seguro</span>
+                            <span>{t.checkout?.payment?.secure}</span>
                         </div>
                     </div>
                 </div>
@@ -180,8 +195,8 @@ function ServiceCheckoutContent() {
                         {/* Left Column: Details & Input */}
                         <div className="space-y-6">
                             <div>
-                                <h1 className="text-3xl font-black text-slate-900 mb-2">Finalizar Compra</h1>
-                                <p className="text-slate-600">Completa tus datos para recibir el servicio.</p>
+                                <h1 className="text-3xl font-black text-slate-900 mb-2">{t.checkout?.title}</h1>
+                                <p className="text-slate-600">{t.checkout?.subtitle}</p>
                             </div>
 
                             {/* Service Summary Card */}
@@ -189,7 +204,7 @@ function ServiceCheckoutContent() {
                                 <div className="flex items-center gap-4 mb-4">
                                     <div className={`w-12 h-12 rounded-xl flex items-center justify-center bg-gradient-to-br ${platforms.find(p => p.id === serviceData.platformId)?.color || "from-slate-500 to-slate-700"
                                         } text-white`}>
-                                        <Sparkles className="w-6 h-6" />
+                                        {getServiceIcon()}
                                     </div>
                                     <div>
                                         <h3 className="font-bold text-slate-900 capitalize">
@@ -216,11 +231,11 @@ function ServiceCheckoutContent() {
                             <div className="space-y-4">
                                 <div>
                                     <label className="block text-sm font-bold text-slate-900 mb-2">
-                                        Tu Email (para confirmación)
+                                        {t.checkout?.form?.email}
                                     </label>
                                     <Input
                                         type="email"
-                                        placeholder="ejemplo@correo.com"
+                                        placeholder={t.checkout?.form?.emailPlaceholder}
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
                                         className="h-12"
@@ -232,30 +247,30 @@ function ServiceCheckoutContent() {
                                     </label>
                                     <Input
                                         type="text"
-                                        placeholder={serviceData.serviceType === "followers" ? "@usuario" : "https://..."}
+                                        placeholder={serviceData.serviceType === "followers" ? "@username" : "https://..."}
                                         value={link}
                                         onChange={(e) => setLink(e.target.value)}
                                         className="h-12"
                                     />
                                     <p className="text-xs text-slate-500 mt-1">
-                                        Asegúrate de que la cuenta sea pública.
+                                        {t.checkout?.form?.publicAccount}
                                     </p>
                                 </div>
 
                                 {/* Target Audience / Segmentation Input */}
                                 <div>
                                     <label className="block text-sm font-bold text-slate-900 mb-2">
-                                        País / Ubicación del público (Opcional)
+                                        {t.checkout?.form?.location}
                                     </label>
                                     <Input
                                         type="text"
-                                        placeholder="Ej: Estados Unidos, España, México..."
+                                        placeholder={t.checkout?.form?.locationPlaceholder}
                                         value={segmentation}
                                         onChange={(e) => setSegmentation(e.target.value)}
                                         className="h-12"
                                     />
                                     <p className="text-xs text-slate-500 mt-1">
-                                        Ayúdanos a segmentar mejor tu audiencia (si aplica).
+                                        {t.checkout?.form?.segmentationHelp}
                                     </p>
                                 </div>
                             </div>
@@ -264,7 +279,7 @@ function ServiceCheckoutContent() {
                         {/* Right Column: Payment */}
                         <div className="space-y-6">
                             <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6">
-                                <h3 className="font-bold text-slate-900 mb-4">Método de Pago</h3>
+                                <h3 className="font-bold text-slate-900 mb-4">{t.checkout?.payment?.title}</h3>
 
                                 <div className="grid grid-cols-2 gap-3 mb-6">
                                     <button
@@ -280,7 +295,7 @@ function ServiceCheckoutContent() {
                                             </div>
                                         )}
                                         <Bitcoin className="w-6 h-6 mx-auto mb-2 text-orange-500" />
-                                        <div className="text-xs font-bold text-slate-900">Crypto</div>
+                                        <div className="text-xs font-bold text-slate-900">{t.checkout?.payment?.crypto}</div>
                                     </button>
 
                                     <button
@@ -291,20 +306,20 @@ function ServiceCheckoutContent() {
                                             }`}
                                     >
                                         <MessageCircle className="w-6 h-6 mx-auto mb-2 text-blue-500" />
-                                        <div className="text-xs font-bold text-slate-900">WhatsApp</div>
-                                        <div className="text-[10px] text-slate-500">Transferencia/Efectivo</div>
+                                        <div className="text-xs font-bold text-slate-900">{t.checkout?.payment?.whatsapp}</div>
+                                        <div className="text-[10px] text-slate-500">{t.checkout?.payment?.transfer}</div>
                                     </button>
                                 </div>
 
                                 {/* Total Calculation */}
                                 <div className="space-y-2 mb-6 pb-6 border-b border-slate-200">
                                     <div className="flex justify-between text-sm">
-                                        <span className="text-slate-600">Subtotal</span>
+                                        <span className="text-slate-600">{t.checkout?.payment?.subtotal}</span>
                                         <span className="font-medium">{formatPrice(serviceData.price)}</span>
                                     </div>
                                     {paymentMethod === "crypto" && (
                                         <div className="flex justify-between text-sm text-green-600">
-                                            <span>Descuento Crypto (10%)</span>
+                                            <span>{t.checkout?.payment?.discountCrypto}</span>
                                             <span className="font-medium">-{formatPrice(cryptoDiscount)}</span>
                                         </div>
                                     )}
@@ -312,13 +327,13 @@ function ServiceCheckoutContent() {
                                         <div className="flex justify-between text-sm text-indigo-600">
                                             <span className="flex items-center gap-1">
                                                 <Check className="w-4 h-4" />
-                                                Código {referralCode} (5%)
+                                                Code {referralCode} (5%)
                                             </span>
                                             <span className="font-medium">-{formatPrice(referralDiscount)}</span>
                                         </div>
                                     )}
                                     <div className="flex justify-between items-baseline pt-2">
-                                        <span className="text-lg font-bold text-slate-900">Total a Pagar</span>
+                                        <span className="text-lg font-bold text-slate-900">{t.checkout?.payment?.total}</span>
                                         <span className="text-2xl font-black text-slate-900">{formatPrice(total)}</span>
                                     </div>
                                 </div>
@@ -327,13 +342,13 @@ function ServiceCheckoutContent() {
                                     onClick={handleCheckout}
                                     className="w-full h-14 text-lg font-bold bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 shadow-lg"
                                 >
-                                    {paymentMethod === "crypto" ? "Pagar con Crypto" : "Finalizar en WhatsApp"}
+                                    {paymentMethod === "crypto" ? t.checkout?.payment?.payCrypto : t.checkout?.payment?.payWhatsapp}
                                     <ArrowRight className="w-5 h-5 ml-2" />
                                 </Button>
 
                                 <div className="mt-4 flex items-center justify-center gap-2 text-xs text-slate-500">
                                     <Lock className="w-3 h-3" />
-                                    <span>Transacción encriptada y segura</span>
+                                    <span>{t.checkout?.payment?.encrypted}</span>
                                 </div>
                             </div>
                         </div>
@@ -346,7 +361,7 @@ function ServiceCheckoutContent() {
 
 export default function ServiceCheckoutPage() {
     return (
-        <Suspense fallback={<div>Cargando...</div>}>
+        <Suspense fallback={<div>Loading...</div>}>
             <ServiceCheckoutContent />
         </Suspense>
     )

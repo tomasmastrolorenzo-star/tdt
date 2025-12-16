@@ -42,15 +42,15 @@ export default function SocialProofTicker() {
   const current = recentPurchases[currentIndex]
 
   const getActionText = (action: string) => {
-    return action === "analyzed" ? "analizó su perfil 🔍" : "solicitó estrategia 📈"
+    return action === "analyzed" ? t.socialProofTicker?.analyzed : t.socialProofTicker?.requested
   }
 
   const getTimeText = (minutes: number) => {
     if (minutes < 60) {
-      return `hace ${minutes} min`
+      return `${t.socialProofTicker?.time?.ago || "hace"} ${minutes} ${t.socialProofTicker?.time?.min}`
     }
     const hours = Math.floor(minutes / 60)
-    return `hace ${hours}h ${minutes % 60}min`
+    return `${t.socialProofTicker?.time?.ago || "hace"} ${hours}${t.socialProofTicker?.time?.hour} ${minutes % 60}${t.socialProofTicker?.time?.min}`
   }
 
   return (

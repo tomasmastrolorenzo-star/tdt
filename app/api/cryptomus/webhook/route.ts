@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
             payment_amount,
             payer_amount,
             payer_currency,
-        } = body
+        } = body as any
 
         console.log('Cryptomus Webhook:', {
             uuid,
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
         })
 
         // Update order status in database
-        const supabase = createClient()
+        const supabase = await createClient()
 
         // Update order based on payment status
         if (status === 'paid' || status === 'paid_over') {
