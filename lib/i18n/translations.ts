@@ -74,6 +74,13 @@ export const translations = {
         followers: "Seguidores Entregados",
         support: "Soporte Disponible",
       },
+      statsGrid: {
+        monthlyGrowth: "Aumento mensual de seguidores",
+        hoursSaved: "Horas ahorradas para los clientes",
+        rating: "Basado en opiniones reales",
+        userBase: "Base actual de usuarios de TDT",
+      },
+
     },
     // Platform selector
     platform: {
@@ -206,6 +213,7 @@ export const translations = {
       privacy: "Privacidad",
       contact: "Contacto",
       login: "Iniciar Sesión",
+      refundPolicy: "Política de Reembolso",
       copyright: "Todos los derechos reservados.",
     },
     // Package qualities
@@ -524,6 +532,12 @@ export const translations = {
         followers: "Followers Delivered",
         support: "Support Available",
       },
+      statsGrid: {
+        monthlyGrowth: "Monthly follower increase",
+        hoursSaved: "Hours saved for clients",
+        rating: "Based on real client reviews",
+        userBase: "Current TDT user base",
+      },
     },
     // Platform selector
     platform: {
@@ -566,6 +580,11 @@ export const translations = {
       },
     },
     // Testimonials
+    testimonialsSection: {
+      badge: "Clients love us",
+      title: "Clients love our social media growth tool",
+      subtitle: "Discover why influencers and brands trust TDT with their social media growth and success",
+    },
     testimonials: [
       {
         name: "María García",
@@ -655,6 +674,7 @@ export const translations = {
       privacy: "Privacy",
       contact: "Contact",
       login: "Log In",
+      refundPolicy: "Refund Policy",
       copyright: "All rights reserved.",
     },
     // Package qualities

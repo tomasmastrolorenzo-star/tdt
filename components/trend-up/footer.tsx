@@ -31,7 +31,7 @@ export default function TrendUpFooter() {
               {t.footer.contact}
             </Link>
             <Link href="/refund" className="text-slate-400 hover:text-white text-sm transition-colors">
-              Política de Reembolso
+              {t.footer.refundPolicy}
             </Link>
             <Link href="/login" className="text-slate-400 hover:text-white text-sm transition-colors">
               {t.footer.login}

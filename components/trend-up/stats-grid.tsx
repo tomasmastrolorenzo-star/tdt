@@ -2,34 +2,40 @@
 
 import { Instagram, Clock, CheckCircle, Users } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
+import { useI18n } from "@/lib/i18n/context"
 
 export default function StatsGrid() {
+    const { t } = useI18n()
+
+    // Defensive check
+    if (!t?.hero?.statsGrid) return null
+
     const stats = [
         {
             icon: Instagram,
             value: "4,152",
-            label: "Aumento mensual de seguidores de nuestros clientes",
+            label: t.hero.statsGrid.monthlyGrowth || "Monthly follower increase",
             color: "text-pink-500",
             bg: "bg-pink-500/10"
         },
         {
             icon: Clock,
             value: "8M+",
-            label: "Horas ahorradas para los clientes",
+            label: t.hero.statsGrid.hoursSaved || "Hours saved for clients",
             color: "text-emerald-500",
             bg: "bg-emerald-500/10"
         },
         {
             icon: CheckCircle,
             value: "4.9/5",
-            label: "Basado en opiniones reales de clientes",
+            label: t.hero.statsGrid.rating || "Based on real client reviews",
             color: "text-blue-500",
             bg: "bg-blue-500/10"
         },
         {
             icon: Users,
             value: "15,000+",
-            label: "Base actual de usuarios de TDT",
+            label: t.hero.statsGrid.userBase || "Current TDT user base",
             color: "text-purple-500",
             bg: "bg-purple-500/10"
         }

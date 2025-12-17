@@ -2,8 +2,10 @@
 
 import Link from "next/link"
 import { Sparkles, Instagram, Twitter, Facebook, Youtube } from "lucide-react"
+import { useI18n } from "@/lib/i18n/context"
 
 export default function ProfessionalFooter() {
+    const { t } = useI18n()
     return (
         <footer className="bg-slate-900 text-slate-300">
             {/* Main Footer */}
@@ -65,7 +67,7 @@ export default function ProfessionalFooter() {
                             <li><a href="#" className="hover:text-orange-500 transition-colors">Términos de Servicio</a></li>
                             <li><a href="#" className="hover:text-orange-500 transition-colors">Política de Privacidad</a></li>
                             <li><a href="#" className="hover:text-orange-500 transition-colors">Política de Cookies</a></li>
-                            <li><Link href="/refund" className="hover:text-orange-500 transition-colors">Política de Reembolso</Link></li>
+                            <li><Link href="/refund" className="hover:text-orange-500 transition-colors">{t.footer.refundPolicy}</Link></li>
                             <li><a href="#" className="hover:text-orange-500 transition-colors">GDPR</a></li>
                         </ul>
                     </div>
