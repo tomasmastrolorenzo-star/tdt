@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { cryptomusClient } from "@/lib/services/cryptomus"
-import { createClient } from "@/lib/supabase/server"
+import { createClient } from "@supabase/supabase-js"
 
 export async function POST(request: NextRequest) {
     try {
@@ -50,8 +50,18 @@ export async function POST(request: NextRequest) {
             txid
         })
 
-        // Update order status in database
-        const supabase = await createClient()
+
+        // Initialize Supabase Admin to update orders without RLS restrictions
+        const supabase = createClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.SUPABASE_SERVICE_ROLE_KEY!,
+            {
+                auth: {
+                    autoRefreshToken: false,
+                    persistSession: false
+                }
+            }
+        )
 
         // Update order based on payment status
         if (status === 'paid' || status === 'paid_over') {
