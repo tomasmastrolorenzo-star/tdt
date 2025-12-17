@@ -4,16 +4,7 @@ import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
 
 // Cliente admin con Service Role Key
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false
-    }
-  }
-)
+
 
 export async function POST(request: Request) {
   try {
@@ -110,6 +101,18 @@ export async function POST(request: Request) {
     }
 
     // 5. Verificar si el email ya existe
+    // Inicializar cliente admin aquí para evitar errores en build
+    const supabaseAdmin = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      }
+    )
+
     const { data: existingUser } = await supabaseAdmin.auth.admin.listUsers()
     const emailExists = existingUser?.users?.some(u => u.email === email)
 
