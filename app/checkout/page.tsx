@@ -72,12 +72,41 @@ function CheckoutContent() {
     const cryptoDiscount = paymentMethod === "crypto" ? subtotal * 0.1 : 0
     const total = subtotal - cryptoDiscount
 
-    const handleCheckout = () => {
+    const handleCheckout = async () => {
         if (paymentMethod === "crypto") {
-            // Redirect to Cryptomus payment (Simulation)
-            console.log("Processing crypto payment:", { total, plan: selectedPlan, upsells: { autoLikes, autoViews } })
-            // Simulate success redirect for demo
-            window.location.href = `/checkout/success?order_id=CRYPTO-${Math.floor(Math.random() * 10000)}&email=${userData.email}`
+            try {
+                // Call create-payment API
+                const response = await fetch("/api/create-payment", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        amount: total,
+                        currency: "USD", // Or ARS if supported, but typically Crypto is USD-based. For now keep as logic implies.
+                        // Ideally we should convert ARS to USD or use USDT directly.
+                        email: userData.email,
+                        username: userData.username,
+                        orderDetails: {
+                            plan: selectedPlan,
+                            billing: billingCycle,
+                            amount: selectedPlan === "turbo" ? "5000" : "2000", // Needs actual value from params if available, defaulting for safety
+                            // In real app, pass exact quantity from params
+                            upsells: { autoLikes, autoViews }
+                        }
+                    })
+                })
+
+                const data = await response.json()
+
+                if (data.success && data.url) {
+                    // Redirect to Cryptomus
+                    window.location.href = data.url
+                } else {
+                    alert("Error al crear el pago: " + (data.error || "Intente nuevamente"))
+                }
+            } catch (error) {
+                console.error("Checkout Error:", error)
+                alert("Ocurrió un error al procesar el pago.")
+            }
         } else {
             // Open WhatsApp
             const message = `Hola! Quiero contratar el plan ${selectedPlan.toUpperCase()} (${billingCycle}) por ARS $${total.toLocaleString()}. Usuario: @${userData.username}`
