@@ -9,7 +9,8 @@ export default function ImpactSection() {
     const { t } = useI18n()
 
     return (
-        <section className="py-14 bg-gradient-to-br from-orange-500 to-orange-600 relative overflow-hidden">
+    return (
+        <section className="py-8 bg-gradient-to-br from-orange-500 to-orange-600 relative overflow-hidden">
             <div className="container mx-auto px-4 text-center relative z-10">
                 {/* Social Logos (White 50% opacity) */}
                 <div className="flex items-center justify-center gap-8 mb-10 opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500">
@@ -25,8 +26,12 @@ export default function ImpactSection() {
                     </span>
                 </h2>
 
-                <Link href="#consultant" className="inline-block mb-10">
-                    <Button size="lg" className="!bg-[#020617] !text-white hover:!bg-slate-900 border border-slate-800 font-bold text-lg px-8 py-6 rounded-full shadow-xl transition-all hover:scale-105 hover:shadow-slate-900/50">
+                <Link href="#consultant" className="inline-block mb-8">
+                    <Button
+                        size="lg"
+                        className="font-bold text-lg px-8 py-6 rounded-full shadow-xl transition-all hover:scale-105 hover:shadow-slate-900/50"
+                        style={{ backgroundColor: '#020617', color: 'white', border: '1px solid #1e293b' }}
+                    >
                         {t.impact?.cta} <ArrowRight className="w-5 h-5 ml-2" />
                     </Button>
                 </Link>

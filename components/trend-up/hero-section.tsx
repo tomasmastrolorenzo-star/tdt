@@ -28,7 +28,7 @@ export default function HeroSection() {
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-4xl mx-auto text-center">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-full px-4 py-1.5 mb-8 hover:border-[#F8B229]/50 transition-colors">
+          <div className="inline-flex items-center gap-2 bg-slate-900/50 backdrop-blur-sm rounded-full px-4 py-1.5 mb-8 hover:bg-slate-800 transition-colors">
             <span className="flex h-2 w-2 rounded-full bg-[#D42426] animate-pulse shadow-[0_0_10px_#D42426]" />
             <span className="text-sm text-slate-300 font-medium">{badgeText}</span>
           </div>
@@ -50,7 +50,7 @@ export default function HeroSection() {
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
             <Link href="#consultant" className="w-full sm:w-auto">
-              <Button size="lg" className="w-full sm:w-auto bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white h-16 px-10 rounded-full text-xl font-bold shadow-[0_0_30px_rgba(249,115,22,0.5)] hover:shadow-[0_0_40px_rgba(249,115,22,0.7)] transition-all hover:scale-105 border border-white/20 animate-pulse-slow">
+              <Button size="lg" className="w-full sm:w-auto bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white h-16 px-10 rounded-full text-xl font-bold shadow-[0_0_30px_rgba(249,115,22,0.5)] hover:shadow-[0_0_40px_rgba(249,115,22,0.7)] transition-all hover:scale-105 animate-pulse-slow">
                 {t.hero.cta}
               </Button>
             </Link>
