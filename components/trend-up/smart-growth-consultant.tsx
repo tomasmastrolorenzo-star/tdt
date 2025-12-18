@@ -184,7 +184,7 @@ export default function SmartGrowthConsultant() {
                         {/* Loading Overlay (Revelation) */}
                         <AnimatePresence>
                             {isLoading && <LoadingOverlay step={3} t={t} values={{ interest, location }} />}
-                        </AnatePresence>
+                        </AnimatePresence>
 
                         {/* Progress Bar (Top) */}
                         <div className="w-full h-1.5 bg-slate-800">
