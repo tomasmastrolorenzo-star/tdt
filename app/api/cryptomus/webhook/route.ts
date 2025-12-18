@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
         // Update order based on payment status
         if (status === 'paid' || status === 'paid_over') {
             // Payment successful
-            await supabase
+            const { data: updatedOrder, error: updateError } = await supabase
                 .from('orders')
                 .update({
                     payment_status: 'completed',
@@ -80,12 +80,80 @@ export async function POST(request: NextRequest) {
                         payer_amount,
                         payer_currency,
                     },
-                    status: 'processing',
+                    status: 'processing', // Will set to completed if it's a wallet fund
                     updated_at: new Date().toISOString()
                 })
                 .eq('id', order_id)
+                .select()
+                .single()
 
-            // TODO: Process the order (create JAP order, send confirmation email, etc.)
+            if (updateError) {
+                console.error("Error updating order:", updateError)
+                return NextResponse.json({ success: false, error: "Order update failed" }, { status: 500 })
+            }
+
+            // Handle Wallet Funding
+            if (updatedOrder?.service_id === 'wallet_fund' || updatedOrder?.metadata?.type === 'wallet_fund') {
+                const userId = updatedOrder.metadata?.userId
+                const amountToAdd = parseFloat(payment_amount || updatedOrder.amount)
+
+                if (userId && !isNaN(amountToAdd)) {
+                    console.log(`Processing Wallet Top-up for user ${userId}: +${amountToAdd}`)
+
+                    // 1. Ensure wallet exists (UPSERT not strictly needed if we assume it exists, but safer)
+                    // First try to get wallet
+                    let { data: wallet } = await supabase.from('wallets').select('id, balance').eq('user_id', userId).single()
+
+                    if (!wallet) {
+                        // Create wallet if missing
+                        const { data: newWallet, error: createWalletError } = await supabase
+                            .from('wallets')
+                            .insert({ user_id: userId, balance: 0 })
+                            .select()
+                            .single()
+
+                        if (createWalletError) {
+                            console.error("Error creating wallet:", createWalletError)
+                        } else {
+                            wallet = newWallet
+                        }
+                    }
+
+                    if (wallet) {
+                        // 2. Update balance
+                        const { error: balanceError } = await supabase
+                            .from('wallets')
+                            .update({
+                                balance: Number(wallet.balance) + Number(amountToAdd),
+                                updated_at: new Date().toISOString()
+                            })
+                            .eq('id', wallet.id)
+
+                        if (!balanceError) {
+                            // 3. Create Transaction Record
+                            await supabase.from('transactions').insert({
+                                wallet_id: wallet.id,
+                                user_id: userId, // For redundancy/indexing
+                                amount: amountToAdd,
+                                type: 'deposit',
+                                status: 'completed',
+                                description: `Carga de saldo via Cryptomus (Orden #${updatedOrder.id.slice(0, 8)})`,
+                                reference_id: updatedOrder.id
+                            })
+
+                            // 4. Mark order as completed
+                            await supabase
+                                .from('orders')
+                                .update({ status: 'completed' })
+                                .eq('id', updatedOrder.id)
+                        } else {
+                            console.error("Error updating balance:", balanceError)
+                        }
+                    }
+                }
+            }
+
+            // TODO: Process JAP orders if it's NOT a wallet fund (service_id !== 'wallet_fund')
 
         } else if (status === 'cancel' || status === 'system_fail' || status === 'fail') {
             // Payment failed or cancelled
