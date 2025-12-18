@@ -92,7 +92,7 @@ export default function HeroSection() {
           </div>
 
           {/* Stats with Counter */}
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-8 border-t border-slate-800 pt-10 max-w-3xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-8 pt-10 max-w-3xl mx-auto">
             <div>
               <div className="text-3xl font-bold text-white mb-1 flex justify-center items-center gap-0.5">
                 <Counter end={50} suffix="K+" />

@@ -51,7 +51,7 @@ export default function HowItWorks() {
             <div key={index} className={`relative flex flex-col items-center text-center bg-white rounded-3xl p-8 border ${step.border} hover:shadow-xl transition-all duration-300 group z-10`}>
               {/* Mobile Connector (Vertical) */}
               {index < steps.length - 1 && (
-                <div className="md:hidden absolute -bottom-8 left-1/2 -translate-x-1/2 w-[2px] h-8 border-l-2 border-dashed border-white/30 z-0" />
+                <div className="md:hidden absolute -bottom-8 left-1/2 -translate-x-1/2 w-[2px] h-8 border-l-2 border-dashed border-white/50 z-20" />
               )}
 
               {/* Desktop Connector (Horizontal) - keeping existing logic but cleaning up comments */}

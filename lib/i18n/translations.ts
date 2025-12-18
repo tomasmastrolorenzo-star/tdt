@@ -241,7 +241,7 @@ export const translations = {
           description: "Utiliza nuestras opciones de segmentación avanzadas para encontrar los seguidores que deseas por edad, demografía, ubicación, género, etc.",
         },
         {
-          title: "2. Ejecución Inteligente",
+          title: "2. Ejecución con IA",
           description: "TDT usa aprendizaje automático, GPT4o y estrategas expertos para promocionar tu contenido a los usuarios correctos orgánicamente.",
         },
         {
@@ -1381,21 +1381,22 @@ export const translations = {
     ],
     // How it works
     howItWorks: {
-      title: "Como",
-      titleHighlight: "Funciona",
-      subtitle: "Em apenas 3 passos simples você estará no caminho para aumentar sua audiência",
+      badge: "Como funciona?",
+      title: "Planos personalizados para",
+      titleHighlight: "crescimento orgânico",
+      subtitle: "Em apenas 3 passos simples você estará no caminho para crescer sua audiência",
       steps: [
         {
-          title: "Escolha seu pacote",
-          description: "Selecione a plataforma e o pacote que melhor se adapta às suas necessidades de crescimento.",
+          title: "1. Defina seus objetivos",
+          description: "Use nossas opções avançadas de segmentação para encontrar os seguidores que você deseja por idade, demografia, localização, gênero, etc.",
         },
         {
-          title: "Insira seu perfil",
-          description: "Só precisamos do seu nome de usuário. Nunca pedimos senhas ou dados sensíveis.",
+          title: "2. Execução com IA",
+          description: "TDT usa aprendizado de máquina, GPT4o e estrategistas especialistas para promover seu conteúdo aos usuários certos organicamente.",
         },
         {
-          title: "Receba seus seguidores",
-          description: "Você começará a ver resultados em questão de horas. Entrega gradual e segura.",
+          title: "3. Crescimento Segmentado",
+          description: "Você obterá seguidores segmentados que interagem com seu conteúdo com base em seu nicho, resultando em maior retenção e engajamento genuíno.",
         },
       ],
     },
