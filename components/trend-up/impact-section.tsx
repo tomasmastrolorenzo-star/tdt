@@ -11,40 +11,22 @@ export default function ImpactSection() {
     return (
         <section className="py-20 bg-gradient-to-br from-orange-500 to-orange-600 relative overflow-hidden">
             <div className="container mx-auto px-4 text-center relative z-10">
-                {/* Social Proof */}
-                <div className="inline-flex flex-col items-center justify-center mb-8">
-                    <div className="flex -space-x-4 mb-4">
-                        {[1, 2, 3, 4, 5].map((i) => (
-                            <div key={i} className="w-12 h-12 rounded-full border-4 border-slate-950 overflow-hidden bg-slate-800">
-                                <img
-                                    src={`https://i.pravatar.cc/100?img=${i + 10}`}
-                                    alt="Client"
-                                    className="w-full h-full object-cover"
-                                />
-                            </div>
-                        ))}
-                    </div>
-                    <div className="flex items-center gap-2 mb-2">
-                        <div className="flex gap-1">
-                            {[1, 2, 3, 4, 5].map((i) => (
-                                <Star key={i} className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-                            ))}
-                        </div>
-                        <span className="text-white font-bold">5.0</span>
-                    </div>
-                    <p className="text-white/90 font-handwriting text-xl mb-4 italic">{t.impact?.lovedBy}</p>
+                {/* Social Logos (White 50% opacity) */}
+                <div className="flex items-center justify-center gap-8 mb-10 opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" alt="Instagram" className="h-8 invert brightness-0" />
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg" alt="YouTube" className="h-8 invert brightness-0" />
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/3/34/Icon_hulus_TikTok_02.svg" alt="TikTok" className="h-7 invert brightness-0" />
                 </div>
 
-                <h2 className="text-3xl md:text-5xl font-black text-white mb-8 leading-tight">
-                    {t.impact?.title || "TDT impulsa los"} <br />
-                    <span className="bg-white/20 px-2 rounded-lg italic">
-                        {t.impact?.titleMiddle || "resultados de su marca"}
-                    </span> <br />
-                    {t.impact?.titleEnd || "específica"}
+                <h2 className="text-3xl md:text-5xl font-black text-white mb-8 leading-tight max-w-4xl mx-auto">
+                    {t.impact?.title || "Dominate Your Niche"} <br className="hidden md:block" />
+                    <span className="bg-white/10 px-3 py-1 rounded-xl italic decoration-wavy decoration-white/30 text-white inline-block mt-2 backdrop-blur-sm">
+                        {t.impact?.titleMiddle || "with Data-Driven Precision"}
+                    </span>
                 </h2>
 
                 <Link href="#consultant" className="inline-block mb-16">
-                    <Button size="lg" className="bg-white text-slate-900 hover:bg-slate-100 font-bold text-lg px-8 py-6 rounded-full shadow-lg transition-transform hover:scale-105">
+                    <Button size="lg" className="bg-slate-900 text-white hover:bg-slate-800 font-bold text-lg px-8 py-6 rounded-full shadow-xl transition-all hover:scale-105 hover:shadow-slate-900/30 border border-slate-700/50">
                         {t.impact?.cta} <ArrowRight className="w-5 h-5 ml-2" />
                     </Button>
                 </Link>

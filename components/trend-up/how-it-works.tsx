@@ -49,19 +49,13 @@ export default function HowItWorks() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {steps.map((step, index) => (
             <div key={index} className={`relative flex flex-col items-center text-center bg-white rounded-3xl p-8 border ${step.border} hover:shadow-xl transition-all duration-300 group z-10`}>
-              {/* Connector Line (Mobile hidden, Desktop visible) */}
+              {/* Mobile Connector (Vertical) */}
               {index < steps.length - 1 && (
-                <div className="hidden md:block absolute top-14 -right-1/2 w-full h-[2px] border-t-2 border-dashed border-slate-300 z-0 pointer-events-none"
-                  style={{ transform: "translateY(50%)" }}
-                />
-                // Logic: Positions a line extending to the right. 
-                // Issue: "right-1/2" might be too far or short depending on grid gap. 
-                // A better approach is using a pseudo element on the container or a separate element between columns.
-                // Given the grid setup, "absolute" on the card might be tricky if not overflowing correctly.
-                // Let's try a simpler approach: Draw the arrow/line in the grid gap? No.
-                // Standard approach: Absolute positioning on the card, pointing right.
-                // CSS: `left-full` width `half-gap`.
+                <div className="md:hidden absolute -bottom-8 left-1/2 -translate-x-1/2 w-[2px] h-8 border-l-2 border-dashed border-white/30 z-0" />
               )}
+
+              {/* Desktop Connector (Horizontal) - keeping existing logic but cleaning up comments */}
+
               {/* Improved Connector: Render only if not last */}
               {index < steps.length - 1 && (
                 <div className="hidden md:block absolute top-[3.5rem] left-[60%] w-[80%] h-auto -z-10">

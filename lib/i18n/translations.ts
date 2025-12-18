@@ -56,6 +56,8 @@ export const translations = {
   es: {
     // Hero
     hero: {
+      badgeChristmas: "🎄 Navidad llegó a TDT",
+      badgeNewYear: "🎉 Oferta de Año Nuevo",
       badge: "🎄 Navidad llegó a TDT",
       title: "Vence al Algoritmo y Conecta con",
       titleHighlight: "Audiencias Reales",
@@ -66,7 +68,7 @@ export const translations = {
       solution: "TDT usa Inteligencia Artificial para poner tu contenido en frente de personas reales interesadas en contenido como el tuyo. Solo selecciona género, ubicación del público objetivo, y nuestra IA se encarga del resto.",
       solutionHighlight: "Empezarás a ver crecimiento real en horas.",
       trustBadge: "No son bots ni cuentas fake. Es gente real.",
-      trustLine: "Amado por más de 80,000 fans",
+      trustLine: "Amado por más de *80,000* fans",
       guarantee: "💯 Garantía de satisfacción o te devolvemos tu dinero",
       cta: "Impulsar mi cuenta con IA →",
       ctaSecondary: "Cómo Funciona",
@@ -230,21 +232,21 @@ export const translations = {
     // How it works
     howItWorks: {
       badge: "¿Cómo funciona?",
-      title: "Planes personalizados para el",
-      titleHighlight: "crecimiento orgánico 🤝",
-      subtitle: "En solo 3 simples pasos estarás en camino a hacer crecer tu audiencia",
+      title: "Planes personalizados para",
+      titleHighlight: "crecimiento orgánico",
+      subtitle: "En 3 simples pasos estarás en camino a crecer tu audiencia",
       steps: [
         {
-          title: "1. Establece tus objetivos",
-          description: "Utiliza nuestras opciones avanzadas de segmentación para encontrar a los seguidores que deseas por edad, grupo demográfico, ubicación, sexo, etc.",
+          title: "1. Define tus metas",
+          description: "Utiliza nuestras opciones de segmentación avanzadas para encontrar los seguidores que deseas por edad, demografía, ubicación, género, etc.",
         },
         {
-          title: "2. Nosotros nos ocupamos",
-          description: "TDT hace uso del aprendizaje automático, GPT4o y expertos estrategas en crecimiento para promocionar tu contenido entre los usuarios adecuados de forma orgánica.",
+          title: "2. Ejecución Inteligente",
+          description: "TDT usa aprendizaje automático, GPT4o y estrategas expertos para promocionar tu contenido a los usuarios correctos orgánicamente.",
         },
         {
-          title: "3. Crecimiento orgánico dirigido",
-          description: "Conseguirás seguidores segmentados y que interactúen con tu contenido según tu nicho, que, además disfrutarán de él y lo apreciarán.",
+          title: "3. Crecimiento Segmentado",
+          description: "Obtendrás seguidores segmentados que interactúan con tu contenido según tu nicho, resultando en mayor retención y engagement genuino.",
         },
       ],
     },
@@ -474,6 +476,31 @@ export const translations = {
         guarantee: "Garantía Total",
       },
     },
+    // Checkout Redesign
+    checkout: {
+      orderBump: {
+        headline: "🚀 Oferta Única: Procesamiento Prioritario",
+        copy: "¡Sí! Quiero procesamiento prioritario por solo $3.99.",
+        price: "+$3.99",
+      },
+      mysteryUpsell: {
+        title: "¡Espera! No cierres esta página...",
+        subtitle: "Nuestra IA sugiere potenciar tu pedido para maximizar la retención.",
+        offer: "¿Quieres DUPLICAR tus seguidores por solo el 50% del costo?",
+        ctaAccept: "Sí, Mejorar mi Pedido Ahora",
+        ctaReject: "No gracias, me quedo con mi crecimiento pequeño",
+      },
+      visualValidator: {
+        valid: "Cuenta Encontrada",
+        checking: "Validando con IA...",
+      },
+      paymentButton: {
+        text: "Activar Plan Ahora",
+        subtext: "Entrega Garantizada en 24h",
+      },
+      noPassword: "🔒 Nunca pedimos tu contraseña",
+      secureLogos: "Pagos 100% Seguros y Encriptados",
+    },
     // Social Proof Ticker
     socialProofTicker: {
       analyzed: "analizó su perfil 🔍",
@@ -629,7 +656,9 @@ export const translations = {
   en: {
     // Hero
     hero: {
-      badge: "🎄 Christmas came to TDT",
+      badgeChristmas: "🎄 Christmas came to TDT",
+      badgeNewYear: "🎉 New Year Offer",
+      badge: "Christmas came to TDT",
       title: "Beat the Algorithm and Connect with",
       titleHighlight: "Real Audiences",
       titleEnd: "using AI",
@@ -639,7 +668,7 @@ export const translations = {
       solution: "TDT uses Artificial Intelligence to put your content in front of real people interested in content like yours. Just select gender, target audience location, and our AI takes care of the rest.",
       solutionHighlight: "You'll start seeing real growth in hours.",
       trustBadge: "Not bots or fake accounts. Real people.",
-      trustLine: "Loved by over 80,000 fans",
+      trustLine: "Loved by over *80,000* fans",
       guarantee: "💯 Satisfaction guarantee or your money back",
       cta: "Boost my account with AI →",
       ctaSecondary: "How It Works",
@@ -767,7 +796,7 @@ export const translations = {
     howItWorks: {
       badge: "How it works?",
       title: "Custom plans for",
-      titleHighlight: "organic growth 🤝",
+      titleHighlight: "organic growth",
       subtitle: "In just 3 simple steps you'll be on your way to growing your audience",
       steps: [
         {
@@ -775,12 +804,12 @@ export const translations = {
           description: "Use our advanced targeting options to find the followers you want by age, demographic, location, gender, etc.",
         },
         {
-          title: "2. We handle it",
+          title: "2. AI Execution",
           description: "TDT uses machine learning, GPT4o, and expert growth strategists to promote your content to the right users organically.",
         },
         {
           title: "3. Targeted organic growth",
-          description: "You'll get segmented followers who engage with your content based on your niche, and who will also enjoy and appreciate it.",
+          description: "You'll get segmented followers who engage with your content based on your niche, resulting in higher retention and genuine engagement.",
         },
       ],
     },
@@ -1003,6 +1032,31 @@ export const translations = {
         guarantee: "Full Guarantee",
       },
     },
+    // Checkout Redesign
+    checkout: {
+      orderBump: {
+        headline: "🚀 One-Time Offer: Priority Processing",
+        copy: "Yes, add priority processing for $3.99.",
+        price: "+$3.99",
+      },
+      mysteryUpsell: {
+        title: "Wait! Do not close this page...",
+        subtitle: "Our AI suggests boosting your order to maximize retention.",
+        offer: "Get Double the Followers for only 50% of the cost?",
+        ctaAccept: "Yes, Upgrade My Order Instantly",
+        ctaReject: "No thanks, I'll keep my small growth",
+      },
+      visualValidator: {
+        valid: "Account Found",
+        checking: "Validating with AI...",
+      },
+      paymentButton: {
+        text: "Start Growth Now",
+        subtext: "Guaranteed Delivery within 24h",
+      },
+      noPassword: "🔒 We never ask for your password",
+      secureLogos: "100% Secure & Encrypted Payments",
+    },
     // Social Proof Ticker
     socialProofTicker: {
       analyzed: "analyzed their profile 🔍",
@@ -1016,10 +1070,10 @@ export const translations = {
     // Impact Section
     impact: {
       lovedBy: "Loved by over 80,000 fans",
-      title: "TDT boosts your",
-      titleMiddle: "specific brand",
-      titleEnd: "results",
-      cta: "Start now",
+      title: "Dominate Your Niche",
+      titleMiddle: "with Data-Driven Precision",
+      titleEnd: "",
+      cta: "Start Now",
       card: {
         followers: "Followers",
         growth: "Growth",
@@ -1157,6 +1211,8 @@ export const translations = {
   pt: {
     // Hero
     hero: {
+      badgeChristmas: "🎄 O Natal chegou à TDT",
+      badgeNewYear: "🎉 Oferta de Ano Novo",
       badge: "🎄 O Natal chegou à TDT",
       title: "Vença o Algoritmo e Conecte-se com",
       titleHighlight: "Públicos Reais",
@@ -1167,7 +1223,7 @@ export const translations = {
       solution: "TDT usa Inteligência Artificial para colocar seu conteúdo na frente de pessoas reais interessadas em conteúdo como o seu. Apenas selecione gênero, localização do público-alvo, e nossa IA cuida do resto.",
       solutionHighlight: "Você começará a ver crescimento real em horas.",
       trustBadge: "Não são bots ou contas falsas. São pessoas reais.",
-      trustLine: "Amado por mais de 80.000 fãs",
+      trustLine: "Amado por mais de *80.000* fãs",
       guarantee: "💯 Garantia de satisfação ou seu dinheiro de volta",
       cta: "Impulsionar minha conta com IA →",
       ctaSecondary: "Como Funciona",
@@ -1467,10 +1523,10 @@ export const translations = {
     // Impact Section
     impact: {
       lovedBy: "Amado por mais de 80.000 fãs",
-      title: "TDT impulsiona os",
-      titleMiddle: "resultados da sua marca",
-      titleEnd: "específica",
-      cta: "Comece agora",
+      title: "Domina tu Nicho",
+      titleMiddle: "con Precisión Basada en Datos",
+      titleEnd: "",
+      cta: "Empezar Ahora",
       card: {
         followers: "Seguidores",
         growth: "Crescimento",

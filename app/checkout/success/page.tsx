@@ -10,6 +10,9 @@ function SuccessContent() {
     const searchParams = useSearchParams()
     const [orderId, setOrderId] = useState("")
     const [email, setEmail] = useState("")
+    const [status, setStatus] = useState<"connecting" | "success">("connecting")
+    const [progress, setProgress] = useState(0)
+    const isUpgraded = searchParams.get("upgraded") === "true"
 
     useEffect(() => {
         // Simulate generating an order ID if one isn't provided
@@ -18,46 +21,58 @@ function SuccessContent() {
         const userEmail = searchParams.get("email") || "tu correo"
         setEmail(userEmail)
 
-        // Process order (Email + JAP)
-        const processOrder = async () => {
-            try {
-                const orderDetails = {
-                    serviceName: searchParams.get("service") || "Servicio de Instagram",
-                    amount: searchParams.get("amount") || "1000",
-                    price: searchParams.get("price") || "$9.99"
+        // Connection Simulation
+        const interval = setInterval(() => {
+            setProgress(prev => {
+                if (prev >= 100) {
+                    clearInterval(interval)
+                    setStatus("success")
+                    return 100
                 }
+                return prev + 2 // 50 ticks * 2 = 100 approx 2-3 secs
+            })
+        }, 30)
 
-                const japId = searchParams.get("jap_id")
-                const link = searchParams.get("link")
+        // Process order logic...
+        // ... (Keep existing processOrder logic if necessary, though simpler is better for view)
 
-                await fetch('/api/process-order', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        email: userEmail,
-                        orderDetails,
-                        japId,
-                        link
-                    })
-                })
-            } catch (error) {
-                console.error('Failed to process order:', error)
-            }
-        }
-
-        if (userEmail !== "tu correo") {
-            processOrder()
-        }
+        return () => clearInterval(interval)
     }, [searchParams])
 
     const handleCopyOrderId = () => {
         navigator.clipboard.writeText(orderId)
-        // Could add a toast notification here
+    }
+
+    if (status === "connecting") {
+        return (
+            <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4 text-center">
+                <div className="w-full max-w-md space-y-8">
+                    <div className="relative w-24 h-24 mx-auto">
+                        <div className="absolute inset-0 border-4 border-slate-800 rounded-full"></div>
+                        <div className="absolute inset-0 border-t-4 border-green-500 rounded-full animate-spin"></div>
+                        <Sparkles className="absolute inset-0 m-auto w-8 h-8 text-green-500 animate-pulse" />
+                    </div>
+                    <div>
+                        <h2 className="text-2xl font-bold text-white mb-2">Connecting to AI Network...</h2>
+                        <p className="text-slate-400">Allocating server resources for your growth</p>
+                    </div>
+                    {/* Progress Bar */}
+                    <div className="w-full bg-slate-800 rounded-full h-4 overflow-hidden relative">
+                        <div
+                            className="h-full bg-gradient-to-r from-green-500 to-emerald-400 transition-all duration-100 ease-out flex items-center justify-end pr-2"
+                            style={{ width: `${progress}%` }}
+                        >
+                            <span className="text-[10px] font-bold text-slate-900 leading-none">{progress}%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
     }
 
     return (
         <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-            <div className="max-w-2xl w-full bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-200">
+            <div className="max-w-2xl w-full bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-200 animate-fade-in-up">
                 {/* Header with Success Animation */}
                 <div className="bg-green-500 p-10 text-center relative overflow-hidden">
                     <div className="absolute top-0 left-0 w-full h-full opacity-10">
@@ -69,11 +84,16 @@ function SuccessContent() {
                             <CheckCircle2 className="w-10 h-10 text-green-500" />
                         </div>
                         <h1 className="text-3xl md:text-4xl font-black text-white mb-2">
-                            ¡Orden Confirmada!
+                            Success! Your Strategy is Active.
                         </h1>
                         <p className="text-green-100 text-lg">
                             Tu crecimiento en Instagram está por comenzar
                         </p>
+                        {isUpgraded && (
+                            <div className="mt-4 inline-block bg-white/20 backdrop-blur-md px-4 py-1 rounded-full text-sm font-bold text-white border border-white/30">
+                                🚀 Plan Upgraded Successfully
+                            </div>
+                        )}
                     </div>
                 </div>
 

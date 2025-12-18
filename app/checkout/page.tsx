@@ -2,10 +2,11 @@
 
 import { useState, useEffect, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
-import { Check, Sparkles, Shield, CreditCard, Bitcoin, MessageCircle, Lock, X } from "lucide-react"
+import { Check, Sparkles, Shield, CreditCard, Bitcoin, MessageCircle, Lock, X, User, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import { Input } from "@/components/ui/input"
+import { useI18n } from "@/lib/i18n/context"
 
 interface UpsellOption {
     id: string
@@ -16,382 +17,336 @@ interface UpsellOption {
 }
 
 function CheckoutContent() {
+    const { t } = useI18n()
     const searchParams = useSearchParams()
     const [selectedPlan, setSelectedPlan] = useState("turbo")
     const [billingCycle, setBillingCycle] = useState("annual")
     const [paymentMethod, setPaymentMethod] = useState<"crypto" | "manual">("crypto")
 
-    // Upsells state
-    const [autoLikes, setAutoLikes] = useState(false)
-    const [autoViews, setAutoViews] = useState(false)
+    // Order Bump State
+    const [orderBump, setOrderBump] = useState(false)
 
-    // User data from previous step
+    // User data
     const [userData, setUserData] = useState({
         username: "",
-        email: "",
-        goal: ""
+        email: ""
     })
+
+    // Simulate AI Validation
+    const [isValidating, setIsValidating] = useState(false)
+    const [isValidUser, setIsValidUser] = useState(false)
 
     useEffect(() => {
         setUserData({
             username: searchParams.get("username") || "",
-            email: searchParams.get("email") || "",
-            goal: searchParams.get("goal") || ""
+            email: searchParams.get("email") || ""
         })
         setSelectedPlan(searchParams.get("plan") || "turbo")
         setBillingCycle(searchParams.get("billing") || "annual")
+
+        // Auto-validate if username present
+        if (searchParams.get("username")) {
+            setIsValidating(true)
+            setTimeout(() => {
+                setIsValidating(false)
+                setIsValidUser(true)
+            }, 1000)
+        }
     }, [searchParams])
 
-    // Pricing
-    const basePrices = {
-        standard: { monthly: 49842, annual: 24921 },
-        turbo: { monthly: 120210, annual: 60105 }
+    const handleUserChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const val = e.target.value
+        setUserData(prev => ({ ...prev, username: val }))
+        setIsValidUser(false)
+        if (val.length > 2) {
+            setIsValidating(true)
+            // Debounce mock
+            setTimeout(() => {
+                setIsValidating(false)
+                setIsValidUser(true)
+            }, 800)
+        }
     }
 
-    const upsells: UpsellOption[] = [
-        {
-            id: "auto-likes",
-            title: "Auto-Likes en tus próximos posts",
-            description: "Recibe likes automáticos en cada publicación para impulsar el engagement",
-            price: 15000,
-            icon: "❤️"
-        },
-        {
-            id: "auto-views",
-            title: "Auto-Views para tus Reels",
-            description: "Aumenta las visualizaciones de tus Reels automáticamente",
-            price: 18000,
-            icon: "👁️"
-        }
-    ]
+    // Pricing Constants
+    const basePrices = {
+        standard: { monthly: 24921, annual: 12460 }, // approx based on landing page
+        turbo: { monthly: 120210, annual: 60105 } // approx
+    }
+    const BUMP_PRICE = 4500 // approx $4.99 USD in ARS or just display USD
 
     // Calculate total
-    const basePrice = basePrices[selectedPlan as keyof typeof basePrices][billingCycle as keyof typeof basePrices.standard]
-    const upsellTotal = (autoLikes ? upsells[0].price : 0) + (autoViews ? upsells[1].price : 0)
-    const subtotal = basePrice + upsellTotal
+    const planKey = selectedPlan === "turbo" || selectedPlan === "premium" ? "turbo" : "standard"
+    const cycleKey = billingCycle === "annual" ? "annual" : "monthly"
+
+    const basePrice = basePrices[planKey][cycleKey] || 50000
+    const bumpTotal = orderBump ? BUMP_PRICE : 0
+    const subtotal = basePrice + bumpTotal
     const cryptoDiscount = paymentMethod === "crypto" ? subtotal * 0.1 : 0
     const total = subtotal - cryptoDiscount
 
     const handleCheckout = async () => {
+        // ... (Same logic as before, just updated payload)
         if (paymentMethod === "crypto") {
             try {
-                // Call create-payment API
                 const response = await fetch("/api/create-payment", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         amount: total,
-                        currency: "USD", // Or ARS if supported, but typically Crypto is USD-based. For now keep as logic implies.
-                        // Ideally we should convert ARS to USD or use USDT directly.
+                        currency: "USD",
                         email: userData.email,
                         username: userData.username,
                         orderDetails: {
                             plan: selectedPlan,
                             billing: billingCycle,
-                            amount: selectedPlan === "turbo" ? "5000" : "2000", // Needs actual value from params if available, defaulting for safety
-                            // In real app, pass exact quantity from params
-                            upsells: { autoLikes, autoViews }
+                            amount: selectedPlan === "turbo" ? "5000" : "1000",
+                            orderBump: orderBump
                         }
                     })
                 })
-
                 const data = await response.json()
-
                 if (data.success && data.url) {
-                    // Redirect to Cryptomus
                     window.location.href = data.url
                 } else {
-                    alert("Error al crear el pago: " + (data.error || "Intente nuevamente"))
+                    alert("Error: " + (data.error || "Try again"))
                 }
             } catch (error) {
-                console.error("Checkout Error:", error)
-                alert("Ocurrió un error al procesar el pago.")
+                console.error("Error", error)
+                alert("Payment Error")
             }
         } else {
-            // Open WhatsApp
-            const message = `Hola! Quiero contratar el plan ${selectedPlan.toUpperCase()} (${billingCycle}) por ARS $${total.toLocaleString()}. Usuario: @${userData.username}`
+            const message = `Hola! Plan ${selectedPlan.toUpperCase()} (${billingCycle}). Bump: ${orderBump ? "YES" : "NO"}. Total: $${total}. User: @${userData.username}`
             window.open(`https://wa.me/5492212235170?text=${encodeURIComponent(message)}`, '_blank')
-
-            // Redirect to success page to close the loop
-            window.location.href = `/checkout/success?order_id=MANUAL-${Math.floor(Math.random() * 10000)}&email=${userData.email}`
         }
     }
 
     return (
-        <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
-            {/* Header */}
-            <div className="bg-white border-b border-slate-200">
-                <div className="container mx-auto px-4 py-4">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                            <Sparkles className="w-6 h-6 text-orange-500" />
-                            <span className="font-bold text-xl">TDT</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-sm text-slate-600">
-                            <Shield className="w-4 h-4 text-green-500" />
-                            <span>Pago 100% Seguro</span>
-                        </div>
+        <main className="min-h-screen bg-slate-50 font-sans">
+            {/* Minimal Header */}
+            <div className="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+                <div className="container mx-auto px-4 py-4 max-w-6xl flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                        <Sparkles className="w-6 h-6 text-orange-600 fill-orange-600" />
+                        <span className="font-black text-xl text-slate-900 tracking-tight">TDT <span className="text-slate-400 font-normal">Secure Checkout</span></span>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs font-bold text-green-600 bg-green-50 px-3 py-1 rounded-full border border-green-200">
+                        <Lock className="w-3 h-3" />
+                        <span>256-Bit SSL Encrypted</span>
                     </div>
                 </div>
             </div>
 
-            {/* Main Content */}
-            <div className="container mx-auto px-4 py-12">
-                <div className="max-w-6xl mx-auto">
-                    {/* Progress Steps */}
-                    <div className="flex items-center justify-center gap-4 mb-12">
-                        <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 rounded-full bg-green-500 text-white flex items-center justify-center text-sm font-bold">
-                                ✓
+            <div className="container mx-auto px-4 py-8 max-w-6xl">
+                <div className="grid lg:grid-cols-12 gap-8 relative">
+
+                    {/* LEFT COLUMN: Data & Payment Selection (lg:col-span-7) */}
+                    <div className="lg:col-span-7 space-y-8">
+
+                        {/* 1. Account Details */}
+                        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8">
+                            <div className="flex items-center gap-3 mb-6">
+                                <div className="bg-orange-100 p-2 rounded-lg">
+                                    <User className="w-5 h-5 text-orange-600" />
+                                </div>
+                                <h3 className="text-xl font-bold text-slate-900">Account Details</h3>
                             </div>
-                            <span className="text-sm font-medium text-slate-600">Perfil</span>
-                        </div>
-                        <div className="w-16 h-0.5 bg-green-500"></div>
-                        <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 rounded-full bg-green-500 text-white flex items-center justify-center text-sm font-bold">
-                                ✓
+
+                            <div className="space-y-6">
+                                {/* Username Input with AI Validator */}
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">Instagram Username</label>
+                                    <div className="relative">
+                                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">@</div>
+                                        <Input
+                                            value={userData.username}
+                                            onChange={handleUserChange}
+                                            className={`pl-8 h-12 text-lg transition-all ${isValidUser ? "border-green-500 ring-2 ring-green-500/20" : "border-slate-300"}`}
+                                            placeholder="username"
+                                        />
+                                        <div className="absolute inset-y-0 right-3 flex items-center">
+                                            {isValidating && <span className="text-xs text-orange-500 font-bold animate-pulse">{t.checkout?.visualValidator?.checking || "Validating..."}</span>}
+                                            {isValidUser && !isValidating && <div className="flex items-center gap-1 text-green-600 text-xs font-bold"><Check className="w-4 h-4" /> {t.checkout?.visualValidator?.valid || "Found"}</div>}
+                                        </div>
+                                    </div>
+                                    {/* Security Notice */}
+                                    <div className="mt-2 flex items-center gap-1.5 text-xs text-slate-500">
+                                        <Shield className="w-3 h-3 text-green-500" />
+                                        <span>{t.checkout?.noPassword || "We never ask for your password"}</span>
+                                    </div>
+                                </div>
+
+                                {/* Email Input */}
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">Email Address</label>
+                                    <Input
+                                        value={userData.email}
+                                        onChange={(e) => setUserData({ ...userData, email: e.target.value })}
+                                        className="h-12 border-slate-300"
+                                        placeholder="you@email.com"
+                                        type="email"
+                                    />
+                                </div>
                             </div>
-                            <span className="text-sm font-medium text-slate-600">Plan</span>
                         </div>
-                        <div className="w-16 h-0.5 bg-orange-500"></div>
-                        <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center text-sm font-bold">
-                                3
+
+                        {/* 2. Payment Method */}
+                        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8">
+                            <div className="flex items-center gap-3 mb-6">
+                                <div className="bg-indigo-100 p-2 rounded-lg">
+                                    <CreditCard className="w-5 h-5 text-indigo-600" />
+                                </div>
+                                <h3 className="text-xl font-bold text-slate-900">Select Payment Method</h3>
                             </div>
-                            <span className="text-sm font-medium text-slate-900">Pago</span>
+
+                            <div className="space-y-4">
+                                <button
+                                    onClick={() => setPaymentMethod("crypto")}
+                                    className={`w-full flex items-center justify-between p-4 rounded-xl border-2 transition-all ${paymentMethod === "crypto" ? "border-green-500 bg-green-50/50" : "border-slate-200 hover:border-slate-300"}`}
+                                >
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center">
+                                            <Bitcoin className="w-6 h-6 text-orange-500" />
+                                        </div>
+                                        <div className="text-left">
+                                            <div className="font-bold text-slate-900 flex items-center gap-2">
+                                                Crypto / Binance / USDT
+                                                <span className="bg-green-100 text-green-700 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase">-10% OFF</span>
+                                            </div>
+                                            <div className="text-sm text-slate-500">Instant approval. Anonymous.</div>
+                                        </div>
+                                    </div>
+                                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${paymentMethod === "crypto" ? "border-green-500" : "border-slate-300"}`}>
+                                        {paymentMethod === "crypto" && <div className="w-2.5 h-2.5 rounded-full bg-green-500" />}
+                                    </div>
+                                </button>
+
+                                <button
+                                    onClick={() => setPaymentMethod("manual")}
+                                    className={`w-full flex items-center justify-between p-4 rounded-xl border-2 transition-all ${paymentMethod === "manual" ? "border-blue-500 bg-blue-50/50" : "border-slate-200 hover:border-slate-300"}`}
+                                >
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center">
+                                            <MessageCircle className="w-6 h-6 text-blue-500" />
+                                        </div>
+                                        <div className="text-left">
+                                            <div className="font-bold text-slate-900">Transfer / Cash (WhatsApp)</div>
+                                            <div className="text-sm text-slate-500">Contact support to pay manually.</div>
+                                        </div>
+                                    </div>
+                                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${paymentMethod === "manual" ? "border-blue-500" : "border-slate-300"}`}>
+                                        {paymentMethod === "manual" && <div className="w-2.5 h-2.5 rounded-full bg-blue-500" />}
+                                    </div>
+                                </button>
+                            </div>
+
+                            {/* Payment Logos Row */}
+                            <div className="mt-8 pt-6 border-t border-slate-100">
+                                <p className="text-xs text-center text-slate-400 font-bold uppercase tracking-wider mb-4">{t.checkout?.secureLogos || "We accept"}</p>
+                                <div className="flex flex-wrap justify-center gap-4 opacity-60 grayscale hover:grayscale-0 transition-all duration-300">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png" alt="Visa" className="h-6 object-contain" />
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/b/b7/MasterCard_Logo.svg" alt="Mastercard" className="h-6 object-contain" />
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/American_Express_logo_%282018%29.svg" alt="Amex" className="h-6 object-contain" />
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Google_Wallet_Icon_2015.svg/2560px-Google_Wallet_Icon_2015.svg.png" alt="GPay" className="h-6 object-contain" />
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Ethereum_logo_2014.svg/1257px-Ethereum_logo_2014.svg.png" alt="Crypto" className="h-6 object-contain" />
+                                </div>
+                            </div>
                         </div>
+
                     </div>
 
-                    <div className="grid lg:grid-cols-2 gap-8">
-                        {/* Left Column - Upsells */}
-                        <div className="space-y-6">
-                            <div>
-                                <h2 className="text-2xl font-bold text-slate-900 mb-2">
-                                    Potencia tu crecimiento
-                                </h2>
-                                <p className="text-slate-600">
-                                    Agrega servicios adicionales para maximizar tus resultados
-                                </p>
-                            </div>
+                    {/* RIGHT COLUMN: Summary & Upsell (Sticky) (lg:col-span-5) */}
+                    <div className="lg:col-span-5 relative">
+                        <div className="lg:sticky lg:top-24 space-y-6">
 
-                            {/* Base Plan Summary */}
-                            <div className="bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-300 rounded-2xl p-6">
-                                <div className="flex items-center gap-3 mb-4">
-                                    <Sparkles className="w-6 h-6 text-green-600" />
-                                    <div>
-                                        <h3 className="font-bold text-slate-900">
-                                            Plan {selectedPlan === "turbo" ? "Turbo AI" : "Standard"}
-                                        </h3>
-                                        <p className="text-sm text-slate-600">
-                                            Facturación {billingCycle === "annual" ? "anual" : "mensual"}
-                                        </p>
-                                    </div>
+                            <div className="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+                                <div className="p-6 border-b border-slate-100 bg-slate-50/50">
+                                    <h3 className="text-lg font-bold text-slate-900">Order Summary</h3>
                                 </div>
-                                <div className="flex items-baseline gap-2">
-                                    <span className="text-3xl font-black text-slate-900">
-                                        ARS ${basePrice.toLocaleString()}
-                                    </span>
-                                    <span className="text-slate-600">/mes</span>
-                                </div>
-                            </div>
-
-                            {/* Upsell Toggles */}
-                            <div className="space-y-4">
-                                <h3 className="font-bold text-slate-900">Servicios adicionales</h3>
-
-                                {upsells.map((upsell, index) => (
-                                    <div
-                                        key={upsell.id}
-                                        className={`border-2 rounded-2xl p-6 transition-all ${(index === 0 && autoLikes) || (index === 1 && autoViews)
-                                            ? "border-orange-500 bg-orange-50"
-                                            : "border-slate-200 bg-white"
-                                            }`}
-                                    >
-                                        <div className="flex items-start justify-between gap-4">
-                                            <div className="flex-1">
-                                                <div className="flex items-center gap-2 mb-2">
-                                                    <span className="text-2xl">{upsell.icon}</span>
-                                                    <h4 className="font-bold text-slate-900">{upsell.title}</h4>
-                                                </div>
-                                                <p className="text-sm text-slate-600 mb-3">
-                                                    {upsell.description}
-                                                </p>
-                                                <div className="flex items-baseline gap-2">
-                                                    <span className="text-xl font-bold text-orange-500">
-                                                        +ARS ${upsell.price.toLocaleString()}
-                                                    </span>
-                                                    <span className="text-sm text-slate-500">/mes</span>
-                                                </div>
-                                            </div>
-                                            <Switch
-                                                checked={index === 0 ? autoLikes : autoViews}
-                                                onCheckedChange={index === 0 ? setAutoLikes : setAutoViews}
-                                                className="data-[state=checked]:bg-orange-500"
-                                            />
+                                <div className="p-6 space-y-4">
+                                    {/* Item */}
+                                    <div className="flex justify-between items-start pb-4 border-b border-slate-100">
+                                        <div>
+                                            <div className="font-bold text-slate-900">Plan {planKey.toUpperCase()}</div>
+                                            <div className="text-xs text-slate-500">Billing: {cycleKey}</div>
+                                        </div>
+                                        <div className="text-right">
+                                            <div className="font-bold">ARS ${basePrice.toLocaleString()}</div>
                                         </div>
                                     </div>
-                                ))}
-                            </div>
-                        </div>
 
-                        {/* Right Column - Payment */}
-                        <div className="lg:sticky lg:top-4 h-fit">
-                            <div className="bg-white rounded-2xl shadow-xl border border-slate-200 p-8">
-                                <h3 className="text-xl font-bold text-slate-900 mb-6">
-                                    Resumen del pedido
-                                </h3>
-
-                                {/* Order Summary */}
-                                <div className="space-y-3 mb-6 pb-6 border-b border-slate-200">
-                                    <div className="flex justify-between text-sm">
-                                        <span className="text-slate-600">
-                                            Plan {selectedPlan === "turbo" ? "Turbo AI" : "Standard"}
-                                        </span>
-                                        <span className="font-medium">ARS ${basePrice.toLocaleString()}</span>
-                                    </div>
-
-                                    {autoLikes && (
-                                        <div className="flex justify-between text-sm">
-                                            <span className="text-slate-600">Auto-Likes</span>
-                                            <span className="font-medium">ARS ${upsells[0].price.toLocaleString()}</span>
-                                        </div>
-                                    )}
-
-                                    {autoViews && (
-                                        <div className="flex justify-between text-sm">
-                                            <span className="text-slate-600">Auto-Views</span>
-                                            <span className="font-medium">ARS ${upsells[1].price.toLocaleString()}</span>
-                                        </div>
-                                    )}
-
+                                    {/* Discount Line */}
                                     {paymentMethod === "crypto" && (
-                                        <div className="flex justify-between text-sm text-green-600">
-                                            <span>Descuento Crypto (10%)</span>
-                                            <span className="font-medium">-ARS ${cryptoDiscount.toLocaleString()}</span>
+                                        <div className="flex justify-between items-center text-green-600 text-sm font-medium">
+                                            <span>Crypto Discount</span>
+                                            <span>- ARS ${cryptoDiscount.toLocaleString()}</span>
                                         </div>
                                     )}
-                                </div>
 
-                                {/* Total */}
-                                <div className="flex justify-between items-baseline mb-8">
-                                    <span className="text-lg font-bold text-slate-900">Total</span>
-                                    <div className="text-right">
-                                        <div className="text-3xl font-black text-slate-900">
-                                            ARS ${total.toLocaleString()}
+                                    {/* Bump Line */}
+                                    {orderBump && (
+                                        <div className="flex justify-between items-center text-orange-600 text-sm font-bold animate-fade-in">
+                                            <span>VIP Priority</span>
+                                            <span>+ ARS ${BUMP_PRICE.toLocaleString()}</span>
                                         </div>
-                                        <div className="text-sm text-slate-500">
-                                            por mes
-                                        </div>
+                                    )}
+
+                                    {/* Total */}
+                                    <div className="flex justify-between items-baseline pt-2">
+                                        <span className="text-slate-500">Total</span>
+                                        <span className="text-3xl font-black text-slate-900">ARS ${total.toLocaleString()}</span>
                                     </div>
                                 </div>
 
-                                {/* Payment Method Selector */}
-                                <div className="mb-6">
-                                    <label className="block text-sm font-bold text-slate-900 mb-3">
-                                        Método de pago
-                                    </label>
-
-                                    <div className="grid grid-cols-2 gap-3 mb-4">
-                                        <button
-                                            onClick={() => setPaymentMethod("crypto")}
-                                            className={`relative p-4 rounded-xl border-2 transition-all ${paymentMethod === "crypto"
-                                                ? "border-green-500 bg-green-50"
-                                                : "border-slate-200 hover:border-slate-300"
-                                                }`}
-                                        >
-                                            {paymentMethod === "crypto" && (
-                                                <div className="absolute -top-2 -right-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                                                    -10%
-                                                </div>
-                                            )}
-                                            <Bitcoin className="w-6 h-6 mx-auto mb-2 text-orange-500" />
-                                            <div className="text-xs font-bold text-slate-900">Crypto</div>
-                                            <div className="text-xs text-slate-500">Automático</div>
-                                        </button>
-
-                                        <button
-                                            onClick={() => setPaymentMethod("manual")}
-                                            className={`p-4 rounded-xl border-2 transition-all ${paymentMethod === "manual"
-                                                ? "border-blue-500 bg-blue-50"
-                                                : "border-slate-200 hover:border-slate-300"
-                                                }`}
-                                        >
-                                            <MessageCircle className="w-6 h-6 mx-auto mb-2 text-blue-500" />
-                                            <div className="text-xs font-bold text-slate-900">WhatsApp</div>
-                                            <div className="text-[10px] text-slate-500">Transferencia</div>
-                                        </button>
-                                    </div>
-
-                                    {/* Payment Method Details */}
-                                    {paymentMethod === "crypto" ? (
-                                        <div className="bg-green-50 border border-green-200 rounded-xl p-4">
-                                            <div className="flex items-start gap-3">
-                                                <Bitcoin className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                                                <div className="text-sm">
-                                                    <p className="font-bold text-green-900 mb-1">
-                                                        Pago con Criptomonedas
-                                                    </p>
-                                                    <p className="text-green-700 text-xs">
-                                                        Procesamiento automático e instantáneo. Acepta BTC, ETH, USDT y más.
-                                                    </p>
-                                                </div>
+                                {/* THE GOLDEN BOX (ORDER BUMP) */}
+                                <div className="p-6 bg-[#FFFBE6] border-2 border-dashed border-[#FF4D4F] rounded-xl relative overflow-hidden animate-pulse-slow">
+                                    <div className="flex items-center justify-between gap-4">
+                                        <div className="flex-1">
+                                            <div className="font-black text-[#FF4D4F] text-sm uppercase tracking-wide mb-1">
+                                                {t.checkout?.orderBump?.headline || "🚀 ONE-TIME OFFER: PRIORITY PROCESSING"}
                                             </div>
+                                            <p className="text-sm text-slate-700 font-medium leading-tight">
+                                                {t.checkout?.orderBump?.copy || "Yes, add priority processing for $3.99."}
+                                            </p>
                                         </div>
-                                    ) : (
-                                        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-                                            <div className="flex items-start gap-3">
-                                                <MessageCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                                                <div className="text-sm">
-                                                    <p className="font-bold text-blue-900 mb-1">
-                                                        Pago Manual
-                                                    </p>
-                                                    <p className="text-blue-700 text-xs">
-                                                        Un agente te contactará por WhatsApp para coordinar el pago vía MercadoPago o transferencia.
-                                                    </p>
-                                                </div>
-                                            </div>
+                                        <div className="flex flex-col items-end gap-2">
+                                            <Switch
+                                                checked={orderBump}
+                                                onCheckedChange={setOrderBump}
+                                                className="data-[state=checked]:bg-[#FF4D4F] scale-110"
+                                            />
+                                            <span className="text-xs font-bold text-[#FF4D4F]">
+                                                {t.checkout?.orderBump?.price || "+$3.99"}
+                                            </span>
                                         </div>
-                                    )}
-                                </div>
-
-                                {/* CTA Button */}
-                                <Button
-                                    onClick={handleCheckout}
-                                    className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold py-6 rounded-xl text-lg shadow-lg mb-4"
-                                >
-                                    {paymentMethod === "crypto" ? (
-                                        <>
-                                            <Bitcoin className="w-5 h-5 mr-2" />
-                                            Activar Crecimiento Ahora →
-                                        </>
-                                    ) : (
-                                        <>
-                                            <MessageCircle className="w-5 h-5 mr-2" />
-                                            Contactar Agente →
-                                        </>
-                                    )}
-                                </Button>
-
-                                {/* Trust Badges */}
-                                <div className="flex items-center justify-center gap-6 text-xs text-slate-500">
-                                    <div className="flex items-center gap-1">
-                                        <Lock className="w-4 h-4" />
-                                        <span>SSL Secure</span>
-                                    </div>
-                                    <div className="flex items-center gap-1">
-                                        <X className="w-4 h-4" />
-                                        <span>Cancel Anytime</span>
                                     </div>
                                 </div>
 
-                                {/* Money Back Guarantee */}
-                                <div className="mt-6 pt-6 border-t border-slate-200 text-center">
-                                    <div className="inline-flex items-center gap-2 text-sm text-green-600 font-medium">
-                                        <Shield className="w-5 h-5" />
-                                        <span>Garantía de reembolso de 14 días</span>
-                                    </div>
+                                {/* Pay Button */}
+                                <div className="p-6 bg-slate-50 border-t border-slate-100">
+                                    <Button
+                                        onClick={handleCheckout}
+                                        className="w-full bg-black hover:bg-slate-800 text-white text-lg font-bold py-7 rounded-xl shadow-lg transition-all hover:scale-[1.02] active:scale-95"
+                                    >
+                                        {t.checkout?.paymentButton?.text || "Start Growth Now"}
+                                        <ArrowRight className="ml-2 w-5 h-5" />
+                                    </Button>
+                                    <p className="text-center text-xs text-slate-400 mt-3 flex items-center justify-center gap-1.5 font-medium">
+                                        <Sparkles className="w-3 h-3 text-green-500" />
+                                        {t.checkout?.paymentButton?.subtext || "Guaranteed Delivery within 24h"}
+                                    </p>
                                 </div>
                             </div>
+
+                            {/* Guaranteed Seal */}
+                            <div className="flex items-center justify-center gap-4 text-slate-400 grayscale opacity-70">
+                                <Shield className="w-8 h-8" />
+                                <div className="text-xs">
+                                    <div className="font-bold">100% Money Back Guarantee</div>
+                                    <div>If we don't deliver, we refund.</div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>

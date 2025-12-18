@@ -86,24 +86,24 @@ export default function StatsGrid() {
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-slate-900 to-slate-950 opacity-80" />
             <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px)', backgroundSize: '40px 40px', opacity: 0.1 }}></div>
 
-            <div className="container mx-auto px-4 relative z-10">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="container mx-auto px-4 relative z-10 w-full max-w-7xl">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {stats.map((stat, index) => (
                         <Card key={index} className="bg-slate-900/50 backdrop-blur-md border-slate-800 hover:border-slate-700 transition-colors rounded-[20px] overflow-hidden group">
-                            <CardContent className="p-6 flex flex-col items-center text-center">
-                                <div className={`w-16 h-16 rounded-2xl ${stat.bg} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg`}>
-                                    <stat.icon className={`w-8 h-8 ${stat.color}`} />
+                            <CardContent className="p-4 flex flex-col items-center text-center h-full justify-center">
+                                <div className={`w-12 h-12 rounded-xl ${stat.bg} flex items-center justify-center mb-3 group-hover:scale-110 transition-transform shadow-lg`}>
+                                    <stat.icon className={`w-6 h-6 ${stat.color}`} />
                                 </div>
-                                <div className={`text-3xl font-bold mb-2 ${stat.isIg ? "text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-orange-400" : stat.color}`}>
+                                <div className={`text-3xl md:text-4xl font-extrabold mb-1 ${stat.isIg ? "text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-orange-400" : stat.color}`}>
                                     {stat.isRating ? (
                                         <div className="flex flex-col items-center">
                                             <span>4.9/5</span>
-                                            <div className="flex gap-0.5 mt-1">
-                                                {[1, 2, 3, 4].map(s => <Star key={s} className="w-4 h-4 text-yellow-500 fill-yellow-500" />)}
+                                            <div className="flex gap-0.5 mt-1 justify-center">
+                                                {[1, 2, 3, 4].map(s => <Star key={s} className="w-3.5 h-3.5 text-yellow-500 fill-yellow-500" />)}
                                                 <div className="relative">
-                                                    <Star className="w-4 h-4 text-yellow-500/30 fill-yellow-500/30" />
+                                                    <Star className="w-3.5 h-3.5 text-yellow-500/30 fill-yellow-500/30" />
                                                     <div className="absolute top-0 left-0 w-[90%] overflow-hidden">
-                                                        <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                                                        <Star className="w-3.5 h-3.5 text-yellow-500 fill-yellow-500" />
                                                     </div>
                                                 </div>
                                             </div>
@@ -112,7 +112,7 @@ export default function StatsGrid() {
                                         <CountUp to={stat.value} suffix={stat.suffix} />
                                     )}
                                 </div>
-                                <p className="text-slate-400 text-sm leading-relaxed">{stat.label}</p>
+                                <p className="text-slate-400 text-xs md:text-sm leading-relaxed font-medium">{stat.label}</p>
                             </CardContent>
                         </Card>
                     ))}

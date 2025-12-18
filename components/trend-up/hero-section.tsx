@@ -8,6 +8,15 @@ import { useI18n } from "@/lib/i18n/context"
 export default function HeroSection() {
   const { t } = useI18n()
 
+  // Holiday Logic
+  const today = new Date()
+  const isChristmas = today.getMonth() === 11 && today.getDate() <= 26
+  const badgeText = isChristmas ? (t.hero.badgeChristmas || t.hero.badge) : (t.hero.badgeNewYear || "Start 2026 Strong")
+
+  // Trust Line Parsing (Expected format: "Prefix *Number* Suffix")
+  const trustLineRaw = t.hero.trustLine
+  const trustParts = trustLineRaw.includes('*') ? trustLineRaw.split('*') : [trustLineRaw]
+
   return (
     <section className="relative pt-32 pb-20 overflow-hidden">
       {/* Background Effects */}
@@ -21,7 +30,7 @@ export default function HeroSection() {
           {/* Badge */}
           <div className="inline-flex items-center gap-2 bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-full px-4 py-1.5 mb-8 hover:border-[#F8B229]/50 transition-colors">
             <span className="flex h-2 w-2 rounded-full bg-[#D42426] animate-pulse shadow-[0_0_10px_#D42426]" />
-            <span className="text-sm text-slate-300 font-medium">{t.hero.badge} 🎄</span>
+            <span className="text-sm text-slate-300 font-medium">{badgeText}</span>
           </div>
 
           {/* Headline */}
@@ -33,24 +42,10 @@ export default function HeroSection() {
             {t.hero.titleEnd && <span className="block md:inline mt-2 md:mt-0">{t.hero.titleEnd}</span>}
           </h1>
 
-          {/* Problem Statement */}
-          {/* <p className="text-xl md:text-2xl text-[#F8B229] font-semibold mb-4">
-            {t.hero.problem}
-          </p> */}
-          {/* User requested focused sub-headline, maybe removing 'Problem' or integrating it? 
-              Ref: "Sub-headline: Reforzar la promesa de seguridad..." 
-              I'll render the new subtitle prominently instead of problem/solution split if needed, 
-              but t.hero.subtitle now contains the security promise.
-          */}
-
-          {/* Subtitle / Promise */}
-          <p className="text-lg md:text-xl text-slate-300 mb-10 max-w-2xl mx-auto leading-relaxed">
+          {/* Subtitle / Promise (Increased spacing) */}
+          <p className="text-lg md:text-xl text-slate-300 mb-14 max-w-2xl mx-auto leading-relaxed">
             {t.hero.subtitle}
           </p>
-
-          {/* Trust Badge (Hidden or moved? User didn't explicitly delete, but "Social Proof" section is moved below CTA. 
-             I'll keep this small badge if it adds value, or hide if clutter. I'll hide to clean up as per "Minimalist keywords".) 
-          */}
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
@@ -59,11 +54,6 @@ export default function HeroSection() {
                 {t.hero.cta}
               </Button>
             </Link>
-            {/* Secondary CTA removed or kept? "Estandarizar todos los botones...". 
-                I'll keep secondary for "How it works" but make it less prominent or remove if single focus is better.
-                User said "Estandarizar todos los botones de conversión primaria". Didn't say remove secondary.
-                I'll keep it but ensure primary pops.
-            */}
           </div>
 
           {/* Social Proof (Moved Below CTA) */}
@@ -87,7 +77,17 @@ export default function HeroSection() {
               <div className="flex gap-0.5 text-[#F8B229]">
                 {[1, 2, 3, 4, 5].map((s) => <Star key={s} className="w-5 h-5 fill-current" />)}
               </div>
-              <span className="text-slate-400 font-medium">{t.hero.trustLine}</span>
+              <span className="text-slate-400 font-medium">
+                {trustParts.length > 1 ? (
+                  <>
+                    {trustParts[0]}
+                    <strong className="text-white font-bold">{trustParts[1]}</strong>
+                    {trustParts[2]}
+                  </>
+                ) : (
+                  trustLineRaw
+                )}
+              </span>
             </div>
           </div>
 

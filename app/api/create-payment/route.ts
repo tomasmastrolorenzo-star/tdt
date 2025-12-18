@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
       amount: amount.toString(),
       currency: currency,
       order_id: order.id, // Use our DB ID as external order ID
-      url_return: `${process.env.NEXT_PUBLIC_APP_URL}/checkout/success?order_id=${order.id}&email=${email}`,
+      url_return: `${process.env.NEXT_PUBLIC_APP_URL}/checkout/upsell?order_id=${order.id}&email=${email}`,
       url_callback: `${process.env.NEXT_PUBLIC_APP_URL}/api/cryptomus/webhook`,
       is_payment_multiple: true, // Allow user to pay in multiple txs if needed? Usually false is safer for simple items.
       lifetime: 3600, // 1 hour to pay
