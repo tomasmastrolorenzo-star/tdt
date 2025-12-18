@@ -5,7 +5,7 @@ import { createClient } from "@supabase/supabase-js"
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { amount, currency = "USD", orderDetails, email, username } = body
+    const { amount, currency = "USD", orderDetails, email, username, userId } = body
 
     if (!amount || !email || !orderDetails) {
       return NextResponse.json(
@@ -13,6 +13,11 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       )
     }
+
+    // Determine if this is a wallet top-up or service purchase
+    const isWalletFund = orderDetails.type === 'wallet_fund'
+    const serviceId = isWalletFund ? 'wallet_fund' : (orderDetails.packageId || "custom")
+    const serviceName = isWalletFund ? 'Carga de Saldo' : orderDetails.plan
 
   }
 
@@ -34,8 +39,8 @@ export async function POST(request: NextRequest) {
     .insert({
       user_email: email,
       username: username,
-      service_id: orderDetails.packageId || "custom",
-      service_name: orderDetails.plan,
+      service_id: serviceId,
+      service_name: serviceName,
       amount: amount, // Monetary amount
       quantity: parseInt(orderDetails.amount) || 0, // Service quantity (e.g. 1000 followers)
       link: orderDetails.link || "",
@@ -46,7 +51,8 @@ export async function POST(request: NextRequest) {
       metadata: {
         ...orderDetails,
         plan: orderDetails.plan,
-        billing: orderDetails.billing
+        billing: orderDetails.billing,
+        userId: userId // Store userId for wallet crediting
       }
     })
     .select()
