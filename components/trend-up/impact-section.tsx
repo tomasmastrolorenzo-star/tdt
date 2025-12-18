@@ -9,7 +9,6 @@ export default function ImpactSection() {
     const { t } = useI18n()
 
     return (
-    return (
         <section className="py-8 bg-gradient-to-br from-orange-500 to-orange-600 relative overflow-hidden">
             <div className="container mx-auto px-4 text-center relative z-10">
                 {/* Social Logos (White 50% opacity) */}
