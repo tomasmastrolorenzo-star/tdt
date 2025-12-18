@@ -57,17 +57,18 @@ export const translations = {
     // Hero
     hero: {
       badge: "🎄 Navidad llegó a TDT",
-      title: "Lleva tus Redes al",
-      titleHighlight: "Siguiente Nivel",
+      title: "Vence al Algoritmo y Conecta con",
+      titleHighlight: "Audiencias Reales",
+      titleEnd: "mediante IA",
       subtitle:
-        "Seguidores reales, engagement auténtico. Crece en Instagram, TikTok y más con la plataforma de confianza de miles de creadores.",
+        "Sin bots, sin cuentas falsas. Solo crecimiento orgánico segmentado por género y ubicación en tiempo récord.",
       problem: "¿Cansado que el algoritmo esconda tu cuenta?",
       solution: "TDT usa Inteligencia Artificial para poner tu contenido en frente de personas reales interesadas en contenido como el tuyo. Solo selecciona género, ubicación del público objetivo, y nuestra IA se encarga del resto.",
       solutionHighlight: "Empezarás a ver crecimiento real en horas.",
       trustBadge: "No son bots ni cuentas fake. Es gente real.",
-      trustLine: "Más de 50,000 creadores confían en nosotros",
+      trustLine: "Amado por más de 80,000 fans",
       guarantee: "💯 Garantía de satisfacción o te devolvemos tu dinero",
-      cta: "Usar IA Ahora ✨",
+      cta: "Impulsar mi cuenta con IA →",
       ctaSecondary: "Cómo Funciona",
       stats: {
         clients: "Clientes Satisfechos",
@@ -118,26 +119,112 @@ export const translations = {
         supportDesc: "Siempre estamos para ayudarte",
         secure: "Pago seguro",
         secureDesc: "Encriptación de nivel bancario",
-        refund: "Reembolso garantizado",
         refundDesc: "Sin preguntas en 30 días",
       },
+    },
+    // Testimonials Section Header
+    testimonialsSection: {
+      badge: "Amor de nuestros clientes",
+      title: "Clientes aman nuestra herramienta de crecimiento",
+      subtitle: "Mira por qué influencers y marcas confían en TDT para su crecimiento en Instagram.",
+    },
+    // New Features / Benefits Section (Competitor Match)
+    features: {
+      header: {
+        main: "Tecnología de IA + Estrategas de marketing =",
+        highlight: "Crecimiento fácil y rápido 🚀",
+      },
+      badge: "Impulsado por IA",
+      title: "Sin seguidores falsos ni bots",
+      subtitle: "Solo crecimiento inteligente para Instagram. Verás crecimiento inmediato gracias a la tecnología impulsada por IA de TDT.",
+      list: [
+        {
+          title: "Sin Tácticas de Spam",
+          description: "No dependas de la automatización y los bots. TDT garantiza fans nuevos y auténticos que realmente aprecian e interactúan con tu contenido.",
+        },
+        {
+          title: "Crecimiento Constante",
+          description: "Mira cómo crece tu contador de seguidores cada día sin trabajo de tu parte. Trabajamos 24/7 para hacer crecer tu cuenta.",
+        },
+        {
+          title: "Crecimiento Sin Riesgos",
+          description: "TDT nunca pide tu contraseña de IG. Cumplimos completamente con las directrices de Instagram y hemos ayudado a más de 80,000 usuarios.",
+        },
+        {
+          title: "Nuevos Seguidores Comprometidos",
+          description: "TDT se asegura de que tus seguidores no solo te sigan y dejen de seguir, sino que disfruten lo que compartes y quieran ver más.",
+        },
+        {
+          title: "No Pierdas Tiempo ni Dinero",
+          description: "¿Por qué pagar por un equipo de marketing entero cuando TDT hace crecer tu cuenta mejor? Tú enfócate en crear contenido.",
+        },
+        {
+          title: "Modelos de Crecimiento de IA",
+          description: "Una vez nos das tus filtros de segmentación (ubicación, edad, género, intereses), siéntate y deja que la tecnología de TDT encuentre tus seguidores.",
+        },
+      ]
     },
     // Testimonials
     testimonials: [
       {
-        name: "María García",
-        comment: "Increíble servicio! Mis seguidores llegaron en menos de 24 horas. 100% recomendado.",
-        platform: "Instagram",
+        name: "Alexander K.",
+        role: "🇩🇪 Germany",
+        comment: "The precision of the GPT-4o targeting is impressive. I’ve seen a 20% increase in organic reach from high-quality European audiences.",
+        rating: 5,
       },
       {
-        name: "Carlos Mendoza",
-        comment: "El mejor servicio de SMM que he probado. Seguidores reales y soporte excelente.",
-        platform: "TikTok",
+        name: "Sarah Jenkins",
+        role: "🇺🇸 USA",
+        comment: "Safety was my main concern, but TDT's no-password policy won me over. My community is growing with real, active users.",
+        rating: 5,
       },
       {
-        name: "Ana Rodríguez",
-        comment: "Mi canal de YouTube creció increíblemente rápido. Volveré a comprar.",
-        platform: "YouTube",
+        name: "Yuki Tanaka",
+        role: "🇯🇵 Japan",
+        comment: "Finally, a tool that understands global demographics. The AI helped me connect with art enthusiasts worldwide.",
+        rating: 5,
+      },
+      {
+        name: "Mateo Ricci",
+        role: "🇮🇹 Italy",
+        comment: "Switched to TDT after trying several SMM panels that failed. The difference is night and day; this is real AI-driven growth.",
+        rating: 5,
+      },
+      {
+        name: "Chloe Lefebvre",
+        role: "🇫🇷 France",
+        comment: "Setting up my goals took less than 5 minutes. The AI handles the rest perfectly. It’s the most seamless scaling experience.",
+        rating: 5,
+      },
+      {
+        name: "Liam O’Connor",
+        role: "🇮🇪 Ireland",
+        comment: "As a brand owner, I need results, not bots. TDT delivered a highly engaged audience that actually converts into web traffic.",
+        rating: 5,
+      },
+      {
+        name: "Amira Al-Sayed",
+        role: "🇦🇪 UAE",
+        comment: "The best investment for my digital presence. The targeting options for location and interests are incredibly accurate.",
+        rating: 5,
+      },
+      {
+        name: "Lucas Silva",
+        role: "🇧🇷 Brazil",
+        comment: "Incrível! A tecnologia GPT-4o realmente faz a diferença. O crescimento é orgânico e constante. Suporte nota 10.",
+        rating: 5,
+      },
+      {
+        name: "Oliver Smith",
+        role: "🇬🇧 UK",
+        comment: "Professional, secure, and effective. TDT is now an essential part of my marketing stack for all my client profiles.",
+        rating: 5,
+      },
+      {
+        name: "Elena Kostas",
+        role: "🇬🇷 Greece",
+        comment: "Fast results without compromising account safety. It’s rare to find a service that actually follows through on its promises.",
+        rating: 5,
       },
     ],
     // How it works
@@ -215,6 +302,28 @@ export const translations = {
       login: "Iniciar Sesión",
       refundPolicy: "Política de Reembolso",
       copyright: "Todos los derechos reservados.",
+      professional: {
+        description: "La plataforma líder en crecimiento orgánico de Instagram. Más de 80,000 clientes confían en nosotros.",
+        products: "Producto",
+        company: "Empresa",
+        legal: "Legal",
+        securePayment: "🔒 Pagos 100% seguros y encriptados",
+        rights: "Todos los derechos reservados.",
+        madeWith: "Hecho con ❤️ en Argentina",
+        features: "Características",
+        pricing: "Precios",
+        cases: "Casos de Éxito",
+        testimonials: "Testimonios",
+        about: "Sobre Nosotros",
+        blog: "Blog",
+        careers: "Carreras",
+        press: "Prensa",
+        terms: "Términos de Servicio",
+        privacy: "Política de Privacidad",
+        cookies: "Política de Cookies",
+        gdpr: "GDPR",
+        paymentMethods: "Métodos de pago aceptados:"
+      }
     },
     // Package qualities
     qualities: {
@@ -295,19 +404,30 @@ export const translations = {
         following: "siguiendo",
       }
     },
-    // Consultant (El Faro)
+    // Consultant (AI Growth)
     consultant: {
-      badge: "✨ El Faro: Consultor de Crecimiento IA",
+      badge: "✨ AI Growth Consultant",
       title: "Diseña tu Estrategia",
       titleHighlight: "Personalizada",
       subtitle: "Nuestra IA analiza tu perfil y diseña el plan perfecto para tu crecimiento. Solo selecciona tus preferencias.",
       step1: {
         title: "1. ¿Cuál es tu objetivo de alcance?",
-        subtitle: "Selecciona cuántos seguidores nuevos quieres atraer.",
-        followers: "seguidores",
-        micro: "Micro (500)",
-        influencer: "Influencer (100k)",
+        subtitle: "Selecciona tu plataforma y objetivo para comenzar el análisis.",
+        followers: "Seguidores Objetivo",
+        micro: "Micro Influencer",
+        influencer: "Influencer",
         continue: "Continuar",
+        // Loading & Analysis
+        loading: {
+          analyzing: "Analizando tendencias de {niche} en {location}...",
+          optimizing: "Optimizando estrategia de crecimiento GPT-4o...",
+        },
+        // Dynamic ranges
+        ranges: {
+          foundation: "Perfecto para construir una base sólida.",
+          authority: "Ideal para acelerar la autoridad de marca.",
+          dominance: "Nivel élite para dominio global del mercado.",
+        },
       },
       step2: {
         title: "2. Define tu Audiencia Ideal",
@@ -317,6 +437,36 @@ export const translations = {
         interestLabel: "Nicho / Interés",
         back: "Atrás",
         cta: "Ver Opciones",
+      },
+      // Selectors
+      selectors: {
+        locations: {
+          us: "Estados Unidos",
+          latam: "Latinoamérica",
+          europe: "Europa",
+          asia: "Asia",
+          emirates: "Emiratos Árabes",
+          global: "Global",
+        },
+        interests: {
+          fashion: "Moda",
+          art: "Arte",
+          business: "Negocios",
+          trading: "Trading",
+          fitness: "Fitness",
+          sports: "Deportes",
+          motherhood: "Maternidad",
+          agriculture: "Agricultura",
+          food: "Comida",
+          travel: "Viajes",
+          tech: "Tecnología",
+          lifestyle: "Estilo de Vida",
+        },
+        genders: {
+          any: "Cualquiera",
+          male: "Hombres",
+          female: "Mujeres",
+        }
       },
       trust: {
         encrypted: "Datos Encriptados",
@@ -334,42 +484,7 @@ export const translations = {
         ago: "hace",
       },
     },
-    // Features Grid
-    features: {
-      riskFree: {
-        title: "Crecimiento sin riesgo",
-        desc: "TDT nunca le pide la contraseña de su cuenta como otras empresas, evitando cualquier riesgo de ser suspendido. Cumplimos todas las directrices de IG.",
-      },
-      engaged: {
-        title: "Nuevos seguidores comprometidos",
-        desc: "TDT se asegura de que tus nuevos fans no sólo te sigan, sino que disfruten de lo que compartes y quieran ver más.",
-      },
-      noSpam: {
-        title: "Sin spam ni bots",
-        desc: "Solo crecimiento inteligente en redes sociales. Verás un crecimiento inmediato gracias a la tecnología GPT4 de TDT.",
-      },
-      secret: "¿Cuál es el secreto?",
-      header: {
-        main: "Tecnología de IA + Estrategas de marketing =",
-        highlight: "Crecimiento fácil y rápido 🚀",
-      },
-      ai: {
-        title: "Mejora tu crecimiento con la IA",
-        desc: "Utilizamos modelos de aprendizaje automático patentados para encontrar la audiencia adecuada para tu perfil y contenido.",
-      },
-      demographics: {
-        title: "Dirígete a grupos demográficos específicos",
-        desc: "Nos aseguramos de tener todas las opciones de segmentación disponibles: edad, sexo, ubicación, cuentas similares, hashtags, intereses y mucho más.",
-      },
-      anywhere: {
-        title: "Encuentra seguidores en cualquier lugar",
-        desc: "La segmentación por ubicación es clave para garantizar la mejora de la presencia de tu marca en las zonas adecuadas.",
-      },
-      support: {
-        title: "Obtén asistencia en cualquier momento",
-        desc: "Además de un gestor de cuenta dedicado, tendrás acceso a nuestro equipo de asistencia 24 horas al día, 7 días a la semana.",
-      },
-    },
+
     // Impact Section
     impact: {
       lovedBy: "Amado por creadores de todo el mundo",
@@ -515,17 +630,18 @@ export const translations = {
     // Hero
     hero: {
       badge: "🎄 Christmas came to TDT",
-      title: "Take Your Socials to the",
-      titleHighlight: "Next Level",
+      title: "Beat the Algorithm and Connect with",
+      titleHighlight: "Real Audiences",
+      titleEnd: "using AI",
       subtitle:
-        "Real followers, authentic engagement. Grow on Instagram, TikTok and more with the trusted platform of thousands of creators.",
+        "No bots, no fake accounts. Just organic growth targeted by gender and location in record time.",
       problem: "Tired of the algorithm hiding your account?",
       solution: "TDT uses Artificial Intelligence to put your content in front of real people interested in content like yours. Just select gender, target audience location, and our AI takes care of the rest.",
       solutionHighlight: "You'll start seeing real growth in hours.",
       trustBadge: "Not bots or fake accounts. Real people.",
-      trustLine: "Trusted by over 50,000 creators worldwide",
+      trustLine: "Loved by over 80,000 fans",
       guarantee: "💯 Satisfaction guarantee or your money back",
-      cta: "Use AI Now ✨",
+      cta: "Boost my account with AI →",
       ctaSecondary: "How It Works",
       stats: {
         clients: "Satisfied Clients",
@@ -576,30 +692,75 @@ export const translations = {
         secure: "Secure payment",
         secureDesc: "Bank-level encryption",
         refund: "Refund guaranteed",
-        refundDesc: "No questions in 30 days",
+        refundDesc: "No questions asked in 30 days",
       },
     },
-    // Testimonials
+    // Testimonials Section Header
     testimonialsSection: {
-      badge: "Clients love us",
-      title: "Clients love our social media growth tool",
       subtitle: "Discover why influencers and brands trust TDT with their social media growth and success",
     },
+
+    // Testimonials
     testimonials: [
       {
-        name: "María García",
-        comment: "Incredible service! My followers arrived in less than 24 hours. 100% recommended.",
-        platform: "Instagram",
+        name: "Alexander K.",
+        role: "🇩🇪 Germany",
+        comment: "The precision of the GPT-4o targeting is impressive. I’ve seen a 20% increase in organic reach from high-quality European audiences.",
+        rating: 5,
       },
       {
-        name: "Carlos Mendoza",
-        comment: "The best SMM service I've tried. Real followers and excellent support.",
-        platform: "TikTok",
+        name: "Sarah Jenkins",
+        role: "🇺🇸 USA",
+        comment: "Safety was my main concern, but TDT's no-password policy won me over. My community is growing with real, active users.",
+        rating: 5,
       },
       {
-        name: "Ana Rodríguez",
-        comment: "My YouTube channel grew incredibly fast. Will buy again.",
-        platform: "YouTube",
+        name: "Yuki Tanaka",
+        role: "🇯🇵 Japan",
+        comment: "Finally, a tool that understands global demographics. The AI helped me connect with art enthusiasts worldwide.",
+        rating: 5,
+      },
+      {
+        name: "Mateo Ricci",
+        role: "🇮🇹 Italy",
+        comment: "Switched to TDT after trying several SMM panels that failed. The difference is night and day; this is real AI-driven growth.",
+        rating: 5,
+      },
+      {
+        name: "Chloe Lefebvre",
+        role: "🇫🇷 France",
+        comment: "Setting up my goals took less than 5 minutes. The AI handles the rest perfectly. It’s the most seamless scaling experience.",
+        rating: 5,
+      },
+      {
+        name: "Liam O’Connor",
+        role: "🇮🇪 Ireland",
+        comment: "As a brand owner, I need results, not bots. TDT delivered a highly engaged audience that actually converts into web traffic.",
+        rating: 5,
+      },
+      {
+        name: "Amira Al-Sayed",
+        role: "🇦🇪 UAE",
+        comment: "The best investment for my digital presence. The targeting options for location and interests are incredibly accurate.",
+        rating: 5,
+      },
+      {
+        name: "Lucas Silva",
+        role: "🇧🇷 Brazil",
+        comment: "Incrível! A tecnologia GPT-4o realmente faz a diferença. O crescimento é orgânico e constante. Suporte nota 10.",
+        rating: 5,
+      },
+      {
+        name: "Oliver Smith",
+        role: "🇬🇧 UK",
+        comment: "Professional, secure, and effective. TDT is now an essential part of my marketing stack for all my client profiles.",
+        rating: 5,
+      },
+      {
+        name: "Elena Kostas",
+        role: "🇬🇷 Greece",
+        comment: "Fast results without compromising account safety. It’s rare to find a service that actually follows through on its promises.",
+        rating: 5,
       },
     ],
     // How it works
@@ -631,31 +792,27 @@ export const translations = {
       items: [
         {
           question: "Are these real followers?",
-          answer:
-            "Yes, all our followers are real accounts with activity. We don't use bots or fake accounts that could harm your account.",
+          answer: "Yes. TDT uses GPT-4o and advanced targeting to connect your profile with real users interested in your specific niche. We don't use fake bot farms.",
         },
         {
           question: "How long does delivery take?",
-          answer:
-            "Delivery time varies by package selected. Generally between 24 hours and 10 days, depending on quantity.",
+          answer: "You will see the first results within hours. Our AI optimizes the growth speed to ensure it looks 100% organic and safe for the platform's algorithm.",
         },
         {
           question: "Is it safe for my account?",
-          answer:
-            "Absolutely. We use safe and gradual delivery methods that respect platform policies. Your account is 100% protected.",
+          answer: "Absolutely. We comply with all official guidelines. Since we don't use automation that violates terms of service, your account is 100% safe.",
         },
         {
           question: "Do you offer a guarantee?",
-          answer:
-            "Yes, all our packages include a replacement guarantee. If you lose followers during the guarantee period, we replace them for free.",
+          answer: "Yes, we have a refill guarantee. If your numbers drop within the first 30 days, our system automatically detects it and restores your growth.",
         },
         {
           question: "What payment methods do you accept?",
-          answer: "We accept credit/debit cards, PayPal, bank transfers and cryptocurrencies for your convenience.",
+          answer: "We accept all major Credit Cards, PayPal, and Cryptocurrency for your convenience and privacy.",
         },
         {
           question: "Do you need my password?",
-          answer: "No, never. We only need your public username. Your security is our priority.",
+          answer: "Never. We only need your username or link. We will never ask for sensitive access information.",
         },
       ],
     },
@@ -676,6 +833,28 @@ export const translations = {
       login: "Log In",
       refundPolicy: "Refund Policy",
       copyright: "All rights reserved.",
+      professional: {
+        description: "The leading platform for organic Instagram growth. Over 80,000 clients trust us.",
+        products: "Products",
+        company: "Company",
+        legal: "Legal",
+        securePayment: "🔒 100% secure and encrypted payments",
+        rights: "All rights reserved.",
+        madeWith: "Made with ❤️ in Argentina",
+        features: "Features",
+        pricing: "Pricing",
+        cases: "Success Stories",
+        testimonials: "Testimonials",
+        about: "About Us",
+        blog: "Blog",
+        careers: "Careers",
+        press: "Press",
+        terms: "Terms of Service",
+        privacy: "Privacy Policy",
+        cookies: "Cookie Policy",
+        gdpr: "GDPR",
+        paymentMethods: "Accepted payment methods:"
+      }
     },
     // Package qualities
     qualities: {
@@ -756,19 +935,28 @@ export const translations = {
         following: "following",
       }
     },
-    // Consultant (El Faro)
+    // Consultant (AI Growth)
     consultant: {
-      badge: "✨ The Beacon: AI Growth Consultant",
+      badge: "✨ AI Growth Consultant",
       title: "Design Your Strategy",
       titleHighlight: "Personalized",
       subtitle: "Our AI analyzes your profile and designs the perfect plan for your growth. Just select your preferences.",
       step1: {
         title: "1. What is your reach goal?",
-        subtitle: "Select how many new followers you want to attract.",
-        followers: "followers",
-        micro: "Micro (500)",
-        influencer: "Influencer (100k)",
+        subtitle: "Select your platform and goal to start the analysis.",
+        followers: "Target Followers",
+        micro: "Micro Influencer",
+        influencer: "Influencer",
         continue: "Continue",
+        loading: {
+          analyzing: "Analyzing {niche} trends in {location}...",
+          optimizing: "Optimizing GPT-4o growth strategy...",
+        },
+        ranges: {
+          foundation: "Perfect for building a solid foundation.",
+          authority: "Ideal for accelerating brand authority.",
+          dominance: "Elite tier for global market dominance.",
+        },
       },
       step2: {
         title: "2. Define your Ideal Audience",
@@ -778,6 +966,36 @@ export const translations = {
         interestLabel: "Niche / Interest",
         back: "Back",
         cta: "See Options",
+      },
+      // Selectors
+      selectors: {
+        locations: {
+          us: "United States",
+          latam: "Latin America",
+          europe: "Europe",
+          asia: "Asia",
+          emirates: "UAE",
+          global: "Global",
+        },
+        interests: {
+          fashion: "Fashion",
+          art: "Art",
+          business: "Business",
+          trading: "Trading",
+          fitness: "Fitness",
+          sports: "Sports",
+          motherhood: "Motherhood",
+          agriculture: "Agriculture",
+          food: "Food",
+          travel: "Travel",
+          tech: "Technology",
+          lifestyle: "Lifestyle",
+        },
+        genders: {
+          any: "Any",
+          male: "Men",
+          female: "Women",
+        }
       },
       trust: {
         encrypted: "Encrypted Data",
@@ -793,42 +1011,6 @@ export const translations = {
         min: "min",
         hour: "h",
         ago: "ago",
-      },
-    },
-    // Features Grid
-    features: {
-      riskFree: {
-        title: "Risk-free Growth",
-        desc: "TDT never asks for your password like other companies, avoiding any risk of suspension. We comply with all IG guidelines.",
-      },
-      engaged: {
-        title: "New Engaged Followers",
-        desc: "TDT ensures your new fans don't just follow you, but enjoy what you share and want to see more.",
-      },
-      noSpam: {
-        title: "No Spam or Bots",
-        desc: "Only smart social media growth. You'll see immediate growth thanks to TDT's GPT4 technology.",
-      },
-      secret: "What's the secret?",
-      header: {
-        main: "AI Technology + Marketing Strategists =",
-        highlight: "Fast & Easy Growth 🚀",
-      },
-      ai: {
-        title: "Boost your growth with AI",
-        desc: "We use patented machine learning models to find the right audience for your profile and content.",
-      },
-      demographics: {
-        title: "Target specific demographics",
-        desc: "We ensure all targeting options are available: age, gender, location, lookalike accounts, hashtags, interests, and more.",
-      },
-      anywhere: {
-        title: "Find followers anywhere",
-        desc: "Location targeting is key to ensuring your brand presence improves in the right areas.",
-      },
-      support: {
-        title: "Get support anytime",
-        desc: "In addition to a dedicated account manager, you'll have access to our support team 24/7.",
       },
     },
     // Impact Section
@@ -976,17 +1158,18 @@ export const translations = {
     // Hero
     hero: {
       badge: "🎄 O Natal chegou à TDT",
-      title: "Leve suas Redes ao",
-      titleHighlight: "Próximo Nível",
+      title: "Vença o Algoritmo e Conecte-se com",
+      titleHighlight: "Públicos Reais",
+      titleEnd: "usando IA",
       subtitle:
-        "Seguidores reais, engajamento autêntico. Cresça no Instagram, TikTok e mais com a plataforma de confiança de milhares de criadores.",
+        "Sem bots, sem contas falsas. Apenas crescimento orgânico segmentado por gênero e localização em tempo recorde.",
       problem: "Cansado do algoritmo esconder sua conta?",
       solution: "TDT usa Inteligência Artificial para colocar seu conteúdo na frente de pessoas reais interessadas em conteúdo como o seu. Apenas selecione gênero, localização do público-alvo, e nossa IA cuida do resto.",
       solutionHighlight: "Você começará a ver crescimento real em horas.",
       trustBadge: "Não são bots ou contas falsas. São pessoas reais.",
-      trustLine: "Mais de 50.000 criadores confiam em nós",
+      trustLine: "Amado por mais de 80.000 fãs",
       guarantee: "💯 Garantia de satisfação ou seu dinheiro de volta",
-      cta: "Usar IA Agora ✨",
+      cta: "Impulsionar minha conta com IA →",
       ctaSecondary: "Como Funciona",
       stats: {
         clients: "Clientes Satisfeitos",
@@ -1030,26 +1213,114 @@ export const translations = {
         supportDesc: "Sempre estamos aqui para ajudar",
         secure: "Pagamento seguro",
         secureDesc: "Criptografia de nível bancário",
-        refund: "Reembolso garantido",
         refundDesc: "Sem perguntas em 30 dias",
       },
     },
+    // Testimonials Section Header
+    testimonialsSection: {
+      badge: "Amor dos clientes",
+      title: "Clientes amam nossa ferramenta de crescimento",
+      subtitle: "Veja por que influenciadores e marcas confiam na TDT para seu crescimento no Instagram.",
+    },
+    // New Features / Benefits Section
+    features: {
+      header: {
+        main: "Tecnologia IA + Estrategistas de Marketing =",
+        highlight: "Crescimento Rápido e Fácil 🚀",
+      },
+      badge: "Impulsionado por IA",
+      title: "Sem seguidores falsos ou bots",
+      subtitle: "Apenas crescimento inteligente no Instagram. Você verá crescimento imediato graças à tecnologia de IA da TDT.",
+      list: [
+        {
+          title: "Sem Táticas de Spam",
+          description: "Não dependa de automação e bots. TDT garante novos fãs autênticos que realmente apreciam e interagem com seu conteúdo.",
+        },
+        {
+          title: "Crescimento Constante",
+          description: "Veja seu contador de seguidores crescer todo dia sem trabalho da sua parte. Trabalhamos 24/7 para crescer sua conta.",
+        },
+        {
+          title: "Crescimento Sem Riscos",
+          description: "TDT nunca pede sua senha do IG. Estamos em total conformidade com as diretrizes do Instagram.",
+        },
+        {
+          title: "Novos Seguidores Engajados",
+          description: "TDT garante que seus seguidores não apenas sigam e deixem de seguir, mas que aproveitem o que você compartilha.",
+        },
+        {
+          title: "Não Perca Tempo ou Dinheiro",
+          description: "Por que pagar por uma equipe de marketing inteira quando a TDT cresce sua conta melhor? Foque em criar conteúdo.",
+        },
+        {
+          title: "Modelos de Crescimento IA",
+          description: "Uma vez que você nos dá seus filtros de segmentação, sente-se e deixe a tecnologia da TDT encontrar os seguidores certos.",
+        },
+      ]
+    },
+    // Testimonials
+
     // Testimonials
     testimonials: [
       {
-        name: "María García",
-        comment: "Serviço incrível! Meus seguidores chegaram em menos de 24 horas. 100% recomendado.",
-        platform: "Instagram",
+        name: "Alexander K.",
+        role: "🇩🇪 Germany",
+        comment: "The precision of the GPT-4o targeting is impressive. I’ve seen a 20% increase in organic reach from high-quality European audiences.",
+        rating: 5,
       },
       {
-        name: "Carlos Mendoza",
-        comment: "O melhor serviço de SMM que já experimentei. Seguidores reais e suporte excelente.",
-        platform: "TikTok",
+        name: "Sarah Jenkins",
+        role: "🇺🇸 USA",
+        comment: "Safety was my main concern, but TDT's no-password policy won me over. My community is growing with real, active users.",
+        rating: 5,
       },
       {
-        name: "Ana Rodríguez",
-        comment: "Meu canal do YouTube cresceu incrivelmente rápido. Vou comprar novamente.",
-        platform: "YouTube",
+        name: "Yuki Tanaka",
+        role: "🇯🇵 Japan",
+        comment: "Finally, a tool that understands global demographics. The AI helped me connect with art enthusiasts worldwide.",
+        rating: 5,
+      },
+      {
+        name: "Mateo Ricci",
+        role: "🇮🇹 Italy",
+        comment: "Switched to TDT after trying several SMM panels that failed. The difference is night and day; this is real AI-driven growth.",
+        rating: 5,
+      },
+      {
+        name: "Chloe Lefebvre",
+        role: "🇫🇷 France",
+        comment: "Setting up my goals took less than 5 minutes. The AI handles the rest perfectly. It’s the most seamless scaling experience.",
+        rating: 5,
+      },
+      {
+        name: "Liam O’Connor",
+        role: "🇮🇪 Ireland",
+        comment: "As a brand owner, I need results, not bots. TDT delivered a highly engaged audience that actually converts into web traffic.",
+        rating: 5,
+      },
+      {
+        name: "Amira Al-Sayed",
+        role: "🇦🇪 UAE",
+        comment: "The best investment for my digital presence. The targeting options for location and interests are incredibly accurate.",
+        rating: 5,
+      },
+      {
+        name: "Lucas Silva",
+        role: "🇧🇷 Brazil",
+        comment: "Incrível! A tecnologia GPT-4o realmente faz a diferença. O crescimento é orgânico e constante. Suporte nota 10.",
+        rating: 5,
+      },
+      {
+        name: "Oliver Smith",
+        role: "🇬🇧 UK",
+        comment: "Professional, secure, and effective. TDT is now an essential part of my marketing stack for all my client profiles.",
+        rating: 5,
+      },
+      {
+        name: "Elena Kostas",
+        role: "🇬🇷 Greece",
+        comment: "Fast results without compromising account safety. It’s rare to find a service that actually follows through on its promises.",
+        rating: 5,
       },
     ],
     // How it works
@@ -1125,6 +1396,28 @@ export const translations = {
       contact: "Contacto",
       login: "Entrar",
       copyright: "Todos os direitos reservados.",
+      professional: {
+        description: "A plataforma líder em crescimento orgânico no Instagram. Mais de 80.000 clientes confiam em nós.",
+        products: "Produto",
+        company: "Empresa",
+        legal: "Legal",
+        securePayment: "🔒 Pagamentos 100% seguros e criptografados",
+        rights: "Todos os direitos reservados.",
+        madeWith: "Feito com ❤️ na Argentina",
+        features: "Características",
+        pricing: "Preços",
+        cases: "Casos de Sucesso",
+        testimonials: "Depoimentos",
+        about: "Sobre Nós",
+        blog: "Blog",
+        careers: "Carreiras",
+        press: "Imprensa",
+        terms: "Termos de Serviço",
+        privacy: "Política de Privacidade",
+        cookies: "Política de Cookies",
+        gdpr: "GDPR",
+        paymentMethods: "Métodos de pagamento aceitos:"
+      }
     },
     // Package qualities
     qualities: {
@@ -1297,6 +1590,11 @@ export const translations = {
         guarantee: "Garantia Total",
       },
       back: "Voltar",
+    },
+    direct: {
+      title: "Precisa de um impulso rápido? Explore soluções individuais.",
+      bestSeller: "Mais Vendido",
+      instant: "Início Instantâneo",
     },
   },
 }

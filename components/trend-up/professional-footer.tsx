@@ -18,7 +18,7 @@ export default function ProfessionalFooter() {
                             <span className="font-bold text-xl text-white">TDT</span>
                         </div>
                         <p className="text-sm text-slate-400 mb-6">
-                            La plataforma líder en crecimiento orgánico de Instagram. Más de 80,000 clientes confían en nosotros.
+                            {t.footer.professional?.description || "La plataforma líder..."}
                         </p>
                         <div className="flex gap-4">
                             <a href="#" className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-orange-500 transition-colors">
@@ -38,37 +38,37 @@ export default function ProfessionalFooter() {
 
                     {/* Product Column */}
                     <div>
-                        <h4 className="font-bold text-white mb-4">Producto</h4>
+                        <h4 className="font-bold text-white mb-4">{t.footer.professional?.products}</h4>
                         <ul className="space-y-3 text-sm">
-                            <li><a href="#" className="hover:text-orange-500 transition-colors">Características</a></li>
-                            <li><a href="#" className="hover:text-orange-500 transition-colors">Precios</a></li>
-                            <li><a href="#" className="hover:text-orange-500 transition-colors">Casos de Éxito</a></li>
-                            <li><a href="#" className="hover:text-orange-500 transition-colors">Testimonios</a></li>
+                            <li><a href="#" className="hover:text-orange-500 transition-colors">{t.footer.professional?.features}</a></li>
+                            <li><a href="#" className="hover:text-orange-500 transition-colors">{t.footer.professional?.pricing}</a></li>
+                            <li><a href="#" className="hover:text-orange-500 transition-colors">{t.footer.professional?.cases}</a></li>
+                            <li><a href="#" className="hover:text-orange-500 transition-colors">{t.footer.professional?.testimonials}</a></li>
                             <li><a href="#" className="hover:text-orange-500 transition-colors">FAQ</a></li>
                         </ul>
                     </div>
 
                     {/* Company Column */}
                     <div>
-                        <h4 className="font-bold text-white mb-4">Empresa</h4>
+                        <h4 className="font-bold text-white mb-4">{t.footer.professional?.company}</h4>
                         <ul className="space-y-3 text-sm">
-                            <li><a href="#" className="hover:text-orange-500 transition-colors">Sobre Nosotros</a></li>
-                            <li><a href="#" className="hover:text-orange-500 transition-colors">Blog</a></li>
-                            <li><a href="#" className="hover:text-orange-500 transition-colors">Carreras</a></li>
-                            <li><a href="#" className="hover:text-orange-500 transition-colors">Prensa</a></li>
-                            <li><a href="#" className="hover:text-orange-500 transition-colors">Contacto</a></li>
+                            <li><a href="#" className="hover:text-orange-500 transition-colors">{t.footer.professional?.about}</a></li>
+                            <li><a href="#" className="hover:text-orange-500 transition-colors">{t.footer.professional?.blog}</a></li>
+                            <li><a href="#" className="hover:text-orange-500 transition-colors">{t.footer.professional?.careers}</a></li>
+                            <li><a href="#" className="hover:text-orange-500 transition-colors">{t.footer.professional?.press}</a></li>
+                            <li><Link href="/contact" className="hover:text-orange-500 transition-colors">{t.footer.contact}</Link></li>
                         </ul>
                     </div>
 
                     {/* Legal Column */}
                     <div>
-                        <h4 className="font-bold text-white mb-4">Legal</h4>
+                        <h4 className="font-bold text-white mb-4">{t.footer.professional?.legal}</h4>
                         <ul className="space-y-3 text-sm">
-                            <li><a href="#" className="hover:text-orange-500 transition-colors">Términos de Servicio</a></li>
-                            <li><a href="#" className="hover:text-orange-500 transition-colors">Política de Privacidad</a></li>
-                            <li><a href="#" className="hover:text-orange-500 transition-colors">Política de Cookies</a></li>
+                            <li><Link href="/terms" className="hover:text-orange-500 transition-colors">{t.footer.professional?.terms}</Link></li>
+                            <li><Link href="/privacy" className="hover:text-orange-500 transition-colors">{t.footer.professional?.privacy}</Link></li>
+                            <li><Link href="#" className="hover:text-orange-500 transition-colors">{t.footer.professional?.cookies}</Link></li>
                             <li><Link href="/refund" className="hover:text-orange-500 transition-colors">{t.footer.refundPolicy}</Link></li>
-                            <li><a href="#" className="hover:text-orange-500 transition-colors">GDPR</a></li>
+                            <li><a href="#" className="hover:text-orange-500 transition-colors">{t.footer.professional?.gdpr}</a></li>
                         </ul>
                     </div>
                 </div>
@@ -77,7 +77,7 @@ export default function ProfessionalFooter() {
                 <div className="mt-12 pt-8 border-t border-slate-800">
                     <div className="flex flex-col md:flex-row items-center justify-between gap-6">
                         <div>
-                            <p className="text-sm text-slate-400 mb-3">Métodos de pago aceptados:</p>
+                            <p className="text-sm text-slate-400 mb-3">{t.footer.professional?.paymentMethods}</p>
                             <div className="flex gap-3">
                                 {/* Visa */}
                                 <div className="w-12 h-8 bg-white rounded flex items-center justify-center">
@@ -113,7 +113,7 @@ export default function ProfessionalFooter() {
                         </div>
 
                         <div className="text-sm text-slate-400">
-                            <p>🔒 Pagos 100% seguros y encriptados</p>
+                            <p>{t.footer.professional?.securePayment}</p>
                         </div>
                     </div>
                 </div>
@@ -123,8 +123,8 @@ export default function ProfessionalFooter() {
             <div className="border-t border-slate-800">
                 <div className="container mx-auto px-4 py-6">
                     <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-slate-400">
-                        <p>© 2024 TDT. Todos los derechos reservados.</p>
-                        <p>Hecho con ❤️ en Argentina</p>
+                        <p>© {new Date().getFullYear()} TDT. {t.footer.professional?.rights}</p>
+                        <p>{t.footer.professional?.madeWith}</p>
                     </div>
                 </div>
             </div>
