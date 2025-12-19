@@ -19,9 +19,9 @@ interface UpsellOption {
 function CheckoutContent() {
     const { t } = useI18n()
     const searchParams = useSearchParams()
-    const [selectedPlan, setSelectedPlan] = useState("turbo")
-    const [billingCycle, setBillingCycle] = useState("annual")
-    const [paymentMethod, setPaymentMethod] = useState<"crypto" | "manual">("crypto")
+    const [selectedPlan, setSelectedPlan] = useState("pro")
+    const [billingCycle, setBillingCycle] = useState("monthly")
+    const [paymentMethod, setPaymentMethod] = useState<"crypto" | "manual">("manual")
 
     // Order Bump State
     const [orderBump, setOrderBump] = useState(false)
@@ -41,8 +41,11 @@ function CheckoutContent() {
             username: searchParams.get("username") || "",
             email: searchParams.get("email") || ""
         })
-        setSelectedPlan(searchParams.get("plan") || "turbo")
-        setBillingCycle(searchParams.get("billing") || "annual")
+        const planParam = searchParams.get("plan")
+        // Map old params to new if necessary, or just use raw. 
+        // Our pricing section sends: starter, pro, dominance
+        setSelectedPlan(planParam || "pro")
+        setBillingCycle(searchParams.get("billing") || "monthly")
 
         // Auto-validate if username present
         if (searchParams.get("username")) {
@@ -68,61 +71,62 @@ function CheckoutContent() {
         }
     }
 
-    // Pricing Constants
-    const basePrices = {
-        standard: { monthly: 24921, annual: 12460 }, // approx based on landing page
-        turbo: { monthly: 120210, annual: 60105 } // approx
+    // Pricing Constants (USD)
+    const basePrices: Record<string, { monthly: number, quarterly: number }> = {
+        starter: { monthly: 49, quarterly: 117 }, // 49 * 3 * 0.8
+        pro: { monthly: 99, quarterly: 237 }, // 99 * 3 * 0.8
+        dominance: { monthly: 249, quarterly: 597 } // 249 * 3 * 0.8
     }
-    const BUMP_PRICE = 4500 // approx $4.99 USD in ARS or just display USD
 
-    // Calculate total
-    const planKey = selectedPlan === "turbo" || selectedPlan === "premium" ? "turbo" : "standard"
-    const cycleKey = billingCycle === "annual" ? "annual" : "monthly"
+    // Fallback for unknown plans
+    const safePlan = basePrices[selectedPlan] ? selectedPlan : "pro"
+    const cycleKey = billingCycle === "quarterly" ? "quarterly" : "monthly"
+    const basePrice = basePrices[safePlan][cycleKey]
 
-    const basePrice = basePrices[planKey][cycleKey] || 50000
+    const BUMP_PRICE = 4.99
     const bumpTotal = orderBump ? BUMP_PRICE : 0
     const subtotal = basePrice + bumpTotal
     const cryptoDiscount = paymentMethod === "crypto" ? subtotal * 0.1 : 0
     const total = subtotal - cryptoDiscount
 
+    // Terms State
+    const [termsAccepted, setTermsAccepted] = useState(false)
+
     const handleCheckout = async () => {
-        // ... (Same logic as before, just updated payload)
+        if (!userData.username) {
+            alert("Please enter your Instagram Username")
+            return
+        }
+        if (!termsAccepted) {
+            alert("Please accept the Terms of Service to proceed.")
+            return
+        }
+
         if (paymentMethod === "crypto") {
-            try {
-                const response = await fetch("/api/create-payment", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        amount: total,
-                        currency: "USD",
-                        email: userData.email,
-                        username: userData.username,
-                        orderDetails: {
-                            plan: selectedPlan,
-                            billing: billingCycle,
-                            amount: selectedPlan === "turbo" ? "5000" : "1000",
-                            orderBump: orderBump
-                        }
-                    })
-                })
-                const data = await response.json()
-                if (data.success && data.url) {
-                    window.location.href = data.url
-                } else {
-                    alert("Error: " + (data.error || "Try again"))
-                }
-            } catch (error) {
-                console.error("Error", error)
-                alert("Payment Error")
-            }
+            // Placeholder for Cryptomus Integration logic
+            // Ideally we redirect to an API, but for now alerted or minimal action
+            // User said: "voy a chequear todo para cryptomus"
+            // Let's redirect to a placeholder or alert
+            alert("Cryptomus integration coming soon! For now, please use WhatsApp to complete your Crypto payment manually.")
+            const message = `[CRYPTO REQUEST] Plan: ${selectedPlan.toUpperCase()} ($${total.toFixed(2)}). User: @${userData.username}. Email: ${userData.email}`
+            window.open(`https://wa.me/5492212235170?text=${encodeURIComponent(message)}`, '_blank')
         } else {
-            const message = `Hello! I would like to pay for Plan ${selectedPlan.toUpperCase()} (${billingCycle}). Bump: ${orderBump ? "YES" : "NO"}. Total: $${total}. User: @${userData.username}`
+            // WhatsApp Manual Checkout
+            const planName = selectedPlan === "starter" ? "GROWTH STARTER" : selectedPlan === "pro" ? "VIRAL MOMENTUM" : "BRAND PARTNER"
+            const message = `Hello! I would like to activate:
+            
+🚀 *Plan:* ${planName}
+📅 *Billing:* ${billingCycle.toUpperCase()}
+👤 *Username:* @${userData.username}
+📧 *Email:* ${userData.email}
+${orderBump ? "⚡ *Priority:* YES" : ""}
+
+💰 *Total to Pay:* $${total.toFixed(2)} USD
+
+I have accepted the Terms of Service.`
             window.open(`https://wa.me/5492212235170?text=${encodeURIComponent(message)}`, '_blank')
         }
     }
-
-    // Terms State
-    const [termsAccepted, setTermsAccepted] = useState(false)
 
     return (
         <main className="min-h-screen bg-slate-50 font-sans">
@@ -131,7 +135,7 @@ function CheckoutContent() {
                 <div className="container mx-auto px-4 py-4 max-w-6xl flex justify-between items-center">
                     <div className="flex items-center gap-2">
                         <Sparkles className="w-6 h-6 text-orange-600 fill-orange-600" />
-                        <span className="font-black text-xl text-slate-900 tracking-tight">TDT <span className="text-slate-400 font-normal">Secure Checkout</span></span>
+                        <span className="font-black text-xl text-slate-900 tracking-tight">Trend Digital <span className="text-slate-400 font-normal">Secure Checkout</span></span>
                     </div>
                     <div className="flex items-center gap-2 text-xs font-bold text-green-600 bg-green-50 px-3 py-1 rounded-full border border-green-200">
                         <Lock className="w-3 h-3" />
@@ -270,19 +274,21 @@ function CheckoutContent() {
                                     {/* Item */}
                                     <div className="flex justify-between items-start pb-4 border-b border-slate-100">
                                         <div>
-                                            <div className="font-bold text-slate-900">Plan {planKey.toUpperCase()}</div>
-                                            <div className="text-xs text-slate-500">Billing: {cycleKey}</div>
+                                            <div className="font-bold text-slate-900 uppercase tracking-wide">
+                                                {safePlan === "starter" ? "Growth Starter" : safePlan === "pro" ? "Viral Momentum" : "Brand Partner"}
+                                            </div>
+                                            <div className="text-xs text-slate-500 capitalize">Billing: {billingCycle}</div>
                                         </div>
                                         <div className="text-right">
-                                            <div className="font-bold">ARS ${basePrice.toLocaleString()}</div>
+                                            <div className="font-bold text-lg">${basePrice.toLocaleString()}</div>
                                         </div>
                                     </div>
 
                                     {/* Discount Line */}
                                     {paymentMethod === "crypto" && (
                                         <div className="flex justify-between items-center text-green-600 text-sm font-medium">
-                                            <span>Crypto Discount</span>
-                                            <span>- ARS ${cryptoDiscount.toLocaleString()}</span>
+                                            <span>Crypto Discount (10%)</span>
+                                            <span>- ${cryptoDiscount.toFixed(2)}</span>
                                         </div>
                                     )}
 
@@ -290,14 +296,14 @@ function CheckoutContent() {
                                     {orderBump && (
                                         <div className="flex justify-between items-center text-orange-600 text-sm font-bold animate-fade-in">
                                             <span>VIP Priority</span>
-                                            <span>+ ARS ${BUMP_PRICE.toLocaleString()}</span>
+                                            <span>+ ${BUMP_PRICE}</span>
                                         </div>
                                     )}
 
                                     {/* Total */}
                                     <div className="flex justify-between items-baseline pt-2">
                                         <span className="text-slate-500">Total</span>
-                                        <span className="text-3xl font-black text-slate-900">ARS ${total.toLocaleString()}</span>
+                                        <span className="text-3xl font-black text-slate-900">${total.toFixed(2)}</span>
                                     </div>
                                 </div>
 
@@ -309,7 +315,7 @@ function CheckoutContent() {
                                                 {t.checkout?.orderBump?.headline || "🚀 ONE-TIME OFFER: PRIORITY PROCESSING"}
                                             </div>
                                             <p className="text-sm text-slate-700 font-medium leading-tight">
-                                                {t.checkout?.orderBump?.copy || "Yes, add priority processing for $3.99."}
+                                                {t.checkout?.orderBump?.copy || "Yes, add priority processing for $4.99."}
                                             </p>
                                         </div>
                                         <div className="flex flex-col items-end gap-2">
@@ -319,7 +325,7 @@ function CheckoutContent() {
                                                 className="data-[state=checked]:bg-[#FF4D4F] scale-110"
                                             />
                                             <span className="text-xs font-bold text-[#FF4D4F]">
-                                                {t.checkout?.orderBump?.price || "+$3.99"}
+                                                +$4.99
                                             </span>
                                         </div>
                                     </div>
@@ -345,14 +351,14 @@ function CheckoutContent() {
                                     <Button
                                         onClick={handleCheckout}
                                         disabled={!termsAccepted}
-                                        className="w-full bg-black hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed text-white text-lg font-bold py-7 rounded-xl shadow-lg transition-all hover:scale-[1.02] active:scale-95"
+                                        className="w-full bg-slate-900 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed text-white text-lg font-bold py-7 rounded-xl shadow-lg transition-all hover:scale-[1.02] active:scale-95"
                                     >
-                                        {t.checkout?.paymentButton?.text || "Start Growth Now"}
+                                        Activate Plan
                                         <ArrowRight className="ml-2 w-5 h-5" />
                                     </Button>
                                     <p className="text-center text-xs text-slate-400 mt-3 flex items-center justify-center gap-1.5 font-medium">
                                         <Sparkles className="w-3 h-3 text-green-500" />
-                                        {t.checkout?.paymentButton?.subtext || "Guaranteed Delivery within 24h"}
+                                        Guaranteed Delivery within 24h
                                     </p>
                                 </div>
                             </div>
