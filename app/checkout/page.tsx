@@ -248,15 +248,37 @@ I have accepted the Terms of Service.`
                                 </button>
                             </div>
 
-                            {/* Payment Logos Row */}
+                            {/* Payment Logos Row (Clean SVGs) */}
                             <div className="mt-8 pt-6 border-t border-slate-100">
                                 <p className="text-xs text-center text-slate-400 font-bold uppercase tracking-wider mb-4">{t.checkout?.secureLogos || "We accept"}</p>
-                                <div className="flex flex-wrap justify-center gap-4 opacity-60 grayscale hover:grayscale-0 transition-all duration-300">
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png" alt="Visa" className="h-6 object-contain" />
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/b/b7/MasterCard_Logo.svg" alt="Mastercard" className="h-6 object-contain" />
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/American_Express_logo_%282018%29.svg" alt="Amex" className="h-6 object-contain" />
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Google_Wallet_Icon_2015.svg/2560px-Google_Wallet_Icon_2015.svg.png" alt="GPay" className="h-6 object-contain" />
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Ethereum_logo_2014.svg/1257px-Ethereum_logo_2014.svg.png" alt="Crypto" className="h-6 object-contain" />
+                                <div className="flex flex-wrap justify-center gap-3 grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
+                                    {/* Visa */}
+                                    <div className="h-6 w-10 flex items-center justify-center bg-white border border-slate-200 rounded">
+                                        <svg className="w-8 h-5" viewBox="0 0 48 32" fill="none">
+                                            <rect width="48" height="32" rx="4" fill="white" />
+                                            <path d="M20.5 11h-3.2l-2 12h3.2l2-12zm8.5 7.7c0-3.2-4.4-3.4-4.4-4.8 0-.4.4-.9 1.3-.9.7 0 1.3.1 1.9.3l.3-1.9c-.6-.2-1.4-.4-2.4-.4-2.5 0-4.3 1.3-4.3 3.2 0 1.4 1.2 2.1 2.2 2.6 1 .5 1.4.8 1.4 1.2 0 .7-.8 1-1.6 1-.9 0-1.8-.2-2.6-.6l-.4 2c.8.4 1.9.6 3.1.6 2.7 0 4.5-1.3 4.5-3.3zm6.8 4.3h2.8l-2.4-12h-2.6c-.6 0-1 .3-1.3.8l-4.5 11.2h2.7l.5-1.5h3.3l.5 1.5zm-2.9-3.5l1.4-3.8.8 3.8h-2.2zm-13.4-8.5l-3.1 12h-2.7l-1.5-9.3c-.1-.4-.2-.6-.5-.8-.5-.3-1.4-.6-2.2-.8l.1-.4h3.8c.5 0 .9.3 1 .9l.9 4.8 2.2-5.7h2.7z" fill="#1434CB" />
+                                        </svg>
+                                    </div>
+                                    {/* Mastercard */}
+                                    <div className="h-6 w-10 flex items-center justify-center bg-white border border-slate-200 rounded">
+                                        <svg className="w-8 h-5" viewBox="0 0 48 32" fill="none">
+                                            <rect width="48" height="32" rx="4" fill="white" />
+                                            <circle cx="18" cy="16" r="7" fill="#EB001B" />
+                                            <circle cx="30" cy="16" r="7" fill="#F79E1B" />
+                                            <path d="M24 10.5c-1.4 1.3-2.3 3.2-2.3 5.5s.9 4.2 2.3 5.5c1.4-1.3 2.3-3.2 2.3-5.5s-.9-4.2-2.3-5.5z" fill="#FF5F00" />
+                                        </svg>
+                                    </div>
+                                    {/* Amex */}
+                                    <div className="h-6 w-10 flex items-center justify-center bg-white border border-slate-200 rounded">
+                                        <svg className="w-8 h-5" viewBox="0 0 48 32" fill="none">
+                                            <rect width="48" height="32" rx="4" fill="#006FCF" />
+                                            <path d="M14 12h-2l-1.5 4-1.5-4h-2l2.5 6h2l2.5-6zm3 0h-2v6h2v-6zm4 0h-2l-1.5 4v-4h-2v6h2l1.5-4v4h2v-6zm8 0h-4v6h4v-1.5h-2v-1h2v-1.5h-2v-1h2v-1.5zm4 0h-2l-1.5 4-1.5-4h-2l2.5 6h2l2.5-6z" fill="white" />
+                                        </svg>
+                                    </div>
+                                    {/* Bitcoin/Crypto */}
+                                    <div className="h-6 w-10 flex items-center justify-center bg-white border border-slate-200 rounded">
+                                        <Bitcoin className="w-5 h-5 text-orange-500" />
+                                    </div>
                                 </div>
                             </div>
                         </div>
