@@ -103,28 +103,39 @@ function CheckoutContent() {
             return
         }
 
+        // 1. Capture Lead (Fire & Forget mostly, but await to ensure saved)
+        try {
+            await fetch('/api/create-lead', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: userData.email,
+                    username: userData.username,
+                    plan: selectedPlan,
+                    period: billingCycle,
+                    amount: total,
+                    payment_method: paymentMethod,
+                    order_bump: orderBump
+                })
+            })
+        } catch (err) {
+            console.error("Lead capture failed (non-blocking)", err)
+        }
+
         if (paymentMethod === "crypto") {
-            // Placeholder for Cryptomus Integration logic
-            // Ideally we redirect to an API, but for now alerted or minimal action
-            // User said: "voy a chequear todo para cryptomus"
-            // Let's redirect to a placeholder or alert
-            alert("Cryptomus integration coming soon! For now, please use WhatsApp to complete your Crypto payment manually.")
             const message = `[CRYPTO REQUEST] Plan: ${selectedPlan.toUpperCase()} ($${total.toFixed(2)}). User: @${userData.username}. Email: ${userData.email}`
+            alert("Crypto Gateway is activating... A VIP Agent will assist you instantly via WhatsApp.")
             window.open(`https://wa.me/5492212235170?text=${encodeURIComponent(message)}`, '_blank')
         } else {
-            // WhatsApp Manual Checkout
             const planName = selectedPlan === "starter" ? "GROWTH STARTER" : selectedPlan === "pro" ? "VIRAL MOMENTUM" : "BRAND PARTNER"
-            const message = `Hello! I would like to activate:
+            const message = `Hello TDT Support. I want to finalize payment for the ${planName} ($${total.toFixed(2)}).
             
-🚀 *Plan:* ${planName}
-📅 *Billing:* ${billingCycle.toUpperCase()}
-👤 *Username:* @${userData.username}
-📧 *Email:* ${userData.email}
-${orderBump ? "⚡ *Priority:* YES" : ""}
+👤 User: @${userData.username}
+📧 Email: ${userData.email}
+📅 Billing: ${billingCycle.toUpperCase()}
 
-💰 *Total to Pay:* $${total.toFixed(2)} USD
+Please send payment details for Zelle/CashApp/Transfer.`
 
-I have accepted the Terms of Service.`
             window.open(`https://wa.me/5492212235170?text=${encodeURIComponent(message)}`, '_blank')
         }
     }
@@ -208,42 +219,55 @@ I have accepted the Terms of Service.`
                             </div>
 
                             <div className="space-y-4">
+                                {/* Option A: Instant Crypto */}
                                 <button
                                     onClick={() => setPaymentMethod("crypto")}
-                                    className={`w-full flex items-center justify-between p-4 rounded-xl border-2 transition-all ${paymentMethod === "crypto" ? "border-green-500 bg-green-50/50" : "border-slate-200 hover:border-slate-300"}`}
+                                    className={`relative w-full flex items-center justify-between p-4 rounded-xl border-2 transition-all overflow-hidden ${paymentMethod === "crypto" ? "border-green-500 bg-green-50/50" : "border-slate-200 hover:border-slate-300 opacity-60"}`}
                                 >
                                     <div className="flex items-center gap-4">
-                                        <div className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center">
-                                            <Bitcoin className="w-6 h-6 text-orange-500" />
+                                        <div className="w-10 h-10 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center">
+                                            <Bitcoin className="w-6 h-6 text-yellow-500" />
                                         </div>
                                         <div className="text-left">
                                             <div className="font-bold text-slate-900 flex items-center gap-2">
-                                                Crypto / Binance / USDT
-                                                <span className="bg-green-100 text-green-700 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase">-10% OFF</span>
+                                                Pay with Crypto
+                                                <span className="bg-slate-200 text-slate-600 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase">Coming Soon</span>
                                             </div>
-                                            <div className="text-sm text-slate-500">Instant approval. Anonymous.</div>
+                                            <div className="text-sm text-slate-500">Instant Activation (USDT/BTC/ETH)</div>
                                         </div>
                                     </div>
-                                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${paymentMethod === "crypto" ? "border-green-500" : "border-slate-300"}`}>
-                                        {paymentMethod === "crypto" && <div className="w-2.5 h-2.5 rounded-full bg-green-500" />}
-                                    </div>
+                                    {paymentMethod === "crypto" && <div className="absolute top-0 right-0 p-1"><div className="w-2.5 h-2.5 rounded-full bg-green-500" /></div>}
                                 </button>
 
+                                {/* Option B: VIP Manual Processing */}
                                 <button
                                     onClick={() => setPaymentMethod("manual")}
-                                    className={`w-full flex items-center justify-between p-4 rounded-xl border-2 transition-all ${paymentMethod === "manual" ? "border-blue-500 bg-blue-50/50" : "border-slate-200 hover:border-slate-300"}`}
+                                    className={`relative w-full p-0 rounded-xl border-2 transition-all shadow-sm group ${paymentMethod === "manual" ? "border-[#D4AF37] bg-amber-50/10 ring-1 ring-[#D4AF37]/50" : "border-slate-200 hover:border-[#D4AF37]/50"}`}
                                 >
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center">
-                                            <MessageCircle className="w-6 h-6 text-blue-500" />
+                                    <div className="p-4 flex items-center justify-between">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center shadow-lg">
+                                                <Shield className="w-6 h-6 text-[#D4AF37]" />
+                                            </div>
+                                            <div className="text-left">
+                                                <div className="font-black text-slate-900 text-lg flex items-center gap-2">
+                                                    VIP Manual Processing
+                                                    <span className="bg-[#D4AF37]/10 text-[#D4AF37] text-[10px] px-2 py-0.5 rounded-full font-bold uppercase border border-[#D4AF37]/20">Verified</span>
+                                                </div>
+                                                <div className="text-sm text-slate-600 font-medium">Zelle / CashApp / Wire Transfer</div>
+                                            </div>
                                         </div>
-                                        <div className="text-left">
-                                            <div className="font-bold text-slate-900">Transfer / Cash (WhatsApp)</div>
-                                            <div className="text-sm text-slate-500">Contact support to pay manually.</div>
+                                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${paymentMethod === "manual" ? "border-[#D4AF37]" : "border-slate-300"}`}>
+                                            {paymentMethod === "manual" && <div className="w-3 h-3 rounded-full bg-[#D4AF37]" />}
                                         </div>
                                     </div>
-                                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${paymentMethod === "manual" ? "border-blue-500" : "border-slate-300"}`}>
-                                        {paymentMethod === "manual" && <div className="w-2.5 h-2.5 rounded-full bg-blue-500" />}
+
+                                    {/* Trust Footer */}
+                                    <div className="bg-[#D4AF37]/5 px-4 py-2 border-t border-[#D4AF37]/10 flex items-center gap-2">
+                                        <Lock className="w-3 h-3 text-[#D4AF37]" />
+                                        <p className="text-[11px] text-slate-600 font-medium">
+                                            For security, high-ticket orders are verified personally by a billing agent.
+                                        </p>
                                     </div>
                                 </button>
                             </div>
@@ -375,7 +399,7 @@ I have accepted the Terms of Service.`
                                         onClick={handleCheckout}
                                         className="w-full bg-slate-900 hover:bg-slate-800 text-white text-lg font-bold py-7 rounded-xl shadow-lg transition-all hover:scale-[1.02] active:scale-95"
                                     >
-                                        Activate Plan
+                                        Proceed to Secure Activation
                                         <ArrowRight className="ml-2 w-5 h-5" />
                                     </Button>
                                     <p className="text-center text-xs text-slate-400 mt-3 flex items-center justify-center gap-1.5 font-medium">
