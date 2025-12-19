@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Check, ShieldCheck, CreditCard, Ban, Sparkles, Zap, Crown } from "lucide-react"
+import { Check, ShieldCheck, CreditCard, Ban, Sparkles, Zap, Crown, CheckCircle2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import Link from "next/link"
@@ -133,14 +133,15 @@ export default function PricingSection() {
 
                                     {/* Features */}
                                     <ul className="space-y-4 mb-8">
-                                        {tier.features.map((feature, i) => (
-                                            <li key={i} className="flex items-start gap-3">
-                                                <div className={`mt-0.5 p-0.5 rounded-full ${tier.highlight ? "bg-orange-100 text-orange-600" : "bg-slate-100 text-slate-500"}`}>
-                                                    <Check className="w-3.5 h-3.5" />
-                                                </div>
-                                                <span className="text-sm font-medium text-slate-700">{feature}</span>
-                                            </li>
-                                        ))}
+                                        {tier.features.map((feature, i) => {
+                                            const cleanFeature = feature.replace(/^[✅✔✨•\s]+/, '').trim()
+                                            return (
+                                                <li key={i} className="flex items-start gap-3">
+                                                    <CheckCircle2 className="w-5 h-5 text-[#00f3ff] drop-shadow-[0_0_8px_rgba(0,243,255,0.6)] flex-shrink-0 mt-0.5" />
+                                                    <span className="text-sm font-medium text-slate-700">{cleanFeature}</span>
+                                                </li>
+                                            )
+                                        })}
                                     </ul>
                                 </div>
 
