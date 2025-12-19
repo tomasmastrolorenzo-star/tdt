@@ -31,8 +31,8 @@ export default function PricingSection() {
             key: 'starter',
             name: "GROWTH STARTER",
             price: 49,
-            features: ["2,500 Real Followers", "Auto-Likes", "Standard Delivery", "24/7 Support"],
-            badge: "Good Start",
+            features: ["Safe Entry Protocol", "Basic Audience Expansion", "Organic Optimization", "24/7 Support Access"],
+            badge: "Safe Entry",
             badgeColor: "bg-blue-100 text-blue-700",
             highlight: false,
             cta: "Activate Plan"
@@ -41,8 +41,8 @@ export default function PricingSection() {
             key: 'pro',
             name: "VIRAL MOMENTUM 🏆",
             price: 99,
-            features: ["5,000 Real Followers", "Priority Delivery", "Warranty (Refill)", "Dedicated Manager", "AI Content Strategy"],
-            badge: "MOST POPULAR",
+            features: ["Accelerated Growth Engine", "AI Viral Strategy", "Priority Optimization", "Content Calibration"],
+            badge: "THE STANDARD",
             badgeColor: "bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-lg shadow-orange-500/40",
             highlight: true,
             cta: "Activate Plan"
@@ -51,8 +51,8 @@ export default function PricingSection() {
             key: 'dominance',
             name: "BRAND PARTNER",
             price: 249,
-            features: ["15,000 Followers", "Dedicated Support", "Instant Velocity", "VIP Networking", "Money-Back Guarantee"],
-            badge: "Best ROI",
+            features: ["Maximum Velocity", "Dedicated Account Manager", "Campaign Priority", "VIP Networking Access"],
+            badge: "MAXIMUM ROI",
             badgeColor: "bg-purple-100 text-purple-700",
             highlight: false,
             cta: "Activate Plan"

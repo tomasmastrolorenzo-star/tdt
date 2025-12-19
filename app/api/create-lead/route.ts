@@ -16,10 +16,33 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
         }
 
-        // Upsert Profile if needed (or just ensure it exists? For now we just create order)
-        // Actually, we should try to link it to a user if possible, but for guest checkout just storing in orders is fine if tables allow nullable user_id.
-        // Assuming 'orders' table has email/username fields or metadata.
+        const ip = req.headers.get('x-forwarded-for')?.split(',')[0] || 'unknown'
 
+        // 1. Strict Input Validation
+        const usernameRegex = /^[a-zA-Z0-9._]{1,30}$/
+        if (!usernameRegex.test(username)) {
+            return NextResponse.json({ error: 'Invalid username format' }, { status: 400 })
+        }
+
+        // 2. Rate Limiting (Anti-Spam)
+        // Check orders created by this IP in the last 10 minutes
+        const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000).toISOString()
+
+        const { count, error: countError } = await supabase
+            .from('orders')
+            .select('*', { count: 'exact', head: true })
+            .filter('details->>ip_address', 'eq', ip)
+            .gt('created_at', tenMinutesAgo)
+
+        if (countError) {
+            console.error('Rate limit check failed:', countError)
+        }
+
+        if (count && count >= 3) {
+            return NextResponse.json({ error: 'Too many requests. Please try again later.' }, { status: 429 })
+        }
+
+        // 3. Create Order Intent
         const { data, error } = await supabase
             .from('orders')
             .insert([
@@ -30,11 +53,11 @@ export async function POST(req: Request) {
                         plan,
                         period,
                         payment_method,
-                        order_bump
+                        order_bump,
+                        ip_address: ip // Save IP for future checks
                     },
                     amount: amount,
-                    status: 'pending_payment',
-                    // user_id: ... might be null for guest
+                    status: 'initiated', // Changed from pending_payment to initiated
                     created_at: new Date().toISOString()
                 }
             ])
@@ -42,7 +65,6 @@ export async function POST(req: Request) {
 
         if (error) {
             console.error('Error creating lead:', error)
-            // Don't fail the request to the user, we want them to proceed to WhatsApp regardless
             return NextResponse.json({ success: false, error: error.message }, { status: 500 })
         }
 

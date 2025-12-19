@@ -43,6 +43,9 @@ export default function HomePage() {
       {/* PHASE 4: EL FARO (The Consultant) */}
       <SmartGrowthConsultant />
 
+      {/* Pricing Section (Was Missing) */}
+      <PricingSection />
+
       {/* Footer Area */}
       <DirectServices />
       <FAQSection />

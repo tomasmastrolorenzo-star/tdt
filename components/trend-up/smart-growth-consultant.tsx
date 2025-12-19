@@ -2,10 +2,9 @@
 
 import { useState, useRef, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { Slider } from "@/components/ui/slider"
 import { Button } from "@/components/ui/button"
 import { motion, AnimatePresence } from "framer-motion"
-import { ArrowRight, Sparkles, Loader2, Users, User, Globe, MapPin, Map, Check, Rocket, BarChart3, Database } from "lucide-react"
+import { ArrowRight, Sparkles, Loader2, Users, User, Globe, MapPin, Map, Check, Rocket, BarChart3, Database, Lock, Shield } from "lucide-react"
 import { LOCATIONS, INTERESTS, GENDERS, type LocationId, type InterestId, type GenderId } from "@/lib/el-faro/selectors"
 import { useI18n } from "@/lib/i18n/context"
 
@@ -84,11 +83,9 @@ const LoadingOverlay = ({ step, t, values }: { step: number, t: any, values: any
 export default function SmartGrowthConsultant() {
     const { t } = useI18n()
     const router = useRouter()
-    const [step, setStep] = useState(1)
     const [isLoading, setIsLoading] = useState(false)
 
     // Form Data
-    const [followers, setFollowers] = useState([2000])
     const [platform, setPlatform] = useState("instagram")
     const [gender, setGender] = useState<GenderId>("any")
     const [location, setLocation] = useState<LocationId>("us")
@@ -104,66 +101,18 @@ export default function SmartGrowthConsultant() {
     const handleNext = async () => {
         vibrate(20) // Button click haptic
 
-        if (step === 2) {
-            setIsLoading(true)
-            // Show "Processing" Screen for 4s + buffer
-            await new Promise(resolve => setTimeout(resolve, 4500))
+        setIsLoading(true)
+        // Show "Processing" Screen for 4s + buffer
+        await new Promise(resolve => setTimeout(resolve, 4500))
 
-            // Redirect
-            const params = new URLSearchParams({
-                platform,
-                followers: followers[0].toString(),
-                gender,
-                location,
-                interest,
-            })
-            router.push(`/servicios?${params.toString()}`)
-            // Don't set isLoading false to keep overlay until Nav happens
-        } else {
-            setStep(step + 1)
-        }
-    }
-
-    // Slider Logic with Haptics on Milestones
-    const handleSliderChange = (vals: number[]) => {
-        const val = vals[0]
-        // Simple haptic check on milestones: 5k, 10k, 20k, 50k
-        if ([5000, 10000, 20000, 50000].includes(val)) {
-            vibrate(40)
-        } else if (val % 1000 === 0) {
-            // subtle tick
-            vibrate(5)
-        }
-        setFollowers(vals)
-    }
-
-    // Dynamic Micro-Copy Logic
-    const getRangeText = (val: number) => {
-        const ranges = (t.consultant?.step1 as any)?.ranges
-        if (!ranges) return ""
-        if (val <= 2000) return ranges.foundation
-        if (val <= 20000) return ranges.authority
-        return ranges.dominance
-    }
-
-    // Odometer Effect Component (Simple implementation suitable for this context)
-    const Odometer = ({ value }: { value: number }) => {
-        return (
-            <span className="tabular-nums tracking-tight">
-                <AnimatePresence mode="popLayout">
-                    <motion.span
-                        key={value}
-                        initial={{ y: 20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        exit={{ y: -20, opacity: 0 }}
-                        transition={{ duration: 0.2 }}
-                        className="inline-block"
-                    >
-                        {value.toLocaleString()}
-                    </motion.span>
-                </AnimatePresence>
-            </span>
-        )
+        // Redirect
+        const params = new URLSearchParams({
+            platform,
+            gender,
+            location,
+            interest,
+        })
+        router.push(`/servicios?${params.toString()}`)
     }
 
     return (
@@ -203,229 +152,137 @@ export default function SmartGrowthConsultant() {
                             <motion.div
                                 className="h-full bg-gradient-to-r from-cyan-400 to-purple-500 shadow-[0_0_10px_rgba(168,85,247,0.5)]"
                                 initial={{ width: "0%" }}
-                                animate={{ width: `${(step / 2) * 100}%` }}
+                                animate={{ width: `${(1 / 2) * 100}%` }} // Adjusted to 100% for single step
                                 transition={{ duration: 0.8, ease: "easeInOut" }}
                             />
                         </div>
 
                         <div className="p-8 md:p-12 flex-grow flex flex-col justify-center">
-                            <AnimatePresence mode="wait">
-                                {/* STEP 1: PLATFORM & QUANTITY */}
-                                {step === 1 && (
-                                    <motion.div
-                                        key="step1"
-                                        initial={{ opacity: 0, x: 20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        exit={{ opacity: 0, x: -20 }}
-                                        className="space-y-10"
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="space-y-8"
+                            >
+                                <div className="text-center text-white space-y-2 mb-6">
+                                    <h3 className="text-2xl font-bold">{t.consultant?.step1?.title || "Configure Your Growth Engine"}</h3>
+                                    <p className="text-slate-400">{t.consultant?.step1?.subtitle || "Our AI will analyze your niche to build a custom strategy."}</p>
+                                </div>
+
+                                {/* 1. Platform Selector */}
+                                <div className="flex justify-center gap-6">
+                                    <button
+                                        onClick={() => { setPlatform("instagram"); vibrate(); }}
+                                        className={`group relative px-6 py-3 rounded-2xl font-bold transition-all duration-300 overflow-hidden ${platform === "instagram" ? "scale-105 shadow-xl shadow-purple-500/20 ring-2 ring-purple-500/50 bg-slate-800" : "bg-slate-800/50 text-slate-400 hover:bg-slate-800"}`}
                                     >
-                                        <div className="text-center text-white space-y-2">
-                                            <h3 className="text-2xl font-bold">{t.consultant?.step1?.title}</h3>
-                                            <p className="text-slate-400">{t.consultant?.step1?.subtitle}</p>
-                                        </div>
+                                        {platform === "instagram" && <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-orange-500/20 opacity-100" />}
+                                        <span className={`relative z-10 flex items-center gap-2 ${platform === "instagram" ? "text-white" : ""}`}>
+                                            <span className="text-xl">📸</span> Instagram
+                                        </span>
+                                    </button>
 
-                                        {/* Platform Selector */}
-                                        <div className="flex justify-center gap-6">
-                                            <button
-                                                onClick={() => { setPlatform("instagram"); vibrate(); }}
-                                                className={`group relative px-8 py-4 rounded-2xl font-bold transition-all duration-300 overflow-hidden ${platform === "instagram" ? "scale-105 shadow-xl shadow-purple-500/20 ring-2 ring-purple-500/50" : "bg-slate-800 text-slate-400 hover:bg-slate-750"}`}
-                                            >
-                                                {platform === "instagram" && <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-orange-500 opacity-100" />}
-                                                <span className={`relative z-10 flex items-center gap-2 ${platform === "instagram" ? "text-white" : ""}`}>
-                                                    <span className="text-xl">📸</span> Instagram
-                                                </span>
-                                            </button>
+                                    <button
+                                        onClick={() => { setPlatform("tiktok"); vibrate(); }}
+                                        className={`group relative px-6 py-3 rounded-2xl font-bold transition-all duration-300 overflow-hidden ${platform === "tiktok" ? "scale-105 shadow-xl shadow-pink-500/20 ring-2 ring-pink-500/50 bg-slate-800" : "bg-slate-800/50 text-slate-400 hover:bg-slate-800"}`}
+                                    >
+                                        {platform === "tiktok" && <div className="absolute inset-0 bg-gradient-to-r from-pink-600/20 to-teal-400/20 opacity-100" />}
+                                        <span className={`relative z-10 flex items-center gap-2 ${platform === "tiktok" ? "text-white" : ""}`}>
+                                            <span className="text-xl">🎵</span> TikTok
+                                        </span>
+                                    </button>
+                                </div>
 
-                                            <button
-                                                onClick={() => { setPlatform("tiktok"); vibrate(); }}
-                                                className={`group relative px-8 py-4 rounded-2xl font-bold transition-all duration-300 overflow-hidden ${platform === "tiktok" ? "scale-105 shadow-xl shadow-pink-500/20 ring-2 ring-pink-500/50" : "bg-slate-800 text-slate-400 hover:bg-slate-750"}`}
-                                            >
-                                                {platform === "tiktok" && <div className="absolute inset-0 bg-gradient-to-r from-pink-600 to-teal-400 opacity-100" />}
-                                                <span className={`relative z-10 flex items-center gap-2 ${platform === "tiktok" ? "text-white" : ""}`}>
-                                                    <span className="text-xl">🎵</span> TikTok
-                                                </span>
-                                            </button>
-                                        </div>
-
-                                        {/* Slider / Reach Goal - Appears with Fade Up */}
-                                        <motion.div
-                                            initial={{ opacity: 0, y: 20 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            transition={{ delay: 0.2 }}
-                                            className="px-6 py-8 bg-slate-800/40 rounded-3xl border border-slate-700/50"
-                                        >
-                                            <div className="text-center mb-10">
-                                                <div className="flex items-center justify-center gap-2 text-5xl md:text-6xl font-black text-white mb-2">
-                                                    <Odometer value={followers[0]} />
-                                                </div>
-                                                <div className="text-lg text-slate-400 font-medium mb-1">{t.consultant?.step1?.followers}</div>
-
-                                                {/* Dynamic Micro-Copy */}
-                                                <motion.div
-                                                    key={followers[0]} // Re-animates on change
-                                                    initial={{ opacity: 0 }}
-                                                    animate={{ opacity: 1 }}
-                                                    className="text-indigo-400 text-sm font-semibold h-5"
+                                <div className="grid gap-6 md:grid-cols-2">
+                                    {/* 2. Gender */}
+                                    <div>
+                                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 pl-1">{t.consultant?.step2?.genderLabel || "Target Audience"}</label>
+                                        <div className="grid grid-cols-3 gap-2">
+                                            {GENDERS.map((g) => (
+                                                <button
+                                                    key={g.id}
+                                                    onClick={() => { setGender(g.id); vibrate(); }}
+                                                    className={`relative p-3 rounded-xl border transition-all duration-200 flex flex-col items-center justify-center gap-1 ${gender === g.id ? "border-cyan-400 bg-cyan-950/30 text-white shadow-[0_0_15px_rgba(34,211,238,0.3)] ring-1 ring-cyan-400" : "border-slate-700 bg-slate-800/30 text-slate-400 hover:bg-slate-800"}`}
                                                 >
-                                                    {getRangeText(followers[0])}
-                                                </motion.div>
-                                            </div>
-
-                                            <div className="px-4">
-                                                <Slider
-                                                    defaultValue={[2000]}
-                                                    max={100000}
-                                                    min={500}
-                                                    step={500}
-                                                    value={followers}
-                                                    onValueChange={handleSliderChange} // Use wrapper for haptics
-                                                    className="mb-6 cursor-pointer"
-                                                />
-
-                                                {/* Illuminated Status Labels */}
-                                                <div className="flex justify-between text-xs font-bold uppercase tracking-widest px-1">
-                                                    <span className={`transition-colors duration-300 ${followers[0] <= 5000 ? "text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]" : "text-slate-600"}`}>
-                                                        {t.consultant?.step1?.micro}
-                                                    </span>
-                                                    <span className={`transition-colors duration-300 ${followers[0] >= 50000 ? "text-purple-400 drop-shadow-[0_0_8px_rgba(168,85,247,0.8)]" : "text-slate-600"}`}>
-                                                        {t.consultant?.step1?.influencer}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </motion.div>
-
-                                        <div className="flex justify-end pt-2">
-                                            <Button
-                                                onClick={handleNext}
-                                                disabled={isLoading}
-                                                className="bg-white text-slate-900 hover:bg-slate-200 text-lg px-10 py-7 rounded-2xl font-bold shadow-lg shadow-white/10 hover:shadow-white/20 transition-all active:scale-95 disabled:opacity-80"
-                                            >
-                                                {isLoading ? (
-                                                    <Loader2 className="w-6 h-6 animate-spin mr-2" />
-                                                ) : (
-                                                    <>
-                                                        {t.consultant?.step1?.continue} <ArrowRight className="ml-2 w-5 h-5" />
-                                                    </>
-                                                )}
-                                            </Button>
+                                                    <div className="text-xl">{g.id === 'female' ? '👩' : g.id === 'male' ? '👨' : '👥'}</div>
+                                                    <div className="text-[10px] font-bold uppercase">{t.consultant?.selectors?.genders?.[g.id] || g.name}</div>
+                                                </button>
+                                            ))}
                                         </div>
-                                    </motion.div>
-                                )}
+                                    </div>
 
-                                {/* STEP 2: AUDIENCE SELECTORS */}
-                                {step === 2 && (
-                                    <motion.div
-                                        key="step2"
-                                        initial={{ opacity: 0, x: 20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        exit={{ opacity: 0, x: -20 }}
-                                        className="space-y-8"
+                                    {/* 3. Location */}
+                                    <div>
+                                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 pl-1">{t.consultant?.step2?.locationLabel || "Target Region"}</label>
+                                        <div className="grid grid-cols-2 gap-2">
+                                            {LOCATIONS.slice(0, 4).map((loc) => (
+                                                <button
+                                                    key={loc.id}
+                                                    onClick={() => { setLocation(loc.id); vibrate(); }}
+                                                    className={`relative p-3 rounded-xl border transition-all duration-200 flex items-center gap-2 ${location === loc.id ? "border-emerald-400 bg-emerald-950/30 text-white shadow-[0_0_15px_rgba(52,211,153,0.3)] ring-1 ring-emerald-400" : "border-slate-700 bg-slate-800/30 text-slate-400 hover:bg-slate-800"}`}
+                                                >
+                                                    <span className="text-lg">{loc.id === 'us' ? '🇺🇸' : loc.id === 'uk' ? '🇬🇧' : loc.id === 'eu' ? '🇪🇺' : '🌎'}</span>
+                                                    <div className="text-[10px] font-bold uppercase truncate">{t.consultant?.selectors?.locations?.[loc.id] || loc.name}</div>
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* 4. Interest / Niche */}
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 pl-1">{t.consultant?.step2?.interestLabel || "Niche / Industry"}</label>
+                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                                        {INTERESTS.slice(0, 8).map((int) => (
+                                            <button
+                                                key={int.id}
+                                                onClick={() => { setInterest(int.id); vibrate(); }}
+                                                className={`group relative p-2.5 rounded-xl border text-center transition-all duration-200 ${interest === int.id ? `border-purple-400 bg-purple-900/30 text-white shadow-[0_0_15px_rgba(192,132,252,0.3)] ring-1 ring-purple-400` : "border-slate-700 bg-slate-800/30 text-slate-400 hover:bg-slate-800"}`}
+                                            >
+                                                <div className={`text-lg mb-1 transition-transform duration-300 ${interest === int.id ? "scale-125 animate-bounce-short" : "group-hover:scale-110"}`}>
+                                                    {int.icon}
+                                                </div>
+                                                <div className="text-[10px] font-bold uppercase truncate">
+                                                    {t.consultant?.selectors?.interests?.[int.id] || int.name}
+                                                </div>
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div className="flex justify-center pt-4">
+                                    <Button
+                                        onClick={handleNext}
+                                        disabled={isLoading}
+                                        className="w-full md:w-auto bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white text-xl px-12 py-8 rounded-2xl font-black shadow-xl shadow-cyan-500/20 active:scale-95 transition-all disabled:opacity-80 flex items-center justify-center gap-3"
                                     >
-                                        <div className="text-center text-white mb-2">
-                                            <h3 className="text-2xl font-bold mb-2">{t.consultant?.step2?.title}</h3>
-                                            <p className="text-slate-400">{t.consultant?.step2?.subtitle}</p>
-                                        </div>
-
-                                        <div className="grid gap-8">
-                                            {/* Gender Selector - Staggered */}
-                                            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-                                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 pl-1">{t.consultant?.step2?.genderLabel}</label>
-                                                <div className="grid grid-cols-3 gap-3">
-                                                    {GENDERS.map((g) => (
-                                                        <button
-                                                            key={g.id}
-                                                            onClick={() => { setGender(g.id); vibrate(); }}
-                                                            className={`relative p-4 rounded-xl border transition-all duration-200 flex flex-col items-center justify-center gap-2 ${gender === g.id ? "border-cyan-400 bg-cyan-950/30 text-white shadow-[0_0_20px_rgba(34,211,238,0.4)] ring-1 ring-cyan-400" : "border-slate-700 bg-slate-800/50 text-slate-400 hover:bg-slate-800"}`}
-                                                        >
-                                                            {gender === g.id && <div className="absolute top-2 right-2 text-cyan-400"><Check className="w-4 h-4" /></div>}
-                                                            <div className="text-2xl mb-1">
-                                                                {g.id === 'female' ? '👩' : g.id === 'male' ? '👨' : '👥'}
-                                                            </div>
-                                                            <div className="text-sm font-bold">
-                                                                {t.consultant?.selectors?.genders?.[g.id as keyof typeof t.consultant.selectors.genders] || g.name}
-                                                            </div>
-                                                        </button>
-                                                    ))}
-                                                </div>
-                                            </motion.div>
-
-                                            {/* Location Selector */}
-                                            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-                                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 pl-1">{t.consultant?.step2?.locationLabel}</label>
-                                                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                                                    {LOCATIONS.map((loc) => (
-                                                        <button
-                                                            key={loc.id}
-                                                            onClick={() => { setLocation(loc.id); vibrate(); }}
-                                                            className={`relative p-3 rounded-xl border transition-all duration-200 flex items-center gap-3 ${location === loc.id ? "border-emerald-400 bg-emerald-950/30 text-white shadow-[0_0_20px_rgba(52,211,153,0.4)] ring-1 ring-emerald-400" : "border-slate-700 bg-slate-800/50 text-slate-400 hover:bg-slate-800"}`}
-                                                        >
-                                                            <span className="text-2xl">
-                                                                {loc.id === 'us' ? '🇺🇸' : loc.id === 'uk' ? '🇬🇧' : loc.id === 'eu' ? '🇪🇺' : loc.id === 'latam' ? '🌎' : loc.id === 'asia' ? '🌏' : '🌍'}
-                                                            </span>
-                                                            <div className="text-sm font-bold text-left">
-                                                                {t.consultant?.selectors?.locations?.[loc.id as keyof typeof t.consultant.selectors.locations] || loc.name}
-                                                            </div>
-                                                            {location === loc.id && <div className="ml-auto text-emerald-400"><Check className="w-4 h-4" /></div>}
-                                                        </button>
-                                                    ))}
-                                                </div>
-                                            </motion.div>
-
-                                            {/* Interest Selector + Pulse Effect */}
-                                            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-                                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 pl-1">{t.consultant?.step2?.interestLabel}</label>
-                                                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                                                    {INTERESTS.slice(0, 8).map((int) => (
-                                                        <button
-                                                            key={int.id}
-                                                            onClick={() => { setInterest(int.id); vibrate(); }}
-                                                            className={`group relative p-3 rounded-xl border text-center transition-all duration-200 ${interest === int.id ? `border-purple-400 bg-purple-900/30 text-white shadow-[0_0_20px_rgba(192,132,252,0.4)] ring-1 ring-purple-400` : "border-slate-700 bg-slate-800/50 text-slate-400 hover:bg-slate-800"}`}
-                                                        >
-                                                            {interest === int.id && <div className="absolute top-2 right-2 text-purple-400"><Check className="w-3 h-3" /></div>}
-                                                            <div className={`text-xl mb-1 transition-transform duration-300 ${interest === int.id ? "scale-125 animate-bounce-short" : "group-hover:scale-110"}`}>
-                                                                ✨ {int.icon}
-                                                            </div>
-                                                            <div className="text-xs font-bold truncate">
-                                                                {t.consultant?.selectors?.interests?.[int.id as keyof typeof t.consultant.selectors.interests] || int.name}
-                                                            </div>
-                                                        </button>
-                                                    ))}
-                                                </div>
-                                            </motion.div>
-                                        </div>
-
-                                        <div className="flex justify-between items-center pt-6">
-                                            <button onClick={() => setStep(1)} className="text-slate-400 hover:text-white text-sm font-medium underline decoration-slate-600 underline-offset-4 transition-colors">{t.consultant?.step2?.back || "Back"}</button>
-
-                                            <Button
-                                                onClick={handleNext}
-                                                disabled={isLoading}
-                                                className="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white text-lg px-10 py-7 rounded-2xl font-bold shadow-lg shadow-cyan-500/20 active:scale-95 transition-all disabled:opacity-80"
-                                            >
-                                                {isLoading ? (
-                                                    <Loader2 className="w-6 h-6 animate-spin" />
-                                                ) : (
-                                                    <>
-                                                        Analyze Audience 🤖
-                                                    </>
-                                                )}
-                                            </Button>
-                                        </div>
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
+                                        {isLoading ? (
+                                            <>
+                                                <Loader2 className="w-6 h-6 animate-spin" />
+                                                Processing...
+                                            </>
+                                        ) : (
+                                            <>
+                                                Analyze Audience 🤖
+                                                <ArrowRight className="w-6 h-6" />
+                                            </>
+                                        )}
+                                    </Button>
+                                </div>
+                            </motion.div>
                         </div>
 
                         {/* Footer: Trust Bar (Always Visible) */}
                         <div className="bg-slate-950/50 border-t border-slate-800 py-4 px-6 flex flex-wrap justify-center gap-x-8 gap-y-2 mt-auto">
                             <div className="flex items-center gap-2 text-slate-400 text-xs font-medium uppercase tracking-wider">
-                                <Sparkles className="w-3.5 h-3.5 text-emerald-500" /> {t.consultant?.trust?.encrypted}
+                                <Lock className="w-3.5 h-3.5 text-emerald-500" />
+                                {t.consultant?.trust?.encrypted || "256-Bit Encrypted"}
                             </div>
                             <div className="flex items-center gap-2 text-slate-400 text-xs font-medium uppercase tracking-wider">
-                                <Sparkles className="w-3.5 h-3.5 text-emerald-500" /> {t.consultant?.trust?.noPassword}
+                                <User className="w-3.5 h-3.5 text-blue-500" />
+                                {t.consultant?.trust?.noPassword || "No Password Required"}
                             </div>
                             <div className="flex items-center gap-2 text-slate-400 text-xs font-medium uppercase tracking-wider">
-                                <Sparkles className="w-3.5 h-3.5 text-emerald-500" /> {t.consultant?.trust?.guarantee}
+                                <Shield className="w-3.5 h-3.5 text-purple-500" />
+                                {t.consultant?.trust?.guarantee || "Growth Guarantee"}
                             </div>
                         </div>
 

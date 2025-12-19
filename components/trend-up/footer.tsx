@@ -22,19 +22,10 @@ export default function TrendUpFooter() {
           {/* Links */}
           <nav className="flex flex-wrap justify-center gap-6">
             <Link href="/terms" className="text-slate-400 hover:text-white text-sm transition-colors">
-              {t.footer_v2?.terms || "Terms"}
-            </Link>
-            <Link href="/privacy" className="text-slate-400 hover:text-white text-sm transition-colors">
-              {t.footer_v2?.privacy || "Privacy"}
-            </Link>
-            <Link href="/contact" className="text-slate-400 hover:text-white text-sm transition-colors">
-              {t.footer_v2?.contact || "Contact"}
-            </Link>
-            <Link href="/refund" className="text-slate-400 hover:text-white text-sm transition-colors">
-              {t.footer_v2?.refundPolicy || "Refund Policy"}
+              Terms of Service
             </Link>
             <Link href="/login" className="text-slate-400 hover:text-white text-sm transition-colors">
-              {t.footer_v2?.login || "Login"}
+              Login
             </Link>
           </nav>
 

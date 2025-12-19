@@ -7,7 +7,11 @@ import { Check, Sparkles, Shield, CreditCard, Bitcoin, MessageCircle, Lock, X, U
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import { Input } from "@/components/ui/input"
+
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
 import { useI18n } from "@/lib/i18n/context"
+import { validateUser } from "@/lib/security/username-validator"
+import { useSecureCheckout } from "@/hooks/use-secure-checkout"
 
 interface UpsellOption {
     id: string
@@ -16,6 +20,8 @@ interface UpsellOption {
     price: number
     icon: any
 }
+
+
 
 function CheckoutContent() {
     const { t } = useI18n()
@@ -62,13 +68,17 @@ function CheckoutContent() {
         const val = e.target.value
         setUserData(prev => ({ ...prev, username: val }))
         setIsValidUser(false)
-        if (val.length > 2) {
+
+        if (val.length > 0) {
             setIsValidating(true)
             // Debounce mock
             setTimeout(() => {
                 setIsValidating(false)
-                setIsValidUser(true)
-            }, 800)
+                const validation = validateUser(val, "instagram")
+                setIsValidUser(validation.valid)
+            }, 600)
+        } else {
+            setIsValidating(false)
         }
     }
 
@@ -93,51 +103,37 @@ function CheckoutContent() {
     // Terms State
     const [termsAccepted, setTermsAccepted] = useState(false)
 
-    const handleCheckout = async () => {
-        if (!userData.username) {
-            alert("Please enter your Instagram Username")
-            return
-        }
-        if (!termsAccepted) {
-            alert("Please accept the Terms of Service to proceed.")
-            return
-        }
+    // Security Hook
+    const {
+        status,
+        error: checkoutError,
+        whatsappLink,
+        showFallbackModal,
+        setShowFallbackModal,
+        processCheckout
+    } = useSecureCheckout()
 
-        // 1. Capture Lead (Fire & Forget mostly, but await to ensure saved)
-        try {
-            await fetch('/api/create-lead', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    email: userData.email,
-                    username: userData.username,
-                    plan: selectedPlan,
-                    period: billingCycle,
-                    amount: total,
-                    payment_method: paymentMethod,
-                    order_bump: orderBump
-                })
-            })
-        } catch (err) {
-            console.error("Lead capture failed (non-blocking)", err)
+    const isProcessing = status === 'PROCESSING' || status === 'VALIDATING'
+
+    // Effect to show errors from hook
+    useEffect(() => {
+        if (checkoutError) {
+            alert(checkoutError)
         }
+    }, [checkoutError])
 
-        if (paymentMethod === "crypto") {
-            const message = `[CRYPTO REQUEST] Plan: ${selectedPlan.toUpperCase()} ($${total.toFixed(2)}). User: @${userData.username}. Email: ${userData.email}`
-            alert("Crypto Gateway is activating... A VIP Agent will assist you instantly via WhatsApp.")
-            window.open(`https://wa.me/5492212235170?text=${encodeURIComponent(message)}`, '_blank')
-        } else {
-            const planName = selectedPlan === "starter" ? "GROWTH STARTER" : selectedPlan === "pro" ? "VIRAL MOMENTUM" : "BRAND PARTNER"
-            const message = `Hello TDT Support. I want to finalize payment for the ${planName} ($${total.toFixed(2)}).
-            
-👤 User: @${userData.username}
-📧 Email: ${userData.email}
-📅 Billing: ${billingCycle.toUpperCase()}
-
-Please send payment details for Zelle/CashApp/Transfer.`
-
-            window.open(`https://wa.me/5492212235170?text=${encodeURIComponent(message)}`, '_blank')
-        }
+    const handleCheckout = () => {
+        processCheckout({
+            userData,
+            planDetails: {
+                plan: selectedPlan,
+                amount: total,
+                period: billingCycle,
+                paymentMethod,
+                orderBump
+            },
+            termsAccepted
+        })
     }
 
     return (
@@ -172,7 +168,19 @@ Please send payment details for Zelle/CashApp/Transfer.`
                             </div>
 
                             <div className="space-y-6">
-                                {/* Username Input with AI Validator */}
+                                {/* Email Input (First) */}
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">Email Address</label>
+                                    <Input
+                                        value={userData.email}
+                                        onChange={(e) => setUserData({ ...userData, email: e.target.value })}
+                                        className="h-12 border-slate-300"
+                                        placeholder="you@email.com"
+                                        type="email"
+                                    />
+                                </div>
+
+                                {/* Username Input with AI Validator (Second) */}
                                 <div>
                                     <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">Instagram Username</label>
                                     <div className="relative">
@@ -184,27 +192,15 @@ Please send payment details for Zelle/CashApp/Transfer.`
                                             placeholder="username"
                                         />
                                         <div className="absolute inset-y-0 right-3 flex items-center">
-                                            {isValidating && <span className="text-xs text-orange-500 font-bold animate-pulse">{t.checkout?.visualValidator?.checking || "Validating..."}</span>}
-                                            {isValidUser && !isValidating && <div className="flex items-center gap-1 text-green-600 text-xs font-bold"><Check className="w-4 h-4" /> {t.checkout?.visualValidator?.valid || "Found"}</div>}
+                                            {isValidating && <span className="text-xs text-orange-500 font-bold animate-pulse">Validating...</span>}
+                                            {isValidUser && !isValidating && <div className="flex items-center gap-1 text-green-600 text-xs font-bold"><Check className="w-4 h-4" /> Available</div>}
                                         </div>
                                     </div>
                                     {/* Security Notice */}
                                     <div className="mt-2 flex items-center gap-1.5 text-xs text-slate-500">
                                         <Shield className="w-3 h-3 text-green-500" />
-                                        <span>{t.checkout?.noPassword || "We never ask for your password"}</span>
+                                        <span>We never ask for your password</span>
                                     </div>
-                                </div>
-
-                                {/* Email Input */}
-                                <div>
-                                    <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">Email Address</label>
-                                    <Input
-                                        value={userData.email}
-                                        onChange={(e) => setUserData({ ...userData, email: e.target.value })}
-                                        className="h-12 border-slate-300"
-                                        placeholder="you@email.com"
-                                        type="email"
-                                    />
                                 </div>
                             </div>
                         </div>
@@ -251,10 +247,9 @@ Please send payment details for Zelle/CashApp/Transfer.`
                                             </div>
                                             <div className="text-left">
                                                 <div className="font-black text-slate-900 text-lg flex items-center gap-2">
-                                                    VIP Manual Processing
-                                                    <span className="bg-[#D4AF37]/10 text-[#D4AF37] text-[10px] px-2 py-0.5 rounded-full font-bold uppercase border border-[#D4AF37]/20">Verified</span>
+                                                    Manual Processing (Zelle / CashApp)
                                                 </div>
-                                                <div className="text-sm text-slate-600 font-medium">Zelle / CashApp / Wire Transfer</div>
+                                                <div className="text-sm text-slate-600 font-medium">Connect with a VIP Agent to process your payment securely.</div>
                                             </div>
                                         </div>
                                         <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${paymentMethod === "manual" ? "border-[#D4AF37]" : "border-slate-300"}`}>
@@ -266,7 +261,7 @@ Please send payment details for Zelle/CashApp/Transfer.`
                                     <div className="bg-[#D4AF37]/5 px-4 py-2 border-t border-[#D4AF37]/10 flex items-center gap-2">
                                         <Lock className="w-3 h-3 text-[#D4AF37]" />
                                         <p className="text-[11px] text-slate-600 font-medium">
-                                            For security, high-ticket orders are verified personally by a billing agent.
+                                            For security and fraud prevention, high-ticket orders are verified manually by our billing team.
                                         </p>
                                     </div>
                                 </button>
@@ -397,11 +392,16 @@ Please send payment details for Zelle/CashApp/Transfer.`
                                 <div className="p-6 bg-slate-50 border-t border-slate-100">
                                     <Button
                                         onClick={handleCheckout}
-                                        className="w-full bg-slate-900 hover:bg-slate-800 text-white text-lg font-bold py-7 rounded-xl shadow-lg transition-all hover:scale-[1.02] active:scale-95"
+                                        disabled={!isValidUser || isProcessing}
+                                        className={`w-full text-white text-lg font-bold py-7 rounded-xl shadow-lg transition-all hover:scale-[1.02] active:scale-95 ${!isValidUser ? "bg-slate-400 cursor-not-allowed text-slate-200" : "bg-slate-900 hover:bg-slate-800"}`}
                                     >
-                                        Proceed to Secure Activation
-                                        <ArrowRight className="ml-2 w-5 h-5" />
+                                        Proceed to Payment 🔒
                                     </Button>
+                                    {!isValidUser && userData.username.length > 0 && !isValidating && (
+                                        <p className="text-center text-xs text-red-500 mt-2 font-bold animate-pulse">
+                                            Please enter a valid Instagram username to proceed.
+                                        </p>
+                                    )}
                                     <p className="text-center text-xs text-slate-400 mt-3 flex items-center justify-center gap-1.5 font-medium">
                                         <Sparkles className="w-3 h-3 text-green-500" />
                                         Guaranteed Delivery within 24h
@@ -422,7 +422,37 @@ Please send payment details for Zelle/CashApp/Transfer.`
                     </div>
                 </div>
             </div>
-        </main>
+            {/* FALLBACK MODAL FOR BLOCKED POPUPS */}
+            <Dialog open={showFallbackModal} onOpenChange={setShowFallbackModal}>
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2">
+                            <Check className="w-5 h-5 text-green-500" />
+                            Order Saved! ✅
+                        </DialogTitle>
+                        <DialogDescription>
+                            Your browser blocked the redirect. Click below to complete activation.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="flex items-center space-x-2 py-4">
+                        <div className="grid flex-1 gap-2">
+                            <Button
+                                onClick={() => window.open(whatsappLink, '_blank')}
+                                className="w-full bg-[#25D366] hover:bg-[#128C7E] text-white font-bold"
+                            >
+                                <MessageCircle className="w-4 h-4 mr-2" />
+                                Click to Open WhatsApp
+                            </Button>
+                        </div>
+                    </div>
+                    <DialogFooter className="sm:justify-start">
+                        <DialogDescription className="text-xs">
+                            If the button doesn't work, ensure you have WhatsApp installed.
+                        </DialogDescription>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+        </main >
     )
 }
 
