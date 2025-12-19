@@ -652,6 +652,60 @@ export const translations = {
       moreSpecific: "¿Buscas algo más específico?",
       viewAll: "Ver todos los servicios y paquetes disponibles",
     },
+    subscription_v2: {
+      title: "Tu Estrategia de Crecimiento con IA está lista.",
+      subtitle: "Selecciona tu plan de aceleración mensual. Cancela cuando quieras.",
+      monthly: "Mensual",
+      quarterly: "Trimestral",
+      save20: "Ahorra 20%",
+      tiers: {
+        starter: {
+          name: "INFLUENCER STARTER",
+          price: "97",
+          description: "Perfecto para creadores construyendo su base inicial.",
+          features: [
+            "🚀 2,500 Seguidores Reales (Crecimiento Mensual)",
+            "✨ Auto-Likes en todos los nuevos posts",
+            "👁️ Auto-Views para Reels/TikToks",
+            "🛡️ Protección de Recarga 30 Días"
+          ],
+          cta: "Comenzar Crecimiento",
+        },
+        pro: {
+          badge: "🔥 MÁS POPULAR",
+          name: "PRO AUTHORITY",
+          price: "249",
+          description: "Velocidad dominante para marcas y marcas personales serias.",
+          features: [
+            "🚀 10,000 Seguidores Reales (Crecimiento Mensual)",
+            "🔥 Impulso VIP de Likes (Mayor retención)",
+            "⚡ Vistas de Velocidad Viral",
+            "💎 Soporte Prioritario WhatsApp",
+            "🔒 No Requiere Contraseña"
+          ],
+          anchor: "Equivalente a una Agencia de $2,000/mes.",
+          cta: "Activar Plan Pro",
+        },
+        celebrity: {
+          name: "CELEBRITY STATUS",
+          price: "497",
+          description: "Máxima exposición y gestión dedicada.",
+          features: [
+            "🚀 25,000+ Seguidores Reales (Crecimiento Agresivo)",
+            "🤖 Estrategia de Comentarios con IA",
+            "🌟 Acceso a Red de Power-Likes",
+            "👨‍💼 Account Manager Dedicado",
+            "📈 Reporte Mensual de Rendimiento"
+          ],
+          cta: "Aplicar Estatus Socio",
+        }
+      },
+      guarantee: {
+        secure: "Pago Seguro SSL",
+        moneyBack: "Garantía de Reembolso 14 Días",
+        cancel: "Cancela Cuando Quieras"
+      }
+    },
     footer_v2: {
       tagline: "Impulsa tu presencia digital",
       terms: "Términos",
@@ -696,6 +750,61 @@ export const translations = {
     // Platform selector
     platform: {
       title: "Select your Platform",
+    },
+    // Subscription Plans (Monthly Recurring)
+    subscription_v2: {
+      title: "Your AI Growth Strategy is Ready.",
+      subtitle: "Select your monthly acceleration plan. Cancel anytime.",
+      monthly: "Monthly",
+      quarterly: "Quarterly",
+      save20: "Save 20%",
+      tiers: {
+        starter: {
+          name: "INFLUENCER STARTER",
+          price: "97",
+          description: "Perfect for creators building their initial base.",
+          features: [
+            "🚀 2,500 Real Followers (Monthly Growth)",
+            "✨ Auto-Likes on all new posts",
+            "👁️ Auto-Views for Reels/TikToks",
+            "🛡️ 30-Day Refill Protection"
+          ],
+          cta: "Start Growth",
+        },
+        pro: {
+          badge: "🔥 MOST POPULAR",
+          name: "PRO AUTHORITY",
+          price: "249",
+          description: "Dominance speed for brands and serious personal brands.",
+          features: [
+            "🚀 10,000 Real Followers (Monthly Growth)",
+            "🔥 VIP Likes Boost (Higher retention)",
+            "⚡ Viral Velocity Views",
+            "💎 Priority WhatsApp Support",
+            "🔒 No Password Required"
+          ],
+          anchor: "Equivalent to a $2,000/mo Agency.",
+          cta: "Activate Pro Plan",
+        },
+        celebrity: {
+          name: "CELEBRITY STATUS",
+          price: "497",
+          description: "Maximum exposure and dedicated management.",
+          features: [
+            "🚀 25,000+ Real Followers (Aggressive Growth)",
+            "🤖 AI Comment Strategy",
+            "🌟 Access to Power-Likes Network",
+            "👨‍💼 Dedicated Account Manager",
+            "📈 Monthly Performance Report"
+          ],
+          cta: "Apply for Partner Status",
+        }
+      },
+      guarantee: {
+        secure: "Secure SSL Payment",
+        moneyBack: "14-Day Money-Back Guarantee",
+        cancel: "Cancel Anytime"
+      }
     },
     // Packages
     packages: {

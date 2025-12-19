@@ -1,192 +1,179 @@
 "use client"
 
 import { useState } from "react"
-import { Check, Flame, Zap, Crown } from "lucide-react"
+import { Check, ShieldCheck, CreditCard, Ban } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
-import { Slider } from "@/components/ui/slider"
 import Link from "next/link"
 import { useI18n } from "@/lib/i18n/context"
 
 export default function PricingSection() {
-    const { t, formatPrice } = useI18n()
-    const [isAnnual, setIsAnnual] = useState(true)
-    const [followersIndex, setFollowersIndex] = useState(0)
+    const { t } = useI18n()
+    const [isQuarterly, setIsQuarterly] = useState(false)
 
-    const quantities = [2000, 5000, 10000, 25000, 50000, 100000]
-    const quantityLabels = ["2k", "5k", "10k", "25k", "50k", "100k"]
-
-    // Base prices in ARS for monthly
-    const basePrices = {
-        standard: [24921, 59900, 109900, 249900, 449900, 849900],
-        premium: [49842, 119900, 219900, 499900, 899900, 1699900]
-    }
-
-    const currentQuantity = quantities[followersIndex]
-    const currentLabel = quantityLabels[followersIndex]
-
-    const getPrice = (type: 'standard' | 'premium') => {
-        let price = basePrices[type][followersIndex]
-        if (isAnnual) {
-            price = price * 0.5 // 50% discount
+    // Helper to calculate price with 20% discount if quarterly
+    const getPrice = (basePrice: number) => {
+        if (isQuarterly) {
+            return Math.floor(basePrice * 0.8)
         }
-        return price.toLocaleString('es-AR')
+        return basePrice
     }
 
-    // Removed strict check to prevent hiding section on minor translation errors
-    // if (!t || !t.pricing) {
-    //    return null;
-    // }
+    const tiers = [
+        {
+            key: 'starter',
+            price: 97,
+            data: t.subscription_v2?.tiers?.starter,
+            highlight: false,
+            buttonVariant: "outline"
+        },
+        {
+            key: 'pro',
+            price: 249,
+            data: t.subscription_v2?.tiers?.pro,
+            highlight: true,
+            buttonVariant: "default"
+        },
+        {
+            key: 'celebrity',
+            price: 497,
+            data: t.subscription_v2?.tiers?.celebrity,
+            highlight: false,
+            buttonVariant: "outline" // Gold/Black handled in render
+        }
+    ]
 
     return (
         <section id="packages" className="py-20 bg-slate-50">
             <div className="container mx-auto px-4">
-                <div className="text-center mb-12">
-                    <div className="inline-block bg-orange-100 text-orange-600 px-4 py-1 rounded-full text-sm font-bold mb-6">
-                        {t.pricing?.limitedDiscount}
-                    </div>
-                    <h2 className="text-3xl md:text-5xl font-bold text-slate-900 mb-6">
-                        {t.pricing?.title} <br />
-                        <span className="text-orange-500">{t.pricing?.titleHighlight}</span>
+                {/* Header */}
+                <div className="text-center mb-16">
+                    <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight">
+                        {t.subscription_v2?.title || "Your AI Growth Strategy is Ready."}
                     </h2>
-                    <p className="text-slate-600 max-w-2xl mx-auto mb-8">
-                        {t.pricing?.subtitle}
+                    <p className="text-xl text-slate-600 mb-8 max-w-2xl mx-auto">
+                        {t.subscription_v2?.subtitle || "Select your monthly acceleration plan. Cancel anytime."}
                     </p>
 
-                    {/* Controls */}
-                    <div className="max-w-xl mx-auto bg-white p-6 rounded-3xl shadow-lg border border-slate-100 mb-12">
-                        {/* Selector de Cantidad */}
-                        <div className="mb-8">
-                            <label className="block text-slate-700 font-bold mb-4 text-lg">
-                                {t.pricing?.want} <span className="text-orange-500 text-2xl">{currentLabel}</span> {t.pricing?.realFollowers}
-                            </label>
-                            <div className="px-4">
-                                <Slider
-                                    defaultValue={[0]}
-                                    max={5}
-                                    step={1}
-                                    value={[followersIndex]}
-                                    onValueChange={(val) => setFollowersIndex(val[0])}
-                                    className="py-4"
-                                />
-                                <div className="flex justify-between text-xs text-slate-400 font-medium mt-2">
-                                    {quantityLabels.map((lbl, i) => (
-                                        <span key={i} className={i === followersIndex ? "text-orange-600 font-bold" : ""}>{lbl}</span>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Switch Anual/Mensual */}
-                        <div className="flex items-center justify-center gap-4 pt-4 border-t border-slate-100">
-                            <span className={`text-sm font-bold ${!isAnnual ? "text-slate-900" : "text-slate-500"}`}>{t.pricing?.monthly}</span>
-                            <Switch checked={isAnnual} onCheckedChange={setIsAnnual} className="data-[state=checked]:bg-green-500" />
-                            <span className={`text-sm font-bold ${isAnnual ? "text-slate-900" : "text-slate-500"}`}>
-                                {t.pricing?.annual} <span className="text-green-500 ml-1">(-50%)</span>
+                    {/* Toggle */}
+                    <div className="flex items-center justify-center gap-4">
+                        <span className={`text-sm font-bold ${!isQuarterly ? "text-slate-900" : "text-slate-500"}`}>
+                            {t.subscription_v2?.monthly || "Monthly"}
+                        </span>
+                        <Switch
+                            checked={isQuarterly}
+                            onCheckedChange={setIsQuarterly}
+                            className="data-[state=checked]:bg-orange-500"
+                        />
+                        <span className={`text-sm font-bold ${isQuarterly ? "text-slate-900" : "text-slate-500"}`}>
+                            {t.subscription_v2?.quarterly || "Quarterly"}
+                            <span className="ml-2 bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-xs">
+                                {t.subscription_v2?.save20 || "Save 20%"}
                             </span>
-                        </div>
+                        </span>
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
-                    {/* Standard Plan */}
-                    <div className="bg-white rounded-[2.5rem] p-8 shadow-xl border border-slate-100 relative overflow-hidden flex flex-col">
-                        <div className="mb-6">
-                            <div className="inline-flex items-center gap-2 bg-slate-100 px-4 py-2 rounded-full mb-4">
-                                <Flame className="w-4 h-4 text-orange-500 fill-orange-500" />
-                                <span className="font-bold text-slate-900">{t.pricing?.standard?.name}</span>
-                            </div>
-                            <h3 className="text-4xl font-black text-slate-900 mb-2">
-                                ${getPrice('standard')}
-                                <span className="text-lg font-medium text-slate-500 ml-2">/mes</span>
-                            </h3>
-                            <p className="text-slate-500 text-sm">{t.pricing?.standard?.desc}</p>
-                        </div>
+                {/* Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto items-start">
+                    {tiers.map((tier) => {
+                        const price = getPrice(tier.price)
+                        // Fallback data if translation missing (Safety)
+                        const name = tier.data?.name || (tier.key === 'starter' ? "INFLUENCER STARTER" : tier.key === 'pro' ? "PRO AUTHORITY" : "CELEBRITY STATUS")
+                        const desc = tier.data?.description || "Loading..."
+                        const features = tier.data?.features || []
+                        const cta = tier.data?.cta || "Select Plan"
 
-                        <div className="space-y-4 flex-1 mb-8">
-                            {[
-                                `${currentLabel} ${t.pricing?.realFollowers}`,
-                                t.pricing?.standard?.delivery,
-                                t.pricing?.standard?.start,
-                                t.pricing?.standard?.guarantee,
-                                t.pricing?.standard?.support
-                            ].map((item, i) => (
-                                <div key={i} className="flex items-start gap-3">
-                                    <div className="mt-0.5 w-5 h-5 rounded-full bg-slate-100 flex items-center justify-center flex-shrink-0">
-                                        <Check className="w-3 h-3 text-slate-600" />
+                        return (
+                            <div
+                                key={tier.key}
+                                className={`relative bg-white rounded-3xl p-8 border transition-all duration-300 flex flex-col
+                                    ${tier.highlight
+                                        ? "border-orange-500 shadow-2xl shadow-orange-500/10 md:-translate-y-4 md:scale-105 z-10"
+                                        : "border-slate-200 shadow-xl hover:shadow-2xl hover:border-orange-200"
+                                    }
+                                `}
+                            >
+                                {/* Badge for Pro */}
+                                {tier.highlight && (
+                                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-orange-600 to-red-600 text-white px-4 py-1 rounded-full text-sm font-bold shadow-lg whitespace-nowrap">
+                                        {tier.data?.badge || "🔥 MOST POPULAR"}
                                     </div>
-                                    <span className="text-slate-600 text-sm">{item}</span>
-                                </div>
-                            ))}
-                        </div>
+                                )}
 
-                        <Link href={`/checkout?plan=standard&followers=${currentQuantity}&billing=${isAnnual ? 'annual' : 'monthly'}`} className="w-full block mt-auto">
-                            <Button className="w-full bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold py-6 rounded-xl">
-                                {t.pricing?.standard?.cta}
-                            </Button>
-                        </Link>
-                    </div>
-
-                    {/* Premium Plan */}
-                    <div className="bg-slate-900 rounded-[2.5rem] p-1 shadow-2xl relative overflow-hidden flex flex-col transform lg:-translate-y-4 lg:scale-105 transition-transform">
-                        <div className="absolute top-0 left-1/2 -translate-x-1/2 bg-gradient-to-r from-orange-500 to-pink-500 text-white px-6 py-1 rounded-b-xl text-xs font-bold shadow-lg z-10">
-                            {t.pricing?.premium?.badge}
-                        </div>
-
-                        <div className="bg-slate-900 rounded-[2.3rem] p-8 h-full flex flex-col relative z-0">
-                            {/* Background Glow */}
-                            <div className="absolute top-0 right-0 w-64 h-64 bg-purple-500/20 rounded-full blur-3xl pointer-events-none" />
-
-                            <div className="mb-6 relative">
-                                <div className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-pink-500 px-4 py-2 rounded-full mb-4">
-                                    <Zap className="w-4 h-4 text-white fill-white" />
-                                    <span className="font-bold text-white">{t.pricing?.premium?.name}</span>
-                                </div>
-                                <h3 className="text-4xl font-black text-white mb-2">
-                                    ${getPrice('premium')}
-                                    <span className="text-lg font-medium text-slate-400 ml-2">/mes</span>
-                                </h3>
-                                <p className="text-slate-400 text-sm">{t.pricing?.premium?.desc}</p>
-                            </div>
-
-                            <div className="space-y-4 flex-1 mb-8 relative">
-                                {[
-                                    `${currentLabel} ${t.pricing?.realFollowers} ${t.pricing?.premium?.bonus}`,
-                                    t.pricing?.premium?.delivery,
-                                    t.pricing?.premium?.start,
-                                    t.pricing?.premium?.guarantee,
-                                    t.pricing?.premium?.support,
-                                    t.pricing?.premium?.ai,
-                                    t.pricing?.premium?.advisor
-                                ].map((item, i) => (
-                                    <div key={i} className="flex items-start gap-3">
-                                        <div className="mt-0.5 w-5 h-5 rounded-full bg-gradient-to-r from-orange-500 to-pink-500 flex items-center justify-center flex-shrink-0">
-                                            <Check className="w-3 h-3 text-white" />
-                                        </div>
-                                        <span className="text-slate-200 text-sm">{item}</span>
+                                {/* Header */}
+                                <div className="mb-6 text-center">
+                                    <h3 className="text-lg font-bold text-slate-500 mb-2 tracking-widest uppercase">{name}</h3>
+                                    <div className="flex items-center justify-center gap-1 mb-2">
+                                        <span className="text-sm font-medium text-slate-400 relative top-[-8px]">$</span>
+                                        <span className="text-5xl font-black text-slate-900">{price}</span>
+                                        <span className="text-slate-400 self-end mb-1">/mo</span>
                                     </div>
-                                ))}
-                            </div>
+                                    <p className="text-slate-600 text-sm h-10 flex items-center justify-center">{desc}</p>
+                                </div>
 
-                            {/* Fixed Link: plan=turbo */}
-                            <Link href={`/checkout?plan=turbo&followers=${currentQuantity}&billing=${isAnnual ? 'annual' : 'monthly'}`} className="w-full block mt-auto relative">
-                                <Button className="w-full bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white font-bold py-6 rounded-xl shadow-lg shadow-orange-500/20">
-                                    {t.pricing?.premium?.cta}
-                                </Button>
-                            </Link>
+                                {/* Divider */}
+                                <div className="w-full h-px bg-slate-100 mb-6" />
+
+                                {/* Features */}
+                                <ul className="space-y-4 mb-8 flex-1">
+                                    {features.map((feature: string, i: number) => (
+                                        <li key={i} className="flex items-start gap-3 text-sm text-slate-700">
+                                            <div className="mt-0.5 min-w-[1.25rem]">
+                                                <Check className={`w-5 h-5 ${tier.highlight ? "text-orange-500" : "text-green-500"}`} />
+                                            </div>
+                                            <span>{feature}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+
+                                {/* Anchor for Pro */}
+                                {tier.highlight && (
+                                    <p className="text-xs text-center text-slate-400 mb-4 font-medium italic">
+                                        {tier.data?.anchor || "Equivalent to a $2,000/mo Agency."}
+                                    </p>
+                                )}
+
+                                {/* CTA Button */}
+                                <div className="mt-auto">
+                                    <Link href={`/checkout?plan=${tier.key}&billing=${isQuarterly ? 'quarterly' : 'monthly'}`} className="block">
+                                        <Button
+                                            className={`w-full py-6 text-lg font-bold rounded-xl transition-all
+                                                ${tier.key === 'celebrity'
+                                                    ? "bg-slate-900 text-amber-400 hover:bg-slate-800 border border-slate-800"
+                                                    : tier.highlight
+                                                        ? "bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white shadow-lg shadow-orange-500/25"
+                                                        : "bg-white text-slate-900 border-2 border-slate-200 hover:border-slate-900 hover:bg-slate-50"
+                                                }
+                                            `}
+                                        >
+                                            {cta}
+                                        </Button>
+                                    </Link>
+                                </div>
+                            </div>
+                        )
+                    })}
+                </div>
+
+                {/* Footer Guarantee */}
+                <div className="mt-16 pt-8 border-t border-slate-200 max-w-4xl mx-auto">
+                    <div className="flex flex-col md:flex-row justify-between items-center gap-6 text-slate-500 text-sm font-medium">
+                        <div className="flex items-center gap-2">
+                            <CreditCard className="w-5 h-5 text-slate-400" />
+                            <span>{t.subscription_v2?.guarantee?.secure || "Secure SSL Payment"}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <ShieldCheck className="w-5 h-5 text-slate-400" />
+                            <span>{t.subscription_v2?.guarantee?.moneyBack || "14-Day Money-Back Guarantee"}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <Ban className="w-5 h-5 text-slate-400" />
+                            <span>{t.subscription_v2?.guarantee?.cancel || "Cancel Anytime"}</span>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <div className="mt-12 text-center">
-                <p className="text-slate-600 mb-4">{t.pricing?.moreSpecific}</p>
-                <Link href="/servicios" className="inline-flex items-center gap-2 text-orange-600 font-bold hover:text-orange-700 transition-colors border-b-2 border-orange-200 hover:border-orange-600 pb-1">
-                    {t.pricing?.viewAll}
-                    <span className="text-xl">→</span>
-                </Link>
-            </div>
-
-        </section >
+        </section>
     )
 }
