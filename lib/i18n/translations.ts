@@ -1114,6 +1114,38 @@ export const translations = {
       },
       whatsappMessage: "Hi! I want to order the service: {service} for {price}. Link: {link} Email: {email} {segmentation}",
     },
+    // Footer
+    footer: {
+      tagline: "Boost your digital presence",
+      terms: "Terms",
+      privacy: "Privacy",
+      contact: "Contact",
+      login: "Login",
+      refundPolicy: "Refund Policy",
+      copyright: "All rights reserved.",
+      professional: {
+        description: "The leading platform for organic Instagram growth. Over 80,000 clients trust us.",
+        products: "Product",
+        company: "Company",
+        legal: "Legal",
+        securePayment: "🔒 100% Secure & Encrypted Payments",
+        rights: "All rights reserved.",
+        madeWith: "Made with ❤️ in Argentina",
+        features: "Features",
+        pricing: "Pricing",
+        cases: "Success Cases",
+        testimonials: "Testimonials",
+        about: "About Us",
+        blog: "Blog",
+        careers: "Careers",
+        press: "Press",
+        terms: "Terms of Service",
+        privacy: "Privacy Policy",
+        cookies: "Cookies Policy",
+        gdpr: "GDPR",
+        paymentMethods: "Accepted payment methods:"
+      },
+    },
     // Services
     services: {
       instagram: {
