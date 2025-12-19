@@ -1,125 +1,94 @@
-import type { Metadata } from "next"
-import Link from "next/link"
-import { ArrowLeft } from "lucide-react"
-import { Button } from "@/components/ui/button"
+"use client"
 
-export const metadata: Metadata = {
-    title: "Términos y Condiciones - Trend Digital Trade",
-    description: "Términos y condiciones de uso de Trend Digital Trade",
-}
+import { useI18n } from "@/lib/i18n/context"
+import { Shield, FileText, Ban, AlertTriangle } from "lucide-react"
 
 export default function TermsPage() {
+    const { t } = useI18n()
+
+    // Safety fallback if t.legal is missing during build/transition
+    const legal = t.legal || {
+        title: "Terms of Service & Refund Policy",
+        sections: {
+            refund: { title: "1. NO-REFUND POLICY", content: "Loading..." },
+            chargeback: { title: "2. CHARGEBACK & DISPUTE CLAUSE", content: "Loading..." },
+            disclaimer: { title: "3. SERVICE DISCLAIMER", content: "Loading..." },
+            cancellation: { title: "4. SUBSCRIPTION CANCELLATION", content: "Loading..." }
+        }
+    }
+
     return (
-        <div className="min-h-screen bg-slate-950 text-white">
-            <div className="container mx-auto px-4 py-12 max-w-4xl">
-                <Link href="/">
-                    <Button variant="ghost" className="mb-8 text-slate-400 hover:text-white">
-                        <ArrowLeft className="mr-2 h-4 w-4" />
-                        Volver al inicio
-                    </Button>
-                </Link>
+        <main className="min-h-screen bg-slate-50 py-20 font-sans">
+            <div className="container mx-auto px-4 max-w-4xl">
+                <div className="bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden">
+                    {/* Header */}
+                    <div className="bg-slate-900 px-8 py-10 text-center">
+                        <div className="inline-flex items-center justify-center p-3 bg-white/10 rounded-xl mb-6">
+                            <Shield className="w-8 h-8 text-orange-500" />
+                        </div>
+                        <h1 className="text-3xl md:text-5xl font-black text-white mb-4">
+                            {legal.title}
+                        </h1>
+                        <p className="text-slate-400 text-lg">
+                            Please read these terms carefully before proceeding with your purchase.
+                        </p>
+                    </div>
 
-                <h1 className="text-4xl font-bold mb-8 bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
-                    Términos y Condiciones
-                </h1>
+                    {/* Content */}
+                    <div className="p-8 md:p-12 space-y-12">
 
-                <div className="prose prose-invert max-w-none space-y-6 text-slate-300">
-                    <section>
-                        <h2 className="text-2xl font-semibold text-white mb-4">1. Aceptación de los Términos</h2>
-                        <p>
-                            Al acceder y utilizar los servicios de Trend Digital Trade (en adelante, "TDT"), usted acepta estar sujeto a estos Términos y Condiciones. Si no está de acuerdo con alguna parte de estos términos, no debe utilizar nuestros servicios.
-                        </p>
-                    </section>
+                        {/* 1. NO REFUND */}
+                        <section className="relative pl-8 border-l-4 border-orange-500">
+                            <h2 className="text-2xl font-bold text-slate-900 mb-4 flex items-center gap-3">
+                                <span className="bg-orange-100 text-orange-600 w-8 h-8 rounded-full flex items-center justify-center text-sm">1</span>
+                                {legal.sections.refund.title}
+                            </h2>
+                            <div className="prose prose-slate max-w-none text-slate-600 whitespace-pre-wrap">
+                                {legal.sections.refund.content}
+                            </div>
+                        </section>
 
-                    <section>
-                        <h2 className="text-2xl font-semibold text-white mb-4">2. Descripción del Servicio</h2>
-                        <p>
-                            TDT es una plataforma de marketing digital que ofrece servicios de crecimiento en redes sociales, incluyendo pero no limitado a:
-                        </p>
-                        <ul className="list-disc pl-6 space-y-2">
-                            <li>Seguidores para Instagram, TikTok, YouTube y otras plataformas</li>
-                            <li>Likes, comentarios y engagement</li>
-                            <li>Visualizaciones de videos</li>
-                            <li>Suscriptores y otros servicios de marketing digital</li>
-                        </ul>
-                    </section>
+                        {/* 2. CHARGEBACK */}
+                        <section className="relative pl-8 border-l-4 border-red-500 bg-red-50/50 p-6 rounded-r-xl">
+                            <h2 className="text-2xl font-bold text-red-900 mb-4 flex items-center gap-3">
+                                <Ban className="w-6 h-6 text-red-600" />
+                                {legal.sections.chargeback.title}
+                            </h2>
+                            <div className="prose prose-red max-w-none text-red-800 whitespace-pre-wrap font-medium">
+                                {legal.sections.chargeback.content}
+                            </div>
+                        </section>
 
-                    <section>
-                        <h2 className="text-2xl font-semibold text-white mb-4">3. Uso del Servicio</h2>
-                        <p>
-                            Al utilizar nuestros servicios, usted se compromete a:
-                        </p>
-                        <ul className="list-disc pl-6 space-y-2">
-                            <li>Proporcionar información precisa y actualizada</li>
-                            <li>No utilizar los servicios para actividades ilegales o fraudulentas</li>
-                            <li>No revender o redistribuir nuestros servicios sin autorización</li>
-                            <li>Cumplir con los términos de servicio de las plataformas de redes sociales</li>
-                        </ul>
-                    </section>
+                        {/* 3. DISCLAIMER */}
+                        <section className="relative pl-8 border-l-4 border-slate-300">
+                            <h2 className="text-2xl font-bold text-slate-900 mb-4 flex items-center gap-3">
+                                <AlertTriangle className="w-6 h-6 text-yellow-500" />
+                                {legal.sections.disclaimer.title}
+                            </h2>
+                            <div className="prose prose-slate max-w-none text-slate-600 whitespace-pre-wrap">
+                                {legal.sections.disclaimer.content}
+                            </div>
+                        </section>
 
-                    <section>
-                        <h2 className="text-2xl font-semibold text-white mb-4">4. Pagos y Reembolsos</h2>
-                        <p>
-                            <strong>Pagos:</strong> Aceptamos pagos a través de criptomonedas y otros métodos especificados en nuestra plataforma. Todos los precios están en USD.
-                        </p>
-                        <p className="mt-4">
-                            <strong>Reembolsos:</strong> Ofrecemos garantía de entrega. Si un servicio no se completa según lo prometido, puede solicitar un reembolso dentro de los 30 días posteriores a la compra.
-                        </p>
-                    </section>
+                        {/* 4. CANCELLATION */}
+                        <section className="relative pl-8 border-l-4 border-slate-300">
+                            <h2 className="text-2xl font-bold text-slate-900 mb-4 flex items-center gap-3">
+                                <FileText className="w-6 h-6 text-blue-500" />
+                                {legal.sections.cancellation.title}
+                            </h2>
+                            <div className="prose prose-slate max-w-none text-slate-600 whitespace-pre-wrap">
+                                {legal.sections.cancellation.content}
+                            </div>
+                        </section>
 
-                    <section>
-                        <h2 className="text-2xl font-semibold text-white mb-4">5. Garantías y Limitaciones</h2>
-                        <p>
-                            Garantizamos la entrega de los servicios contratados. Sin embargo, no podemos garantizar resultados específicos en términos de engagement orgánico o crecimiento a largo plazo.
-                        </p>
-                        <p className="mt-4">
-                            TDT no se hace responsable de:
-                        </p>
-                        <ul className="list-disc pl-6 space-y-2">
-                            <li>Cambios en los algoritmos de las plataformas de redes sociales</li>
-                            <li>Suspensión o cierre de cuentas por parte de las plataformas</li>
-                            <li>Pérdida de seguidores debido a factores externos</li>
-                        </ul>
-                    </section>
+                    </div>
 
-                    <section>
-                        <h2 className="text-2xl font-semibold text-white mb-4">6. Privacidad y Datos</h2>
-                        <p>
-                            Nos comprometemos a proteger su privacidad. Para más información sobre cómo manejamos sus datos, consulte nuestra{" "}
-                            <Link href="/privacy" className="text-pink-500 hover:text-pink-400">
-                                Política de Privacidad
-                            </Link>
-                            .
-                        </p>
-                    </section>
-
-                    <section>
-                        <h2 className="text-2xl font-semibold text-white mb-4">7. Modificaciones del Servicio</h2>
-                        <p>
-                            TDT se reserva el derecho de modificar, suspender o discontinuar cualquier aspecto del servicio en cualquier momento, con o sin previo aviso.
-                        </p>
-                    </section>
-
-                    <section>
-                        <h2 className="text-2xl font-semibold text-white mb-4">8. Contacto</h2>
-                        <p>
-                            Para cualquier pregunta sobre estos Términos y Condiciones, puede contactarnos en:
-                        </p>
-                        <p className="mt-2">
-                            Email:{" "}
-                            <a href="mailto:hola@trenddigitaltrade.com" className="text-pink-500 hover:text-pink-400">
-                                hola@trenddigitaltrade.com
-                            </a>
-                        </p>
-                    </section>
-
-                    <section className="mt-8 pt-8 border-t border-slate-800">
-                        <p className="text-sm text-slate-500">
-                            Última actualización: {new Date().toLocaleDateString("es-ES", { year: "numeric", month: "long", day: "numeric" })}
-                        </p>
-                    </section>
+                    {/* Footer */}
+                    <div className="bg-slate-50 border-t border-slate-100 p-8 text-center text-slate-500 text-sm">
+                        &copy; {new Date().getFullYear()} Trend Digital Trade. All rights reserved.
+                    </div>
                 </div>
             </div>
-        </div>
+        </main>
     )
 }

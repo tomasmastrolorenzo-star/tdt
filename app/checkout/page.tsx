@@ -121,6 +121,9 @@ function CheckoutContent() {
         }
     }
 
+    // Terms State
+    const [termsAccepted, setTermsAccepted] = useState(false)
+
     return (
         <main className="min-h-screen bg-slate-50 font-sans">
             {/* Minimal Header */}
@@ -322,11 +325,27 @@ function CheckoutContent() {
                                     </div>
                                 </div>
 
+                                {/* Terms & Conditions Checkbox */}
+                                <div className="p-6 pb-0">
+                                    <label className="flex items-start gap-3 p-4 bg-slate-50 rounded-xl border border-slate-200 cursor-pointer hover:border-slate-300 transition-colors">
+                                        <input
+                                            type="checkbox"
+                                            checked={termsAccepted}
+                                            onChange={(e) => setTermsAccepted(e.target.checked)}
+                                            className="w-5 h-5 mt-0.5 rounded border-slate-300 text-orange-600 focus:ring-orange-500"
+                                        />
+                                        <span className="text-xs text-slate-600 leading-relaxed font-medium">
+                                            I agree to the <a href="/terms" target="_blank" className="text-orange-600 underline font-bold hover:text-orange-700">Terms of Service</a> and understand that this purchase is <span className="text-red-500 font-bold">non-refundable</span>. I will not file disputes/chargebacks.
+                                        </span>
+                                    </label>
+                                </div>
+
                                 {/* Pay Button */}
                                 <div className="p-6 bg-slate-50 border-t border-slate-100">
                                     <Button
                                         onClick={handleCheckout}
-                                        className="w-full bg-black hover:bg-slate-800 text-white text-lg font-bold py-7 rounded-xl shadow-lg transition-all hover:scale-[1.02] active:scale-95"
+                                        disabled={!termsAccepted}
+                                        className="w-full bg-black hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed text-white text-lg font-bold py-7 rounded-xl shadow-lg transition-all hover:scale-[1.02] active:scale-95"
                                     >
                                         {t.checkout?.paymentButton?.text || "Start Growth Now"}
                                         <ArrowRight className="ml-2 w-5 h-5" />
@@ -354,6 +373,8 @@ function CheckoutContent() {
         </main>
     )
 }
+
+
 
 export default function CheckoutPage() {
     return (
