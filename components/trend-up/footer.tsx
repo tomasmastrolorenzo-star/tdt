@@ -16,25 +16,25 @@ export default function TrendUpFooter() {
             <h3 className="text-xl font-bold bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
               Trend Digital Trade
             </h3>
-            <p className="text-slate-400 text-sm mt-1">{t.footer.tagline}</p>
+            <p className="text-slate-400 text-sm mt-1">{t.footer_v2?.tagline || "Boost your digital presence"}</p>
           </div>
 
           {/* Links */}
           <nav className="flex flex-wrap justify-center gap-6">
             <Link href="/terms" className="text-slate-400 hover:text-white text-sm transition-colors">
-              {t.footer.terms}
+              {t.footer_v2?.terms || "Terms"}
             </Link>
             <Link href="/privacy" className="text-slate-400 hover:text-white text-sm transition-colors">
-              {t.footer.privacy}
+              {t.footer_v2?.privacy || "Privacy"}
             </Link>
             <Link href="/contact" className="text-slate-400 hover:text-white text-sm transition-colors">
-              {t.footer.contact}
+              {t.footer_v2?.contact || "Contact"}
             </Link>
             <Link href="/refund" className="text-slate-400 hover:text-white text-sm transition-colors">
-              {t.footer.refundPolicy}
+              {t.footer_v2?.refundPolicy || "Refund Policy"}
             </Link>
             <Link href="/login" className="text-slate-400 hover:text-white text-sm transition-colors">
-              {t.footer.login}
+              {t.footer_v2?.login || "Login"}
             </Link>
           </nav>
 
@@ -70,7 +70,7 @@ export default function TrendUpFooter() {
         {/* Copyright */}
         <div className="mt-8 pt-8 border-t border-slate-800 text-center">
           <p className="text-slate-500 text-sm">
-            © {new Date().getFullYear()} Trend Digital Trade. {t.footer.copyright}
+            © {new Date().getFullYear()} Trend Digital Trade. {t.footer_v2?.copyright || "All rights reserved."}
           </p>
         </div>
       </div>

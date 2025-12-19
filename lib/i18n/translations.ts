@@ -652,6 +652,15 @@ export const translations = {
       moreSpecific: "¿Buscas algo más específico?",
       viewAll: "Ver todos los servicios y paquetes disponibles",
     },
+    footer_v2: {
+      tagline: "Impulsa tu presencia digital",
+      terms: "Términos",
+      privacy: "Privacidad",
+      contact: "Contacto",
+      login: "Ingresar",
+      refundPolicy: "Política de Reembolso",
+      copyright: "Todos los derechos reservados."
+    },
   },
   en: {
     // Hero
@@ -1159,6 +1168,15 @@ export const translations = {
         gdpr: "GDPR",
         paymentMethods: "Accepted payment methods:"
       },
+    },
+    footer_v2: {
+      tagline: "Boost your digital presence",
+      terms: "Terms",
+      privacy: "Privacy",
+      contact: "Contact",
+      login: "Login",
+      refundPolicy: "Refund Policy",
+      copyright: "All rights reserved."
     },
     // Services
     services: {
@@ -1698,6 +1716,15 @@ export const translations = {
       title: "Precisa de um impulso rápido? Explore soluções individuais.",
       bestSeller: "Mais Vendido",
       instant: "Início Instantâneo",
+    },
+    footer_v2: {
+      tagline: "Impulsione sua presença digital",
+      terms: "Termos",
+      privacy: "Privacidade",
+      contact: "Contato",
+      login: "Entrar",
+      refundPolicy: "Política de Reembolso",
+      copyright: "Todos os direitos reservados."
     },
   },
 }
