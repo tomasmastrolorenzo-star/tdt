@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { Slider } from "@/components/ui/slider"
 import { Button } from "@/components/ui/button"
 import { motion, AnimatePresence } from "framer-motion"
-import { ArrowRight, Sparkles, Loader2, Users, User, Globe, MapPin, Map, Check } from "lucide-react"
+import { ArrowRight, Sparkles, Loader2, Users, User, Globe, MapPin, Map, Check, Rocket, BarChart3, Database } from "lucide-react"
 import { LOCATIONS, INTERESTS, GENDERS, type LocationId, type InterestId, type GenderId } from "@/lib/el-faro/selectors"
 import { useI18n } from "@/lib/i18n/context"
 
@@ -14,57 +14,69 @@ const LoadingOverlay = ({ step, t, values }: { step: number, t: any, values: any
 
     useEffect(() => {
         const timer = setInterval(() => {
-            setMsgIndex(prev => prev === 0 ? 1 : 0)
-        }, 1500) // Change message halfway through total time if we want, or just static. 
-        // User asked for sequence. Total wait is 1.5s? "implementar una pantalla de carga de máximo 1.5 segundos".
-        // Actually, maybe show one then the other or just one.
-        // "Analyzing [Niche] in [Loc]..." -> then maybe "Optimizing..."
-        // I will do 1.5s total. 0-0.75s msg1, 0.75-1.5s msg2.
-
-        const switchTimer = setTimeout(() => {
-            setMsgIndex(1)
+            setMsgIndex(prev => prev < 3 ? prev + 1 : prev)
         }, 1000)
 
-        return () => {
-            clearInterval(timer)
-            clearTimeout(switchTimer)
-        }
+        return () => clearInterval(timer)
     }, [])
 
     const nicheName = t.consultant?.selectors?.interests?.[values.interest] || values.interest
-    const locName = t.consultant?.selectors?.locations?.[values.location] || values.location
+
+    const messages = [
+        { icon: Globe, text: "Connecting to Global Database...", color: "text-blue-400" },
+        { icon: BarChart3, text: `Analyzing ${nicheName} Competitors...`, color: "text-purple-400" },
+        { icon: Rocket, text: "Calibrating Viral Algorithm...", color: "text-orange-400" },
+        { icon: Check, text: "Strategy Generated.", color: "text-green-400" }
+    ]
+
+    const CurrentIcon = messages[msgIndex].icon
 
     return (
         <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 z-50 bg-slate-900/95 backdrop-blur-md flex flex-col items-center justify-center p-8 text-center"
+            className="absolute inset-0 z-50 bg-[#020617]/98 backdrop-blur-xl flex flex-col items-center justify-center p-8 text-center"
         >
-            <div className="relative w-24 h-24 mb-8">
-                <div className="absolute inset-0 rounded-full border-t-2 border-indigo-500 animate-spin"></div>
-                <div className="absolute inset-2 rounded-full border-r-2 border-cyan-500 animate-spin-reverse"></div>
+            {/* Neural Background Effect (Subtle) */}
+            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none"></div>
+
+            {/* HUD Circle */}
+            <div className="relative w-32 h-32 mb-10">
+                {/* Outer Ring */}
+                <div className="absolute inset-0 rounded-full border border-cyan-500/20 animate-spin-slow"></div>
+                {/* Inner Ring (Pulsing) */}
+                <div className="absolute inset-2 rounded-full border-2 border-t-cyan-400 border-r-purple-500 border-b-transparent border-l-transparent animate-spin shadow-[0_0_15px_rgba(34,211,238,0.5)]"></div>
+                {/* Center Core */}
                 <div className="absolute inset-0 flex items-center justify-center">
-                    <Sparkles className="w-8 h-8 text-white animate-pulse" />
+                    <CurrentIcon className={`w-10 h-10 ${messages[msgIndex].color} animate-pulse transition-all duration-300`} />
                 </div>
             </div>
 
-            <AnimatePresence mode="wait">
-                <motion.h3
-                    key={msgIndex}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="text-2xl font-bold text-white mb-2"
-                >
-                    {msgIndex === 0
-                        ? (t.consultant?.step1?.loading?.analyzing || "Analyzing...").replace("{niche}", nicheName).replace("{location}", locName)
-                        : (t.consultant?.step1?.loading?.optimizing || "Optimizing strategy...")
-                    }
-                </motion.h3>
-            </AnimatePresence>
+            {/* Dynamic Text */}
+            <div className="h-16 flex flex-col items-center justify-start">
+                <AnimatePresence mode="wait">
+                    <motion.h3
+                        key={msgIndex}
+                        initial={{ opacity: 0, y: 10, filter: "blur(10px)" }}
+                        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                        exit={{ opacity: 0, y: -10, filter: "blur(10px)" }}
+                        className="text-2xl font-bold text-white mb-2 tracking-wide font-mono"
+                    >
+                        {messages[msgIndex].text}
+                    </motion.h3>
+                </AnimatePresence>
 
-            <p className="text-slate-400 text-sm animate-pulse">AI Power Processing</p>
+                {/* Progress Bar Line */}
+                <div className="w-48 h-1 bg-slate-800 rounded-full mt-4 overflow-hidden">
+                    <motion.div
+                        className="h-full bg-gradient-to-r from-cyan-400 to-purple-500"
+                        initial={{ width: "0%" }}
+                        animate={{ width: `${((msgIndex + 1) / 4) * 100}%` }}
+                        transition={{ duration: 1 }}
+                    />
+                </div>
+            </div>
         </motion.div>
     )
 }
@@ -94,8 +106,8 @@ export default function SmartGrowthConsultant() {
 
         if (step === 2) {
             setIsLoading(true)
-            // Show "Revelation" Loading Screen for 2s (slightly more to read)
-            await new Promise(resolve => setTimeout(resolve, 2000))
+            // Show "Processing" Screen for 4s + buffer
+            await new Promise(resolve => setTimeout(resolve, 4500))
 
             // Redirect
             const params = new URLSearchParams({
