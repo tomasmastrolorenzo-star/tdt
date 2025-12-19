@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { Slider } from "@/components/ui/slider"
 import { Button } from "@/components/ui/button"
 import { motion, AnimatePresence } from "framer-motion"
-import { ArrowRight, Sparkles, Loader2, Users, User, Globe, MapPin, Map } from "lucide-react"
+import { ArrowRight, Sparkles, Loader2, Users, User, Globe, MapPin, Map, Check } from "lucide-react"
 import { LOCATIONS, INTERESTS, GENDERS, type LocationId, type InterestId, type GenderId } from "@/lib/el-faro/selectors"
 import { useI18n } from "@/lib/i18n/context"
 
@@ -323,8 +323,12 @@ export default function SmartGrowthConsultant() {
                                                         <button
                                                             key={g.id}
                                                             onClick={() => { setGender(g.id); vibrate(); }}
-                                                            className={`p-4 rounded-xl border transition-all duration-200 ${gender === g.id ? "border-indigo-500 bg-indigo-500/20 text-white shadow-[0_0_15px_rgba(99,102,241,0.3)]" : "border-slate-700 bg-slate-800/50 text-slate-400 hover:bg-slate-800"}`}
+                                                            className={`relative p-4 rounded-xl border transition-all duration-200 flex flex-col items-center justify-center gap-2 ${gender === g.id ? "border-cyan-400 bg-cyan-950/30 text-white shadow-[0_0_20px_rgba(34,211,238,0.4)] ring-1 ring-cyan-400" : "border-slate-700 bg-slate-800/50 text-slate-400 hover:bg-slate-800"}`}
                                                         >
+                                                            {gender === g.id && <div className="absolute top-2 right-2 text-cyan-400"><Check className="w-4 h-4" /></div>}
+                                                            <div className="text-2xl mb-1">
+                                                                {g.id === 'female' ? '👩' : g.id === 'male' ? '👨' : '👥'}
+                                                            </div>
                                                             <div className="text-sm font-bold">
                                                                 {t.consultant?.selectors?.genders?.[g.id as keyof typeof t.consultant.selectors.genders] || g.name}
                                                             </div>
@@ -341,11 +345,15 @@ export default function SmartGrowthConsultant() {
                                                         <button
                                                             key={loc.id}
                                                             onClick={() => { setLocation(loc.id); vibrate(); }}
-                                                            className={`p-3 rounded-xl border transition-all duration-200 ${location === loc.id ? "border-cyan-500 bg-cyan-500/20 text-white shadow-[0_0_15px_rgba(6,182,212,0.3)]" : "border-slate-700 bg-slate-800/50 text-slate-400 hover:bg-slate-800"}`}
+                                                            className={`relative p-3 rounded-xl border transition-all duration-200 flex items-center gap-3 ${location === loc.id ? "border-emerald-400 bg-emerald-950/30 text-white shadow-[0_0_20px_rgba(52,211,153,0.4)] ring-1 ring-emerald-400" : "border-slate-700 bg-slate-800/50 text-slate-400 hover:bg-slate-800"}`}
                                                         >
-                                                            <div className="text-sm font-bold">
+                                                            <span className="text-2xl">
+                                                                {loc.id === 'us' ? '🇺🇸' : loc.id === 'uk' ? '🇬🇧' : loc.id === 'eu' ? '🇪🇺' : loc.id === 'latam' ? '🌎' : loc.id === 'asia' ? '🌏' : '🌍'}
+                                                            </span>
+                                                            <div className="text-sm font-bold text-left">
                                                                 {t.consultant?.selectors?.locations?.[loc.id as keyof typeof t.consultant.selectors.locations] || loc.name}
                                                             </div>
+                                                            {location === loc.id && <div className="ml-auto text-emerald-400"><Check className="w-4 h-4" /></div>}
                                                         </button>
                                                     ))}
                                                 </div>
@@ -359,10 +367,11 @@ export default function SmartGrowthConsultant() {
                                                         <button
                                                             key={int.id}
                                                             onClick={() => { setInterest(int.id); vibrate(); }}
-                                                            className={`group p-3 rounded-xl border text-center transition-all duration-200 ${interest === int.id ? `border-purple-500 bg-purple-500/20 text-white shadow-[0_0_15px_rgba(168,85,247,0.3)]` : "border-slate-700 bg-slate-800/50 text-slate-400 hover:bg-slate-800"}`}
+                                                            className={`group relative p-3 rounded-xl border text-center transition-all duration-200 ${interest === int.id ? `border-purple-400 bg-purple-900/30 text-white shadow-[0_0_20px_rgba(192,132,252,0.4)] ring-1 ring-purple-400` : "border-slate-700 bg-slate-800/50 text-slate-400 hover:bg-slate-800"}`}
                                                         >
+                                                            {interest === int.id && <div className="absolute top-2 right-2 text-purple-400"><Check className="w-3 h-3" /></div>}
                                                             <div className={`text-xl mb-1 transition-transform duration-300 ${interest === int.id ? "scale-125 animate-bounce-short" : "group-hover:scale-110"}`}>
-                                                                {int.icon}
+                                                                ✨ {int.icon}
                                                             </div>
                                                             <div className="text-xs font-bold truncate">
                                                                 {t.consultant?.selectors?.interests?.[int.id as keyof typeof t.consultant.selectors.interests] || int.name}
@@ -374,18 +383,18 @@ export default function SmartGrowthConsultant() {
                                         </div>
 
                                         <div className="flex justify-between items-center pt-6">
-                                            <button onClick={() => setStep(1)} className="text-slate-400 hover:text-white text-sm font-medium underline decoration-slate-600 underline-offset-4 transition-colors">{t.consultant?.step2?.back}</button>
+                                            <button onClick={() => setStep(1)} className="text-slate-400 hover:text-white text-sm font-medium underline decoration-slate-600 underline-offset-4 transition-colors">{t.consultant?.step2?.back || "Back"}</button>
 
                                             <Button
                                                 onClick={handleNext}
                                                 disabled={isLoading}
-                                                className="bg-gradient-to-r from-indigo-500 to-cyan-500 hover:from-indigo-600 hover:to-cyan-600 text-white text-lg px-10 py-7 rounded-2xl font-bold shadow-lg shadow-indigo-500/20 active:scale-95 transition-all disabled:opacity-80"
+                                                className="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white text-lg px-10 py-7 rounded-2xl font-bold shadow-lg shadow-cyan-500/20 active:scale-95 transition-all disabled:opacity-80"
                                             >
                                                 {isLoading ? (
                                                     <Loader2 className="w-6 h-6 animate-spin" />
                                                 ) : (
                                                     <>
-                                                        {t.consultant?.step2?.cta} <Sparkles className="ml-2 w-5 h-5 animate-pulse" />
+                                                        Analyze Audience 🤖
                                                     </>
                                                 )}
                                             </Button>
