@@ -26,13 +26,12 @@ export default function ImpactSection() {
                 </h2>
 
                 <Link href="#consultant" className="inline-block mb-8">
-                    <Button
-                        size="lg"
-                        className="font-bold text-lg px-8 py-6 rounded-full shadow-xl transition-all hover:scale-105 hover:shadow-slate-900/50"
+                    <button
+                        className="flex items-center justify-center font-bold text-lg px-8 py-6 rounded-full shadow-xl transition-all hover:scale-105 hover:shadow-slate-900/50"
                         style={{ backgroundColor: '#020617', color: 'white', border: '1px solid #1e293b' }}
                     >
                         {t.impact?.cta} <ArrowRight className="w-5 h-5 ml-2" />
-                    </Button>
+                    </button>
                 </Link>
 
                 {/* Floating/Grid Stats removed per user feedback */}
