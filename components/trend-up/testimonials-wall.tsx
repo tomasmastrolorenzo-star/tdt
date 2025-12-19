@@ -16,7 +16,7 @@ export default function TestimonialsWall() {
             name: "María G.",
             initials: "MG",
             rating: 5,
-            text: "Increíble servicio! Pasé de 500 a 15,000 seguidores en 3 meses. Todo orgánico y real.",
+            text: "Amazing service! I went from 500 to 15,000 followers in 3 months. All organic and real.",
             service: "Turbo AI Plan"
         },
         {

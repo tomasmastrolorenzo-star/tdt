@@ -116,7 +116,7 @@ function CheckoutContent() {
                 alert("Payment Error")
             }
         } else {
-            const message = `Hola! Plan ${selectedPlan.toUpperCase()} (${billingCycle}). Bump: ${orderBump ? "YES" : "NO"}. Total: $${total}. User: @${userData.username}`
+            const message = `Hello! I would like to pay for Plan ${selectedPlan.toUpperCase()} (${billingCycle}). Bump: ${orderBump ? "YES" : "NO"}. Total: $${total}. User: @${userData.username}`
             window.open(`https://wa.me/5492212235170?text=${encodeURIComponent(message)}`, '_blank')
         }
     }
@@ -382,7 +382,7 @@ export default function CheckoutPage() {
             <div className="min-h-screen flex items-center justify-center">
                 <div className="text-center">
                     <div className="w-16 h-16 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                    <p className="text-slate-600">Cargando checkout...</p>
+                    <p className="text-slate-600 font-bold">Loading secure checkout...</p>
                 </div>
             </div>
         }>

@@ -67,23 +67,23 @@ export default function ServicePackages({ packages, platform }: ServicePackagesP
   const getBenefitText = (benefit: string): string => {
     const benefitTexts: Record<string, Record<string, string>> = {
       es: {
-        realFollowers: "Seguidores reales y activos",
-        premiumFollowers: "Seguidores premium de alta calidad",
-        eliteFollowers: "Seguidores elite verificados",
-        vipFollowers: "Seguidores VIP exclusivos",
-        gradualDelivery: "Entrega gradual y natural",
-        emailSupport: "Soporte por email",
-        prioritySupport: "Soporte prioritario 24/7",
-        dedicatedSupport: "Soporte dedicado personal",
-        vipSupport: "Soporte VIP exclusivo",
-        freeGuide: "Guía GRATIS: 'Monetiza tu Cuenta'",
-        accountProtection: "$100K Protección de cuenta",
-        aiStrategy: "Estrategia de crecimiento con IA",
-        exploreBoost: "Impulso en página Explorar",
-        fypBoost: "Impulso en For You Page",
-        watchTimeBoost: "Boost de Watch Time",
-        monetizationHelp: "Ayuda para monetización",
-        exclusivePerks: "Acceso a beneficios exclusivos",
+        realFollowers: "Real and active followers",
+        premiumFollowers: "High-quality premium followers",
+        eliteFollowers: "Verified elite followers",
+        vipFollowers: "Exclusive VIP followers",
+        gradualDelivery: "Gradual and natural delivery",
+        emailSupport: "Email support",
+        prioritySupport: "24/7 Priority support",
+        dedicatedSupport: "Personal dedicated support",
+        vipSupport: "Exclusive VIP support",
+        freeGuide: "FREE Guide: 'Monetize Your Account'",
+        accountProtection: "$100K Account Protection",
+        aiStrategy: "AI-powered growth strategy",
+        exploreBoost: "Explore page boost",
+        fypBoost: "For You Page boost",
+        watchTimeBoost: "Watch Time boost",
+        monetizationHelp: "Monetization assistance",
+        exclusivePerks: "Access to exclusive perks",
       },
       en: {
         realFollowers: "Real and active followers",
@@ -105,23 +105,23 @@ export default function ServicePackages({ packages, platform }: ServicePackagesP
         exclusivePerks: "Access to exclusive perks",
       },
       pt: {
-        realFollowers: "Seguidores reais e ativos",
-        premiumFollowers: "Seguidores premium de alta qualidade",
-        eliteFollowers: "Seguidores elite verificados",
-        vipFollowers: "Seguidores VIP exclusivos",
-        gradualDelivery: "Entrega gradual e natural",
-        emailSupport: "Suporte por email",
-        prioritySupport: "Suporte prioritário 24/7",
-        dedicatedSupport: "Suporte dedicado pessoal",
-        vipSupport: "Suporte VIP exclusivo",
-        freeGuide: "Guia GRÁTIS: 'Monetize sua Conta'",
-        accountProtection: "$100K Proteção de conta",
-        aiStrategy: "Estratégia de crescimento com IA",
-        exploreBoost: "Impulso na página Explorar",
-        fypBoost: "Impulso no For You Page",
-        watchTimeBoost: "Boost de Watch Time",
-        monetizationHelp: "Ajuda para monetização",
-        exclusivePerks: "Acesso a benefícios exclusivos",
+        realFollowers: "Real and active followers",
+        premiumFollowers: "High-quality premium followers",
+        eliteFollowers: "Verified elite followers",
+        vipFollowers: "Exclusive VIP followers",
+        gradualDelivery: "Gradual and natural delivery",
+        emailSupport: "Email support",
+        prioritySupport: "24/7 Priority support",
+        dedicatedSupport: "Personal dedicated support",
+        vipSupport: "Exclusive VIP support",
+        freeGuide: "FREE Guide: 'Monetize Your Account'",
+        accountProtection: "$100K Account Protection",
+        aiStrategy: "AI-powered growth strategy",
+        exploreBoost: "Explore page boost",
+        fypBoost: "For You Page boost",
+        watchTimeBoost: "Watch Time boost",
+        monetizationHelp: "Monetization assistance",
+        exclusivePerks: "Access to exclusive perks",
       },
     }
 
@@ -130,18 +130,18 @@ export default function ServicePackages({ packages, platform }: ServicePackagesP
 
   const getEngagementText = (percent: number) => {
     const texts: Record<string, string> = {
-      es: `+${percent}% Engagement incluido`,
+      es: `+${percent}% Engagement included`,
       en: `+${percent}% Engagement included`,
-      pt: `+${percent}% Engagement incluído`,
+      pt: `+${percent}% Engagement included`,
     }
     return texts[language] || texts.en
   }
 
   const getGuaranteeText = (days: number) => {
     const texts: Record<string, string> = {
-      es: `${days} días de reposición`,
+      es: `${days}-day refill guarantee`,
       en: `${days}-day refill guarantee`,
-      pt: `${days} dias de reposição`,
+      pt: `${days}-day refill guarantee`,
     }
     return texts[language] || texts.en
   }
@@ -280,21 +280,21 @@ export default function ServicePackages({ packages, platform }: ServicePackagesP
                     className={cn(
                       "w-full py-5 rounded-xl font-black text-base transition-all duration-300 shadow-lg uppercase tracking-wide",
                       pkg.popular &&
-                        "bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-amber-500/50",
+                      "bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-amber-500/50",
                       pkg.bestValue &&
-                        "bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-purple-500/50",
+                      "bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-purple-500/50",
                       pkg.tier === "vip" &&
-                        !pkg.popular &&
-                        !pkg.bestValue &&
-                        "bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 text-white shadow-violet-500/50",
+                      !pkg.popular &&
+                      !pkg.bestValue &&
+                      "bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 text-white shadow-violet-500/50",
                       pkg.tier === "pro" &&
-                        !pkg.popular &&
-                        !pkg.bestValue &&
-                        "bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white shadow-cyan-500/50",
+                      !pkg.popular &&
+                      !pkg.bestValue &&
+                      "bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white shadow-cyan-500/50",
                       pkg.tier === "basic" &&
-                        !pkg.popular &&
-                        !pkg.bestValue &&
-                        "bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-500 hover:to-slate-600 text-white",
+                      !pkg.popular &&
+                      !pkg.bestValue &&
+                      "bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-500 hover:to-slate-600 text-white",
                     )}
                   >
                     {pkg.popular ? t.packages.getOffer : t.packages.buyNow}

@@ -53,7 +53,7 @@ export default function BeforeAfter() {
                                         <div className={`font-bold text-lg transition-all duration-1000 ${isAfter ? "text-green-600 scale-110" : "text-slate-900"}`}>
                                             {isAfter ? "25,405" : "2,405"}
                                         </div>
-                                        <div className="text-xs text-slate-500">Seguidores</div>
+                                        <div className="text-xs text-slate-500">Followers</div>
                                     </div>
                                     <div>
                                         <div className="font-bold text-lg text-slate-900">647</div>

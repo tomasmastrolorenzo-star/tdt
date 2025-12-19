@@ -11,12 +11,11 @@ export default function PricingSection() {
     const { t } = useI18n()
     const [isQuarterly, setIsQuarterly] = useState(false)
 
-    // Helper to calculate price with 20% discount if quarterly
     const getPrice = (basePrice: number) => {
         if (isQuarterly) {
             return Math.floor(basePrice * 0.8)
         }
-        return basePrice
+        return basePrice.toLocaleString('en-US')
     }
 
     const tiers = [

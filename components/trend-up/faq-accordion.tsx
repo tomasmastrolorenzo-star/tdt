@@ -13,32 +13,6 @@ export default function FAQAccordion() {
 
     const faqs: FAQItem[] = [
         {
-            question: "¿Cómo funciona TDT?",
-            answer: "TDT utiliza inteligencia artificial avanzada para identificar y conectar con tu audiencia objetivo en Instagram. Nuestro sistema analiza patrones de comportamiento, intereses y demografía para atraer seguidores reales y comprometidos a tu cuenta de forma orgánica y segura."
-        },
-        {
-            question: "¿Es TDT compatible con las normas de servicio de Instagram?",
-            answer: "Sí, absolutamente. Utilizamos únicamente métodos orgánicos aprobados por Instagram. No usamos bots, automatización agresiva ni prácticas que violen los términos de servicio. Tu cuenta está 100% segura con nosotros."
-        },
-        {
-            question: "¿Necesito dar mi contraseña de Instagram?",
-            answer: "No, nunca te pediremos tu contraseña de Instagram. Nuestro servicio funciona de manera completamente segura sin necesidad de acceso a tu cuenta. Solo necesitamos tu nombre de usuario público para comenzar."
-        },
-        {
-            question: "¿Cuánto tiempo tardaré en ver resultados?",
-            answer: "La mayoría de nuestros clientes comienzan a ver resultados en las primeras 24-48 horas. El crecimiento es gradual y orgánico, lo que garantiza que tus nuevos seguidores sean reales y comprometidos. Los resultados completos se ven típicamente en 2-4 semanas."
-        },
-        {
-            question: "¿Qué diferencia hay entre el plan Standard y el Turbo AI?",
-            answer: "El plan Turbo AI incluye todas las características del Standard, más: segmentación avanzada por IA, un gestor de cuenta personal, formación exclusiva en estrategias de IA, y crecimiento 40% más rápido. Es ideal para usuarios que buscan resultados profesionales acelerados."
-        },
-        {
-            question: "¿Puedo cancelar en cualquier momento?",
-            answer: "Sí, puedes cancelar tu suscripción en cualquier momento sin penalizaciones. Si cancelas, tu servicio continuará hasta el final del período facturado. Ofrecemos garantía de reembolso de 14 días si no estás satisfecho con los resultados."
-        },
-        {
-            question: "¿Los seguidores son reales?",
-            answer: "Sí, 100% reales. No trabajamos con bots ni cuentas falsas. Todos los seguidores que ganas son usuarios reales de Instagram que tienen un interés genuino en tu contenido o nicho. Esto garantiza un engagement real y duradero."
         },
         {
             question: "¿Ofrecen garantía de resultados?",

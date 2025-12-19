@@ -18,7 +18,7 @@ export default function AIEngineSection() {
                 </h2>
 
                 <p className="text-slate-600 max-w-2xl mx-auto mb-12">
-                    Nuestro motor de crecimiento GPT4o, impulsado pro IA, y nuestros especialistas en redes sociales te encontrarán los mejores seguidores.
+                    Our GPT-4o growth engine, powered by AI, and our social media specialists will find you the best followers.
                 </p>
 
                 <div className="relative max-w-4xl mx-auto mb-12">
