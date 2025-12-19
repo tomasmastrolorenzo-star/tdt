@@ -812,6 +812,20 @@ export const translations = {
           description: "You'll get segmented followers who engage with your content based on your niche, resulting in higher retention and genuine engagement.",
         },
       ],
+      steps_v2: [
+        {
+          title: "1. Set your goals",
+          description: "Use our advanced targeting options to find the followers you want by age, demographic, location, gender, etc.",
+        },
+        {
+          title: "2. AI Execution",
+          description: "TDT uses machine learning, GPT4o, and expert growth strategists to promote your content to the right users organically.",
+        },
+        {
+          title: "3. Targeted organic growth",
+          description: "You'll get segmented followers who engage with your content based on your niche, resulting in higher retention and genuine engagement.",
+        },
+      ],
     },
     // FAQ
     faq: {

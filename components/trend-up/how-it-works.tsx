@@ -9,24 +9,24 @@ export default function HowItWorks() {
   const steps = [
     {
       icon: Target,
-      title: t.howItWorks?.steps?.[0]?.title,
-      description: t.howItWorks?.steps?.[0]?.description,
+      title: t.howItWorks?.steps_v2?.[0]?.title || "1. Set Your Goals",
+      description: t.howItWorks?.steps_v2?.[0]?.description,
       color: "text-orange-500",
       bg: "bg-orange-500/10",
       border: "border-orange-500/20"
     },
     {
       icon: Zap,
-      title: t.howItWorks?.steps?.[1]?.title,
-      description: t.howItWorks?.steps?.[1]?.description,
+      title: t.howItWorks?.steps_v2?.[1]?.title || "2. AI Execution",
+      description: t.howItWorks?.steps_v2?.[1]?.description || "TDT uses machine learning...",
       color: "text-green-500",
       bg: "bg-green-500/10",
       border: "border-green-500/20"
     },
     {
       icon: TrendingUp,
-      title: t.howItWorks?.steps?.[2]?.title,
-      description: t.howItWorks?.steps?.[2]?.description,
+      title: t.howItWorks?.steps_v2?.[2]?.title || "3. Targeted Growth",
+      description: t.howItWorks?.steps_v2?.[2]?.description || "...resulting in higher retention and genuine engagement.",
       color: "text-purple-500",
       bg: "bg-purple-500/10",
       border: "border-purple-500/20"
@@ -51,7 +51,7 @@ export default function HowItWorks() {
             <div key={index} className={`relative flex flex-col items-center text-center bg-white rounded-3xl p-8 border ${step.border} hover:shadow-xl transition-all duration-300 group z-10`}>
               {/* Mobile Connector (Vertical) */}
               {index < steps.length - 1 && (
-                <div className="md:hidden absolute -bottom-8 left-1/2 -translate-x-1/2 w-[3px] h-12 border-l-[3px] border-dashed border-white/60 z-50 pointer-events-none" />
+                <div className="md:hidden absolute -bottom-8 left-1/2 -translate-x-1/2 w-[3px] h-12 border-l-[3px] border-dashed border-white/40 z-50 pointer-events-none" />
               )}
 
               {/* Desktop Connector (Horizontal) - keeping existing logic but cleaning up comments */}
