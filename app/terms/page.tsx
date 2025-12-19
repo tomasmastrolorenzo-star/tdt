@@ -7,13 +7,26 @@ export default function TermsPage() {
     const { t } = useI18n()
 
     // Safety fallback if t.legal is missing during build/transition
-    const legal = t.legal || {
+    // Correct path is t.checkout.legal
+    const legal = t.checkout?.legal || {
         title: "Terms of Service & Refund Policy",
         sections: {
-            refund: { title: "1. NO-REFUND POLICY", content: "Loading..." },
-            chargeback: { title: "2. CHARGEBACK & DISPUTE CLAUSE", content: "Loading..." },
-            disclaimer: { title: "3. SERVICE DISCLAIMER", content: "Loading..." },
-            cancellation: { title: "4. SUBSCRIPTION CANCELLATION", content: "Loading..." }
+            refund: {
+                title: "1. NO-REFUND POLICY",
+                content: "Due to the nature of digital marketing services and intangible goods, Trend Digital Trade (TDT) does not offer monetary refunds once the order processing has begun.\n\nDigital Nature: You acknowledge that by purchasing a plan, you are paying for a digital promotional campaign that consumes server resources and ad spend immediately. These costs are non-recoverable.\n\nThe Remedy: In the event of followers dropping or delivery delays, TDT offers a 30-Day Free Refill Guarantee. We will restore any lost numbers automatically. Refills are the sole remedy; monetary refunds are not permitted."
+            },
+            chargeback: {
+                title: "2. CHARGEBACK & DISPUTE CLAUSE",
+                content: "By completing a purchase, you agree that you will not file a chargeback or dispute with your payment provider.\n\nBreach of Contract: Filing a dispute without contacting our support team first is considered a breach of these Terms.\n\nConsequences: In the event of an unauthorized chargeback, TDT reserves the right to:\n- Ban your account and IP address permanently.\n- Report your details to global merchant blacklists.\n- Remove all delivered followers/likes instantly using our reversal algorithm."
+            },
+            disclaimer: {
+                title: "3. SERVICE DISCLAIMER",
+                content: "TDT is an independent digital strategy agency and is not affiliated with Instagram, TikTok, or Meta.\n\nPlatform Updates: We are not responsible for damages, bans, or blocks caused by updates to Instagram/TikTok algorithms. You use our services at your own risk.\n\nDelivery Speed: Delivery times are estimates. 'Instant Start' implies the campaign setup begins immediately, but full delivery may take time to ensure organic safety."
+            },
+            cancellation: {
+                title: "4. SUBSCRIPTION CANCELLATION",
+                content: "You may cancel your monthly subscription at any time via your dashboard or by contacting support.\n\nTiming: Cancellations must be requested at least 24 hours before the next billing cycle.\n\nPartial Months: No refunds will be issued for partial months of service if you cancel mid-cycle. The service will continue until the end of the paid period."
+            }
         }
     }
 

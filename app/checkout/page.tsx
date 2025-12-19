@@ -2,6 +2,7 @@
 
 import { useState, useEffect, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
+import Link from "next/link"
 import { Check, Sparkles, Shield, CreditCard, Bitcoin, MessageCircle, Lock, X, User, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
@@ -333,16 +334,16 @@ I have accepted the Terms of Service.`
 
                                 {/* Terms & Conditions Checkbox */}
                                 <div className="p-6 pb-0">
-                                    <label className="flex items-start gap-3 p-4 bg-slate-50 rounded-xl border border-slate-200 cursor-pointer hover:border-slate-300 transition-colors">
+                                    <label className="flex items-start gap-3 p-4 bg-slate-50 rounded-xl border border-slate-200 cursor-pointer hover:border-slate-300 transition-colors relative">
                                         <input
                                             type="checkbox"
                                             checked={termsAccepted}
                                             onChange={(e) => setTermsAccepted(e.target.checked)}
-                                            className="w-5 h-5 mt-0.5 rounded border-slate-300 text-orange-600 focus:ring-orange-500"
+                                            className="w-5 h-5 mt-0.5 rounded border-slate-300 text-orange-600 focus:ring-orange-500 relative z-10 cursor-pointer"
                                         />
-                                        <span className="text-xs text-slate-600 leading-relaxed font-medium">
-                                            I agree to the <a href="/terms" target="_blank" className="text-orange-600 underline font-bold hover:text-orange-700">Terms of Service</a> and understand that this purchase is <span className="text-red-500 font-bold">non-refundable</span>. I will not file disputes/chargebacks.
-                                        </span>
+                                        <div className="text-xs text-slate-600 leading-relaxed font-medium">
+                                            I agree to the <Link href="/terms" target="_blank" rel="noopener noreferrer" className="text-orange-600 underline font-bold hover:text-orange-700 relative z-20">Terms of Service</Link> and understand that this purchase is <span className="text-red-500 font-bold">non-refundable</span>. I will not file disputes/chargebacks.
+                                        </div>
                                     </label>
                                 </div>
 
@@ -350,8 +351,7 @@ I have accepted the Terms of Service.`
                                 <div className="p-6 bg-slate-50 border-t border-slate-100">
                                     <Button
                                         onClick={handleCheckout}
-                                        disabled={!termsAccepted}
-                                        className="w-full bg-slate-900 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed text-white text-lg font-bold py-7 rounded-xl shadow-lg transition-all hover:scale-[1.02] active:scale-95"
+                                        className="w-full bg-slate-900 hover:bg-slate-800 text-white text-lg font-bold py-7 rounded-xl shadow-lg transition-all hover:scale-[1.02] active:scale-95"
                                     >
                                         Activate Plan
                                         <ArrowRight className="ml-2 w-5 h-5" />
