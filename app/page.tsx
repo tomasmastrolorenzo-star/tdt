@@ -44,7 +44,28 @@ export default function HomePage() {
       <SmartGrowthConsultant />
 
       {/* Pricing Section (Was Missing) */}
-      <PricingSection />
+      {/* PRICING HIDDEN - STRATEGY CTA */}
+      <section className="py-24 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-900 to-indigo-950/50" />
+        <div className="container mx-auto px-4 relative z-10 text-center">
+          <div className="max-w-3xl mx-auto space-y-8">
+            <h2 className="text-4xl md:text-5xl font-black text-white px-4">
+              How much does growth cost?
+            </h2>
+            <p className="text-xl text-slate-400 font-medium">
+              Our AI customizes plans based on your Niche and Goals.
+            </p>
+            <div className="flex justify-center pt-4">
+              <a
+                href="#consultant"
+                className="group relative inline-flex items-center gap-3 px-8 py-4 bg-white text-slate-900 rounded-full text-xl font-black hover:bg-indigo-50 transition-all shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.5)] hover:scale-105"
+              >
+                <span>Calculate My Strategy 🤖</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Footer Area */}
       <DirectServices />

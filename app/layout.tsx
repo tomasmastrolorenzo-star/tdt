@@ -12,27 +12,33 @@ const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Trend Digital Trade | Crecimiento Real con IA para Redes Sociales",
+  title: "Trend Digital Trade | Beat the Algorithm",
   description:
-    "La primera plataforma que utiliza Inteligencia Artificial para potenciar tu crecimiento en Instagram, TikTok y YouTube. Seguidores reales, segmentados y garantizados.",
-  keywords: "crecimiento instagram, comprar seguidores reales, tiktok viral, ia para redes sociales, marketing digital, trend digital trade",
+    "Accelerate your Instagram & TikTok growth with AI. Real followers, no bots, no passwords. Join 80,000+ creators.",
+  keywords: "social media growth, instagram followers, tiktok growth, ai marketing, trend digital trade, real followers",
   generator: "Next.js",
   applicationName: "Trend Digital Trade",
   openGraph: {
-    title: "Trend Digital Trade 🚀 - Crecimiento con IA",
-    description: "¿Cansado del algoritmo? Usa nuestra IA para conectar con seguidores reales interesados en tu contenido.",
+    title: "Trend Digital Trade | Beat the Algorithm",
+    description: "Accelerate your Instagram & TikTok growth with AI. Real followers, no bots, no passwords.",
     url: "https://trenddigitaltrade.com",
     siteName: "Trend Digital Trade",
-    locale: "es_ES",
+    locale: "en_US",
     type: "website",
     images: [
       {
-        url: "/og-image.png",
+        url: "https://trenddigitaltrade.com/assets/og-preview.jpg",
         width: 1200,
         height: 630,
         alt: "Trend Digital Trade - AI Social Growth",
       },
     ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Trend Digital Trade | Beat the Algorithm",
+    description: "Accelerate your Instagram & TikTok growth with AI. Real followers, no bots, no passwords.",
+    images: ["https://trenddigitaltrade.com/assets/og-preview.jpg"],
   },
   icons: {
     icon: [
@@ -48,7 +54,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="es">
+    <html lang="en">
       <body className={`font-sans antialiased`}>
         <ErrorBoundary>
           <I18nProvider>
