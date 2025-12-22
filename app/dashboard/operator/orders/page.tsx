@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Loader2, RefreshCw, Search, Package, DollarSign, Clock, CheckCircle } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import type { Order, OrderStatus } from "@/lib/supabase/types"
-import { StatsCard } from "@/components/dashboard/StatsCard"
+import { StatsCard } from "@/components/dashboard/stats-card"
 
 interface OrderWithRelations extends Omit<Order, 'services'> {
   services: { name: string; base_price: number } | null

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { toast } from "sonner"
-import Skeleton from "../../../../components/ui/Skeleton"
+import Skeleton from "../../../../components/ui/skeleton"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"

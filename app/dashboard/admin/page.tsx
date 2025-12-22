@@ -5,9 +5,9 @@ import { createClient } from "@/lib/supabase/client"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { DollarSign, Package, Users, TrendingUp, ArrowUpRight, ArrowDownRight, Activity } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { StatsCard } from "@/components/dashboard/StatsCard"
+import { StatsCard } from "@/components/dashboard/stats-card"
 import { getAdminStats } from "@/lib/dashboard/stats"
-import Skeleton from "../../../components/ui/Skeleton"
+import Skeleton from "../../../components/ui/skeleton"
 import Link from "next/link"
 
 interface AdminStats {

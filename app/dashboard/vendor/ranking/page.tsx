@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/client"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Trophy, Medal, Award, TrendingUp } from "lucide-react"
-import { LevelBadge } from "@/components/dashboard/LevelBadge"
+import { LevelBadge } from "@/components/dashboard/level-badge"
 import { getVendorLeaderboard } from "@/lib/dashboard/stats"
 
 interface LeaderboardEntry {
@@ -92,8 +92,8 @@ export default function VendorRankingPage() {
                                 <div
                                     key={vendor.id}
                                     className={`flex items-center gap-4 p-4 rounded-lg border-2 transition-all ${isCurrentUser
-                                            ? "bg-blue-50 dark:bg-blue-950 border-blue-500 shadow-md"
-                                            : "bg-card hover:bg-muted/50"
+                                        ? "bg-blue-50 dark:bg-blue-950 border-blue-500 shadow-md"
+                                        : "bg-card hover:bg-muted/50"
                                         }`}
                                 >
                                     {/* Rank */}

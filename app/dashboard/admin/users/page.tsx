@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 
-import Skeleton from "../../../../components/ui/Skeleton"
+import Skeleton from "../../../../components/ui/skeleton"
 import { toast } from "sonner"
 
 interface UserProfile {

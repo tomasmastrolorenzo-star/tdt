@@ -1,7 +1,7 @@
 "use client"
 
-import { Sidebar } from "@/components/dashboard/Sidebar"
-import { Header } from "@/components/dashboard/Header"
+import { Sidebar } from "@/components/dashboard/sidebar"
+import { Header } from "@/components/dashboard/header"
 import { useState } from "react"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
