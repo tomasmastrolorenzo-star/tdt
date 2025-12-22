@@ -33,6 +33,26 @@ function ServiciosContent() {
     return () => clearTimeout(timer)
   }, [])
 
+  // The Blur Protocol Logic
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [timeLeft, setTimeLeft] = useState({ h: 71, m: 59, s: 59 })
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTimeLeft(prev => {
+        if (prev.s > 0) return { ...prev, s: prev.s - 1 }
+        if (prev.m > 0) return { ...prev, m: prev.m - 1, s: 59 }
+        if (prev.h > 0) return { ...prev, h: prev.h - 1, m: 59, s: 59 }
+        return prev
+      })
+    }, 1000)
+    return () => clearInterval(interval)
+  }, [])
+
+  const handleNDASign = () => {
+    setIsAuthenticated(true)
+  }
+
   const tiers = (isWhale || isLazarus) ? [
     {
       key: 'professional',
@@ -118,6 +138,17 @@ function ServiciosContent() {
             {isLazarus ? 'CRITICAL_LEAD_DETECTED' : 'ANALYSIS_SYNCHRONIZED'}
           </div>
 
+          {!isAuthenticated && (
+            <div className="flex justify-center mb-4">
+              <div className="bg-amber-500/10 border border-amber-500/20 px-4 py-2 flex items-center gap-3 rounded-none animate-pulse">
+                <Lock className="w-3 h-3 text-amber-500" />
+                <span className="text-[10px] font-mono text-amber-500 uppercase tracking-widest">
+                  SLOT LAZARUS RESERVED: {timeLeft.h}:{timeLeft.m.toString().padStart(2, '0')}:{timeLeft.s.toString().padStart(2, '0')}
+                </span>
+              </div>
+            </div>
+          )}
+
           <h1 className="text-5xl md:text-7xl font-verdict text-white italic leading-tight">
             {isLazarus ? (
               <>The <span className="text-red-600">Lazarus</span> Verdict</>
@@ -135,78 +166,109 @@ function ServiciosContent() {
           </p>
         </div>
 
-        {/* GOLDEN METRICS PANEL */}
-        <div className="max-w-4xl mx-auto mb-20">
-          <div className={`bg-[#02040a]/80 border ${isLazarus ? 'border-red-500/30' : 'border-indigo-500/20'} rounded-none p-8 backdrop-blur-3xl relative overflow-hidden group shadow-[0_0_50px_rgba(0,0,0,1)]`}>
-            <div className="grid md:grid-cols-3 gap-12">
-              <div className="space-y-4">
-                <div className="flex items-center gap-2 text-[10px] text-slate-500 uppercase tracking-widest">
-                  <Activity className="w-3 h-3 text-indigo-500" /> Latent Repulsion
+        {/* BLURRED CONTENT WRAPPER */}
+        <div className={`transition-all duration-1000 ${!isAuthenticated ? 'blur-xl opacity-50 pointer-events-none select-none grayscale' : 'blur-0 opacity-100'}`}>
+
+          {/* GOLDEN METRICS PANEL */}
+          <div className="max-w-4xl mx-auto mb-20">
+            <div className={`bg-[#02040a]/80 border ${isLazarus ? 'border-red-500/30' : 'border-indigo-500/20'} rounded-none p-8 backdrop-blur-3xl relative overflow-hidden group shadow-[0_0_50px_rgba(0,0,0,1)]`}>
+              <div className="grid md:grid-cols-3 gap-12">
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 text-[10px] text-slate-500 uppercase tracking-widest">
+                    <Activity className="w-3 h-3 text-indigo-500" /> Latent Repulsion
+                  </div>
+                  <div className="text-3xl font-mono text-white">
+                    {searchParams.get('auth_score') || (isLazarus ? "94.2" : "12.4")}<span className="text-indigo-500 text-lg">%</span>
+                  </div>
+                  <div className="h-1 bg-slate-900 w-full overflow-hidden">
+                    <motion.div initial={{ width: 0 }} animate={{ width: isLazarus ? "94.2%" : `${searchParams.get('auth_score') || 12}%` }} className={`h-full ${isLazarus ? 'bg-red-600 shadow-[0_0_10px_red]' : 'bg-indigo-500'}`} />
+                  </div>
                 </div>
-                <div className="text-3xl font-mono text-white">
-                  {isLazarus ? "94.2" : "12.4"}<span className="text-indigo-500 text-lg">%</span>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 text-[10px] text-slate-500 uppercase tracking-widest">
+                    <Cpu className="w-3 h-3 text-indigo-500" /> Compositional Entropy
+                  </div>
+                  <div className="text-3xl font-mono text-white">
+                    {searchParams.get('entropy_score') || (isLazarus ? "0.02" : "0.89")}<span className="text-indigo-500 text-lg">σ</span>
+                  </div>
+                  <div className="h-1 bg-slate-900 w-full overflow-hidden">
+                    <motion.div initial={{ width: 0 }} animate={{ width: isLazarus ? "5%" : `${(parseFloat(searchParams.get('entropy_score') || '0.89') * 100)}%` }} className={`h-full ${isLazarus ? 'bg-red-600 shadow-[0_0_10px_red]' : 'bg-indigo-500'}`} />
+                  </div>
                 </div>
-                <div className="h-1 bg-slate-900 w-full overflow-hidden">
-                  <motion.div initial={{ width: 0 }} animate={{ width: isLazarus ? "94.2%" : "12.4%" }} className={`h-full ${isLazarus ? 'bg-red-600 shadow-[0_0_10px_red]' : 'bg-indigo-500'}`} />
+                <div className="space-y-4 text-left">
+                  <div className="text-[10px] text-indigo-400 uppercase tracking-[0.3em] mb-2">Audit Status</div>
+                  <div className={`text-xs font-mono leading-relaxed ${isLazarus ? 'text-red-400 animate-pulse' : 'text-slate-400'}`}>
+                    {isLazarus
+                      ? "> ENGAGEMENT MISMATCH DETECTED. GHOST-METADATA SUPPRESSION ACTIVE."
+                      : "> SIGNALS CALIBRATED. NICHE AUTHORITY BYPASS ENGAED."}
+                  </div>
                 </div>
               </div>
-              <div className="space-y-4">
-                <div className="flex items-center gap-2 text-[10px] text-slate-500 uppercase tracking-widest">
-                  <Cpu className="w-3 h-3 text-indigo-500" /> Compositional Entropy
-                </div>
-                <div className="text-3xl font-mono text-white">
-                  {isLazarus ? "0.02" : "0.89"}<span className="text-indigo-500 text-lg">σ</span>
-                </div>
-                <div className="h-1 bg-slate-900 w-full overflow-hidden">
-                  <motion.div initial={{ width: 0 }} animate={{ width: isLazarus ? "5%" : "89%" }} className={`h-full ${isLazarus ? 'bg-red-600 shadow-[0_0_10px_red]' : 'bg-indigo-500'}`} />
-                </div>
+              <div className="absolute top-0 right-0 p-2 opacity-5">
+                <BarChart3 className="w-24 h-24" />
               </div>
-              <div className="space-y-4 text-left">
-                <div className="text-[10px] text-indigo-400 uppercase tracking-[0.3em] mb-2">Audit Status</div>
-                <div className={`text-xs font-mono leading-relaxed ${isLazarus ? 'text-red-400 animate-pulse' : 'text-slate-400'}`}>
-                  {isLazarus
-                    ? "> ENGAGEMENT MISMATCH DETECTED. GHOST-METADATA SUPPRESSION ACTIVE."
-                    : "> SIGNALS CALIBRATED. NICHE AUTHORITY BYPASS ENGAED."}
-                </div>
-              </div>
-            </div>
-            <div className="absolute top-0 right-0 p-2 opacity-5">
-              <BarChart3 className="w-24 h-24" />
             </div>
           </div>
+
+          {/* BUREAU TIERS */}
+          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-20 items-stretch">
+            {!isPageLoading && tiers.map((tier) => (
+              <div key={tier.key} className={`relative rounded-none p-10 transition-all duration-300 flex flex-col h-full bg-[#02040a] border ${tier.highlight ? (isLazarus ? 'border-red-500 shadow-[0_0_40px_rgba(220,38,38,0.2)]' : 'border-indigo-500 shadow-[0_0_40px_rgba(79,70,229,0.15)]') : 'border-slate-800'}`}>
+                <div className="mb-8">
+                  <span className={`inline-block px-3 py-1 rounded-none text-[8px] font-black uppercase tracking-[0.3em] ${tier.badgeColor}`}>
+                    {tier.badge}
+                  </span>
+                </div>
+                <h3 className="text-2xl font-verdict text-white mb-4 italic">{tier.name}</h3>
+                <p className="text-[10px] text-slate-500 font-mono uppercase tracking-widest leading-relaxed mb-6 h-12">
+                  {tier.description}
+                </p>
+                <div className="flex items-baseline gap-1 mb-10">
+                  <span className="text-5xl font-mono text-white">${tier.monthlyPrice}</span>
+                  <span className="text-slate-700 font-mono text-xs">/BUREAU_FEE</span>
+                </div>
+                <ul className="space-y-4 mb-12 flex-grow">
+                  {tier.features.map((f, i) => (
+                    <li key={i} className="flex items-center gap-3 text-[10px] font-mono text-slate-400 uppercase tracking-widest">
+                      <CheckCircle2 className={`w-3.5 h-3.5 ${tier.highlight ? (isLazarus ? 'text-red-500' : 'text-indigo-400') : 'text-slate-600'}`} />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                <Button onClick={() => handleSelectPlan(tier.key)} className={`w-full h-16 rounded-none text-xs font-mono uppercase tracking-[0.3em] transition-all ${tier.highlight ? (isLazarus ? 'bg-red-600 text-white hover:bg-red-700' : 'bg-indigo-600 text-white hover:bg-indigo-700') : 'bg-white text-black hover:bg-slate-200'}`}>
+                  {isLazarus ? 'Initiate Rescue' : 'Authorize Deployment'}
+                </Button>
+              </div>
+            ))}
+          </div>
+
         </div>
 
-        {/* BUREAU TIERS */}
-        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-20 items-stretch">
-          {!isPageLoading && tiers.map((tier) => (
-            <div key={tier.key} className={`relative rounded-none p-10 transition-all duration-300 flex flex-col h-full bg-[#02040a] border ${tier.highlight ? (isLazarus ? 'border-red-500 shadow-[0_0_40px_rgba(220,38,38,0.2)]' : 'border-indigo-500 shadow-[0_0_40px_rgba(79,70,229,0.15)]') : 'border-slate-800'}`}>
-              <div className="mb-8">
-                <span className={`inline-block px-3 py-1 rounded-none text-[8px] font-black uppercase tracking-[0.3em] ${tier.badgeColor}`}>
-                  {tier.badge}
-                </span>
-              </div>
-              <h3 className="text-2xl font-verdict text-white mb-4 italic">{tier.name}</h3>
-              <p className="text-[10px] text-slate-500 font-mono uppercase tracking-widest leading-relaxed mb-6 h-12">
-                {tier.description}
+        {/* NDA LOCK OVERLAY - THE BLUR */}
+        {!isAuthenticated && (
+          <div className="absolute inset-0 z-50 flex items-center justify-center bg-[#020205]/10 backdrop-blur-sm pt-[200px]">
+            <div className="bg-[#020205] border border-indigo-500/50 p-10 max-w-lg text-center shadow-[0_0_100px_rgba(0,0,0,0.9)] relative overflow-hidden group">
+              <div className="absolute top-0 left-0 w-full h-0.5 bg-indigo-500 animate-slide-x" />
+
+              <Shield className="w-16 h-16 text-indigo-500 mx-auto mb-8 animate-pulse" />
+
+              <h3 className="text-2xl font-verdict text-white mb-4 uppercase tracking-wide italic">Security Protocol Active</h3>
+              <p className="text-[10px] text-slate-400 font-mono uppercase tracking-widest mb-10 leading-relaxed max-w-xs mx-auto">
+                The forensic data contained in this report reveals sensitive algorithmic vulnerabilities. Electronic signature required to decrypt results.
               </p>
-              <div className="flex items-baseline gap-1 mb-10">
-                <span className="text-5xl font-mono text-white">${tier.monthlyPrice}</span>
-                <span className="text-slate-700 font-mono text-xs">/BUREAU_FEE</span>
-              </div>
-              <ul className="space-y-4 mb-12 flex-grow">
-                {tier.features.map((f, i) => (
-                  <li key={i} className="flex items-center gap-3 text-[10px] font-mono text-slate-400 uppercase tracking-widest">
-                    <CheckCircle2 className={`w-3.5 h-3.5 ${tier.highlight ? (isLazarus ? 'text-red-500' : 'text-indigo-400') : 'text-slate-600'}`} />
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <Button onClick={() => handleSelectPlan(tier.key)} className={`w-full h-16 rounded-none text-xs font-mono uppercase tracking-[0.3em] transition-all ${tier.highlight ? (isLazarus ? 'bg-red-600 text-white hover:bg-red-700' : 'bg-indigo-600 text-white hover:bg-indigo-700') : 'bg-white text-black hover:bg-slate-200'}`}>
-                {isLazarus ? 'Initiate Rescue' : 'Authorize Deployment'}
+
+              <Button onClick={handleNDASign} className="w-full bg-white text-black hover:bg-indigo-50 hover:text-indigo-900 border border-transparent hover:border-indigo-500 rounded-none text-xs font-mono uppercase tracking-[0.3em] h-14 transition-all">
+                Activar Custodia Confidencial vía NDA
               </Button>
+
+              <div className="mt-8 flex justify-center gap-4 text-[8px] text-slate-600 font-mono uppercase tracking-widest">
+                <span>IP: {Math.random().toString(16).slice(2, 6).toUpperCase()}</span>
+                <span>•</span>
+                <span>SESSION: ENCRYPTED</span>
+              </div>
             </div>
-          ))}
-        </div>
+          </div>
+        )}
 
         {/* PDF PREVIEW (STYLIZED) */}
         <div className="max-w-4xl mx-auto mb-20">

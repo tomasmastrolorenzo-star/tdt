@@ -42,6 +42,11 @@
   --christmas-red: #D42426;
   --christmas-green: #165B33;
   --christmas-gold: #F8B229;
+
+  /* Bureau V7.0 Elite Theme */
+  --bureau-gold: #d4af37;
+  --bureau-crimson: #dc2626;
+  --bureau-black: #000000;
 }
 
 .dark {
@@ -124,8 +129,9 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
-    @apply bg-[#02040a] text-foreground transition-colors duration-700;
+    @apply bg-[#000000] text-foreground transition-colors duration-700;
   }
 }
 
@@ -154,27 +160,89 @@
 }
 
 @keyframes terminal-flicker {
-  0% { opacity: 0.27861; }
-  5% { opacity: 0.34769; }
-  10% { opacity: 0.23604; }
-  15% { opacity: 0.90623; }
-  20% { opacity: 0.18128; }
-  25% { opacity: 0.83891; }
-  30% { opacity: 0.65583; }
-  35% { opacity: 0.57807; }
-  40% { opacity: 0.26559; }
-  45% { opacity: 0.84693; }
-  50% { opacity: 0.96019; }
-  55% { opacity: 0.08594; }
-  60% { opacity: 0.20313; }
-  65% { opacity: 0.71988; }
-  70% { opacity: 0.53455; }
-  75% { opacity: 0.37288; }
-  80% { opacity: 0.71428; }
-  85% { opacity: 0.70419; }
-  90% { opacity: 0.7003; }
-  95% { opacity: 0.36108; }
-  100% { opacity: 0.24387; }
+  0% {
+    opacity: 0.27861;
+  }
+
+  5% {
+    opacity: 0.34769;
+  }
+
+  10% {
+    opacity: 0.23604;
+  }
+
+  15% {
+    opacity: 0.90623;
+  }
+
+  20% {
+    opacity: 0.18128;
+  }
+
+  25% {
+    opacity: 0.83891;
+  }
+
+  30% {
+    opacity: 0.65583;
+  }
+
+  35% {
+    opacity: 0.57807;
+  }
+
+  40% {
+    opacity: 0.26559;
+  }
+
+  45% {
+    opacity: 0.84693;
+  }
+
+  50% {
+    opacity: 0.96019;
+  }
+
+  55% {
+    opacity: 0.08594;
+  }
+
+  60% {
+    opacity: 0.20313;
+  }
+
+  65% {
+    opacity: 0.71988;
+  }
+
+  70% {
+    opacity: 0.53455;
+  }
+
+  75% {
+    opacity: 0.37288;
+  }
+
+  80% {
+    opacity: 0.71428;
+  }
+
+  85% {
+    opacity: 0.70419;
+  }
+
+  90% {
+    opacity: 0.7003;
+  }
+
+  95% {
+    opacity: 0.36108;
+  }
+
+  100% {
+    opacity: 0.24387;
+  }
 }
 
 .crimson-flicker {
@@ -183,9 +251,17 @@
 }
 
 @keyframes crimson-flicker {
-  0% { opacity: 1; }
-  50% { opacity: 0.8; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.8;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }
 
 .font-terminal {

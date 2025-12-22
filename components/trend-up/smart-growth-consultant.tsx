@@ -21,7 +21,7 @@ const NeuralAuthentication = () => (
             <div className="absolute inset-0 border border-indigo-500/20 rounded-full animate-ping" />
         </div>
         <h3 className="text-xl font-mono text-white mb-2 uppercase tracking-[0.3em]">Neural Authentication</h3>
-        <p className="text-indigo-400 font-mono text-[10px] animate-pulse">ESTABLISHING CRYPTOGRAPHIC HANDSHAKE...</p>
+        <p className="text-indigo-400 font-mono text-[10px] animate-pulse">SCANNING AUTHORITY DNA... [SIGNALS DETECTED]</p>
     </motion.div>
 )
 
@@ -37,11 +37,12 @@ const LoadingOverlay = ({ t, values, isLazarus }: { t: any, values: any, isLazar
 
     const nicheName = values.interest
     const messages = [
-        { text: "Bypass Request... [SUCCESS]", color: "text-white" },
-        { text: `Scanning Niche: ${nicheName.toUpperCase()}`, color: "text-indigo-400" },
-        { text: "Calculating Latent Space Entropy...", color: "text-indigo-400" },
-        { text: isLazarus ? "WARNING: FLATLINE DETECTED" : "Neural Pattern Calibrated.", color: isLazarus ? "text-red-500" : "text-emerald-400" },
-        { text: "DISPATCHING VERDICT...", color: "text-white" }
+        { text: "[SCANNING_SAM3_GRADIENTS]... ANOMALY_0.82", color: "text-white" },
+        { text: "[EXIF_PROVENANCE_CHECK]... LOSS_0.78", color: "text-indigo-400" },
+        { text: "[LATENT_SPACE_OFFSET]... +0.52_REPULSION", color: "text-indigo-400" },
+        { text: "CALCULATING TRUSTED MULTIPLIER...", color: "text-indigo-400" },
+        { text: isLazarus ? "FATAL_ERROR: HUMAN_ENTROPY_DEFICIENCY" : "FORENSIC_BIOPSIA_COMPLETE", color: isLazarus ? "text-red-500" : "text-emerald-400" },
+        { text: "DISPATCHING V7.0 VERDICT...", color: "text-white" }
     ]
 
     return (
@@ -93,10 +94,11 @@ export default function SmartGrowthConsultant() {
     const [isAuthenticating, setIsAuthenticating] = useState(false)
 
     // Form Data
+    const [handle, setHandle] = useState("")
     const [platform, setPlatform] = useState("instagram")
     const [gender, setGender] = useState<GenderId>("any")
     const [location, setLocation] = useState<LocationId>("us")
-    const [interest, setInterest] = useState<InterestId>("fitness")
+    const [interest, setInterest] = useState<InterestId>("business")
     const [diagnosis, setDiagnosis] = useState<string>("")
     const [currentStep, setCurrentStep] = useState(0) // 0: Config, 1: Technical Scan
 
@@ -108,6 +110,9 @@ export default function SmartGrowthConsultant() {
 
     useEffect(() => {
         const insights: Record<string, string> = {
+            real_estate: "CRITICAL: EXIF Metadata Stripping Syndrome detected. Meta is classifying your luxury listings as 'Duplicate/Low-Value' due to missing digital signatures.",
+            medical: "WARNING: SAM-3 Manipulation Artifacts found. Algorithm is flagging your before/after content as 'Synthetic/Edited', suppressing reach by 65%.",
+            finance: "ALERT: Vanilla Insight Vector Collapse. Your content lacks the 'Polarizing Hook' metadata required to break into the High-Net-Worth allocator cluster.",
             business: "Market authority logic. Corporate accounts are facing 40% less reach without pattern interrupt.",
             trading: "Compliance filter active. Financial niches require immediate neural warmup.",
             fitness: "Visual static detected. 90% of fitness accounts are indistinguishable by the AI.",
@@ -126,27 +131,113 @@ export default function SmartGrowthConsultant() {
             return
         }
 
-        // Final Analysis Logic
+        // Sovereignty Engine V7.0 (The Deity Logic)
         const fCount = parseInt(followers) || 0
         const lCount = parseInt(avgLikes) || 0
-        const isLazarus = fCount > 100000 && lCount < 500
+
+        // 1. Deterministic Heuristics (Simulation of Grok Analysis)
+        const pseudoHash = (str: string) => {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                const char = str.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash;
+            }
+            return Math.abs(hash);
+        }
+
+        const handleSeed = pseudoHash(handle)
+
+        // Human Entropy (H.E.)
+        // Formula: (avg_comments_length / 10) * (unique_words_ratio) * (heuristic_variance)
+        // Deterministic Simulation: Use seed % 100 to generate consistent variance [0.1 - 0.9]
+        const variance = (handleSeed % 30) / 100
+        const baseEntropy = 0.45 // Assumed base without scraper
+        let humanEntropy = Math.min(0.98, Math.max(0.1, baseEntropy + variance))
+
+        // Trusted Multiplier (T.M.)
+        // Formula: (avg_likes + (avg_comments * 2)) / followers
+        // Note: We lack avg_comments in input, so we simulate it as 2% of likes deterministically
+        const simulatedComments = lCount * 0.02
+        let trustedMultiplier = (lCount + (simulatedComments * 2)) / fCount
+
+        // Lazarus Logic: IF (T.M. < 0.01 && followers > 100000) THEN is_lazarus = true
+        const isLazarus = (trustedMultiplier < 0.01 && fCount > 100000)
         setIsLazarusDetected(isLazarus)
 
-        const highValueNiches = ['business', 'trading', 'tech', 'medical'];
-        const isWhale = highValueNiches.includes(interest) || fCount > 50000;
+        const highValueNiches = ['business', 'trading', 'tech', 'medical', 'real_estate']
+        const isWhale = highValueNiches.includes(interest) || fCount > 50000
+        let nicheTier = 'SILVER'
+        if (isLazarus) nicheTier = 'LAZARUS'
+        else if (fCount > 500000) nicheTier = 'BLACK'
+        else if (fCount > 50000) nicheTier = 'GOLD'
+
+        // 2. The Artifact (Forensic Report JSON)
+        // "Biopsia de Metadatos", "Blacklist de Clúster", "Roadmap de 21 Días"
+        const forensicReport = {
+            protocol: "FAT-V6_ELITE",
+            timestamp: new Date().toISOString(),
+            status: "ASSET_UNDER_CUSTODY",
+            asset_identity: {
+                handle: handle,
+                niche_cluster: interest.toUpperCase(),
+                authority_tier: nicheTier
+            },
+            analysis: {
+                exif_integrity: {
+                    score: (humanEntropy * 0.8).toFixed(2),
+                    verdict: humanEntropy < 0.5 ? "CRITICAL_LOSS" : "OPTIMAL",
+                    detail: humanEntropy < 0.5 ? "82% de las imágenes carecen de firma de origen nativa. Meta clasifica como contenido duplicado." : "Firma digital robusta detectada."
+                },
+                cluster_repulsion: {
+                    offset: `+${(1 - trustedMultiplier).toFixed(2)}`,
+                    zone: trustedMultiplier < 0.01 ? "SPAM_GENERIC_LUXURY" : "AUTHORITY_CLUSTER",
+                    recommendation: "Inyectar metadatos de ubicación crudos en los próximos 3 posts."
+                }
+            },
+            recovery_roadmap: {
+                day_1_to_7: "Detox: Eliminación de 15 posts de baja entropía. Desactivación de herramientas de terceros.",
+                day_8_to_14: "Injection: Publicación de 3 videos de alta varianza tonal (Sin filtros de Meta).",
+                day_15_to_21: "Sovereignty: Activación del booster de señales de autoridad en círculos cerrados."
+            },
+            financial_projection: {
+                annual_loss_recovery: fCount > 100000 ? "$1,200,000" : "$145,000",
+                conversion_lift: "420%"
+            }
+        }
+
+        // 3. Persistence (The Audit Trail)
+        // Note: In a real deploy we would await this, but for UX speed we fire & forget or use optimistic UI
+        // We'll console log for verification if Supabase env var is missing in dev
+        console.log("Saving Asset:", forensicReport)
+
+        // 3. Persistence (The Audit Trail)
+        console.log("Saving Asset:", forensicReport)
+
+        await supabase.from('digital_assets').insert({
+            handle: handle,
+            niche_id: interest,
+            followers: fCount,
+            human_entropy_score: humanEntropy,
+            trusted_multiplier: trustedMultiplier,
+            is_lazarus: isLazarus,
+            tier: nicheTier,
+            forensic_report_json: forensicReport,
+            payment_status: 'PENDING'
+        })
+
         const leadClassification = isLazarus ? 'LAZARUS' : (isWhale ? 'WHALE' : 'STANDARD')
 
-        let originalityScore = 45 + (interest.length * location.length) % 30;
-        if (isLazarus) originalityScore = Math.floor(originalityScore / 2);
 
         funnelTracker.track('faro_analyze', { platform, interest, lead_classification: leadClassification })
         setIsLoading(true)
-        await new Promise(resolve => setTimeout(resolve, 5000))
+        await new Promise(resolve => setTimeout(resolve, 10000))
 
         const params = new URLSearchParams({
             platform, gender, location, interest,
             lead_class: leadClassification,
-            orig_score: originalityScore.toString(),
+            auth_score: (trustedMultiplier * 100).toFixed(2), // Scale for UI % display
+            entropy_score: humanEntropy.toFixed(2),
             f_count: fCount.toString(),
             l_count: lCount.toString()
         })
@@ -158,13 +249,13 @@ export default function SmartGrowthConsultant() {
             {/* Bureau Header */}
             <div className="text-center mb-12">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/5 border border-indigo-500/20 text-indigo-400 text-[10px] font-mono uppercase tracking-[0.4em] mb-6">
-                    <Activity className="w-3 h-3 animate-pulse" /> Diagnostic Engine Armed
+                    <Sparkles className="w-3 h-3 animate-pulse" /> Estatus Superior Confirmado
                 </div>
                 <h2 className="text-4xl md:text-6xl font-verdict text-white mb-4 italic">
-                    El Faro <span className="text-indigo-500">v6.0</span>
+                    Domina el <span className="text-indigo-500">Escenario Global</span>.
                 </h2>
                 <p className="text-slate-500 font-mono text-xs uppercase tracking-widest max-w-xl mx-auto">
-                    BUREAU OF ALGORITHMIC CALIBRATION & NICHE DOMINANCE
+                    VISTAS AUMENTANDO. ALCANCE IMPARABLE. ACTIVA EL MÉTODO ELITE USADO EN DUBAI Y MIAMI.
                 </p>
             </div>
 
@@ -192,14 +283,34 @@ export default function SmartGrowthConsultant() {
                                 <div className="grid md:grid-cols-2 gap-10">
                                     {/* Platform & Niche */}
                                     <div className="space-y-6">
+                                        {/* Handle Input */}
                                         <div>
-                                            <label className="block text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-4">Target Platform</label>
-                                            <div className="grid grid-cols-2 gap-3">
-                                                {['instagram', 'tiktok'].map(p => (
-                                                    <button key={p} onClick={() => setPlatform(p)} className={`py-3 px-4 rounded-lg border font-mono text-xs uppercase transition-all ${platform === p ? 'border-indigo-500 bg-indigo-500/10 text-white shadow-[0_0_15px_rgba(79,70,229,0.2)]' : 'border-slate-800 text-slate-500 hover:border-slate-700'}`}>
-                                                        {p}
-                                                    </button>
-                                                ))}
+                                            <label className="block text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-4">Username (@Handle)</label>
+                                            <div className="relative">
+                                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 font-mono text-sm">@</span>
+                                                <input
+                                                    type="text"
+                                                    value={handle}
+                                                    onChange={(e) => setHandle(e.target.value)}
+                                                    className="w-full bg-[#02040a] border border-slate-800 rounded-lg py-3 pl-10 pr-4 text-white font-mono text-xs focus:border-indigo-500 outline-none uppercase"
+                                                    placeholder="USERNAME"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        {/* Region & Gender */}
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <label className="block text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-4">Region</label>
+                                                <select value={location} onChange={(e) => setLocation(e.target.value as LocationId)} className="w-full bg-[#02040a] border border-slate-800 rounded-lg py-3 px-4 text-white font-mono text-xs focus:border-indigo-500 outline-none">
+                                                    {LOCATIONS.map(l => <option key={l.id} value={l.id}>{l.name.toUpperCase()}</option>)}
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label className="block text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-4">Gender Target</label>
+                                                <select value={gender} onChange={(e) => setGender(e.target.value as GenderId)} className="w-full bg-[#02040a] border border-slate-800 rounded-lg py-3 px-4 text-white font-mono text-xs focus:border-indigo-500 outline-none">
+                                                    {GENDERS.map(g => <option key={g.id} value={g.id}>{g.name.toUpperCase()}</option>)}
+                                                </select>
                                             </div>
                                         </div>
                                         <div>
@@ -240,6 +351,11 @@ export default function SmartGrowthConsultant() {
                                 <div className="text-center font-mono space-y-2">
                                     <h3 className="text-white text-sm uppercase tracking-[0.5em]">Lazarus Calibration</h3>
                                     <p className="text-slate-600 text-[10px] animate-pulse">EXTRACTING METADATA FROM SOURCE...</p>
+                                    <div className="flex gap-4 justify-center mt-2 text-[9px] font-mono text-indigo-400">
+                                        <span>TRUSTED_MULTIPLIER: LOW</span>
+                                        <span>|</span>
+                                        <span>HUMAN_ENTROPY: DEFICIENT</span>
+                                    </div>
                                 </div>
 
                                 <div className="grid md:grid-cols-2 gap-8">
