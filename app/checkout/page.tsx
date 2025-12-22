@@ -1,3 +1,33 @@
+"use client"
+
+import { useState, useEffect, Suspense } from "react"
+import { useSearchParams } from "next/navigation"
+import { useI18n } from "@/lib/i18n/context"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { Switch } from "@/components/ui/switch"
+import Link from "next/link"
+import {
+    Lock,
+    Sparkles,
+    X,
+    MessageCircle,
+    Shield,
+    Check,
+    Activity,
+    ChevronLeft
+} from "lucide-react"
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
+import { ORDER_BUMP, GLOBAL_DISCOUNTS } from "@/lib/constants/pricing"
+
 const BUMP_PRICE = ORDER_BUMP.price
 
 function CountdownTimer() {
@@ -110,7 +140,7 @@ function CheckoutContent() {
     }, [searchParams])
 
     const handleUserChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const val = e.target.value
+        const val = sanitizeInput(e.target.value)
         setUserData(prev => ({ ...prev, username: val }))
         setIsValidUser(false)
 
@@ -148,6 +178,22 @@ function CheckoutContent() {
             termsAccepted
         })
     }
+
+    // FINAL DATA PERSISTENCE - Exit Intent
+    useEffect(() => {
+        const handleBeforeUnload = () => {
+            if (userData.email && userData.email.includes('@')) {
+                funnelTracker.track('STEP_3_CHECKOUT_ENTRY', {
+                    email: userData.email,
+                    username: userData.username,
+                    plan: selectedPlan,
+                    exit_intent: true
+                })
+            }
+        }
+        window.addEventListener('beforeunload', handleBeforeUnload)
+        return () => window.removeEventListener('beforeunload', handleBeforeUnload)
+    }, [userData, selectedPlan])
 
     return (
         <main className="min-h-screen bg-slate-50 font-sans selection:bg-indigo-100">
@@ -193,7 +239,18 @@ function CheckoutContent() {
                                     <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2 ml-1">Email Address</label>
                                     <Input
                                         value={userData.email}
-                                        onChange={(e) => setUserData({ ...userData, email: e.target.value })}
+                                        onChange={(e) => {
+                                            const val = sanitizeInput(e.target.value)
+                                            setUserData({ ...userData, email: val })
+                                            if (val.includes('@')) {
+                                                funnelTracker.track('STEP_3_CHECKOUT_ENTRY', {
+                                                    email: val,
+                                                    plan: selectedPlan,
+                                                    niche: searchParams.get("interest"),
+                                                    location: searchParams.get("location")
+                                                })
+                                            }
+                                        }}
                                         className="h-12 border-slate-200 focus-visible:ring-indigo-500 rounded-xl"
                                         placeholder="you@email.com"
                                         type="email"

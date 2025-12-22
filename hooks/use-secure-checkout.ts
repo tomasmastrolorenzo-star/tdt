@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { validateUser } from '@/lib/security/username-validator';
 import { funnelTracker } from '@/lib/analytics/funnel';
 
@@ -53,9 +54,20 @@ export function useSecureCheckout() {
         funnelTracker.track('lead_attempt', { plan: planDetails.plan });
 
         try {
+            // --- SECURITY: Fetch Lead Token ---
+            const tokenRes = await fetch('/api/security/get-token');
+            const { token } = await tokenRes.json();
+
+            const searchParams = new URLSearchParams(window.location.search);
+            const niche = searchParams.get('interest') || 'Universal';
+            const location = searchParams.get('location') || 'Global';
+
             const res = await fetch('/api/create-lead', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
                 body: JSON.stringify({
                     email: userData.email,
                     username: userData.username,
@@ -64,6 +76,8 @@ export function useSecureCheckout() {
                     amount: planDetails.amount,
                     payment_method: planDetails.paymentMethod,
                     order_bump: planDetails.orderBump,
+                    niche,
+                    location,
                     funnel_history: funnelTracker.getHistory() // Attach the journey
                 })
             });
@@ -79,43 +93,45 @@ export function useSecureCheckout() {
 
             const { orderId } = data; // Proof of persistence
 
-            // 4. Construct WhatsApp Link (With Order ID & Content)
-            const searchParams = new URLSearchParams(window.location.search);
-            const niche = searchParams.get('interest') || 'Universal';
-            const location = searchParams.get('location') || 'Global';
-
-            let link = "";
+            // 4. Handle Payment Flow
+            let redirectUrl = "";
             const planName = planDetails.plan === "starter" ? "GROWTH STARTER" : planDetails.plan === "pro" ? "VIRAL MOMENTUM" : "BRAND PARTNER";
 
             if (planDetails.paymentMethod === "crypto") {
-                const message = `[RESERVATION: #${orderId}] 🚀 READY TO ACTIVATE
+                try {
+                    // Create Cryptomus Invoice
+                    const cryptoRes = await fetch('/api/cryptomus/create-payment', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            amount: planDetails.amount,
+                            orderId: orderId,
+                            customerEmail: userData.email
+                        })
+                    });
 
-I've just completed my AI Growth Audit for @${userData.username} and I'm ready to unlock the ${planName} ($${planDetails.amount.toFixed(2)}).
-
-📈 Strategy Config: ${niche.toUpperCase()} / ${location.toUpperCase()}
-📧 Email: ${userData.email}
-
-Please send the USDT/BTC address. I want to start the organic acceleration today. ⚡`;
-                link = `https://wa.me/5492212235170?text=${encodeURIComponent(message)}`;
+                    const cryptoData = await cryptoRes.json();
+                    if (cryptoData.success && cryptoData.payment?.url) {
+                        redirectUrl = cryptoData.payment.url;
+                    } else {
+                        throw new Error("Cryptomus invoice creation failed");
+                    }
+                } catch (cryptoErr) {
+                    console.error("Cryptomus Error, falling back to WhatsApp:", cryptoErr);
+                    // Fallback to WhatsApp if Cryptomus fails
+                    const message = `[RESERVATION: #${orderId}] 🚀 CRYPTO ACTIVATION (FALLBACK)\n\nI prefer paying with Crypto for @${userData.username}. Please send the address for the ${planName} ($${planDetails.amount.toFixed(2)}).\n\n📧 Email: ${userData.email}`;
+                    redirectUrl = `https://wa.me/5492212235170?text=${encodeURIComponent(message)}`;
+                }
             } else {
-                const message = `[RESERVATION: #${orderId}] ⚡ STRATEGY SECURED
-
-Hi TDT Team! I just finished the El Faro analysis for @${userData.username}. I'm ready to activate my ${planName} ($${planDetails.amount.toFixed(2)}) immediately.
-
-🌍 Target: ${niche.toUpperCase()} / ${location.toUpperCase()}
-📧 Email: ${userData.email}
-
-I'm ready. Please provide the Zelle / CashApp / Transfer details to bypass the algorithm today. 🚀`;
-                link = `https://wa.me/5492212235170?text=${encodeURIComponent(message)}`;
+                // Manual / Concierge Flow
+                const message = `[RESERVATION: #${orderId}] ⚡ STRATEGY SECURED\n\nHi TDT Team! I just finished the El Faro analysis for @${userData.username}. I'm ready to activate my ${planName} ($${planDetails.amount.toFixed(2)}) immediately.\n\n🌍 Target: ${niche.toUpperCase()} / ${location.toUpperCase()}\n📧 Email: ${userData.email}\n\nI'm ready. Please provide the Zelle / CashApp / Transfer details to bypass the algorithm today. 🚀`;
+                redirectUrl = `https://wa.me/5492212235170?text=${encodeURIComponent(message)}`;
             }
 
-            setWhatsappLink(link);
+            setWhatsappLink(redirectUrl);
 
             // 5. Secure Redirect
-            // Using window.open to keep context, but could use location.href if requested.
-            // User requested location.href in pseudo-code, but keeping valid tab is better UX.
-            // We'll stick to window.open for now as it's safer for React apps, unless strict redirect requested.
-            const newWindow = window.open(link, '_blank');
+            const newWindow = window.open(redirectUrl, '_blank');
 
             // Check for popup blocker
             if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
@@ -123,7 +139,7 @@ I'm ready. Please provide the Zelle / CashApp / Transfer details to bypass the a
             }
 
             setStatus('REDIRECTED');
-            funnelTracker.track('STEP_4_WHATSAPP_REDIRECT');
+            funnelTracker.track('STEP_4_WHATSAPP_REDIRECT', { method: planDetails.paymentMethod });
             funnelTracker.clear(); // Session complete
 
         } catch (err) {

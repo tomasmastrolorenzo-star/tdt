@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
                         payer_amount,
                         payer_currency,
                     },
-                    status: 'processing', // Will set to completed if it's a wallet fund
+                    status: 'processing', // Standard Paid Status
                     updated_at: new Date().toISOString()
                 })
                 .eq('id', order_id)
@@ -92,7 +92,42 @@ export async function POST(request: NextRequest) {
                 return NextResponse.json({ success: false, error: "Order update failed" }, { status: 500 })
             }
 
-            // Handle Wallet Funding
+            // --- AUTOMATION: Resend Email ---
+            if (updatedOrder) {
+                try {
+                    const { emailService } = await import('@/lib/services/email')
+                    const planNameMap: Record<string, string> = {
+                        'starter': 'GROWTH STARTER',
+                        'pro': 'VIRAL MOMENTUM',
+                        'partner': 'BRAND PARTNER'
+                    }
+
+                    await emailService.sendOrderConfirmation(updatedOrder.details.email, {
+                        username: updatedOrder.details.username,
+                        planName: planNameMap[updatedOrder.details.plan] || 'Premium Strategy',
+                        status_link: 'https://trenddigitaltrade.com/dashboard/profile'
+                    })
+                    console.log('[Automation] Confirmation email sent for order:', order_id)
+
+                    // --- AUTOMATION: Google Cloud Sync (ORDER_PAID) ---
+                    const { triggerGoogleWebhook } = await import('@/lib/webhooks')
+                    triggerGoogleWebhook('PAYMENT_SUCCESS', {
+                        email: updatedOrder.details.email,
+                        username: updatedOrder.details.username,
+                        order_id: updatedOrder.id,
+                        amount: updatedOrder.amount,
+                        plan: updatedOrder.details.plan,
+                        niche: updatedOrder.details.niche,
+                        location: updatedOrder.details.location,
+                        timestamp: new Date().toISOString()
+                    }).catch(e => console.error('Google Webhook ORDER_PAID failed:', e))
+
+                } catch (e) {
+                    console.error('[Automation Error] Confirm flows failed:', e)
+                }
+            }
+
+            // Handle Wallet Funding (Legacy/Redundant but keeping for safety)
             if (updatedOrder?.service_id === 'wallet_fund' || updatedOrder?.metadata?.type === 'wallet_fund') {
                 const userId = updatedOrder.metadata?.userId
                 const amountToAdd = parseFloat(payment_amount || updatedOrder.amount)

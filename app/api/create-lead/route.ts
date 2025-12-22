@@ -1,6 +1,7 @@
-
 import { createClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
+import { triggerGoogleWebhook } from '@/lib/webhooks'
+import { verifyLeadToken } from '@/lib/security/jwt'
 
 // Initialize Supabase Admin Client
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
@@ -9,8 +10,16 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
 export async function POST(req: Request) {
     try {
+        // --- JWT PROTECTION (The Shield) ---
+        const authHeader = req.headers.get('authorization')
+        const token = authHeader?.replace('Bearer ', '')
+
+        if (!token || !(await verifyLeadToken(token))) {
+            return NextResponse.json({ error: 'Unauthorized session' }, { status: 401 })
+        }
+
         const body = await req.json()
-        const { email, username, plan, period, amount, payment_method, order_bump } = body
+        const { email, username, plan, period, amount, payment_method, order_bump, niche, location, funnel_history } = body
 
         if (!email || !username) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
@@ -34,6 +43,8 @@ export async function POST(req: Request) {
             .filter('details->>ip_address', 'eq', ip)
             .gt('created_at', tenMinutesAgo)
 
+        const ip_reputation = (count && count > 0) ? 'suspicious' : 'clean'
+
         if (countError) {
             console.error('Rate limit check failed:', countError)
         }
@@ -54,7 +65,10 @@ export async function POST(req: Request) {
                         period,
                         payment_method,
                         order_bump,
-                        ip_address: ip // Save IP for future checks
+                        niche,
+                        location,
+                        ip_address: ip, // Save IP for future checks
+                        funnel_history
                     },
                     amount: amount,
                     status: 'initiated', // Changed from pending_payment to initiated
@@ -68,7 +82,23 @@ export async function POST(req: Request) {
             return NextResponse.json({ success: false, error: error.message }, { status: 500 })
         }
 
-        // 4. Trigger "Order Initiated" Email (Async)
+        const orderId = data?.[0]?.id;
+
+        // 4. Trigger Google Webhook (Phase 4)
+        triggerGoogleWebhook('ORDER_INITIATED', {
+            email,
+            username,
+            niche,
+            location,
+            order_id: orderId,
+            ip_address: ip,
+            ip_reputation,
+            amount,
+            plan,
+            timestamp: new Date().toISOString()
+        }).catch(e => console.error('Google Webhook Error:', e));
+
+        // 5. Trigger "Order Initiated" Email (Async)
         const planNameMap: Record<string, string> = {
             'starter': 'GROWTH STARTER',
             'pro': 'VIRAL MOMENTUM',
@@ -76,7 +106,6 @@ export async function POST(req: Request) {
         };
 
         const planName = planNameMap[plan] || 'Custom Strategy';
-        const orderId = data?.[0]?.id;
 
         // Construct the WhatsApp link for the email button
         const waMessage = `[RESERVATION: #${orderId}] ⚡ STRATEGY SECURED\n\nHi TDT Team! I just finished the El Faro analysis for @${username}. I'm ready to activate my ${planName} ($${amount.toFixed(2)}) immediately.\n\n📧 Email: ${email}\n\nI'm ready. Please provide the Zelle / CashApp / Transfer details to bypass the algorithm today. 🚀`;
@@ -96,7 +125,7 @@ export async function POST(req: Request) {
             console.error('Email trigger failed:', e);
         }
 
-        return NextResponse.json({ success: true, orderId: data?.[0]?.id })
+        return NextResponse.json({ success: true, orderId })
 
     } catch (error) {
         console.error('API Error:', error)

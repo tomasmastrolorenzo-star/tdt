@@ -44,7 +44,8 @@ export const funnelTracker = {
                     event,
                     metadata,
                     timestamp: new Date().toISOString()
-                })
+                }),
+                keepalive: true
             }).catch(e => console.warn('[Funnel] DB Sync Failed:', e));
 
             console.log(`[Funnel] Tracked: ${event}`, metadata);

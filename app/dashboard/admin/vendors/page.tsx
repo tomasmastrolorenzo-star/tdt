@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Search, UserPlus, MoreHorizontal, Mail, Shield } from "lucide-react"
+import { Search, UserPlus, MoreHorizontal, Mail, Shield, BarChart3 } from "lucide-react"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 
-import { Skeleton } from "@/components/ui/skeleton"
+import Skeleton from "../../../../components/ui/Skeleton"
 import { toast } from "sonner"
 
 interface Vendor {

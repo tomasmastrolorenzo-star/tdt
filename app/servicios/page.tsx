@@ -4,11 +4,10 @@ import { Suspense, useEffect, useState } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
-import { Check, Sparkles, Zap, Shield, ArrowRight, CheckCircle2, Database, BarChart3, TrendingUp } from "lucide-react"
-import { LOCATIONS, INTERESTS, GENDERS } from "@/lib/el-faro/selectors"
+import { CheckCircle2, Database, Zap, Shield, Activity, BarChart3, Lock, Cpu } from "lucide-react"
+import { LOCATIONS, INTERESTS } from "@/lib/el-faro/selectors"
 import { useI18n } from "@/lib/i18n/context"
 import { funnelTracker } from "@/lib/analytics/funnel"
-import { TICKER_PLANS } from "@/lib/constants/pricing"
 
 function ServiciosContent() {
   const { t } = useI18n()
@@ -19,31 +18,59 @@ function ServiciosContent() {
   const platform = searchParams.get("platform") || "instagram"
   const location = searchParams.get("location") || "us"
   const interest = searchParams.get("interest") || "fitness"
+  const leadClass = searchParams.get("lead_class") || "STANDARD"
+  const isWhale = leadClass === "WHALE"
+  const isLazarus = leadClass === "LAZARUS"
 
-  // Find metadata
-  const locationData = LOCATIONS.find(l => l.id === location)
   const interestData = INTERESTS.find(i => i.id === interest)
-
-  const nicheName = interestData?.name || interest || "Growth"
-  const locationName = locationData?.name || "Global"
+  const nicheName = interestData?.name || interest
 
   useEffect(() => {
     funnelTracker.track('STEP_2_PRICING_VIEW', { platform, interest, location })
-
-    // Artificial delay for "Tech-Heavy" transition feel
-    const timer = setTimeout(() => setIsPageLoading(false), 1500)
+    const timer = setTimeout(() => {
+      setIsPageLoading(false)
+    }, 1500)
     return () => clearTimeout(timer)
   }, [])
 
-  const tiers = [
+  const tiers = (isWhale || isLazarus) ? [
+    {
+      key: 'professional',
+      name: isLazarus ? "RESURRECTION PROTOCOL" : "PROFESSIONAL AUTHORITY",
+      description: isLazarus ? "Emergency recovery for accounts in Latent Space Repulsion." : "Diagnostic-grade scaling for high-status accounts.",
+      monthlyPrice: 499,
+      features: isLazarus
+        ? ["Ghost-Follower De-Indexing", "Engagement Loop Injection", "Neural Signature Reset", "Priority Algorithmic Support", "Identity Gap Repair"]
+        : ["Neural Signature Calibration", "High-Ticket Lead Generation", "Visual Signature Protection", "Direct Engineering Support", "Vortex Safe Warmup"],
+      badge: isLazarus ? "URGENT RESCUE" : "PROFESSIONAL GRADE",
+      badgeColor: isLazarus ? "bg-red-500/10 text-red-500 border-red-500/20" : "bg-indigo-500/10 text-indigo-400 border-indigo-500/20",
+      highlight: false
+    },
+    {
+      key: 'elite',
+      name: isLazarus ? "DOMINATION ASCENSION" : "ELITE EXECUTIVE",
+      description: isLazarus ? "Full-spectrum bypass and total niche reconstruction." : "Complete authority takeover. 2025 Visual Recognition bypass.",
+      monthlyPrice: 1499,
+      features: [
+        "Executive Authority Protocol",
+        isLazarus ? "Lazarus Reconstruction" : "Visual Originality Enforcement",
+        `Global ${nicheName.toUpperCase()} Market Dominance`,
+        "Unlimited Neural Scaling",
+        "Bypass Protection Active"
+      ],
+      badge: "ELITE STATUS",
+      badgeColor: isLazarus ? "bg-red-600/20 text-red-400 border-red-500/40 animate-pulse" : "bg-amber-500/20 text-amber-400 border-amber-500/40 animate-pulse",
+      highlight: true
+    }
+  ] : [
     {
       key: 'starter',
       name: "GROWTH STARTER",
       description: "Ideal for new accounts starting from zero authority.",
       monthlyPrice: 49,
-      features: ["Foundation Build", "Basic Audience Expansion", "Organic Optimization", "24/7 Support Access"],
+      features: ["Foundation Build", "Audience Expansion", "Organic Optimization", "24/7 Support Access"],
       badge: "Safe Entry",
-      badgeColor: "bg-blue-500/10 text-blue-400 border border-blue-500/20",
+      badgeColor: "bg-blue-500/10 text-blue-400 border-blue-500/20",
       highlight: false
     },
     {
@@ -51,15 +78,9 @@ function ServiciosContent() {
       name: "VIRAL MOMENTUM",
       description: "Aggressive growth to trigger algorithm recommendations.",
       monthlyPrice: 99,
-      features: [
-        "Accelerated Growth Engine",
-        "AI Viral Strategy",
-        `Targeted ${nicheName} Community Outreach`,
-        `${locationName} Specialized Traffic`,
-        "Priority Optimization"
-      ],
+      features: ["Accelerated Growth Engine", "AI Viral Strategy", `Targeted Outreach`, `Specialized Traffic`, "Priority Optimization"],
       badge: `🔥 BEST FOR ${nicheName.toUpperCase()}`,
-      badgeColor: "bg-orange-500/20 text-orange-400 border border-orange-500/40 shadow-[0_0_15px_rgba(249,115,22,0.3)] animate-pulse",
+      badgeColor: "bg-orange-500/20 text-orange-400 border-orange-500/40 animate-pulse",
       highlight: true
     },
     {
@@ -67,262 +88,161 @@ function ServiciosContent() {
       name: "BRAND PARTNER",
       description: "Full-scale reputation management & authority building.",
       monthlyPrice: 249,
-      features: ["Maximum Velocity", "Dedicated Account Manager", "Full-Scale Reputation Mgmt", "Authority Building", "VIP Support"],
+      features: ["Maximum Velocity", "Dedicated Account Manager", "Authority Building", "Profit Verified Data"],
       badge: "MAXIMUM ROI",
-      badgeColor: "bg-purple-500/10 text-purple-400 border border-purple-500/20",
+      badgeColor: "bg-purple-500/10 text-purple-400 border-purple-500/20",
       highlight: false
     }
   ]
 
   const handleSelectPlan = (planKey: string) => {
-    const params = new URLSearchParams({
-      plan: planKey,
-      billing: 'monthly',
-      platform,
-      interest,
-      location
-    })
+    const params = new URLSearchParams({ plan: planKey, billing: 'monthly', platform, interest, location })
     funnelTracker.track('STEP_3_CHECKOUT_ENTRY', { plan: planKey })
     router.push(`/checkout?${params.toString()}`)
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 font-sans relative overflow-hidden">
-      {/* Background Ambience */}
-      <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-indigo-900/20 to-transparent pointer-events-none" />
+    <main className={`min-h-screen bg-[#02040a] font-mono relative overflow-hidden terminal-scanlines ${isLazarus ? 'crimson-flicker' : ''}`}>
+      {/* Bureau Overlays */}
+      {isLazarus && <div className="absolute inset-0 bg-red-950/20 pointer-events-none z-0" />}
+      <div className={`absolute top-0 left-0 w-full h-[600px] bg-gradient-to-b ${isLazarus ? 'from-red-900/40' : 'from-indigo-900/30'} to-transparent pointer-events-none z-0`} />
 
-      {/* Header */}
-      <div className="container mx-auto px-4 py-12 relative z-10">
-        <button onClick={() => router.back()} className="text-slate-500 hover:text-white flex items-center gap-2 mb-10 transition-colors font-medium">
-          ← Back to Configuration
+      <div className="container mx-auto px-4 py-16 relative z-10">
+        <button onClick={() => router.back()} className="text-slate-500 hover:text-white flex items-center gap-2 mb-12 transition-colors text-[10px] uppercase tracking-widest">
+          ← Re-calibrate Diagnostic
         </button>
 
-        {/* Title */}
-        <div className="text-center mb-16 space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-bold uppercase tracking-wider animate-fade-in">
-            <Sparkles className="w-3 h-3" /> Analysis Complete
+        {/* THE VERDICT */}
+        <div className="text-center mb-20 space-y-6">
+          <div className={`inline-flex items-center gap-2 px-4 py-1 rounded-full ${isLazarus ? 'bg-red-500/10 border border-red-500/20 text-red-500' : 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400'} text-[10px] font-black uppercase tracking-[0.4em] animate-fade-in`}>
+            {isLazarus ? 'CRITICAL_LEAD_DETECTED' : 'ANALYSIS_SYNCHRONIZED'}
           </div>
-          <h1 className="text-4xl md:text-5xl font-black text-white capitalize space-y-2 leading-tight">
-            {interestData ? (
-              <>AI Strategy for <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">{nicheName}</span> in <span className="text-white">{locationName}</span> is Ready 🚀</>
+
+          <h1 className="text-5xl md:text-7xl font-verdict text-white italic leading-tight">
+            {isLazarus ? (
+              <>The <span className="text-red-600">Lazarus</span> Verdict</>
+            ) : isWhale ? (
+              <>Bypass <span className="text-indigo-500">Authorized</span></>
             ) : (
-              <>Choose your <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">Growth Plan</span></>
+              <>Final <span className="text-indigo-400">Diagnosis</span></>
             )}
           </h1>
-          <p className="text-slate-400 text-lg max-w-2xl mx-auto font-medium">
-            Our AI has calibrated the perfect roadmap for your <span className="text-white">{nicheName}</span> niche in <span className="text-white">{locationName}</span>.
+
+          <p className="text-slate-500 text-xs uppercase tracking-[0.2em] max-w-xl mx-auto leading-relaxed">
+            {isLazarus
+              ? "NEURAL FLATLINE DETECTED. IMMEDIATE RESURRECTION PROTOCOL ENGAGED TO BYPASS LATENT SPACE REPULSION."
+              : `BUREAU CLASSIFICATION: ${leadClass}. DEPLOYING ${nicheName.toUpperCase()}-SPECIFIC GROWTH SCHEMA.`}
           </p>
         </div>
 
-        {/* Tiers Grid */}
-        <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto mb-20 items-stretch">
-          {isPageLoading ? (
-            // Skeleton Loaders
-            [1, 2, 3].map((i) => (
-              <div key={i} className={`rounded-3xl p-8 bg-slate-900/40 border border-slate-800 h-[500px] animate-pulse ${i === 2 ? 'scale-110' : ''}`}>
-                <div className="w-24 h-6 bg-slate-800 rounded-full mb-8"></div>
-                <div className="w-3/4 h-8 bg-slate-800 rounded mb-4"></div>
-                <div className="w-full h-12 bg-slate-800 rounded mb-8"></div>
-                <div className="space-y-4">
-                  {[1, 2, 3, 4].map(j => (
-                    <div key={j} className="flex items-center gap-3">
-                      <div className="w-5 h-5 rounded-full bg-slate-800"></div>
-                      <div className="w-full h-4 bg-slate-800 rounded"></div>
-                    </div>
-                  ))}
+        {/* GOLDEN METRICS PANEL */}
+        <div className="max-w-4xl mx-auto mb-20">
+          <div className={`bg-[#02040a]/80 border ${isLazarus ? 'border-red-500/30' : 'border-indigo-500/20'} rounded-none p-8 backdrop-blur-3xl relative overflow-hidden group shadow-[0_0_50px_rgba(0,0,0,1)]`}>
+            <div className="grid md:grid-cols-3 gap-12">
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 text-[10px] text-slate-500 uppercase tracking-widest">
+                  <Activity className="w-3 h-3 text-indigo-500" /> Latent Repulsion
+                </div>
+                <div className="text-3xl font-mono text-white">
+                  {isLazarus ? "94.2" : "12.4"}<span className="text-indigo-500 text-lg">%</span>
+                </div>
+                <div className="h-1 bg-slate-900 w-full overflow-hidden">
+                  <motion.div initial={{ width: 0 }} animate={{ width: isLazarus ? "94.2%" : "12.4%" }} className={`h-full ${isLazarus ? 'bg-red-600 shadow-[0_0_10px_red]' : 'bg-indigo-500'}`} />
                 </div>
               </div>
-            ))
-          ) : (
-            tiers.map((tier) => (
-              <div
-                key={tier.key}
-                className={`relative rounded-3xl p-8 transition-all duration-300 flex flex-col h-full ${tier.highlight
-                  ? "bg-slate-900/80 border-2 border-orange-500/50 shadow-2xl shadow-orange-500/15 scale-110 z-20"
-                  : "bg-slate-900/40 border border-slate-800 hover:border-slate-700 hover:bg-slate-900/60 z-10"
-                  }`}
-              >
-                {/* Badge */}
-                <div className="mb-6 flex justify-between items-start">
-                  <span className={`inline-block px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${tier.badgeColor}`}>
-                    {tier.badge}
-                  </span>
-                  {tier.highlight && <Zap className="w-5 h-5 text-orange-400 fill-orange-400/20" />}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 text-[10px] text-slate-500 uppercase tracking-widest">
+                  <Cpu className="w-3 h-3 text-indigo-500" /> Compositional Entropy
                 </div>
-
-                {/* Title & Price */}
-                <div className="mb-6">
-                  <h3 className="text-xl font-black text-white mb-2">{tier.name}</h3>
-                  <p className="text-sm text-slate-400 font-medium leading-relaxed mb-4 min-h-[40px]">
-                    {tier.description}
-                  </p>
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-4xl md:text-5xl font-black text-white">${tier.monthlyPrice}</span>
-                    <span className="text-slate-500 font-bold">/mo</span>
-                  </div>
+                <div className="text-3xl font-mono text-white">
+                  {isLazarus ? "0.02" : "0.89"}<span className="text-indigo-500 text-lg">σ</span>
                 </div>
-
-                {/* Features */}
-                <ul className="space-y-4 mb-8 flex-grow">
-                  {tier.features.map((feature, i) => (
-                    <li key={i} className="flex items-start gap-3 text-sm font-medium text-slate-300">
-                      <CheckCircle2 className={`w-5 h-5 mt-0.5 flex-shrink-0 ${tier.highlight ? "text-orange-400" : "text-blue-400"}`} />
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                {/* CTA */}
-                <Button
-                  onClick={() => handleSelectPlan(tier.key)}
-                  className={`w-full h-14 text-base font-bold rounded-xl transition-all shadow-lg hover:scale-[1.02] active:scale-95 ${tier.highlight
-                    ? "bg-gradient-to-r from-orange-500 to-amber-500 text-white hover:from-orange-600 hover:to-amber-600 shadow-orange-500/25"
-                    : "bg-slate-800 text-white hover:bg-slate-700 hover:text-white"
-                    }`}
-                >
-                  Activate Strategy <ArrowRight className="ml-2 w-4 h-4" />
-                </Button>
-              </div>
-            ))
-          )}
-        </div>
-
-        {/* NEW: AI Audit Details Section (CRO Boost) */}
-        <div className="max-w-4xl mx-auto mb-20 animate-in fade-in slide-in-from-bottom-4 duration-700">
-          <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-8 backdrop-blur-sm relative overflow-hidden">
-            {/* Subtle light effect */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 rounded-full blur-3xl" />
-
-            <h3 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
-              <div className="p-2 bg-blue-500/20 rounded-lg">
-                <Database className="w-6 h-6 text-blue-400" />
-              </div>
-              Strategic Growth Audit: <span className="text-slate-400 font-mono text-lg">@{interest.toUpperCase()}_DISCOVERY</span>
-            </h3>
-
-            <div className="grid md:grid-cols-2 gap-10">
-              <div className="space-y-6">
-                <div className="p-5 bg-slate-950/50 rounded-2xl border border-slate-800 hover:border-slate-700 transition-colors">
-                  <div className="flex justify-between items-center mb-3">
-                    <div className="text-xs font-black text-slate-500 uppercase tracking-widest">Niche Saturation</div>
-                    <span className="text-xs font-bold text-orange-400 bg-orange-400/10 px-2 py-0.5 rounded">CRITICAL</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="flex-1 h-3 bg-slate-800 rounded-full overflow-hidden">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: "88%" }}
-                        className="h-full bg-gradient-to-r from-orange-400 to-red-500"
-                      />
-                    </div>
-                    <span className="text-sm font-black text-white w-8">88%</span>
-                  </div>
-                  <p className="text-[11px] text-slate-500 mt-3 leading-relaxed">The <strong>{nicheName}</strong> sector in <strong>{locationName}</strong> is hyper-competitive. Standard accounts are currently being suppressed by updated discovery algorithms.</p>
-                </div>
-
-                <div className="p-5 bg-slate-950/50 rounded-2xl border border-slate-800 hover:border-slate-700 transition-colors">
-                  <div className="flex justify-between items-center mb-3">
-                    <div className="text-xs font-black text-slate-500 uppercase tracking-widest">Viral Velocity Score</div>
-                    <span className="text-xs font-bold text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded">OPTIMIZED</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="flex-1 h-3 bg-slate-800 rounded-full overflow-hidden">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: "94%" }}
-                        className="h-full bg-gradient-to-r from-emerald-400 to-cyan-500"
-                      />
-                    </div>
-                    <span className="text-sm font-black text-white w-8">94%</span>
-                  </div>
-                  <p className="text-[11px] text-slate-500 mt-3 leading-relaxed">Analysis confirms high retention potential. Users in <strong>{locationName}</strong> are actively engaging with <strong>{nicheName}</strong> content formats.</p>
+                <div className="h-1 bg-slate-900 w-full overflow-hidden">
+                  <motion.div initial={{ width: 0 }} animate={{ width: isLazarus ? "5%" : "89%" }} className={`h-full ${isLazarus ? 'bg-red-600 shadow-[0_0_10px_red]' : 'bg-indigo-500'}`} />
                 </div>
               </div>
-
-              <div className="relative group">
-                <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-1000"></div>
-                <div className="relative bg-slate-950 rounded-2xl p-8 border border-slate-800 h-full flex flex-col">
-                  <div className="flex items-center gap-2 mb-4">
-                    <div className="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center">
-                      <Zap className="w-4 h-4 text-indigo-400" />
-                    </div>
-                    <h4 className="font-black text-indigo-300 uppercase tracking-tighter">AI Deployment Recommendation</h4>
-                  </div>
-                  <p className="text-sm text-slate-300 leading-relaxed italic mb-6">
-                    "To penetrate the <strong>{nicheName}</strong> algorithm barrier, our models recommend the <strong>VIRAL MOMENTUM</strong> bridge. This deployment injects high-retention signals that trigger the discovery loop in <strong>{locationName}</strong> within 24-48 hours."
-                  </p>
-                  <div className="mt-auto pt-6 border-t border-slate-800 flex items-center justify-between text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-                    <span>Audit ID: TDT-${interest.slice(0, 3).toUpperCase()}-${Math.floor(Math.random() * 9000) + 1000}</span>
-                    <span className="flex items-center gap-1.5"><Shield className="w-3 h-3 text-emerald-500" /> Verified Data</span>
-                  </div>
+              <div className="space-y-4 text-left">
+                <div className="text-[10px] text-indigo-400 uppercase tracking-[0.3em] mb-2">Audit Status</div>
+                <div className={`text-xs font-mono leading-relaxed ${isLazarus ? 'text-red-400 animate-pulse' : 'text-slate-400'}`}>
+                  {isLazarus
+                    ? "> ENGAGEMENT MISMATCH DETECTED. GHOST-METADATA SUPPRESSION ACTIVE."
+                    : "> SIGNALS CALIBRATED. NICHE AUTHORITY BYPASS ENGAED."}
                 </div>
               </div>
+            </div>
+            <div className="absolute top-0 right-0 p-2 opacity-5">
+              <BarChart3 className="w-24 h-24" />
             </div>
           </div>
         </div>
 
-        {/* Comparison Table Section */}
-        <div className="max-w-4xl mx-auto mb-24">
-          <div className="text-center mb-10">
-            <h3 className="text-2xl font-bold text-white mb-2 underline decoration-indigo-500/50 underline-offset-8">Comparative Analysis</h3>
-            <p className="text-slate-500 text-sm">Choose the tier that aligns with your authority goals.</p>
-          </div>
-
-          <div className="overflow-hidden rounded-3xl border border-slate-800 bg-slate-900/20 backdrop-blur-sm">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-slate-900/50">
-                  <th className="py-5 px-6 text-slate-500 text-[10px] font-black uppercase tracking-[0.2em]">Feature Set</th>
-                  <th className="py-5 px-6 text-slate-300 text-xs font-bold uppercase tracking-widest">Starter</th>
-                  <th className="py-5 px-6 text-orange-400 text-xs font-black uppercase tracking-[0.2em] bg-orange-500/5">Momentum</th>
-                  <th className="py-5 px-6 text-purple-400 text-xs font-bold uppercase tracking-widest">Partner</th>
-                </tr>
-              </thead>
-              <tbody className="text-slate-400 text-sm">
-                {[
-                  { label: "Algorithm Authority", v1: "Level 1", v2: "Level 4 (Viral)", v3: "Level 10 (Authority)" },
-                  { label: "AI Niche Clustering", v1: "Manual", v2: "Dynamic AI", v3: "Hyper-Precise" },
-                  { label: "Delivery Speed", v1: "Standard", v2: "Priority (⚡)", v3: "Instant (🚀)" },
-                  { label: "Success Guarantee", v1: "Standard", v2: "100% Guaranteed", v3: "Profit Verified" },
-                ].map((row, idx) => (
-                  <tr key={idx} className="border-t border-slate-800/50 hover:bg-slate-800/30 transition-colors">
-                    <td className="py-4 px-6 font-medium text-slate-300">{row.label}</td>
-                    <td className="py-4 px-6 text-slate-500">{row.v1}</td>
-                    <td className="py-4 px-6 font-bold text-white bg-orange-500/5">{row.v2}</td>
-                    <td className="py-4 px-6 text-purple-300/80">{row.v3}</td>
-                  </tr>
+        {/* BUREAU TIERS */}
+        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-20 items-stretch">
+          {!isPageLoading && tiers.map((tier) => (
+            <div key={tier.key} className={`relative rounded-none p-10 transition-all duration-300 flex flex-col h-full bg-[#02040a] border ${tier.highlight ? (isLazarus ? 'border-red-500 shadow-[0_0_40px_rgba(220,38,38,0.2)]' : 'border-indigo-500 shadow-[0_0_40px_rgba(79,70,229,0.15)]') : 'border-slate-800'}`}>
+              <div className="mb-8">
+                <span className={`inline-block px-3 py-1 rounded-none text-[8px] font-black uppercase tracking-[0.3em] ${tier.badgeColor}`}>
+                  {tier.badge}
+                </span>
+              </div>
+              <h3 className="text-2xl font-verdict text-white mb-4 italic">{tier.name}</h3>
+              <p className="text-[10px] text-slate-500 font-mono uppercase tracking-widest leading-relaxed mb-6 h-12">
+                {tier.description}
+              </p>
+              <div className="flex items-baseline gap-1 mb-10">
+                <span className="text-5xl font-mono text-white">${tier.monthlyPrice}</span>
+                <span className="text-slate-700 font-mono text-xs">/BUREAU_FEE</span>
+              </div>
+              <ul className="space-y-4 mb-12 flex-grow">
+                {tier.features.map((f, i) => (
+                  <li key={i} className="flex items-center gap-3 text-[10px] font-mono text-slate-400 uppercase tracking-widest">
+                    <CheckCircle2 className={`w-3.5 h-3.5 ${tier.highlight ? (isLazarus ? 'text-red-500' : 'text-indigo-400') : 'text-slate-600'}`} />
+                    {f}
+                  </li>
                 ))}
-              </tbody>
-            </table>
+              </ul>
+              <Button onClick={() => handleSelectPlan(tier.key)} className={`w-full h-16 rounded-none text-xs font-mono uppercase tracking-[0.3em] transition-all ${tier.highlight ? (isLazarus ? 'bg-red-600 text-white hover:bg-red-700' : 'bg-indigo-600 text-white hover:bg-indigo-700') : 'bg-white text-black hover:bg-slate-200'}`}>
+                {isLazarus ? 'Initiate Rescue' : 'Authorize Deployment'}
+              </Button>
+            </div>
+          ))}
+        </div>
+
+        {/* PDF PREVIEW (STYLIZED) */}
+        <div className="max-w-4xl mx-auto mb-20">
+          <div className="relative border border-slate-800 bg-[#02040a] p-12 overflow-hidden group">
+            <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-xl z-10 flex flex-col items-center justify-center text-center">
+              <Lock className="w-12 h-12 text-indigo-500 mb-6 animate-pulse" />
+              <h4 className="text-xl font-verdict text-white mb-2 italic">Strategy Roadmap: Restricted</h4>
+              <p className="text-[10px] text-slate-500 font-mono uppercase tracking-[0.4em]">AUTHENTICATION REQUIRED TO DECRYPT 5-MONTH TIMELINE</p>
+            </div>
+            <div className="opacity-10 space-y-8 select-none grayscale">
+              <div className="h-4 w-1/2 bg-slate-800" />
+              <div className="grid grid-cols-4 gap-4">
+                {[1, 2, 3, 4].map(i => <div key={i} className="h-24 bg-slate-800" />)}
+              </div>
+              <div className="h-48 bg-slate-800" />
+            </div>
           </div>
         </div>
 
-        {/* Trust Footer */}
-        <div className="max-w-3xl mx-auto text-center border-t border-slate-800/50 pt-10">
-          <div className="flex flex-wrap justify-center gap-8 text-slate-500 text-xs font-bold uppercase tracking-widest">
-            <div className="flex items-center gap-2">
-              <Shield className="w-4 h-4 text-green-500" />
-              <span>SSL Secure Checkout</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Zap className="w-4 h-4 text-yellow-500" />
-              <span>Instant Activation</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-purple-500" />
-              <span>Premium Tech</span>
-            </div>
+        {/* BUREAU FOOTER */}
+        <div className="max-w-3xl mx-auto text-center border-t border-indigo-500/10 pt-16">
+          <div className="flex justify-center gap-12 text-[9px] font-mono text-slate-600 uppercase tracking-widest">
+            <div className="flex items-center gap-2"><Shield className="w-3 h-3" /> SSL_ENCRYPTED</div>
+            <div className="flex items-center gap-2"><Activity className="w-3 h-3" /> NEURAL_BYPASS_v6</div>
+            <div className="flex items-center gap-2">AUDIT_ID: {Math.random().toString(16).slice(2, 10).toUpperCase()}</div>
           </div>
         </div>
 
       </div>
-    </main >
+    </main>
   )
 }
 
 export default function ServiciosPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-slate-950 flex items-center justify-center"><div className="text-white font-mono animate-pulse">Initializing Growth Engine...</div></div>}>
+    <Suspense fallback={<div className="min-h-screen bg-[#02040a] flex items-center justify-center"><div className="text-indigo-500 font-mono text-xs tracking-widest animate-pulse">BOOTING_DIAGNOSTIC_BUREAU...</div></div>}>
       <ServiciosContent />
     </Suspense>
   )

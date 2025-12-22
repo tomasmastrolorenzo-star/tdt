@@ -7,7 +7,7 @@ import { DollarSign, Package, Users, TrendingUp, ArrowUpRight, ArrowDownRight, A
 import { Button } from "@/components/ui/button"
 import { StatsCard } from "@/components/dashboard/StatsCard"
 import { getAdminStats } from "@/lib/dashboard/stats"
-import { Skeleton } from "@/components/ui/skeleton"
+import Skeleton from "../../../components/ui/Skeleton"
 import Link from "next/link"
 
 interface AdminStats {

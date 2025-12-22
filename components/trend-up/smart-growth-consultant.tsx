@@ -1,81 +1,86 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { motion, AnimatePresence } from "framer-motion"
-import { ArrowRight, Sparkles, Loader2, Users, User, Globe, MapPin, Map, Check, Rocket, BarChart3, Database, Lock, Shield } from "lucide-react"
+import { ArrowRight, Sparkles, Loader2, User, Globe, Rocket, BarChart3, Database, Lock, Shield, Cpu, Activity, Zap } from "lucide-react"
 import { LOCATIONS, INTERESTS, GENDERS, type LocationId, type InterestId, type GenderId } from "@/lib/el-faro/selectors"
 import { useI18n } from "@/lib/i18n/context"
 import { funnelTracker } from "@/lib/analytics/funnel"
 
-const LoadingOverlay = ({ step, t, values }: { step: number, t: any, values: any }) => {
+const NeuralAuthentication = () => (
+    <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="absolute inset-0 z-[60] bg-[#02040a] flex flex-col items-center justify-center p-8 text-center terminal-scanlines"
+    >
+        <div className="relative">
+            <Cpu className="w-16 h-16 text-indigo-500 animate-pulse mb-6" />
+            <div className="absolute inset-0 border border-indigo-500/20 rounded-full animate-ping" />
+        </div>
+        <h3 className="text-xl font-mono text-white mb-2 uppercase tracking-[0.3em]">Neural Authentication</h3>
+        <p className="text-indigo-400 font-mono text-[10px] animate-pulse">ESTABLISHING CRYPTOGRAPHIC HANDSHAKE...</p>
+    </motion.div>
+)
+
+const LoadingOverlay = ({ t, values, isLazarus }: { t: any, values: any, isLazarus: boolean }) => {
     const [msgIndex, setMsgIndex] = useState(0)
 
     useEffect(() => {
         const timer = setInterval(() => {
-            setMsgIndex(prev => prev < 3 ? prev + 1 : prev)
-        }, 1000)
-
+            setMsgIndex(prev => prev < 4 ? prev + 1 : prev)
+        }, 900)
         return () => clearInterval(timer)
     }, [])
 
-    const nicheName = t.consultant?.selectors?.interests?.[values.interest] || values.interest
-
+    const nicheName = values.interest
     const messages = [
-        { icon: Globe, text: "Connecting to Global Database...", color: "text-blue-400" },
-        { icon: BarChart3, text: `Analyzing ${nicheName} Competitors...`, color: "text-purple-400" },
-        { icon: Rocket, text: "Calibrating Viral Algorithm...", color: "text-orange-400" },
-        { icon: Check, text: "Strategy Generated.", color: "text-green-400" }
+        { text: "Bypass Request... [SUCCESS]", color: "text-white" },
+        { text: `Scanning Niche: ${nicheName.toUpperCase()}`, color: "text-indigo-400" },
+        { text: "Calculating Latent Space Entropy...", color: "text-indigo-400" },
+        { text: isLazarus ? "WARNING: FLATLINE DETECTED" : "Neural Pattern Calibrated.", color: isLazarus ? "text-red-500" : "text-emerald-400" },
+        { text: "DISPATCHING VERDICT...", color: "text-white" }
     ]
-
-    const CurrentIcon = messages[msgIndex].icon
 
     return (
         <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 z-50 bg-[#020617]/98 backdrop-blur-xl flex flex-col items-center justify-center p-8 text-center"
+            className={`absolute inset-0 z-50 ${isLazarus ? 'bg-red-950/40 crimson-flicker' : 'bg-[#02040a]'} backdrop-blur-3xl flex flex-col items-center justify-center p-8 text-center terminal-scanlines`}
         >
-            {/* Neural Background Effect (Subtle) */}
-            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none"></div>
-
-            {/* HUD Circle */}
-            <div className="relative w-32 h-32 mb-10">
-                {/* Outer Ring */}
-                <div className="absolute inset-0 rounded-full border border-cyan-500/20 animate-spin-slow"></div>
-                {/* Inner Ring (Pulsing) */}
-                <div className="absolute inset-2 rounded-full border-2 border-t-cyan-400 border-r-purple-500 border-b-transparent border-l-transparent animate-spin shadow-[0_0_15px_rgba(34,211,238,0.5)]"></div>
-                {/* Center Core */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                    <CurrentIcon className={`w-10 h-10 ${messages[msgIndex].color} animate-pulse transition-all duration-300`} />
-                </div>
+            <div className={`w-64 space-y-2 text-left font-mono text-[10px] ${isLazarus ? 'text-red-400' : 'text-indigo-500'} mb-10`}>
+                <p>LOCAL_HOST: ANALYSIS_v6.0.4</p>
+                <p>STATUS: {isLazarus ? "CRITICAL_FAILURE" : "OP_ACTIVE"}</p>
+                <p>TARGET: {nicheName.toUpperCase()}_AUTHORITY</p>
             </div>
 
-            {/* Dynamic Text */}
-            <div className="h-16 flex flex-col items-center justify-start">
-                <AnimatePresence mode="wait">
-                    <motion.h3
-                        key={msgIndex}
-                        initial={{ opacity: 0, y: 10, filter: "blur(10px)" }}
-                        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                        exit={{ opacity: 0, y: -10, filter: "blur(10px)" }}
-                        className="text-2xl font-bold text-white mb-2 tracking-wide font-mono"
-                    >
-                        {messages[msgIndex].text}
-                    </motion.h3>
-                </AnimatePresence>
+            <div className="relative mb-12">
+                <Activity className={`w-16 h-16 ${isLazarus ? 'text-red-500' : 'text-indigo-500'} animate-pulse`} />
+                <div className={`absolute inset-0 border-2 ${isLazarus ? 'border-red-500/30' : 'border-indigo-500/30'} rounded-full animate-spin-slow scale-150`} />
+            </div>
 
-                {/* Progress Bar Line */}
-                <div className="w-48 h-1 bg-slate-800 rounded-full mt-4 overflow-hidden">
-                    <motion.div
-                        className="h-full bg-gradient-to-r from-cyan-400 to-purple-500"
-                        initial={{ width: "0%" }}
-                        animate={{ width: `${((msgIndex + 1) / 4) * 100}%` }}
-                        transition={{ duration: 1 }}
-                    />
-                </div>
+            <AnimatePresence mode="wait">
+                <motion.p
+                    key={msgIndex}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 10 }}
+                    className={`text-sm font-black font-mono tracking-widest ${messages[Math.min(msgIndex, 4)].color}`}
+                >
+                    {">"} {messages[Math.min(msgIndex, 4)].text}
+                </motion.p>
+            </AnimatePresence>
+
+            <div className="w-48 h-[1px] bg-slate-800 rounded-full mt-8 overflow-hidden">
+                <motion.div
+                    className={`h-full ${isLazarus ? 'bg-red-500' : 'bg-indigo-500'}`}
+                    initial={{ width: "0%" }}
+                    animate={{ width: `${((msgIndex + 1) / 5) * 100}%` }}
+                    transition={{ duration: 0.8 }}
+                />
             </div>
         </motion.div>
     )
@@ -85,218 +90,203 @@ export default function SmartGrowthConsultant() {
     const { t } = useI18n()
     const router = useRouter()
     const [isLoading, setIsLoading] = useState(false)
+    const [isAuthenticating, setIsAuthenticating] = useState(false)
 
     // Form Data
     const [platform, setPlatform] = useState("instagram")
     const [gender, setGender] = useState<GenderId>("any")
     const [location, setLocation] = useState<LocationId>("us")
     const [interest, setInterest] = useState<InterestId>("fitness")
+    const [diagnosis, setDiagnosis] = useState<string>("")
+    const [currentStep, setCurrentStep] = useState(0) // 0: Config, 1: Technical Scan
+
+    // Lazarus State
+    const [followers, setFollowers] = useState<string>("")
+    const [avgLikes, setAvgLikes] = useState<string>("")
+
+    const [isLazarusDetected, setIsLazarusDetected] = useState(false)
 
     useEffect(() => {
-        funnelTracker.track('faro_start')
-    }, [])
-
-    // Haptics Helper
-    const vibrate = (ms: number = 10) => {
-        if (typeof navigator !== 'undefined' && navigator.vibrate) {
-            navigator.vibrate(ms)
+        const insights: Record<string, string> = {
+            business: "Market authority logic. Corporate accounts are facing 40% less reach without pattern interrupt.",
+            trading: "Compliance filter active. Financial niches require immediate neural warmup.",
+            fitness: "Visual static detected. 90% of fitness accounts are indistinguishable by the AI.",
+            default: "Niche recognized. High-ticket growth requires an immediate visual signature calibration."
         }
-    }
+        setDiagnosis(insights[interest] || insights.default)
+    }, [interest])
 
     const handleNext = async () => {
-        vibrate(20) // Button click haptic
+        setIsAuthenticating(true)
+        await new Promise(resolve => setTimeout(resolve, 1000))
+        setIsAuthenticating(false)
 
-        funnelTracker.track('faro_analyze', { platform, gender, location, interest })
+        if (currentStep === 0) {
+            setCurrentStep(1)
+            return
+        }
 
+        // Final Analysis Logic
+        const fCount = parseInt(followers) || 0
+        const lCount = parseInt(avgLikes) || 0
+        const isLazarus = fCount > 100000 && lCount < 500
+        setIsLazarusDetected(isLazarus)
+
+        const highValueNiches = ['business', 'trading', 'tech', 'medical'];
+        const isWhale = highValueNiches.includes(interest) || fCount > 50000;
+        const leadClassification = isLazarus ? 'LAZARUS' : (isWhale ? 'WHALE' : 'STANDARD')
+
+        let originalityScore = 45 + (interest.length * location.length) % 30;
+        if (isLazarus) originalityScore = Math.floor(originalityScore / 2);
+
+        funnelTracker.track('faro_analyze', { platform, interest, lead_classification: leadClassification })
         setIsLoading(true)
-        // Show "Processing" Screen for 4s + buffer
-        await new Promise(resolve => setTimeout(resolve, 4500))
+        await new Promise(resolve => setTimeout(resolve, 5000))
 
-        // Redirect
         const params = new URLSearchParams({
-            platform,
-            gender,
-            location,
-            interest,
+            platform, gender, location, interest,
+            lead_class: leadClassification,
+            orig_score: originalityScore.toString(),
+            f_count: fCount.toString(),
+            l_count: lCount.toString()
         })
         router.push(`/servicios?${params.toString()}`)
     }
 
     return (
-        <section id="consultant" className="py-20 relative overflow-hidden">
-            {/* Background Gradient */}
-            <div className="absolute inset-0 bg-gradient-to-b from-slate-900 via-slate-900 to-indigo-950 z-0" />
+        <div className="relative">
+            {/* Bureau Header */}
+            <div className="text-center mb-12">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/5 border border-indigo-500/20 text-indigo-400 text-[10px] font-mono uppercase tracking-[0.4em] mb-6">
+                    <Activity className="w-3 h-3 animate-pulse" /> Diagnostic Engine Armed
+                </div>
+                <h2 className="text-4xl md:text-6xl font-verdict text-white mb-4 italic">
+                    El Faro <span className="text-indigo-500">v6.0</span>
+                </h2>
+                <p className="text-slate-500 font-mono text-xs uppercase tracking-widest max-w-xl mx-auto">
+                    BUREAU OF ALGORITHMIC CALIBRATION & NICHE DOMINANCE
+                </p>
+            </div>
 
-            <div className="container mx-auto px-4 relative z-10">
-                <div className="max-w-5xl mx-auto">
+            <div className="bg-[#02040a] border border-indigo-500/20 rounded-2xl p-0 relative overflow-hidden min-h-[500px] flex flex-col terminal-scanlines shadow-[0_0_50px_rgba(79,70,229,0.05)]">
 
-                    {/* Header */}
-                    <div className="text-center mb-12">
-                        <span className="inline-block py-1 px-3 rounded-full bg-indigo-500/20 text-indigo-300 text-sm font-bold mb-4 border border-indigo-500/30 animate-pulse">
-                            {t.consultant?.badge || "✨ TDT Lighthouse"}
-                        </span>
-                        <h2 className="text-4xl md:text-5xl font-black text-white mb-4">
-                            {t.consultant?.title} <br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">
-                                {t.consultant?.titleHighlight}
-                            </span>
-                        </h2>
-                        <p className="text-slate-400 text-lg max-w-2xl mx-auto">
-                            {t.consultant?.subtitle}
-                        </p>
+                <AnimatePresence>
+                    {isAuthenticating && <NeuralAuthentication />}
+                    {isLoading && <LoadingOverlay t={t} values={{ interest }} isLazarus={isLazarusDetected} />}
+                </AnimatePresence>
+
+                {/* Status Bar */}
+                <div className="px-6 py-2 bg-indigo-500/5 border-b border-indigo-500/10 flex justify-between items-center bg-slate-900/40">
+                    <div className="flex gap-1.5 font-mono text-[9px] text-indigo-400/60 uppercase">
+                        <span>SESSION: 0x{Math.random().toString(16).slice(2, 8).toUpperCase()}</span>
+                        <span className="text-indigo-500/20">|</span>
+                        <span>STATUS: OP_READY</span>
                     </div>
+                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                </div>
 
-                    {/* Main Card */}
-                    <div className="bg-slate-900/80 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-0 shadow-2xl relative overflow-hidden min-h-[550px] flex flex-col">
-
-                        {/* Loading Overlay (Revelation) */}
-                        <AnimatePresence>
-                            {isLoading && <LoadingOverlay step={3} t={t} values={{ interest, location }} />}
-                        </AnimatePresence>
-
-                        {/* Progress Bar (Top) */}
-                        <div className="w-full h-1.5 bg-slate-800">
-                            <motion.div
-                                className="h-full bg-gradient-to-r from-cyan-400 to-purple-500 shadow-[0_0_10px_rgba(168,85,247,0.5)]"
-                                initial={{ width: "0%" }}
-                                animate={{ width: `${(1 / 2) * 100}%` }} // Adjusted to 100% for single step
-                                transition={{ duration: 0.8, ease: "easeInOut" }}
-                            />
-                        </div>
-
-                        <div className="p-8 md:p-12 flex-grow flex flex-col justify-center">
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                className="space-y-8"
-                            >
-                                <div className="text-center text-white space-y-2 mb-6">
-                                    <h3 className="text-2xl font-bold">{t.consultant?.step1?.title || "Configure Your Growth Engine"}</h3>
-                                    <p className="text-slate-400">{t.consultant?.step1?.subtitle || "Our AI will analyze your niche to build a custom strategy."}</p>
-                                </div>
-
-                                {/* 1. Platform Selector */}
-                                <div className="flex justify-center gap-6">
-                                    <button
-                                        onClick={() => { setPlatform("instagram"); vibrate(); }}
-                                        className={`group relative px-6 py-3 rounded-2xl font-bold transition-all duration-300 overflow-hidden ${platform === "instagram" ? "scale-105 shadow-xl shadow-purple-500/20 ring-2 ring-purple-500/50 bg-slate-800" : "bg-slate-800/50 text-slate-400 hover:bg-slate-800"}`}
-                                    >
-                                        {platform === "instagram" && <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-orange-500/20 opacity-100" />}
-                                        <span className={`relative z-10 flex items-center gap-2 ${platform === "instagram" ? "text-white" : ""}`}>
-                                            <span className="text-xl">📸</span> Instagram
-                                        </span>
-                                    </button>
-
-                                    <button
-                                        onClick={() => { setPlatform("tiktok"); vibrate(); }}
-                                        className={`group relative px-6 py-3 rounded-2xl font-bold transition-all duration-300 overflow-hidden ${platform === "tiktok" ? "scale-105 shadow-xl shadow-pink-500/20 ring-2 ring-pink-500/50 bg-slate-800" : "bg-slate-800/50 text-slate-400 hover:bg-slate-800"}`}
-                                    >
-                                        {platform === "tiktok" && <div className="absolute inset-0 bg-gradient-to-r from-pink-600/20 to-teal-400/20 opacity-100" />}
-                                        <span className={`relative z-10 flex items-center gap-2 ${platform === "tiktok" ? "text-white" : ""}`}>
-                                            <span className="text-xl">🎵</span> TikTok
-                                        </span>
-                                    </button>
-                                </div>
-
-                                <div className="grid gap-6 md:grid-cols-2">
-                                    {/* 2. Gender */}
-                                    <div>
-                                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 pl-1">{t.consultant?.step2?.genderLabel || "Target Audience"}</label>
-                                        <div className="grid grid-cols-3 gap-2">
-                                            {GENDERS.map((g) => (
-                                                <button
-                                                    key={g.id}
-                                                    onClick={() => { setGender(g.id); vibrate(); }}
-                                                    className={`relative p-3 rounded-xl border transition-all duration-200 flex flex-col items-center justify-center gap-1 ${gender === g.id ? "border-cyan-400 bg-cyan-950/30 text-white shadow-[0_0_15px_rgba(34,211,238,0.3)] ring-1 ring-cyan-400" : "border-slate-700 bg-slate-800/30 text-slate-400 hover:bg-slate-800"}`}
-                                                >
-                                                    <div className="text-xl">{g.id === 'female' ? '👩' : g.id === 'male' ? '👨' : '👥'}</div>
-                                                    <div className="text-[10px] font-bold uppercase">{t.consultant?.selectors?.genders?.[g.id] || g.name}</div>
-                                                </button>
-                                            ))}
+                <div className="p-8 md:p-12 flex-grow flex flex-col justify-center">
+                    <AnimatePresence mode="wait">
+                        {currentStep === 0 ? (
+                            <motion.div key="s1" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-8">
+                                <div className="grid md:grid-cols-2 gap-10">
+                                    {/* Platform & Niche */}
+                                    <div className="space-y-6">
+                                        <div>
+                                            <label className="block text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-4">Target Platform</label>
+                                            <div className="grid grid-cols-2 gap-3">
+                                                {['instagram', 'tiktok'].map(p => (
+                                                    <button key={p} onClick={() => setPlatform(p)} className={`py-3 px-4 rounded-lg border font-mono text-xs uppercase transition-all ${platform === p ? 'border-indigo-500 bg-indigo-500/10 text-white shadow-[0_0_15px_rgba(79,70,229,0.2)]' : 'border-slate-800 text-slate-500 hover:border-slate-700'}`}>
+                                                        {p}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label className="block text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-4">Strategic Niche</label>
+                                            <select value={interest} onChange={(e) => setInterest(e.target.value as InterestId)} className="w-full bg-[#02040a] border border-slate-800 rounded-lg py-3 px-4 text-white font-mono text-xs focus:border-indigo-500 outline-none">
+                                                {INTERESTS.map(i => <option key={i.id} value={i.id}>{i.name.toUpperCase()}</option>)}
+                                            </select>
                                         </div>
                                     </div>
 
-                                    {/* 3. Location */}
-                                    <div>
-                                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 pl-1">{t.consultant?.step2?.locationLabel || "Target Region"}</label>
-                                        <div className="grid grid-cols-2 gap-2">
-                                            {LOCATIONS.slice(0, 4).map((loc) => (
-                                                <button
-                                                    key={loc.id}
-                                                    onClick={() => { setLocation(loc.id); vibrate(); }}
-                                                    className={`relative p-3 rounded-xl border transition-all duration-200 flex items-center gap-2 ${location === loc.id ? "border-emerald-400 bg-emerald-950/30 text-white shadow-[0_0_15px_rgba(52,211,153,0.3)] ring-1 ring-emerald-400" : "border-slate-700 bg-slate-800/30 text-slate-400 hover:bg-slate-800"}`}
-                                                >
-                                                    <span className="text-lg">{loc.id === 'us' ? '🇺🇸' : loc.id === 'uk' ? '🇬🇧' : loc.id === 'eu' ? '🇪🇺' : '🌎'}</span>
-                                                    <div className="text-[10px] font-bold uppercase truncate">{t.consultant?.selectors?.locations?.[loc.id] || loc.name}</div>
-                                                </button>
-                                            ))}
+                                    {/* Insight Panel */}
+                                    <div className="bg-indigo-500/5 border border-indigo-500/10 rounded-xl p-6 flex flex-col">
+                                        <div className="flex items-center gap-2 mb-4">
+                                            <Zap className="w-4 h-4 text-indigo-400" />
+                                            <span className="text-[10px] font-mono text-indigo-300 uppercase tracking-widest">Niche Audit</span>
+                                        </div>
+                                        <p className="text-xs text-slate-400 leading-relaxed font-mono animate-fade-in" key={interest}>
+                                            {">"} {diagnosis}
+                                        </p>
+                                        <div className="mt-auto pt-6 flex justify-between items-end border-t border-indigo-500/10">
+                                            <div className="space-y-1">
+                                                <div className="text-[8px] text-slate-600 uppercase font-mono tracking-tighter">Algorithm Drift</div>
+                                                <div className="text-indigo-400 font-mono text-sm leading-none">-{15 + (interest.length % 5)}% traction</div>
+                                            </div>
+                                            <Shield className="w-4 h-4 text-indigo-500 opacity-20" />
                                         </div>
                                     </div>
                                 </div>
 
-                                {/* 4. Interest / Niche */}
-                                <div>
-                                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 pl-1">{t.consultant?.step2?.interestLabel || "Niche / Industry"}</label>
-                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                                        {INTERESTS.slice(0, 8).map((int) => (
-                                            <button
-                                                key={int.id}
-                                                onClick={() => { setInterest(int.id); vibrate(); }}
-                                                className={`group relative p-2.5 rounded-xl border text-center transition-all duration-200 ${interest === int.id ? `border-purple-400 bg-purple-900/30 text-white shadow-[0_0_15px_rgba(192,132,252,0.3)] ring-1 ring-purple-400` : "border-slate-700 bg-slate-800/30 text-slate-400 hover:bg-slate-800"}`}
-                                            >
-                                                <div className={`text-lg mb-1 transition-transform duration-300 ${interest === int.id ? "scale-125 animate-bounce-short" : "group-hover:scale-110"}`}>
-                                                    {int.icon}
-                                                </div>
-                                                <div className="text-[10px] font-bold uppercase truncate">
-                                                    {t.consultant?.selectors?.interests?.[int.id] || int.name}
-                                                </div>
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                <div className="flex justify-center pt-4">
-                                    <Button
-                                        onClick={handleNext}
-                                        disabled={isLoading}
-                                        className="w-full md:w-auto bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white text-xl px-12 py-8 rounded-2xl font-black shadow-xl shadow-cyan-500/20 active:scale-95 transition-all disabled:opacity-80 flex items-center justify-center gap-3"
-                                    >
-                                        {isLoading ? (
-                                            <>
-                                                <Loader2 className="w-6 h-6 animate-spin" />
-                                                Processing...
-                                            </>
-                                        ) : (
-                                            <>
-                                                Analyze Audience 🤖
-                                                <ArrowRight className="w-6 h-6" />
-                                            </>
-                                        )}
+                                <div className="flex justify-center pt-8">
+                                    <Button onClick={handleNext} className="w-full md:w-auto bg-white text-black hover:bg-slate-200 text-xs font-mono uppercase tracking-[0.2em] py-8 px-16 rounded-none shadow-[4px_4px_0px_#4f46e5]">
+                                        Execute Authentication <ArrowRight className="ml-2 w-4 h-4" />
                                     </Button>
                                 </div>
                             </motion.div>
-                        </div>
+                        ) : (
+                            <motion.div key="s2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-10">
+                                <div className="text-center font-mono space-y-2">
+                                    <h3 className="text-white text-sm uppercase tracking-[0.5em]">Lazarus Calibration</h3>
+                                    <p className="text-slate-600 text-[10px] animate-pulse">EXTRACTING METADATA FROM SOURCE...</p>
+                                </div>
 
-                        {/* Footer: Trust Bar (Always Visible) */}
-                        <div className="bg-slate-950/50 border-t border-slate-800 py-4 px-6 flex flex-wrap justify-center gap-x-8 gap-y-2 mt-auto">
-                            <div className="flex items-center gap-2 text-slate-400 text-xs font-medium uppercase tracking-wider">
-                                <Lock className="w-3.5 h-3.5 text-emerald-500" />
-                                {t.consultant?.trust?.encrypted || "256-Bit Encrypted"}
-                            </div>
-                            <div className="flex items-center gap-2 text-slate-400 text-xs font-medium uppercase tracking-wider">
-                                <User className="w-3.5 h-3.5 text-blue-500" />
-                                {t.consultant?.trust?.noPassword || "No Password Required"}
-                            </div>
-                            <div className="flex items-center gap-2 text-slate-400 text-xs font-medium uppercase tracking-wider">
-                                <Shield className="w-3.5 h-3.5 text-purple-500" />
-                                {t.consultant?.trust?.guarantee || "Growth Guarantee"}
-                            </div>
-                        </div>
+                                <div className="grid md:grid-cols-2 gap-8">
+                                    <div className="space-y-3">
+                                        <label className="text-[10px] font-mono text-slate-500 uppercase tracking-widest pl-1">Magnitude (Followers)</label>
+                                        <input type="number" value={followers} onChange={(e) => setFollowers(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-lg py-5 px-6 text-white font-mono text-xl focus:border-indigo-500 outline-none" placeholder="0" />
+                                    </div>
+                                    <div className="space-y-3">
+                                        <label className="text-[10px] font-mono text-slate-500 uppercase tracking-widest pl-1">Entropy (Avg Likes)</label>
+                                        <input type="number" value={avgLikes} onChange={(e) => setAvgLikes(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-lg py-5 px-6 text-white font-mono text-xl focus:border-indigo-500 outline-none" placeholder="0" />
+                                    </div>
+                                </div>
 
-                    </div>
+                                <div className="p-6 bg-slate-900/40 border-l border-indigo-500 flex items-start gap-4">
+                                    <div className="space-y-2">
+                                        <div className="text-[10px] text-indigo-400 font-mono uppercase tracking-widest">Diagnostic Note</div>
+                                        <p className="text-xs text-slate-500 font-mono leading-relaxed">Cross-referencing entropy markers against Dec-25 benchmark. Detecting potential Latent Space Repulsion...</p>
+                                    </div>
+                                </div>
 
+                                <div className="flex flex-col md:flex-row justify-center items-center gap-6 pt-4">
+                                    <button onClick={() => setCurrentStep(0)} className="text-slate-600 hover:text-indigo-400 font-mono text-[10px] uppercase tracking-widest">
+                                        Retry Configuration
+                                    </button>
+                                    <Button onClick={handleNext} disabled={!followers || !avgLikes} className="w-full md:w-auto bg-indigo-600 text-white hover:bg-indigo-700 text-xs font-mono uppercase tracking-[0.2em] py-8 px-20 rounded-none shadow-[4px_4px_0px_white]">
+                                        Initiate Final Scan <Rocket className="ml-2 w-4 h-4" />
+                                    </Button>
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </div>
+
+                {/* Footer Trust Bar */}
+                <div className="bg-indigo-500/5 px-8 py-4 border-t border-indigo-500/10 flex flex-wrap justify-center gap-8 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all">
+                    <div className="flex items-center gap-2 text-[9px] font-mono text-slate-400 uppercase tracking-widest">
+                        <Database className="w-3 h-3" /> Encrypted Audit
+                    </div>
+                    <div className="flex items-center gap-2 text-[9px] font-mono text-slate-400 uppercase tracking-widest">
+                        <Lock className="w-3.5 h-3.5" /> No Password
+                    </div>
+                    <div className="flex items-center gap-2 text-[9px] font-mono text-slate-400 uppercase tracking-widest">
+                        <Shield className="w-3.5 h-3.5" /> Bureau Verified
+                    </div>
+                </div>
+
             </div>
-        </section>
+        </div>
     )
 }

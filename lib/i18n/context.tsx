@@ -5,35 +5,50 @@ import {
   type Language,
   type Currency,
   translations,
+  type TranslationType,
   currencyRates,
   currencySymbols,
   countryToCurrency,
   countryToLanguage,
 } from "./translations"
+import { en } from "./locales/en"
 
 interface I18nContextType {
   language: Language
   setLanguage: (lang: Language) => void
   currency: Currency
   setCurrency: (curr: Currency) => void
-  t: typeof translations.es
+  t: TranslationType
   formatPrice: (priceUSD: number) => string
   currencySymbol: string
+  isLoading: boolean
 }
 
 const I18nContext = createContext<I18nContextType | undefined>(undefined)
 
+// Minimal fallback so the app doesn't crash before loading
+const emptyT: any = {}
+
 export function I18nProvider({ children }: { children: ReactNode }) {
-  // STRICT ENGLISH ENFORCEMENT for Global Launch
-  // We intentionally bypass IP detection to ensure:
-  // 1. consistent English experience worldwide
-  // 2. fast load times (no API delay)
-  // 3. no crashes for non-US users falling back to broken locales
   const [language, setLanguage] = useState<Language>("en")
   const [currency, setCurrency] = useState<Currency>("USD")
+  const [t, setT] = useState<TranslationType>(en)
+  const [isLoading, setIsLoading] = useState(true)
 
-  // Always use English translations
-  const t = translations.en
+  useEffect(() => {
+    async function loadTranslations() {
+      setIsLoading(true)
+      try {
+        const activeT = await translations[language]()
+        setT(activeT)
+      } catch (err) {
+        console.error("Failed to load translations:", err)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    loadTranslations()
+  }, [language])
 
   const formatPrice = (priceUSD: number) => {
     return `$${priceUSD.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`
@@ -49,6 +64,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
         t,
         formatPrice,
         currencySymbol: "$",
+        isLoading
       }}
     >
       {children}

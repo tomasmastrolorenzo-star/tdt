@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { Settings, LayoutDashboard, ShoppingBag, Users, Wallet, Ticket, BarChart3, Shield } from "lucide-react"
+import { Settings, LayoutDashboard, ShoppingBag, Users, Wallet, Ticket, BarChart3, Shield, RefreshCcw } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useState, useEffect } from "react"
@@ -42,6 +42,7 @@ export function Sidebar({ className, onNavigate }: SidebarProps) {
         { title: "Overview", icon: LayoutDashboard, href: "/dashboard/admin" },
         { title: "Users", icon: Users, href: "/dashboard/admin/users" },
         { title: "Orders", icon: ShoppingBag, href: "/dashboard/admin/orders" },
+        { title: "Recovery", icon: RefreshCcw, href: "/dashboard/admin/recovery" },
         { title: "Pricing", icon: Settings, href: "/dashboard/admin/pricing" },
         { title: "Vendors", icon: Shield, href: "/dashboard/admin/vendors" },
         { title: "Finance", icon: Wallet, href: "/dashboard/admin/finance" },

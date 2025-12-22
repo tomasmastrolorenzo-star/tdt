@@ -27,6 +27,9 @@ import {
   Zap,
   Plus,
   Settings,
+  Send,
+  Check,
+  Video
 } from "lucide-react"
 import Link from "next/link"
 import type { User } from "@supabase/supabase-js"
@@ -81,7 +84,64 @@ interface DashboardContentProps {
 export function DashboardContent({ user, userData, wallet, orders, levels, services }: DashboardContentProps) {
   const [loggingOut, setLoggingOut] = useState(false)
   const [calcPrice, setCalcPrice] = useState(500)
+  const [vipPostUrl, setVipPostUrl] = useState("")
+  const [isVipSubmitting, setIsVipSubmitting] = useState(false)
+  const [vipCountdown, setVipCountdown] = useState<number | null>(null)
   const router = useRouter()
+
+  const hasVipAccess = userData?.role === "CEO" || orders.some(o =>
+    o.status === 'COMPLETED' &&
+    (o.services?.name?.toLowerCase().includes('authority') || o.services?.name?.toLowerCase().includes('elite') || o.services?.name?.toLowerCase().includes('resurrection'))
+  )
+
+  useEffect(() => {
+    if (vipCountdown === null) return
+    if (vipCountdown <= 0) {
+      setVipCountdown(null)
+      return
+    }
+    const timer = setInterval(() => {
+      setVipCountdown(prev => prev !== null ? prev - 1 : null)
+    }, 1000)
+    return () => clearInterval(timer)
+  }, [vipCountdown])
+
+  const formatCountdown = (seconds: number) => {
+    const mins = Math.floor(seconds / 60)
+    const secs = seconds % 60
+    return `${mins}:${secs.toString().padStart(2, '0')}`
+  }
+
+  const handleVipPost = async () => {
+    if (!vipPostUrl) return;
+    setIsVipSubmitting(true);
+
+    // Optimistic UI Response
+    const currentUrl = vipPostUrl;
+    setVipPostUrl("");
+    setVipCountdown(1800); // 30 mins
+
+    try {
+      fetch('/api/analytics/track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          event: 'VIP_POST_ACTION',
+          metadata: {
+            url: currentUrl,
+            username: userData?.name || user.email,
+            plan: 'VIP/ELITE'
+          },
+          timestamp: new Date().toISOString()
+        })
+      });
+      // We don't wait for the fetch to finish for the user
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsVipSubmitting(false);
+    }
+  }
 
   const handleLogout = async () => {
     setLoggingOut(true)
@@ -241,6 +301,107 @@ export function DashboardContent({ user, userData, wallet, orders, levels, servi
           </Card>
         </div>
 
+        {/* 🏛️ ADAPTIVE AUTHORITY ROADMAP (VIP ONLY) */}
+        {hasVipAccess && (
+          <Card className="bg-slate-950 border-indigo-500/30 shadow-[0_0_50px_rgba(99,102,241,0.15)] overflow-hidden relative group">
+            <div className="absolute top-0 right-0 p-8 opacity-5">
+              <Zap className="w-32 h-32 text-indigo-400" />
+            </div>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <Badge className="bg-indigo-500 text-white mb-2 uppercase font-black tracking-tighter">VIP Authority Active</Badge>
+                  <CardTitle className="text-2xl text-white font-black">Adaptive Growth Roadmap</CardTitle>
+                  <CardDescription className="text-slate-400 text-sm">Path to 500k Followers • Professional Protocol V3</CardDescription>
+                </div>
+                <div className="text-right">
+                  <div className="text-xs text-slate-500 font-bold uppercase mb-1">Current Velocity</div>
+                  <div className="text-xl font-black text-indigo-400">+1.4k / day</div>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-8">
+              {/* Progress Tracker */}
+              <div className="space-y-4">
+                <div className="flex justify-between text-xs font-black uppercase tracking-widest">
+                  <span className="text-indigo-400">Phase 1: Neural Warmup</span>
+                  <span className="text-slate-500 tracking-normal italic font-medium">Month 2 of 5</span>
+                </div>
+                <div className="h-4 bg-slate-900 rounded-full border border-slate-800 p-1">
+                  <div className="h-full w-[35%] bg-gradient-to-r from-indigo-600 via-purple-500 to-cyan-400 rounded-full shadow-[0_0_15px_rgba(99,102,241,0.4)] relative">
+                    <div className="absolute inset-0 bg-white/20 animate-pulse" />
+                  </div>
+                </div>
+                <div className="grid grid-cols-5 gap-2 text-[10px] text-center font-bold text-slate-600 uppercase tracking-tighter">
+                  <div className="text-indigo-400">Identity</div>
+                  <div className="text-indigo-200">Expansion</div>
+                  <div>Domination</div>
+                  <div>Monetization</div>
+                  <div>Legacy</div>
+                </div>
+              </div>
+
+              {/* VIP ACTION BUTTONS */}
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="p-6 rounded-2xl bg-indigo-500/5 border border-indigo-500/20 flex flex-col justify-between">
+                  <div>
+                    <h4 className="font-bold text-white mb-2 flex items-center gap-2">
+                      <Video className="w-4 h-4 text-cyan-400" /> Content Boost Trigger
+                    </h4>
+                    <p className="text-xs text-slate-400 leading-relaxed mb-4">
+                      {vipCountdown
+                        ? "Priority Signal Sent to Global Network. Golden Window active."
+                        : "Just uploaded? Paste the URL here to trigger high-priority AI engagement signals."}
+                    </p>
+                  </div>
+                  {vipCountdown ? (
+                    <div className="flex items-center gap-4 bg-slate-900/50 p-3 rounded-xl border border-indigo-500/20">
+                      <div className="w-10 h-10 rounded-full border-2 border-indigo-500/40 border-t-indigo-400 animate-spin flex items-center justify-center">
+                        <Check className="w-5 h-5 text-indigo-400" />
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest">Golden Window</p>
+                        <p className="text-xl font-black text-white font-mono">{formatCountdown(vipCountdown)}</p>
+                      </div>
+                      <div className="ml-auto text-[10px] text-slate-500 font-bold uppercase tracking-widest animate-pulse">
+                        Signals Propagating...
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex gap-2">
+                      <Input
+                        placeholder="Paste Post URL..."
+                        className="bg-slate-900 border-slate-800 text-xs h-10"
+                        value={vipPostUrl}
+                        onChange={(e) => setVipPostUrl(e.target.value)}
+                      />
+                      <Button
+                        size="sm"
+                        className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold"
+                        onClick={handleVipPost}
+                        disabled={isVipSubmitting}
+                      >
+                        {isVipSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                      </Button>
+                    </div>
+                  )}
+                </div>
+
+                <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-between">
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Strategy Specialist</p>
+                    <p className="text-sm font-bold text-white">Vortex Engineering Team</p>
+                    <p className="text-[10px] text-emerald-400 flex items-center gap-1"><span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" /> Live Now</p>
+                  </div>
+                  <Button variant="outline" className="border-indigo-500/30 text-indigo-400 hover:bg-indigo-500/10 font-bold text-xs">
+                    Access Private WA
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Calculator and Levels Row */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Commission Calculator */}
@@ -317,11 +478,10 @@ export function DashboardContent({ user, userData, wallet, orders, levels, servi
                     return (
                       <div
                         key={level.id}
-                        className={`flex items-center justify-between p-3 rounded-lg border transition-all ${
-                          isCurrentLevel
-                            ? "bg-cyan-500/10 border-cyan-500/30"
-                            : "bg-slate-800/30 border-slate-700/50 hover:bg-slate-800/50"
-                        }`}
+                        className={`flex items-center justify-between p-3 rounded-lg border transition-all ${isCurrentLevel
+                          ? "bg-cyan-500/10 border-cyan-500/30"
+                          : "bg-slate-800/30 border-slate-700/50 hover:bg-slate-800/50"
+                          }`}
                       >
                         <div className="flex items-center gap-3">
                           <div className={`p-2 rounded-lg ${isCurrentLevel ? "bg-cyan-500/20" : "bg-slate-700/50"}`}>

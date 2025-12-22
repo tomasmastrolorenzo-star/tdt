@@ -4,6 +4,7 @@
  */
 
 import crypto from 'crypto'
+import * as Sentry from '@sentry/nextjs'
 
 export interface CryptomusPaymentRequest {
     amount: string
@@ -118,12 +119,21 @@ export class CryptomusClient {
 
             if (!response.ok) {
                 const errorText = await response.text()
-                throw new Error(`Cryptomus API Error: ${response.status} - ${errorText}`)
+                const error = new Error(`Cryptomus API Error: ${response.status} - ${errorText}`)
+
+                Sentry.captureException(error, {
+                    extra: { endpoint, status: response.status, body: data }
+                })
+
+                throw error
             }
 
             return await response.json()
         } catch (error) {
             console.error('Cryptomus Request Failed:', error)
+            Sentry.captureException(error, {
+                extra: { endpoint, body: data }
+            })
             throw error
         }
     }

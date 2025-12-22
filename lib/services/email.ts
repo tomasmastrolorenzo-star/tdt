@@ -1,4 +1,5 @@
 import { Resend } from 'resend';
+import * as Sentry from '@sentry/nextjs';
 
 interface EmailOptions {
     to: string;
@@ -85,10 +86,19 @@ export class EmailService {
                 html: options.html,
             });
 
-            if (error) throw error;
+            if (error) {
+                const sentryError = new Error(`Resend Error: ${error.message}`);
+                Sentry.captureException(sentryError, {
+                    extra: { to: options.to, subject: options.subject, error }
+                });
+                throw error;
+            }
             console.log('Email sent successfully:', data?.id);
         } catch (error) {
             console.error('Resend Error:', error);
+            Sentry.captureException(error, {
+                extra: { to: options.to, subject: options.subject }
+            });
             // Don't throw here to prevent blocking main flows
         }
     }

@@ -52,12 +52,13 @@ export const countryToLanguage: Record<string, Language> = {
   PT: "pt",
 }
 
-import { es } from "./locales/es"
-import { en } from "./locales/en"
-import { pt } from "./locales/pt"
+// Define the shape of our translations based on the base file (en)
+// We'll import the type from the en file which we assume is the source of truth
+import type { en } from "./locales/en"
+export type TranslationType = typeof en
 
 export const translations = {
-  es,
-  en,
-  pt,
+  es: () => import("./locales/es").then(m => m.es),
+  en: () => import("./locales/en").then(m => m.en),
+  pt: () => import("./locales/pt").then(m => m.pt),
 }

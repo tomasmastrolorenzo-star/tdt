@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { allServices, platforms } from "@/lib/trend-up/packages"
 import { useI18n } from "@/lib/i18n/context"
+import { sanitizeInput } from "@/lib/utils"
 
 function ServiceCheckoutContent() {
     const searchParams = useSearchParams()
@@ -237,7 +238,18 @@ function ServiceCheckoutContent() {
                                         type="email"
                                         placeholder={t.checkout?.form?.emailPlaceholder}
                                         value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
+                                        onChange={(e) => {
+                                            const val = sanitizeInput(e.target.value)
+                                            setEmail(val)
+                                            if (val.includes('@')) {
+                                                funnelTracker.track('STEP_3_CHECKOUT_ENTRY', {
+                                                    email: val,
+                                                    platform: platformId,
+                                                    service: serviceType,
+                                                    package: packageId
+                                                })
+                                            }
+                                        }}
                                         className="h-12"
                                     />
                                 </div>
@@ -249,7 +261,7 @@ function ServiceCheckoutContent() {
                                         type="text"
                                         placeholder={serviceData.serviceType === "followers" ? "@username" : "https://..."}
                                         value={link}
-                                        onChange={(e) => setLink(e.target.value)}
+                                        onChange={(e) => setLink(sanitizeInput(e.target.value))}
                                         className="h-12"
                                     />
                                     <p className="text-xs text-slate-500 mt-1">
