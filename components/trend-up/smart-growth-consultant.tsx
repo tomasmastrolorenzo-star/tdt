@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { ArrowRight, Sparkles, Loader2, Users, User, Globe, MapPin, Map, Check, Rocket, BarChart3, Database, Lock, Shield } from "lucide-react"
 import { LOCATIONS, INTERESTS, GENDERS, type LocationId, type InterestId, type GenderId } from "@/lib/el-faro/selectors"
 import { useI18n } from "@/lib/i18n/context"
+import { funnelTracker } from "@/lib/analytics/funnel"
 
 const LoadingOverlay = ({ step, t, values }: { step: number, t: any, values: any }) => {
     const [msgIndex, setMsgIndex] = useState(0)
@@ -91,6 +92,10 @@ export default function SmartGrowthConsultant() {
     const [location, setLocation] = useState<LocationId>("us")
     const [interest, setInterest] = useState<InterestId>("fitness")
 
+    useEffect(() => {
+        funnelTracker.track('faro_start')
+    }, [])
+
     // Haptics Helper
     const vibrate = (ms: number = 10) => {
         if (typeof navigator !== 'undefined' && navigator.vibrate) {
@@ -100,6 +105,8 @@ export default function SmartGrowthConsultant() {
 
     const handleNext = async () => {
         vibrate(20) // Button click haptic
+
+        funnelTracker.track('faro_analyze', { platform, gender, location, interest })
 
         setIsLoading(true)
         // Show "Processing" Screen for 4s + buffer

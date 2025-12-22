@@ -1,24 +1,5 @@
-"use client"
-
-import { useState, useEffect } from "react"
-import { createClient } from "@/lib/supabase/client"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Badge } from "@/components/ui/badge"
-import { DollarSign, TrendingUp, TrendingDown, Plus, Calendar } from "lucide-react"
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog"
-import { Label } from "@/components/ui/label"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { toast } from "sonner"
+import { Skeleton } from "@/components/ui/skeleton"
 
 interface Expense {
     id: string
@@ -75,12 +56,18 @@ export default function AdminFinancePage() {
 
         } catch (error) {
             console.error("Error fetching financial data:", error)
+            toast.error("Failed to load financial records")
         } finally {
             setLoading(false)
         }
     }
 
     const handleAddExpense = async () => {
+        if (!amount || !description) {
+            toast.error("Please fill in all required fields")
+            return
+        }
+
         try {
             const { error } = await supabase.from("expenses").insert({
                 amount: Number(amount),
@@ -91,168 +78,178 @@ export default function AdminFinancePage() {
 
             if (error) throw error
 
+            toast.success("Expense registered successfully")
             setIsAddExpenseOpen(false)
             setAmount("")
             setDescription("")
             setCategory("OTHER")
             fetchFinancialData()
-        } catch (error) {
+        } catch (error: any) {
             console.error("Error adding expense:", error)
+            toast.error(error.message || "Failed to save expense")
         }
     }
 
     return (
-        <div className="space-y-6">
-            <div className="flex items-center justify-between">
+        <div className="space-y-6 max-w-7xl mx-auto p-4 md:p-8 pb-20">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Finanzas</h1>
-                    <p className="text-muted-foreground">Control de ingresos, gastos y rentabilidad</p>
+                    <h1 className="text-3xl font-bold tracking-tight text-white">Financial Treasury</h1>
+                    <p className="text-zinc-400">Control revenue, operational costs, and net profitability.</p>
                 </div>
                 <Dialog open={isAddExpenseOpen} onOpenChange={setIsAddExpenseOpen}>
                     <DialogTrigger asChild>
-                        <Button>
+                        <Button className="bg-indigo-600 hover:bg-indigo-700">
                             <Plus className="mr-2 h-4 w-4" />
-                            Registrar Gasto
+                            Record Expense
                         </Button>
                     </DialogTrigger>
-                    <DialogContent>
+                    <DialogContent className="bg-zinc-950 border-zinc-800 text-white">
                         <DialogHeader>
-                            <DialogTitle>Registrar Nuevo Gasto</DialogTitle>
-                            <DialogDescription>
-                                Añade un gasto operativo para calcular la rentabilidad real.
+                            <DialogTitle>Register New Operational Cost</DialogTitle>
+                            <DialogDescription className="text-zinc-500">
+                                Add an operational expense to calculate real profitability.
                             </DialogDescription>
                         </DialogHeader>
                         <div className="grid gap-4 py-4">
-                            <div className="grid grid-cols-4 items-center gap-4">
-                                <Label htmlFor="amount" className="text-right">
-                                    Monto ($)
-                                </Label>
+                            <div className="space-y-2">
+                                <Label htmlFor="amount">Amount (USD) *</Label>
                                 <Input
                                     id="amount"
                                     type="number"
-                                    className="col-span-3"
+                                    placeholder="0.00"
+                                    className="bg-zinc-900 border-zinc-800"
                                     value={amount}
                                     onChange={(e) => setAmount(e.target.value)}
                                 />
                             </div>
-                            <div className="grid grid-cols-4 items-center gap-4">
-                                <Label htmlFor="description" className="text-right">
-                                    Descripción
-                                </Label>
+                            <div className="space-y-2">
+                                <Label htmlFor="description">Description *</Label>
                                 <Input
                                     id="description"
-                                    className="col-span-3"
+                                    placeholder="e.g., Server hosting Monthly"
+                                    className="bg-zinc-900 border-zinc-800"
                                     value={description}
                                     onChange={(e) => setDescription(e.target.value)}
                                 />
                             </div>
-                            <div className="grid grid-cols-4 items-center gap-4">
-                                <Label htmlFor="category" className="text-right">
-                                    Categoría
-                                </Label>
+                            <div className="space-y-2">
+                                <Label htmlFor="category">Category</Label>
                                 <Select value={category} onValueChange={setCategory}>
-                                    <SelectTrigger className="col-span-3">
-                                        <SelectValue placeholder="Seleccionar categoría" />
+                                    <SelectTrigger className="bg-zinc-900 border-zinc-800">
+                                        <SelectValue placeholder="Select category" />
                                     </SelectTrigger>
-                                    <SelectContent>
+                                    <SelectContent className="bg-zinc-900 border-zinc-800 text-white">
                                         <SelectItem value="MARKETING">Marketing / Ads</SelectItem>
-                                        <SelectItem value="SERVER">Servidores / Infraestructura</SelectItem>
-                                        <SelectItem value="SALARY">Salarios</SelectItem>
-                                        <SelectItem value="SOFTWARE">Software / Licencias</SelectItem>
-                                        <SelectItem value="OTHER">Otros</SelectItem>
+                                        <SelectItem value="SERVER">Servers / Infrastructure</SelectItem>
+                                        <SelectItem value="SALARY">Salaries</SelectItem>
+                                        <SelectItem value="SOFTWARE">Software / Licenses</SelectItem>
+                                        <SelectItem value="OTHER">Other Expenses</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
                         </div>
                         <DialogFooter>
-                            <Button variant="outline" onClick={() => setIsAddExpenseOpen(false)}>Cancelar</Button>
-                            <Button onClick={handleAddExpense}>Guardar Gasto</Button>
+                            <Button variant="outline" onClick={() => setIsAddExpenseOpen(false)} className="border-zinc-800 text-zinc-400">Cancel</Button>
+                            <Button onClick={handleAddExpense} className="bg-indigo-600 hover:bg-indigo-700">Save Expense</Button>
                         </DialogFooter>
                     </DialogContent>
                 </Dialog>
             </div>
 
             <div className="grid gap-4 md:grid-cols-3">
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Ingresos Totales</CardTitle>
-                        <DollarSign className="h-4 w-4 text-green-500" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold text-green-600">${totalRevenue.toFixed(2)}</div>
-                        <p className="text-xs text-muted-foreground mt-1">
-                            Ventas completadas
-                        </p>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Gastos Operativos</CardTitle>
-                        <TrendingDown className="h-4 w-4 text-red-500" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold text-red-600">${totalExpenses.toFixed(2)}</div>
-                        <p className="text-xs text-muted-foreground mt-1">
-                            Total de gastos registrados
-                        </p>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Ganancia Neta Real</CardTitle>
-                        <TrendingUp className="h-4 w-4 text-blue-500" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className={`text-2xl font-bold ${netProfit >= 0 ? 'text-blue-600' : 'text-red-600'}`}>
-                            ${netProfit.toFixed(2)}
-                        </div>
-                        <p className="text-xs text-muted-foreground mt-1">
-                            (Márgenes TDT - Gastos)
-                        </p>
-                    </CardContent>
-                </Card>
+                {loading ? (
+                    Array(3).fill(0).map((_, i) => (
+                        <Card key={i} className="bg-zinc-900 border-zinc-800">
+                            <CardHeader className="pb-2"><Skeleton className="h-4 w-24 bg-zinc-800" /></CardHeader>
+                            <CardContent><Skeleton className="h-8 w-32 bg-zinc-800" /><Skeleton className="h-3 w-16 mt-2 bg-zinc-800" /></CardContent>
+                        </Card>
+                    ))
+                ) : (
+                    <>
+                        <Card className="bg-zinc-900 border-zinc-800">
+                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                <CardTitle className="text-sm font-medium text-zinc-400">Total Gross Revenue</CardTitle>
+                                <DollarSign className="h-4 w-4 text-emerald-500" />
+                            </CardHeader>
+                            <CardContent>
+                                <div className="text-3xl font-bold text-white">${totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+                                <p className="text-xs text-zinc-500 mt-1">Total completed sales volume</p>
+                            </CardContent>
+                        </Card>
+                        <Card className="bg-zinc-900 border-zinc-800">
+                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                <CardTitle className="text-sm font-medium text-zinc-400">Operational Expenses</CardTitle>
+                                <TrendingDown className="h-4 w-4 text-rose-500" />
+                            </CardHeader>
+                            <CardContent>
+                                <div className="text-3xl font-bold text-rose-500">${totalExpenses.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+                                <p className="text-xs text-zinc-500 mt-1">Total registered costs</p>
+                            </CardContent>
+                        </Card>
+                        <Card className="bg-zinc-900 border-zinc-800">
+                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                <CardTitle className="text-sm font-medium text-zinc-400">Real Net Profit</CardTitle>
+                                <TrendingUp className="h-4 w-4 text-indigo-500" />
+                            </CardHeader>
+                            <CardContent>
+                                <div className={`text-3xl font-bold ${netProfit >= 0 ? 'text-indigo-400' : 'text-rose-500'}`}>
+                                    ${netProfit.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                                </div>
+                                <p className="text-xs text-zinc-500 mt-1">(Gross Margin - Operational Costs)</p>
+                            </CardContent>
+                        </Card>
+                    </>
+                )}
             </div>
 
-            <Card>
-                <CardHeader>
-                    <CardTitle>Historial de Gastos</CardTitle>
-                    <CardDescription>Registro detallado de todos los gastos operativos</CardDescription>
+            <Card className="bg-zinc-900 border-zinc-800">
+                <CardHeader className="border-b border-zinc-800">
+                    <CardTitle className="text-white font-semibold">Expense Log</CardTitle>
+                    <CardDescription className="text-zinc-500">Detailed record of all operational expenses</CardDescription>
                 </CardHeader>
-                <CardContent>
-                    <div className="rounded-md border">
+                <CardContent className="p-0">
+                    <div className="overflow-x-auto">
                         <table className="w-full text-sm text-left">
-                            <thead className="bg-muted/50 text-muted-foreground">
+                            <thead className="bg-zinc-950/50 text-zinc-500 uppercase text-[10px] tracking-widest font-bold">
                                 <tr>
-                                    <th className="p-4 font-medium">Fecha</th>
-                                    <th className="p-4 font-medium">Descripción</th>
-                                    <th className="p-4 font-medium">Categoría</th>
-                                    <th className="p-4 font-medium text-right">Monto</th>
+                                    <th className="p-4 border-b border-zinc-800">Posting Date</th>
+                                    <th className="p-4 border-b border-zinc-800">Description</th>
+                                    <th className="p-4 border-b border-zinc-800">Category</th>
+                                    <th className="p-4 border-b border-zinc-800 text-right">Amount</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody className="divide-y divide-zinc-800">
                                 {loading ? (
-                                    <tr>
-                                        <td colSpan={4} className="p-8 text-center text-muted-foreground">
-                                            Cargando gastos...
-                                        </td>
-                                    </tr>
+                                    Array(5).fill(0).map((_, i) => (
+                                        <tr key={i}>
+                                            <td className="p-4"><Skeleton className="h-5 w-24 bg-zinc-800" /></td>
+                                            <td className="p-4"><Skeleton className="h-5 w-48 bg-zinc-800" /></td>
+                                            <td className="p-4"><Skeleton className="h-6 w-20 bg-zinc-800" /></td>
+                                            <td className="p-4 text-right"><Skeleton className="h-5 w-16 ml-auto bg-zinc-800" /></td>
+                                        </tr>
+                                    ))
                                 ) : expenses.length === 0 ? (
                                     <tr>
-                                        <td colSpan={4} className="p-8 text-center text-muted-foreground">
-                                            No hay gastos registrados
+                                        <td colSpan={4} className="p-12 text-center text-zinc-500">
+                                            No operational expenses recorded yet.
                                         </td>
                                     </tr>
                                 ) : (
                                     expenses.map((expense) => (
-                                        <tr key={expense.id} className="border-t hover:bg-muted/50">
-                                            <td className="p-4 text-muted-foreground">
-                                                {new Date(expense.date).toLocaleDateString()}
+                                        <tr key={expense.id} className="hover:bg-zinc-800/30 transition-colors">
+                                            <td className="p-4 text-zinc-500 font-mono text-xs">
+                                                {new Date(expense.date).toLocaleDateString('en-US', {
+                                                    month: 'short', day: 'numeric', year: 'numeric'
+                                                })}
                                             </td>
-                                            <td className="p-4 font-medium">{expense.description}</td>
+                                            <td className="p-4 font-medium text-white">{expense.description}</td>
                                             <td className="p-4">
-                                                <Badge variant="outline">{expense.category}</Badge>
+                                                <Badge variant="outline" className="border-zinc-700 text-zinc-400 capitalize">
+                                                    {expense.category.toLowerCase()}
+                                                </Badge>
                                             </td>
-                                            <td className="p-4 text-right font-medium text-red-600">
+                                            <td className="p-4 text-right font-mono font-bold text-rose-500">
                                                 -${expense.amount.toFixed(2)}
                                             </td>
                                         </tr>
@@ -264,5 +261,7 @@ export default function AdminFinancePage() {
                 </CardContent>
             </Card>
         </div>
+    )
+}
     )
 }

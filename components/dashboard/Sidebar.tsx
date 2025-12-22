@@ -40,25 +40,26 @@ export function Sidebar({ className, onNavigate }: SidebarProps) {
 
     const adminRoutes = [
         { title: "Overview", icon: LayoutDashboard, href: "/dashboard/admin" },
-        { title: "Usuarios", icon: Users, href: "/dashboard/admin/users" },
-        { title: "Órdenes", icon: ShoppingBag, href: "/dashboard/admin/orders" },
-        { title: "Vendedores", icon: Shield, href: "/dashboard/admin/vendors" },
-        { title: "Finanzas", icon: Wallet, href: "/dashboard/admin/finance" },
+        { title: "Users", icon: Users, href: "/dashboard/admin/users" },
+        { title: "Orders", icon: ShoppingBag, href: "/dashboard/admin/orders" },
+        { title: "Pricing", icon: Settings, href: "/dashboard/admin/pricing" },
+        { title: "Vendors", icon: Shield, href: "/dashboard/admin/vendors" },
+        { title: "Finance", icon: Wallet, href: "/dashboard/admin/finance" },
     ]
 
     const operatorRoutes = [
-        { title: "Pedidos", icon: ShoppingBag, href: "/dashboard/operator/orders" },
-        { title: "Servicios", icon: Settings, href: "/dashboard/operator/services" },
+        { title: "Orders", icon: ShoppingBag, href: "/dashboard/operator/orders" },
+        { title: "Services", icon: Settings, href: "/dashboard/operator/services" },
         { title: "Tickets", icon: Ticket, href: "/dashboard/operator/tickets" },
     ]
 
     const vendorRoutes = [
         { title: "Dashboard", icon: LayoutDashboard, href: "/dashboard/vendor" },
-        { title: "Mis Servicios", icon: ShoppingBag, href: "/dashboard/vendor/services" },
-        { title: "Nuevo Pedido", icon: ShoppingBag, href: "/dashboard/vendor/new-order" },
+        { title: "My Services", icon: ShoppingBag, href: "/dashboard/vendor/services" },
+        { title: "New Order", icon: ShoppingBag, href: "/dashboard/vendor/new-order" },
         { title: "Ranking", icon: CrownIcon, href: "/dashboard/vendor/ranking" },
-        { title: "Calculadora", icon: BarChart3, href: "/dashboard/vendor/calculator" },
-        { title: "Historial Pedidos", icon: ShoppingBag, href: "/dashboard/orders" },
+        { title: "Calculator", icon: BarChart3, href: "/dashboard/vendor/calculator" },
+        { title: "Order History", icon: ShoppingBag, href: "/dashboard/orders" },
     ]
 
     function CrownIcon(props: any) {
@@ -141,7 +142,7 @@ export function Sidebar({ className, onNavigate }: SidebarProps) {
                         <Link href="/dashboard/profile">
                             <Button variant="ghost" className="w-full justify-start text-zinc-400 hover:text-white hover:bg-zinc-800/50">
                                 <Settings className="mr-2 h-4 w-4" />
-                                Configuración
+                                Settings
                             </Button>
                         </Link>
                     </div>

@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import { validateUser } from '@/lib/security/username-validator';
+import { funnelTracker } from '@/lib/analytics/funnel';
 
 export type CheckoutStatus = 'IDLE' | 'VALIDATING' | 'PROCESSING' | 'REDIRECTED' | 'ERROR';
 
@@ -50,6 +50,8 @@ export function useSecureCheckout() {
 
         // 3. Backend Capture (INITIATED)
         setStatus('PROCESSING');
+        funnelTracker.track('lead_attempt', { plan: planDetails.plan });
+
         try {
             const res = await fetch('/api/create-lead', {
                 method: 'POST',
@@ -61,7 +63,8 @@ export function useSecureCheckout() {
                     period: planDetails.period,
                     amount: planDetails.amount,
                     payment_method: planDetails.paymentMethod,
-                    order_bump: planDetails.orderBump
+                    order_bump: planDetails.orderBump,
+                    funnel_history: funnelTracker.getHistory() // Attach the journey
                 })
             });
 
@@ -76,20 +79,33 @@ export function useSecureCheckout() {
 
             const { orderId } = data; // Proof of persistence
 
-            // 4. Construct WhatsApp Link (With Order ID)
+            // 4. Construct WhatsApp Link (With Order ID & Content)
+            const searchParams = new URLSearchParams(window.location.search);
+            const niche = searchParams.get('interest') || 'Universal';
+            const location = searchParams.get('location') || 'Global';
+
             let link = "";
+            const planName = planDetails.plan === "starter" ? "GROWTH STARTER" : planDetails.plan === "pro" ? "VIRAL MOMENTUM" : "BRAND PARTNER";
+
             if (planDetails.paymentMethod === "crypto") {
-                const message = `[CRYPTO REQUEST] Plan: ${planDetails.plan.toUpperCase()} ($${planDetails.amount.toFixed(2)}). User: @${userData.username}. Email: ${userData.email}. Order ID: ${orderId}`;
+                const message = `[RESERVATION: #${orderId}] 🚀 READY TO ACTIVATE
+
+I've just completed my AI Growth Audit for @${userData.username} and I'm ready to unlock the ${planName} ($${planDetails.amount.toFixed(2)}).
+
+📈 Strategy Config: ${niche.toUpperCase()} / ${location.toUpperCase()}
+📧 Email: ${userData.email}
+
+Please send the USDT/BTC address. I want to start the organic acceleration today. ⚡`;
                 link = `https://wa.me/5492212235170?text=${encodeURIComponent(message)}`;
             } else {
-                const planName = planDetails.plan === "starter" ? "GROWTH STARTER" : planDetails.plan === "pro" ? "VIRAL MOMENTUM" : "BRAND PARTNER";
-                const message = `Hello TDT Support. I want to finalize payment for the ${planName} ($${planDetails.amount.toFixed(2)}). My email is ${userData.email}.
-            
-👤 User: @${userData.username}
-📅 Billing: ${planDetails.period.toUpperCase()}
-🆔 Order ID: ${orderId}
+                const message = `[RESERVATION: #${orderId}] ⚡ STRATEGY SECURED
 
-Please send payment details for Zelle/CashApp/Transfer.`;
+Hi TDT Team! I just finished the El Faro analysis for @${userData.username}. I'm ready to activate my ${planName} ($${planDetails.amount.toFixed(2)}) immediately.
+
+🌍 Target: ${niche.toUpperCase()} / ${location.toUpperCase()}
+📧 Email: ${userData.email}
+
+I'm ready. Please provide the Zelle / CashApp / Transfer details to bypass the algorithm today. 🚀`;
                 link = `https://wa.me/5492212235170?text=${encodeURIComponent(message)}`;
             }
 
@@ -107,6 +123,8 @@ Please send payment details for Zelle/CashApp/Transfer.`;
             }
 
             setStatus('REDIRECTED');
+            funnelTracker.track('STEP_4_WHATSAPP_REDIRECT');
+            funnelTracker.clear(); // Session complete
 
         } catch (err) {
             console.error("Checkout flow error:", err);

@@ -26,6 +26,9 @@ import {
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 
+import { Skeleton } from "@/components/ui/skeleton"
+import { toast } from "sonner"
+
 interface UserProfile {
     id: string
     full_name: string
@@ -34,7 +37,7 @@ interface UserProfile {
     created_at: string
 }
 
-// Componente de formulario para crear usuario (Genérico)
+// User Creation Form Component
 function CreateUserForm({ onSuccess }: { onSuccess: () => void }) {
     const [formData, setFormData] = useState({
         name: '',
@@ -61,20 +64,16 @@ function CreateUserForm({ onSuccess }: { onSuccess: () => void }) {
             const data = await response.json()
 
             if (!response.ok) {
-                throw new Error(data.error || 'Error al crear usuario')
+                throw new Error(data.error || 'Error creating user')
             }
 
-            // Mostrar mensaje de éxito
-            alert(`✅ ${data.message}`)
-
-            // Resetear formulario
+            toast.success(`User created successfully: ${data.message}`)
             setFormData({ name: '', email: '', password: '', role: 'user', initial_level: 'novato' })
-
-            // Llamar callback de éxito
             onSuccess()
 
         } catch (err: any) {
             setError(err.message)
+            toast.error(err.message)
         } finally {
             setLoading(false)
         }
@@ -83,77 +82,80 @@ function CreateUserForm({ onSuccess }: { onSuccess: () => void }) {
     return (
         <form onSubmit={handleSubmit} className="space-y-4 py-4">
             {error && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+                <div className="bg-red-500/10 border border-red-500/20 text-red-500 px-4 py-3 rounded text-sm">
                     {error}
                 </div>
             )}
 
             <div className="space-y-2">
-                <Label htmlFor="name">Nombre Completo *</Label>
+                <Label htmlFor="name">Full Name *</Label>
                 <Input
                     id="name"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="Nombre Apellido"
+                    placeholder="John Doe"
+                    className="bg-zinc-900 border-zinc-800"
                     required
                 />
             </div>
 
             <div className="space-y-2">
-                <Label htmlFor="email">Email *</Label>
+                <Label htmlFor="email">Email address *</Label>
                 <Input
                     id="email"
                     type="email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    placeholder="usuario@ejemplo.com"
+                    placeholder="user@example.com"
+                    className="bg-zinc-900 border-zinc-800"
                     required
                 />
             </div>
 
             <div className="space-y-2">
-                <Label htmlFor="password">Contraseña *</Label>
+                <Label htmlFor="password">Password *</Label>
                 <Input
                     id="password"
                     type="password"
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    placeholder="Mínimo 6 caracteres"
+                    placeholder="Min 6 characters"
+                    className="bg-zinc-900 border-zinc-800"
                     minLength={6}
                     required
                 />
             </div>
 
             <div className="space-y-2">
-                <Label htmlFor="role">Rol *</Label>
+                <Label htmlFor="role">Account Role *</Label>
                 <select
                     id="role"
                     value={formData.role}
                     onChange={(e) => setFormData({ ...formData, role: e.target.value as any })}
-                    className="w-full px-3 py-2 border border-input bg-background rounded-md"
+                    className="w-full px-3 py-2 border border-zinc-800 bg-zinc-900 text-white rounded-md text-sm"
                     required
                 >
-                    <option value="user">Usuario (Cliente)</option>
-                    <option value="vendor">Vendedor</option>
-                    <option value="operator">Operador</option>
-                    <option value="admin">Administrador</option>
+                    <option value="user">User (Client)</option>
+                    <option value="vendor">Vendor</option>
+                    <option value="operator">Operator</option>
+                    <option value="admin">Administrator</option>
+                    <option value="ceo">CEO</option>
                 </select>
             </div>
 
-            {/* Selector de Nivel Inicial - Solo para Vendedores */}
             {formData.role === 'vendor' && (
-                <div className="space-y-2 border-t pt-4">
-                    <Label htmlFor="initial_level">Nivel Inicial (Vendedor)</Label>
+                <div className="space-y-2 border-t border-zinc-800 pt-4">
+                    <Label htmlFor="initial_level">Initial Level (For Vendors)</Label>
                     <select
                         id="initial_level"
                         value={formData.initial_level}
                         onChange={(e) => setFormData({ ...formData, initial_level: e.target.value as any })}
-                        className="w-full px-3 py-2 border border-input bg-background rounded-md"
+                        className="w-full px-3 py-2 border border-zinc-800 bg-zinc-900 text-white rounded-md text-sm"
                         required
                     >
-                        <option value="novato">🌱 Novato</option>
+                        <option value="novato">🌱 Novato (Rookie)</option>
                         <option value="pro">⚡ Pro</option>
-                        <option value="experto">🔥 Experto</option>
+                        <option value="experto">🔥 Expert</option>
                         <option value="elite">👑 Elite</option>
                     </select>
                 </div>
@@ -163,9 +165,9 @@ function CreateUserForm({ onSuccess }: { onSuccess: () => void }) {
                 <Button
                     type="submit"
                     disabled={loading}
-                    className="w-full sm:w-auto"
+                    className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700"
                 >
-                    {loading ? 'Creando...' : 'Crear Usuario'}
+                    {loading ? 'Processing...' : 'Create Account'}
                 </Button>
             </DialogFooter>
         </form>
@@ -192,10 +194,10 @@ export default function AdminUsersPage() {
                 .order('created_at', { ascending: false })
 
             if (error) throw error
-
             setUsers(data || [])
         } catch (error) {
             console.error("Error fetching users:", error)
+            toast.error("Failed to load users")
         } finally {
             setLoading(false)
         }
@@ -208,38 +210,38 @@ export default function AdminUsersPage() {
     )
 
     const getRoleBadge = (role: string) => {
-        switch (role) {
-            case 'admin':
+        switch (role?.toUpperCase()) {
+            case 'ADMIN':
             case 'CEO':
-                return <Badge variant="default" className="bg-red-500">Admin</Badge>
-            case 'operator':
-                return <Badge variant="secondary" className="bg-blue-100 text-blue-800">Operador</Badge>
-            case 'vendor':
-                return <Badge variant="secondary" className="bg-purple-100 text-purple-800">Vendedor</Badge>
-            default: // user
-                return <Badge variant="outline">Usuario</Badge>
+                return <Badge className="bg-red-500/10 text-red-500 border-red-500/20">Admin</Badge>
+            case 'OPERATOR':
+                return <Badge className="bg-blue-500/10 text-blue-500 border-blue-500/20">Operator</Badge>
+            case 'VENDOR':
+                return <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20">Vendor</Badge>
+            default:
+                return <Badge variant="outline" className="text-zinc-500 border-zinc-800">User</Badge>
         }
     }
 
     return (
-        <div className="space-y-6">
-            <div className="flex items-center justify-between">
+        <div className="space-y-6 max-w-7xl mx-auto p-4 md:p-8">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Usuarios</h1>
-                    <p className="text-muted-foreground">Gestión total de usuarios del sistema</p>
+                    <h1 className="text-3xl font-bold tracking-tight text-white">Advanced User Management</h1>
+                    <p className="text-zinc-400">Manage all registered accounts and roles across the platform.</p>
                 </div>
                 <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
                     <DialogTrigger asChild>
-                        <Button>
+                        <Button className="bg-indigo-600 hover:bg-indigo-700">
                             <UserPlus className="mr-2 h-4 w-4" />
-                            Nuevo Usuario
+                            Invite/Create User
                         </Button>
                     </DialogTrigger>
-                    <DialogContent className="sm:max-w-[500px]">
+                    <DialogContent className="sm:max-w-[500px] bg-zinc-950 border-zinc-800 text-white">
                         <DialogHeader>
-                            <DialogTitle>Crear Nuevo Usuario</DialogTitle>
-                            <DialogDescription>
-                                Crea una cuenta manualmente (Cliente, Vendedor, Operador o Admin).
+                            <DialogTitle>Add New Account</DialogTitle>
+                            <DialogDescription className="text-zinc-500">
+                                Create a new account manually for a client, vendor, or internal staff.
                             </DialogDescription>
                         </DialogHeader>
                         <CreateUserForm
@@ -252,79 +254,94 @@ export default function AdminUsersPage() {
                 </Dialog>
             </div>
 
-            <Card>
-                <CardHeader>
-                    <div className="flex items-center justify-between">
-                        <CardTitle>Todos los Usuarios ({users.length})</CardTitle>
-                        <div className="relative w-64">
-                            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Card className="bg-zinc-900 border-zinc-800">
+                <CardHeader className="border-b border-zinc-800">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <CardTitle className="text-xl font-semibold text-white">Network Accounts ({users.length})</CardTitle>
+                        <div className="relative w-full md:w-80">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
                             <Input
-                                placeholder="Buscar por nombre, email o rol..."
-                                className="pl-8"
+                                placeholder="Search by name, email or role..."
+                                className="pl-10 bg-zinc-950 border-zinc-800 text-white"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
                     </div>
                 </CardHeader>
-                <CardContent>
-                    <div className="rounded-md border">
-                        <table className="w-full text-sm text-left">
-                            <thead className="bg-muted/50 text-muted-foreground">
+                <CardContent className="p-0">
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-sm text-left border-collapse">
+                            <thead className="bg-zinc-950/50 text-zinc-500 uppercase text-[10px] tracking-widest font-bold">
                                 <tr>
-                                    <th className="p-4 font-medium">Usuario</th>
-                                    <th className="p-4 font-medium">Rol</th>
-                                    <th className="p-4 font-medium">Fecha Registro</th>
-                                    <th className="p-4 font-medium text-right">Acciones</th>
+                                    <th className="p-4 border-b border-zinc-800">User Details</th>
+                                    <th className="p-4 border-b border-zinc-800">Role</th>
+                                    <th className="p-4 border-b border-zinc-800">Member Since</th>
+                                    <th className="p-4 border-b border-zinc-800 text-right">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody className="divide-y divide-zinc-800">
                                 {loading ? (
-                                    <tr>
-                                        <td colSpan={4} className="p-8 text-center text-muted-foreground">
-                                            Cargando usuarios...
-                                        </td>
-                                    </tr>
+                                    Array(5).fill(0).map((_, i) => (
+                                        <tr key={i}>
+                                            <td className="p-4"><Skeleton className="h-10 w-full bg-zinc-800" /></td>
+                                            <td className="p-4"><Skeleton className="h-6 w-20 bg-zinc-800" /></td>
+                                            <td className="p-4"><Skeleton className="h-6 w-32 bg-zinc-800" /></td>
+                                            <td className="p-4 text-right"><Skeleton className="h-8 w-8 ml-auto bg-zinc-800" /></td>
+                                        </tr>
+                                    ))
                                 ) : filteredUsers.length === 0 ? (
                                     <tr>
-                                        <td colSpan={4} className="p-8 text-center text-muted-foreground">
-                                            No se encontraron usuarios
+                                        <td colSpan={4} className="p-12 text-center text-zinc-500 bg-zinc-950/20">
+                                            No users found matching your search criteria.
                                         </td>
                                     </tr>
                                 ) : (
                                     filteredUsers.map((user) => (
-                                        <tr key={user.id} className="border-t hover:bg-muted/50">
+                                        <tr key={user.id} className="hover:bg-zinc-800/30 transition-colors group">
                                             <td className="p-4">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">
-                                                        <User className="w-4 h-4 text-slate-500" />
+                                                <div className="flex items-center gap-4">
+                                                    <div className="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center border border-zinc-700 group-hover:border-indigo-500/50 transition-colors">
+                                                        <User className="w-5 h-5 text-zinc-400 group-hover:text-indigo-400 transition-colors" />
                                                     </div>
                                                     <div>
-                                                        <div className="font-medium">{user.full_name || "Sin nombre"}</div>
-                                                        <div className="text-muted-foreground text-xs">{user.email}</div>
+                                                        <div className="font-semibold text-white">{user.full_name || "Anonymous"}</div>
+                                                        <div className="text-zinc-500 text-xs">{user.email}</div>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td className="p-4">
                                                 {getRoleBadge(user.role)}
                                             </td>
-                                            <td className="p-4 text-muted-foreground">
-                                                {new Date(user.created_at).toLocaleDateString()}
+                                            <td className="p-4 text-zinc-400 font-mono text-xs">
+                                                {new Date(user.created_at).toLocaleDateString('en-US', {
+                                                    month: 'short',
+                                                    day: 'numeric',
+                                                    year: 'numeric'
+                                                })}
                                             </td>
                                             <td className="p-4 text-right">
                                                 <DropdownMenu>
                                                     <DropdownMenuTrigger asChild>
-                                                        <Button variant="ghost" className="h-8 w-8 p-0">
+                                                        <Button variant="ghost" className="h-9 w-9 p-0 hover:bg-zinc-800 hover:text-white">
                                                             <MoreHorizontal className="h-4 w-4" />
                                                         </Button>
                                                     </DropdownMenuTrigger>
-                                                    <DropdownMenuContent align="end">
-                                                        <DropdownMenuItem>
+                                                    <DropdownMenuContent align="end" className="bg-zinc-900 border-zinc-800 text-white">
+                                                        <DropdownMenuLabel>Account Actions</DropdownMenuLabel>
+                                                        <DropdownMenuSeparator className="bg-zinc-800" />
+                                                        <DropdownMenuItem className="cursor-pointer hover:bg-zinc-800">
                                                             <Mail className="mr-2 h-4 w-4" />
-                                                            Enviar Email
+                                                            Contact via Email
                                                         </DropdownMenuItem>
-                                                        <DropdownMenuItem className="text-red-600">
-                                                            Bloquear/Eliminar
+                                                        <DropdownMenuItem className="cursor-pointer hover:bg-zinc-800">
+                                                            <Shield className="mr-2 h-4 w-4 text-indigo-400" />
+                                                            Modify Permissions
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuSeparator className="bg-zinc-800" />
+                                                        <DropdownMenuItem className="text-red-500 cursor-pointer hover:bg-red-500/10 hover:text-red-400">
+                                                            <Trash2 className="mr-2 h-4 w-4" />
+                                                            Disable/Delete Account
                                                         </DropdownMenuItem>
                                                     </DropdownMenuContent>
                                                 </DropdownMenu>

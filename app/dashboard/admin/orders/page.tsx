@@ -19,13 +19,15 @@ import {
 
 interface AdminOrder {
     id: string
-    client_name: string
-    client_email: string
-    service_name: string
-    price_final: number
+    username: string
+    email: string
+    plan: string
+    amount: number
     status: string
     created_at: string
-    seller_email: string
+    ip_address?: string
+    funnel_history?: any[]
+    is_spam?: boolean
 }
 
 export default function AdminOrdersPage() {
@@ -46,30 +48,55 @@ export default function AdminOrdersPage() {
                 .from("orders")
                 .select(`
                     id,
-                    client_name,
-                    client_email,
-                    price_final,
+                    details,
+                    amount,
                     status,
-                    created_at,
-                    services (name),
-                    profiles!seller_id (email)
+                    created_at
                 `)
                 .order('created_at', { ascending: false })
 
             if (error) throw error
 
-            const formattedOrders = data.map((order: any) => ({
-                id: order.id,
-                client_name: order.client_name,
-                client_email: order.client_email,
-                service_name: order.services?.name || 'Unknown Service',
-                price_final: order.price_final,
-                status: order.status,
-                created_at: order.created_at,
-                seller_email: order.profiles?.email || 'Unknown Seller'
-            }))
+            const now = new Date().getTime()
+            const oneHour = 60 * 60 * 1000
 
-            setOrders(formattedOrders)
+            // IP Count Map for Spam Detection
+            const ipCounts: Record<string, number[]> = {}
+
+            const formattedOrders = data.map((order: any) => {
+                const ip = order.details?.ip_address || 'unknown'
+                const timestamp = new Date(order.created_at).getTime()
+
+                if (ip !== 'unknown') {
+                    if (!ipCounts[ip]) ipCounts[ip] = []
+                    ipCounts[ip].push(timestamp)
+                }
+
+                return {
+                    id: order.id,
+                    username: order.details?.username || 'N/A',
+                    email: order.details?.email || 'N/A',
+                    plan: order.details?.plan || 'Unknown',
+                    amount: order.amount,
+                    status: order.status,
+                    created_at: order.created_at,
+                    ip_address: ip,
+                    funnel_history: order.details?.funnel_history
+                }
+            })
+
+            // Flag Spam
+            const ordersWithFlags = formattedOrders.map(order => {
+                const ip = order.ip_address
+                if (ip && ip !== 'unknown') {
+                    const timestamps = ipCounts[ip]
+                    const recentAttempts = timestamps.filter(t => (now - t) < oneHour).length
+                    return { ...order, is_spam: recentAttempts > 3 }
+                }
+                return order
+            })
+
+            setOrders(ordersWithFlags)
         } catch (error) {
             console.error("Error fetching orders:", error)
         } finally {
@@ -79,8 +106,8 @@ export default function AdminOrdersPage() {
 
     const filteredOrders = orders.filter(order => {
         const matchesSearch =
-            order.client_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            order.client_email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            order.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            order.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
             order.id.toLowerCase().includes(searchTerm.toLowerCase())
 
         const matchesStatus = statusFilter === "ALL" || order.status === statusFilter
@@ -89,12 +116,32 @@ export default function AdminOrdersPage() {
     })
 
     const getStatusColor = (status: string) => {
-        switch (status) {
-            case 'COMPLETED': return 'bg-green-500'
-            case 'PROCESSING': return 'bg-blue-500'
-            case 'PENDING_PAYMENT': return 'bg-yellow-500'
-            case 'PAYMENT_REJECTED': return 'bg-red-500'
-            default: return 'bg-gray-500'
+        const s = status.toLowerCase()
+        switch (s) {
+            case 'completed': return 'bg-emerald-500'
+            case 'processing': return 'bg-blue-500'
+            case 'initiated': return 'bg-amber-500'
+            case 'cancelled': return 'bg-rose-500'
+            default: return 'bg-slate-500'
+        }
+    }
+
+    const updateStatus = async (id: string, newStatus: string) => {
+        try {
+            const res = await fetch("/api/admin/orders/update-status", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ orderId: id, newStatus })
+            })
+
+            const data = await res.json()
+            if (!res.ok) throw new Error(data.error || "Update failed")
+
+            fetchOrders()
+            alert(`Order ${id.slice(0, 8)} updated to ${newStatus}`)
+        } catch (error: any) {
+            console.error("Error updating status:", error)
+            alert(error.message || "Failed to update status")
         }
     }
 
@@ -102,24 +149,24 @@ export default function AdminOrdersPage() {
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Gestión de Órdenes</h1>
-                    <p className="text-muted-foreground">Control total de todas las órdenes de la plataforma</p>
+                    <h1 className="text-3xl font-bold tracking-tight">Order Management</h1>
+                    <p className="text-muted-foreground">Full control over leads and manual orders</p>
                 </div>
                 <Button variant="outline">
                     <Download className="mr-2 h-4 w-4" />
-                    Exportar CSV
+                    Export CSV
                 </Button>
             </div>
 
             <Card>
                 <CardHeader>
                     <div className="flex items-center justify-between">
-                        <CardTitle>Todas las Órdenes</CardTitle>
+                        <CardTitle>Global Ledger</CardTitle>
                         <div className="flex items-center gap-2">
                             <div className="relative w-64">
                                 <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                                 <Input
-                                    placeholder="Buscar orden..."
+                                    placeholder="Search by User/Email/ID..."
                                     className="pl-8"
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -128,14 +175,14 @@ export default function AdminOrdersPage() {
                             <Select value={statusFilter} onValueChange={setStatusFilter}>
                                 <SelectTrigger className="w-[180px]">
                                     <Filter className="mr-2 h-4 w-4" />
-                                    <SelectValue placeholder="Estado" />
+                                    <SelectValue placeholder="Status" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="ALL">Todos</SelectItem>
-                                    <SelectItem value="PENDING_PAYMENT">Pendiente Pago</SelectItem>
-                                    <SelectItem value="PROCESSING">Procesando</SelectItem>
-                                    <SelectItem value="COMPLETED">Completado</SelectItem>
-                                    <SelectItem value="PAYMENT_REJECTED">Rechazado</SelectItem>
+                                    <SelectItem value="ALL">All Statuses</SelectItem>
+                                    <SelectItem value="initiated">Initiated (Lead)</SelectItem>
+                                    <SelectItem value="processing">Processing</SelectItem>
+                                    <SelectItem value="completed">Completed</SelectItem>
+                                    <SelectItem value="cancelled">Cancelled</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
@@ -146,45 +193,54 @@ export default function AdminOrdersPage() {
                         <table className="w-full text-sm text-left">
                             <thead className="bg-muted/50 text-muted-foreground">
                                 <tr>
-                                    <th className="p-4 font-medium">ID / Cliente</th>
-                                    <th className="p-4 font-medium">Servicio</th>
-                                    <th className="p-4 font-medium">Vendedor</th>
-                                    <th className="p-4 font-medium">Monto</th>
-                                    <th className="p-4 font-medium">Estado</th>
-                                    <th className="p-4 font-medium">Fecha</th>
-                                    <th className="p-4 font-medium text-right">Acciones</th>
+                                    <th className="p-4 font-medium">ID / Instagram</th>
+                                    <th className="p-4 font-medium">Plan</th>
+                                    <th className="p-4 font-medium">Email</th>
+                                    <th className="p-4 font-medium">Amount</th>
+                                    <th className="p-4 font-medium">Status</th>
+                                    <th className="p-4 font-medium text-right">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {loading ? (
                                     <tr>
-                                        <td colSpan={7} className="p-8 text-center text-muted-foreground">
-                                            Cargando órdenes...
+                                        <td colSpan={6} className="p-8 text-center text-muted-foreground italic">
+                                            Loading orders from matrix...
                                         </td>
                                     </tr>
                                 ) : filteredOrders.length === 0 ? (
                                     <tr>
-                                        <td colSpan={7} className="p-8 text-center text-muted-foreground">
-                                            No se encontraron órdenes
+                                        <td colSpan={6} className="p-8 text-center text-muted-foreground">
+                                            No sync entries found.
                                         </td>
                                     </tr>
                                 ) : (
                                     filteredOrders.map((order) => (
-                                        <tr key={order.id} className="border-t hover:bg-muted/50">
+                                        <tr key={order.id} className="border-t hover:bg-muted/50 transition-colors">
                                             <td className="p-4">
-                                                <div className="font-medium truncate w-32" title={order.id}>#{order.id.slice(0, 8)}</div>
-                                                <div className="text-muted-foreground">{order.client_name}</div>
+                                                <div className="flex items-center gap-2">
+                                                    <div>
+                                                        <div className="font-mono text-[10px] text-slate-400">#{order.id.slice(0, 8)}</div>
+                                                        <div className="font-bold text-slate-900 group flex items-center gap-1.5">
+                                                            @{order.username}
+                                                        </div>
+                                                    </div>
+                                                    {order.is_spam && (
+                                                        <Badge variant="destructive" className="animate-pulse py-0 h-5 px-1.5 text-[8px] font-black uppercase tracking-tighter">SPAM RISK</Badge>
+                                                    )}
+                                                </div>
                                             </td>
-                                            <td className="p-4">{order.service_name}</td>
-                                            <td className="p-4 text-muted-foreground">{order.seller_email}</td>
-                                            <td className="p-4 font-medium">${order.price_final}</td>
                                             <td className="p-4">
-                                                <Badge className={getStatusColor(order.status)}>
-                                                    {order.status}
+                                                <Badge variant="outline" className="capitalize font-bold border-indigo-200 text-indigo-700 bg-indigo-50">
+                                                    {order.plan}
                                                 </Badge>
                                             </td>
-                                            <td className="p-4 text-muted-foreground">
-                                                {new Date(order.created_at).toLocaleDateString()}
+                                            <td className="p-4 text-xs font-medium text-slate-500">{order.email}</td>
+                                            <td className="p-4 font-black">${order.amount}</td>
+                                            <td className="p-4">
+                                                <Badge className={`${getStatusColor(order.status)} text-[10px] font-black uppercase tracking-wider`}>
+                                                    {order.status}
+                                                </Badge>
                                             </td>
                                             <td className="p-4 text-right">
                                                 <DropdownMenu>
@@ -194,11 +250,18 @@ export default function AdminOrdersPage() {
                                                         </Button>
                                                     </DropdownMenuTrigger>
                                                     <DropdownMenuContent align="end">
-                                                        <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-                                                        <DropdownMenuItem>Ver detalles</DropdownMenuItem>
-                                                        <DropdownMenuItem>Contactar Cliente</DropdownMenuItem>
+                                                        <DropdownMenuLabel>Manual Override</DropdownMenuLabel>
+                                                        <DropdownMenuItem onClick={() => updateStatus(order.id, 'processing')}>Mark as PAID</DropdownMenuItem>
+                                                        <DropdownMenuItem onClick={() => updateStatus(order.id, 'completed')}>Mark as COMPLETED</DropdownMenuItem>
+                                                        <DropdownMenuItem onClick={() => window.open(`mailto:${order.email}`)}>Contact User</DropdownMenuItem>
+                                                        {order.funnel_history && (
+                                                            <>
+                                                                <DropdownMenuSeparator />
+                                                                <DropdownMenuItem onClick={() => alert(JSON.stringify(order.funnel_history, null, 2))}>View Funnel Journey</DropdownMenuItem>
+                                                            </>
+                                                        )}
                                                         <DropdownMenuSeparator />
-                                                        <DropdownMenuItem className="text-red-600">Cancelar Orden</DropdownMenuItem>
+                                                        <DropdownMenuItem onClick={() => updateStatus(order.id, 'cancelled')} className="text-red-600 font-bold">CANCEL ORDER</DropdownMenuItem>
                                                     </DropdownMenuContent>
                                                 </DropdownMenu>
                                             </td>

@@ -68,6 +68,34 @@ export async function POST(req: Request) {
             return NextResponse.json({ success: false, error: error.message }, { status: 500 })
         }
 
+        // 4. Trigger "Order Initiated" Email (Async)
+        const planNameMap: Record<string, string> = {
+            'starter': 'GROWTH STARTER',
+            'pro': 'VIRAL MOMENTUM',
+            'partner': 'BRAND PARTNER'
+        };
+
+        const planName = planNameMap[plan] || 'Custom Strategy';
+        const orderId = data?.[0]?.id;
+
+        // Construct the WhatsApp link for the email button
+        const waMessage = `[RESERVATION: #${orderId}] ⚡ STRATEGY SECURED\n\nHi TDT Team! I just finished the El Faro analysis for @${username}. I'm ready to activate my ${planName} ($${amount.toFixed(2)}) immediately.\n\n📧 Email: ${email}\n\nI'm ready. Please provide the Zelle / CashApp / Transfer details to bypass the algorithm today. 🚀`;
+        const payment_link = `https://wa.me/5492212235170?text=${encodeURIComponent(waMessage)}`;
+
+        try {
+            const { emailService } = await import('@/lib/services/email');
+            emailService.sendOrderInitiated(email, {
+                username,
+                planName,
+                amount,
+                plan,
+                orderId,
+                payment_link
+            }).catch(e => console.error('Delayed Email Error:', e));
+        } catch (e) {
+            console.error('Email trigger failed:', e);
+        }
+
         return NextResponse.json({ success: true, orderId: data?.[0]?.id })
 
     } catch (error) {

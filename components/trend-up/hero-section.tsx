@@ -3,10 +3,16 @@
 import { Button } from "@/components/ui/button"
 import { CheckCircle2, Star, TrendingUp, Users, ShieldCheck } from "lucide-react"
 import Link from "next/link"
+import { useEffect } from "react"
 import { useI18n } from "@/lib/i18n/context"
+import { funnelTracker } from "@/lib/analytics/funnel"
 
 export default function HeroSection() {
   const { t } = useI18n()
+
+  useEffect(() => {
+    funnelTracker.track('hero_view')
+  }, [])
 
   // Holiday Logic
   const today = new Date()
