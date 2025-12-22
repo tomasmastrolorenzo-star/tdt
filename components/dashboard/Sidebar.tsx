@@ -7,7 +7,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useState, useEffect } from "react"
 import { createClient } from "@/lib/supabase/client"
-import { LevelBadge } from "./LevelBadge"
+import { LevelBadge } from "./level-badge"
 import { getVendorStats } from "@/lib/dashboard/stats"
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
