@@ -1,7 +1,7 @@
 "use client"
 
 import { useI18n } from "@/lib/i18n/context"
-import { Shield, FileText, Ban, AlertTriangle } from "lucide-react"
+import { Shield, FileText, Ban, AlertTriangle, Rocket } from "lucide-react"
 
 export default function TermsPage() {
     const { t } = useI18n()
@@ -91,6 +91,40 @@ export default function TermsPage() {
                             </h2>
                             <div className="prose prose-slate max-w-none text-slate-600 whitespace-pre-wrap">
                                 {legal.sections.cancellation.content}
+                            </div>
+                        </section>
+
+                        {/* 5. DELIVERY POLICY (CRYPTOMUS COMPLIANCE) */}
+                        <section className="relative pl-8 border-l-4 border-slate-300">
+                            <h2 className="text-2xl font-bold text-slate-900 mb-4 flex items-center gap-3">
+                                <Rocket className="w-6 h-6 text-purple-500" />
+                                5. DELIVERY POLICY
+                            </h2>
+                            <div className="prose prose-slate max-w-none text-slate-600 whitespace-pre-wrap">
+                                <p className="mb-2"><strong>Digital Service Nature</strong>: TDT provides intangible digital consulting and promotional services. No physical goods are shipped.</p>
+                                <p className="mb-2"><strong>Timeline</strong>:</p>
+                                <ul className="list-disc pl-5 mb-2">
+                                    <li><strong>Diagnostic Reports</strong>: Delivered instantly via dashboard/email upon payment.</li>
+                                    <li><strong>Sovereignty Protocols</strong>: Campaign setup begins within 24-48 hours. Full stabilization occurs over a 21-day cycle.</li>
+                                </ul>
+                                <p><strong>Confirmation</strong>: You will receive an email confirmation immediately upon transaction completion. Use this as your receipt.</p>
+                            </div>
+                        </section>
+
+                        {/* 6. PROHIBITED USAGE */}
+                        <section className="relative pl-8 border-l-4 border-slate-300">
+                            <h2 className="text-2xl font-bold text-slate-900 mb-4 flex items-center gap-3">
+                                <Ban className="w-6 h-6 text-red-500" />
+                                6. PROHIBITED USAGE
+                            </h2>
+                            <div className="prose prose-slate max-w-none text-slate-600 whitespace-pre-wrap">
+                                You agree NOT to use TDT services for:
+                                <ul className="list-disc pl-5">
+                                    <li>Promoting illegal content, hate speech, or violence.</li>
+                                    <li>Accounts involved in fraud, phishing, or scams.</li>
+                                    <li>Political manipulation or election interference.</li>
+                                </ul>
+                                <span className="font-bold text-red-600 block mt-2">Violation results in immediate termination without refund.</span>
                             </div>
                         </section>
 

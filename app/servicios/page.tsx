@@ -4,7 +4,7 @@ import { Suspense, useEffect, useState } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
-import { CheckCircle2, Database, Zap, Shield, Activity, BarChart3, Lock, Cpu } from "lucide-react"
+import { CheckCircle2, Database, Zap, Shield, Activity, BarChart3, Lock, Cpu, AlertCircle } from "lucide-react"
 import { LOCATIONS, INTERESTS } from "@/lib/el-faro/selectors"
 import { useI18n } from "@/lib/i18n/context"
 import { funnelTracker } from "@/lib/analytics/funnel"
@@ -270,35 +270,113 @@ function ServiciosContent() {
           </div>
         )}
 
-        {/* PDF PREVIEW (STYLIZED) */}
-        <div className="max-w-4xl mx-auto mb-20">
-          <div className="relative border border-slate-800 bg-[#02040a] p-12 overflow-hidden group">
-            <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-xl z-10 flex flex-col items-center justify-center text-center">
-              <Lock className="w-12 h-12 text-indigo-500 mb-6 animate-pulse" />
-              <h4 className="text-xl font-verdict text-white mb-2 italic">Strategy Roadmap: Restricted</h4>
-              <p className="text-[10px] text-slate-500 font-mono uppercase tracking-[0.4em]">AUTHENTICATION REQUIRED TO DECRYPT 5-MONTH TIMELINE</p>
-            </div>
-            <div className="opacity-10 space-y-8 select-none grayscale">
-              <div className="h-4 w-1/2 bg-slate-800" />
-              <div className="grid grid-cols-4 gap-4">
-                {[1, 2, 3, 4].map(i => <div key={i} className="h-24 bg-slate-800" />)}
-              </div>
-              <div className="h-48 bg-slate-800" />
-            </div>
+        {/* COST OF INACTION ANCHOR */}
+        <div className="mb-16 text-center">
+          <div className="inline-block border border-red-900/50 bg-red-950/10 px-6 py-2 mb-4">
+            <span className="text-[10px] text-red-500 font-mono uppercase tracking-widest">Financial Haemorrhage Detected</span>
+          </div>
+          <h3 className="text-4xl md:text-5xl font-verdict text-white mb-2">
+            ${new Intl.NumberFormat().format(parseInt(searchParams.get('coi') || '0'))} <span className="text-slate-600 text-2xl">/ Year</span>
+          </h3>
+          <p className="text-xs text-slate-500 font-mono uppercase tracking-widest">Estimated Revenue Loss from Low Authority</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+          {/* TIER 1: STANDARD */}
+          <div className="border border-indigo-500/20 bg-[#02040a] p-8 hover:border-indigo-500/50 transition-all opacity-50 hover:opacity-100">
+            <h4 className="text-lg font-verdict text-white mb-2">Standard</h4>
+            <div className="text-2xl font-mono text-indigo-400 mb-6">$150 <span className="text-xs text-slate-600">/ 10 Days</span></div>
+            <p className="text-xs text-slate-500 font-mono leading-relaxed mb-6">Micro-correction for assets with slight erosion. Basic Exif realignment.</p>
+            <Button className="w-full bg-transparent border border-indigo-500 text-indigo-500 hover:bg-indigo-500 hover:text-white rounded-none text-[10px] uppercase tracking-widest">
+              Select Standard
+            </Button>
+          </div>
+
+          {/* TIER 2: PROFESSIONAL */}
+          <div className="border border-indigo-500/20 bg-[#02040a] p-8 hover:border-indigo-500/50 transition-all">
+            <h4 className="text-lg font-verdict text-white mb-2">Professional</h4>
+            <div className="text-2xl font-mono text-indigo-400 mb-6">$650 <span className="text-xs text-slate-600">/ 30 Days</span></div>
+            <p className="text-xs text-slate-500 font-mono leading-relaxed mb-6">Momentum structure for niche leaders. Niche-specific metadata injection.</p>
+            <Button className="w-full bg-indigo-900/20 border border-indigo-500 text-indigo-400 hover:bg-indigo-500 hover:text-white rounded-none text-[10px] uppercase tracking-widest">
+              Select Professional
+            </Button>
+          </div>
+
+          {/* TIER 3: ELITE MGMT */}
+          <div className="border border-indigo-500 bg-[#050510] p-8 relative shadow-[0_0_30px_rgba(99,102,241,0.1)]">
+            <div className="absolute top-0 right-0 bg-indigo-500 text-black text-[9px] font-bold px-2 py-1 uppercase tracking-widest">Recommended</div>
+            <h4 className="text-xl font-verdict text-white mb-2">Elite MGMT</h4>
+            <div className="text-3xl font-mono text-white mb-6">$1,850 <span className="text-xs text-slate-500">/ 60 Days</span></div>
+            <p className="text-xs text-slate-400 font-mono leading-relaxed mb-6">Whale stabilization. Full algorithmic dominance and cluster repulsion.</p>
+            <Button className="w-full bg-indigo-600 text-white hover:bg-indigo-500 rounded-none text-[10px] uppercase tracking-widest h-12">
+              Initialize Elite
+            </Button>
           </div>
         </div>
 
-        {/* BUREAU FOOTER */}
-        <div className="max-w-3xl mx-auto text-center border-t border-indigo-500/10 pt-16">
-          <div className="flex justify-center gap-12 text-[9px] font-mono text-slate-600 uppercase tracking-widest">
-            <div className="flex items-center gap-2"><Shield className="w-3 h-3" /> SSL_ENCRYPTED</div>
-            <div className="flex items-center gap-2"><Activity className="w-3 h-3" /> NEURAL_BYPASS_v6</div>
-            <div className="flex items-center gap-2">AUDIT_ID: {Math.random().toString(16).slice(2, 10).toUpperCase()}</div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20 relative">
+          {isLazarus && (
+            <div className="absolute inset-0 z-20 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center border border-red-900/50">
+              <AlertCircle className="w-12 h-12 text-red-600 mb-4 animate-pulse" />
+              <h3 className="text-2xl font-verdict text-white mb-2">Lazarus Protocol Required</h3>
+              <p className="text-xs text-red-400 font-mono uppercase tracking-widest mb-6 max-w-md text-center">
+                Asset Integrity Critical. Standard intervention protocols suspended. Eligibility review required.
+              </p>
+              <Button className="bg-red-900 border border-red-500 text-white hover:bg-red-800 rounded-none px-8 py-4 text-xs tracking-[0.2em] uppercase">
+                Solicitar Evaluación de Elegibilidad
+              </Button>
+            </div>
+          )}
+
+          {/* TIER 4: SOVEREIGN */}
+          <div className="border border-slate-800 p-8 opacity-75">
+            <h4 className="text-lg font-verdict text-slate-400 mb-2">Sovereign Accel</h4>
+            <div className="text-xl font-mono text-slate-500 mb-4">$5,500 <span className="text-[10px]">/ Quarter</span></div>
+            <Button disabled className="w-full bg-slate-900 text-slate-600 border border-slate-800 rounded-none text-[10px] uppercase tracking-widest">
+              Waitlist Only
+            </Button>
+          </div>
+
+          {/* TIER 5: INSTITUTIONAL */}
+          <div className="border border-slate-800 p-8 opacity-75">
+            <h4 className="text-lg font-verdict text-slate-400 mb-2">Institutional</h4>
+            <div className="text-xl font-mono text-slate-500 mb-4">$15,000 <span className="text-[10px]">/ Annual</span></div>
+            <Button disabled className="w-full bg-slate-900 text-slate-600 border border-slate-800 rounded-none text-[10px] uppercase tracking-widest">
+              Corporate Only
+            </Button>
+          </div>
+
+          {/* TIER 6: LAZARUS FULL */}
+          <div className="border border-red-900/30 bg-red-950/5 p-8 relative">
+            <h4 className="text-lg font-verdict text-red-500 mb-2">Lazarus Full</h4>
+            <div className="text-xl font-mono text-red-400/80 mb-4">$25,000+ <span className="text-[10px]">/ Resonance</span></div>
+            <Button disabled className="w-full bg-transparent text-red-900 border border-red-900/50 rounded-none text-[10px] uppercase tracking-widest">
+              By Invitation
+            </Button>
           </div>
         </div>
 
+        {/* STRATEGY ROADMAP REPLACE */}
+        <div className="relative border border-slate-800 bg-[#02040a] p-12 overflow-hidden group mb-20 text-center">
+          <div className="opacity-10 space-y-8 select-none grayscale">
+            <div className="h-4 w-1/2 bg-slate-800" />
+            <div className="grid grid-cols-4 gap-4">
+              {[1, 2, 3, 4].map(i => <div key={i} className="h-24 bg-slate-800" />)}
+            </div>
+            <div className="h-48 bg-slate-800" />
+          </div>
+        </div>
       </div>
-    </main>
+
+      {/* BUREAU FOOTER */}
+      <div className="max-w-3xl mx-auto text-center border-t border-indigo-500/10 pt-16">
+        <div className="flex justify-center gap-12 text-[9px] font-mono text-slate-600 uppercase tracking-widest">
+          <div className="flex items-center gap-2"><Shield className="w-3 h-3" /> SSL_ENCRYPTED</div>
+          <div className="flex items-center gap-2"><Activity className="w-3 h-3" /> NEURAL_BYPASS_v6</div>
+          <div className="flex items-center gap-2">AUDIT_ID: {Math.random().toString(16).slice(2, 10).toUpperCase()}</div>
+        </div>
+      </div>
+    </main >
   )
 }
 

@@ -8,6 +8,7 @@ import { ArrowRight, Sparkles, Loader2, User, Globe, Rocket, BarChart3, Database
 import { LOCATIONS, INTERESTS, GENDERS, type LocationId, type InterestId, type GenderId } from "@/lib/el-faro/selectors"
 import { useI18n } from "@/lib/i18n/context"
 import { funnelTracker } from "@/lib/analytics/funnel"
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 
 const NeuralAuthentication = () => (
     <motion.div
@@ -27,22 +28,24 @@ const NeuralAuthentication = () => (
 
 const LoadingOverlay = ({ t, values, isLazarus }: { t: any, values: any, isLazarus: boolean }) => {
     const [msgIndex, setMsgIndex] = useState(0)
+    const [growthHeight, setGrowthHeight] = useState(10)
 
     useEffect(() => {
         const timer = setInterval(() => {
-            setMsgIndex(prev => prev < 4 ? prev + 1 : prev)
-        }, 900)
+            setMsgIndex(prev => prev < 5 ? prev + 1 : prev)
+        }, 1500) // Slower for effect
+        setTimeout(() => setGrowthHeight(85), 500) // Animate Growth Bar
         return () => clearInterval(timer)
     }, [])
 
     const nicheName = values.interest
     const messages = [
-        { text: "[SCANNING_SAM3_GRADIENTS]... ANOMALY_0.82", color: "text-white" },
-        { text: "[EXIF_PROVENANCE_CHECK]... LOSS_0.78", color: "text-indigo-400" },
-        { text: "[LATENT_SPACE_OFFSET]... +0.52_REPULSION", color: "text-indigo-400" },
-        { text: "CALCULATING TRUSTED MULTIPLIER...", color: "text-indigo-400" },
-        { text: isLazarus ? "FATAL_ERROR: HUMAN_ENTROPY_DEFICIENCY" : "FORENSIC_BIOPSIA_COMPLETE", color: isLazarus ? "text-red-500" : "text-emerald-400" },
-        { text: "DISPATCHING V7.0 VERDICT...", color: "text-white" }
+        { text: "MAPPING_CURRENT_TRAJECTORY... [FLATLINE]", color: "text-slate-400" },
+        { text: "SIMULATING_V7_AUTHORITY_INJECTION...", color: "text-indigo-400" },
+        { text: "PROJECTING_REVENUE_RECOVERY...", color: "text-emerald-400" },
+        { text: "CALCULATING_DOMINANCE_INDEX...", color: "text-indigo-400" },
+        { text: isLazarus ? "FATAL_ERROR: HUMAN_ENTROPY_CRITICAL" : "FORENSIC_BIOPSIA_COMPLETE", color: isLazarus ? "text-red-500" : "text-emerald-400" },
+        { text: "GENERATING_SOVEREIGNTY_ROADMAP...", color: "text-white" }
     ]
 
     return (
@@ -50,39 +53,51 @@ const LoadingOverlay = ({ t, values, isLazarus }: { t: any, values: any, isLazar
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className={`absolute inset-0 z-50 ${isLazarus ? 'bg-red-950/40 crimson-flicker' : 'bg-[#02040a]'} backdrop-blur-3xl flex flex-col items-center justify-center p-8 text-center terminal-scanlines`}
+            className={`absolute inset-0 z-50 ${isLazarus ? 'bg-red-950/90 crimson-flicker' : 'bg-[#02040a]/95'} backdrop-blur-3xl flex flex-col items-center justify-center p-8 text-center terminal-scanlines`}
         >
-            <div className={`w-64 space-y-2 text-left font-mono text-[10px] ${isLazarus ? 'text-red-400' : 'text-indigo-500'} mb-10`}>
-                <p>LOCAL_HOST: ANALYSIS_v6.0.4</p>
-                <p>STATUS: {isLazarus ? "CRITICAL_FAILURE" : "OP_ACTIVE"}</p>
-                <p>TARGET: {nicheName.toUpperCase()}_AUTHORITY</p>
+            {/* FUTURE PROJECTION GRAPH */}
+            <div className="flex items-end gap-8 mb-12 h-40 border-b border-white/10 pb-2 px-8">
+                <div className="flex flex-col items-center gap-2">
+                    <div className="w-12 bg-slate-800/50 border border-slate-700 h-16 rounded-t-sm" />
+                    <span className="text-[9px] text-slate-500 font-mono tracking-widest">CURRENT</span>
+                </div>
+                <div className="flex flex-col items-center gap-2 group">
+                    <div className="relative w-16">
+                        <motion.div
+                            initial={{ height: 16 }}
+                            animate={{ height: 140 }}
+                            transition={{ duration: 3, ease: "circOut" }}
+                            className={`w-full ${isLazarus ? 'bg-red-500' : 'bg-[#d4af37]'} border ${isLazarus ? 'border-red-400' : 'border-[#fcebb6]'} rounded-t-sm shadow-[0_0_30px_rgba(212,175,55,0.3)]`}
+                        />
+                        <div className="absolute -top-8 left-1/2 -translate-x-1/2 text-[#d4af37] text-xs font-bold font-mono">+420%</div>
+                    </div>
+                    <span className={`text-[10px] ${isLazarus ? 'text-red-400' : 'text-[#d4af37]'} font-mono tracking-widest font-bold`}>PROJECTED</span>
+                </div>
             </div>
 
-            <div className="relative mb-12">
-                <Activity className={`w-16 h-16 ${isLazarus ? 'text-red-500' : 'text-indigo-500'} animate-pulse`} />
-                <div className={`absolute inset-0 border-2 ${isLazarus ? 'border-red-500/30' : 'border-indigo-500/30'} rounded-full animate-spin-slow scale-150`} />
+            <div className={`w-full max-w-md space-y-4 text-center font-mono text-[10px] ${isLazarus ? 'text-red-400' : 'text-indigo-500'} mb-10`}>
+                <p>TARGET: {nicheName.toUpperCase()}_CLUSTER</p>
+                <div className="h-1 w-full bg-slate-900 rounded-full overflow-hidden">
+                    <motion.div
+                        className={`h-full ${isLazarus ? 'bg-red-500' : 'bg-[#d4af37]'}`}
+                        initial={{ width: "0%" }}
+                        animate={{ width: "100%" }}
+                        transition={{ duration: 8 }}
+                    />
+                </div>
             </div>
 
             <AnimatePresence mode="wait">
                 <motion.p
                     key={msgIndex}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: 10 }}
-                    className={`text-sm font-black font-mono tracking-widest ${messages[Math.min(msgIndex, 4)].color}`}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className={`text-sm font-bold font-mono tracking-widest ${messages[Math.min(msgIndex, 5)].color}`}
                 >
-                    {">"} {messages[Math.min(msgIndex, 4)].text}
+                    {">"} {messages[Math.min(msgIndex, 5)].text}
                 </motion.p>
             </AnimatePresence>
-
-            <div className="w-48 h-[1px] bg-slate-800 rounded-full mt-8 overflow-hidden">
-                <motion.div
-                    className={`h-full ${isLazarus ? 'bg-red-500' : 'bg-indigo-500'}`}
-                    initial={{ width: "0%" }}
-                    animate={{ width: `${((msgIndex + 1) / 5) * 100}%` }}
-                    transition={{ duration: 0.8 }}
-                />
-            </div>
         </motion.div>
     )
 }
@@ -90,6 +105,7 @@ const LoadingOverlay = ({ t, values, isLazarus }: { t: any, values: any, isLazar
 export default function SmartGrowthConsultant() {
     const { t } = useI18n()
     const router = useRouter()
+    const supabase = createClientComponentClient()
     const [isLoading, setIsLoading] = useState(false)
     const [isAuthenticating, setIsAuthenticating] = useState(false)
 
@@ -99,8 +115,9 @@ export default function SmartGrowthConsultant() {
     const [gender, setGender] = useState<GenderId>("any")
     const [location, setLocation] = useState<LocationId>("us")
     const [interest, setInterest] = useState<InterestId>("business")
+    const [objective, setObjective] = useState<string>("dominion") // New V7 Input
     const [diagnosis, setDiagnosis] = useState<string>("")
-    const [currentStep, setCurrentStep] = useState(0) // 0: Config, 1: Technical Scan
+    const [currentStep, setCurrentStep] = useState(0) // 0: Config, 1: Objectives, 2: Scan
 
     // Lazarus State
     const [followers, setFollowers] = useState<string>("")
@@ -128,6 +145,11 @@ export default function SmartGrowthConsultant() {
 
         if (currentStep === 0) {
             setCurrentStep(1)
+            return
+        }
+        if (currentStep === 1) {
+            // New Objective Step Validation
+            setCurrentStep(2)
             return
         }
 
@@ -165,8 +187,26 @@ export default function SmartGrowthConsultant() {
         const isLazarus = (trustedMultiplier < 0.01 && fCount > 100000)
         setIsLazarusDetected(isLazarus)
 
-        const highValueNiches = ['business', 'trading', 'tech', 'medical', 'real_estate']
-        const isWhale = highValueNiches.includes(interest) || fCount > 50000
+        // Sovereignty Engine V7.0 Financial Logic
+        // 1. Niche Complexity Multiplier
+        let nicheMultiplier = 1.0
+        let avgTicket = 150 // Default low ticket
+        if (['real_estate', 'luxury'].includes(interest)) { nicheMultiplier = 1.5; avgTicket = 2500 }
+        else if (['medical', 'legal'].includes(interest)) { nicheMultiplier = 1.4; avgTicket = 1200 }
+        else if (['business', 'finance'].includes(interest)) { nicheMultiplier = 1.3; avgTicket = 500 }
+
+        // 2. Erosion Factor: (Peak - Current) / Peak
+        // Simulated Peak: Current * (1 + (Variance 0.1 to 0.5))
+        const peakVariance = 1.0 + ((handleSeed % 50) / 100)
+        const peakFollowers = Math.floor(fCount * peakVariance)
+        const erosionFactor = (peakFollowers - fCount) / peakFollowers
+
+        // 3. Cost of Inaction (Lucro Cesante)
+        // Formula: Followers * ConversionRate (0.5%) * Ticket * 12 months
+        // Adjusted by Niche Multiplier
+        const conversionRate = 0.005
+        const costOfInaction = fCount * conversionRate * avgTicket * nicheMultiplier
+
         let nicheTier = 'SILVER'
         if (isLazarus) nicheTier = 'LAZARUS'
         else if (fCount > 500000) nicheTier = 'BLACK'
@@ -226,10 +266,11 @@ export default function SmartGrowthConsultant() {
             payment_status: 'PENDING'
         })
 
+        const isWhale = fCount > 50000 || ['business', 'trading', 'tech', 'medical', 'real_estate'].includes(interest)
         const leadClassification = isLazarus ? 'LAZARUS' : (isWhale ? 'WHALE' : 'STANDARD')
 
 
-        funnelTracker.track('faro_analyze', { platform, interest, lead_classification: leadClassification })
+        funnelTracker.track('lead_attempt', { platform, interest, lead_classification: leadClassification })
         setIsLoading(true)
         await new Promise(resolve => setTimeout(resolve, 10000))
 
@@ -238,6 +279,8 @@ export default function SmartGrowthConsultant() {
             lead_class: leadClassification,
             auth_score: (trustedMultiplier * 100).toFixed(2), // Scale for UI % display
             entropy_score: humanEntropy.toFixed(2),
+            coi: costOfInaction.toFixed(0),
+            erosion: (erosionFactor * 100).toFixed(1),
             f_count: fCount.toString(),
             l_count: lCount.toString()
         })
@@ -278,7 +321,7 @@ export default function SmartGrowthConsultant() {
 
                 <div className="p-8 md:p-12 flex-grow flex flex-col justify-center">
                     <AnimatePresence mode="wait">
-                        {currentStep === 0 ? (
+                        {currentStep === 0 && (
                             <motion.div key="s1" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-8">
                                 <div className="grid md:grid-cols-2 gap-10">
                                     {/* Platform & Niche */}
@@ -346,8 +389,44 @@ export default function SmartGrowthConsultant() {
                                     </Button>
                                 </div>
                             </motion.div>
-                        ) : (
-                            <motion.div key="s2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-10">
+                        )}
+
+                        {currentStep === 1 && (
+                            <motion.div key="s2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-8 max-w-2xl mx-auto text-center">
+                                <h3 className="text-2xl font-verdict text-white italic mb-8">Define Your Mandate</h3>
+
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+                                    {['DOMINION', 'REVENUE', 'LEGACY'].map((m) => (
+                                        <button
+                                            key={m}
+                                            onClick={() => setObjective(m.toLowerCase())}
+                                            className={`p-6 border ${objective === m.toLowerCase() ? 'border-[#d4af37] bg-[#d4af37]/10' : 'border-slate-800 bg-slate-900/50'} hover:border-[#d4af37]/50 transition-all group`}
+                                        >
+                                            <div className={`w-2 h-2 rounded-full mb-4 mx-auto ${objective === m.toLowerCase() ? 'bg-[#d4af37]' : 'bg-slate-700'}`} />
+                                            <div className="text-xs font-mono text-white tracking-widest">{m}</div>
+                                        </button>
+                                    ))}
+                                </div>
+
+                                <h3 className="text-2xl font-verdict text-white italic mb-8">Deployment Velocity</h3>
+                                <div className="bg-slate-900/50 border border-slate-800 p-8 mb-8">
+                                    <div className="flex justify-between text-[9px] font-mono text-slate-500 uppercase tracking-widest mb-4">
+                                        <span>Standard</span>
+                                        <span className="text-[#d4af37]">Sovereign Speed</span>
+                                    </div>
+                                    <div className="h-1 w-full bg-slate-800 relative">
+                                        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 bg-[#d4af37] rounded-full shadow-[0_0_10px_#d4af37]" />
+                                    </div>
+                                </div>
+
+                                <Button onClick={handleNext} className="w-full md:w-auto bg-[#d4af37] text-black hover:bg-[#b5952f] text-xs font-mono uppercase tracking-[0.2em] py-8 px-16 rounded-none">
+                                    Confirm Mandate <ArrowRight className="ml-2 w-4 h-4" />
+                                </Button>
+                            </motion.div>
+                        )}
+
+                        {currentStep === 2 && (
+                            <motion.div key="s3" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-10">
                                 <div className="text-center font-mono space-y-2">
                                     <h3 className="text-white text-sm uppercase tracking-[0.5em]">Lazarus Calibration</h3>
                                     <p className="text-slate-600 text-[10px] animate-pulse">EXTRACTING METADATA FROM SOURCE...</p>
