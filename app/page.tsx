@@ -28,38 +28,38 @@ const METHOD_PILLARS = [
 
 const TESTIMONIALS = [
   {
-    quote: "TDT no gestiona redes; audita patrimonios. Recuperé mi autoridad frente a pacientes VIP cuando otras agencias solo me daban métricas vacías.",
-    author: "Dr. R. Hoffmann",
-    role: "Elite Surgeon, Miami"
+    quote: "Mi práctica en Miami dependía de referidos. TDT reestructuró mi autoridad digital y ahora el 60% de mis pacientes High-Net-Worth llegan por Instagram validado. Recuperé el control.",
+    author: "Dr. Alexander V.",
+    role: "Plastic Surgeon, Miami"
   },
   {
-    quote: "En mercados como Dubai, si no proyectas una autoridad única, el algoritmo te borra. Detectaron la fuga de prestigio que nos costaba millones.",
-    author: "A. Al-Sayed",
-    role: "Luxury Real Estate Principal"
+    quote: "En Real Estate de lujo en Dubai, la percepción es liquidez. Detectaron un bloqueo algorítmico que me costaba leads de $2M+. La corrección fue quirúrgica.",
+    author: "Karem A.",
+    role: "Senior Broker, Dubai Hills"
   },
   {
-    quote: "Mi marca personal era un pasivo. Ahora es mi activo de negocios más fuerte. Profesionalismo al nivel de una firma de consultoría estratégica.",
-    author: "M. Peterson",
-    role: "Professional Athlete & Founder"
+    quote: "No buscaba fama, buscaba leverage de negocios. Transformaron mi marca de 'atleta popular' a 'activo de inversión corporativa'. El ROI es incalculable.",
+    author: "J. Martinez",
+    role: "Pro Athlete & Angel Investor"
   }
 ]
 
 const FAQS = [
   {
-    q: "¿Es este protocolo seguro para la integridad del activo?",
-    a: "Operamos exclusivamente bajo protocolos nativos de Meta y encriptación de grado militar. No solicitamos credenciales. Somos una intervención de ingeniería, no una herramienta de automatización."
+    q: "SEGURIDAD: ¿Es seguro entregar mi activo?",
+    a: "Protocolo 100% Nativo. Operamos bajo la API oficial de Meta y encriptación de grado bancario (AES-256). No requerimos contraseñas, solo el 'Handle' público para la auditoría externa."
+  },
+  {
+    q: "PRECIO: ¿Por qué la inversión es High-Ticket?",
+    a: "No vendemos 'likes'. Ejecutamos una Ingeniería de Estatus que recupera activos valorados en 7 cifras. La tasación se basa en el Lucro Cesante que su marca pierde mensualmente por invisibilidad algorítmica."
   },
   {
     q: "INTEGRIDAD DE API: ¿Cumplen con los estándares de Meta?",
-    a: "Absolutamente. TDT es un partner técnico que opera 100% dentro de los límites de la API Graph oficial. No utilizamos bots, granjas ni inyecciones sintéticas prohibidas."
-  },
-  {
-    q: "¿Cómo se determina la viabilidad de la intervención?",
-    a: "Cada activo es único. El Escáner Forense realiza una tasación técnica inicial; si el activo califica, se procede a un briefing privado para definir el nivel de custodia requerido."
+    a: "Absolutamente. TDT es un partner técnico certificado que opera estrictamente dentro de los límites de la Graph API. Cero bots. Cero riesgo de baneo."
   },
   {
     q: "¿En cuánto tiempo se cristaliza la soberanía?",
-    a: "La estabilización de señales ocurre en las primeras 72 horas. La soberanía total y la re-clasificación del activo se consolidan en un ciclo clínico de 21 días."
+    a: "La estabilización de señales ocurre en 72 horas. La re-clasificación total del activo en el 'Cluster de Autoridad' se consolida en un ciclo clínico de 21 días."
   }
 ]
 
@@ -117,11 +117,43 @@ export default function HomePage() {
         </div>
 
         {/* AUTHORITY STRIP */}
-        <div className="absolute bottom-0 left-0 w-full border-t border-white/5 bg-white/[0.01] py-6 backdrop-blur-sm">
-          <div className="flex justify-center gap-12 opacity-30 grayscale hover:grayscale-0 transition-all duration-500">
-            <span className="text-xs font-serif text-white tracking-widest flex items-center gap-2"><Lock className="w-3 h-3" /> Meta API Verified</span>
-            <span className="text-xs font-serif text-white tracking-widest flex items-center gap-2"><Activity className="w-3 h-3" /> TikTok Algorithm compliant</span>
-            <span className="text-xs font-serif text-white tracking-widest flex items-center gap-2"><Shield className="w-3 h-3" /> Instagram Graph Partner</span>
+        <div className="absolute bottom-0 left-0 w-full border-t border-[#d4af37]/10 bg-[#000000] py-8 z-20">
+          <div className="flex justify-center gap-16 items-center opacity-40 hover:opacity-100 transition-opacity duration-700">
+            <div className="flex items-center gap-2 grayscale brightness-50 hover:grayscale-0 hover:brightness-100 transition-all">
+              <span className="text-xl font-serif text-white tracking-widest font-bold">Meta</span>
+              <span className="text-[10px] text-gray-500 uppercase tracking-widest group-hover:text-[#d4af37]">/ Graph Partner</span>
+            </div>
+            <div className="flex items-center gap-2 grayscale brightness-50 hover:grayscale-0 hover:brightness-100 transition-all">
+              <span className="text-xl font-serif text-white tracking-widest font-bold">TikTok</span>
+              <span className="text-[10px] text-gray-500 uppercase tracking-widest group-hover:text-[#d4af37]">/ Algorithm Certified</span>
+            </div>
+            <div className="flex items-center gap-2 grayscale brightness-50 hover:grayscale-0 hover:brightness-100 transition-all">
+              <span className="text-xl font-serif text-white tracking-widest font-bold">Instagram</span>
+              <span className="text-[10px] text-gray-500 uppercase tracking-widest group-hover:text-[#d4af37]">/ Verified Node</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 1.5 HOW IT WORKS (THE TRIAD) */}
+      <section className="py-24 px-6 bg-[#020202] border-b border-white/5">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="relative p-8 border border-white/5 hover:border-[#d4af37]/20 transition-colors group">
+              <div className="text-[#d4af37] text-4xl font-serif mb-4 opacity-30 group-hover:opacity-100 transition-opacity">I</div>
+              <h3 className="text-xl text-white font-serif mb-2">Interceptación</h3>
+              <p className="text-sm text-gray-500 font-light leading-relaxed">Extraemos metadatos nativos y analizamos la entropía visual para auditoría forense.</p>
+            </div>
+            <div className="relative p-8 border border-white/5 hover:border-[#d4af37]/20 transition-colors group">
+              <div className="text-[#d4af37] text-4xl font-serif mb-4 opacity-30 group-hover:opacity-100 transition-opacity">II</div>
+              <h3 className="text-xl text-white font-serif mb-2">Diagnóstico</h3>
+              <p className="text-sm text-gray-500 font-light leading-relaxed">Identificamos vectores de repulsión algorítmica que invisibilizan el activo ante clientes Elite.</p>
+            </div>
+            <div className="relative p-8 border border-white/5 hover:border-[#d4af37]/20 transition-colors group">
+              <div className="text-[#d4af37] text-4xl font-serif mb-4 opacity-30 group-hover:opacity-100 transition-opacity">III</div>
+              <h3 className="text-xl text-white font-serif mb-2">Soberanía</h3>
+              <p className="text-sm text-gray-500 font-light leading-relaxed">Inyectamos señales de autoridad de alta pureza para recuperar el mando del nicho.</p>
+            </div>
           </div>
         </div>
       </section>

@@ -14,6 +14,8 @@ function ServiciosContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const [isPageLoading, setIsPageLoading] = useState(true)
+  const [showNDA, setShowNDA] = useState<boolean>(false)
+  const [selectedTier, setSelectedTier] = useState<string>("")
 
   const platform = searchParams.get("platform") || "instagram"
   const location = searchParams.get("location") || "us"
@@ -51,6 +53,16 @@ function ServiciosContent() {
 
   const handleNDASign = () => {
     setIsAuthenticated(true)
+    setShowNDA(false)
+    if (selectedTier) {
+      if (selectedTier === 'elite') {
+        // Redirect to Vortex WhatsApp for Elite Tier
+        window.open("https://wa.me/15550123456?text=I_HAVE_SIGNED_THE_NDA_REQUESTING_ELITE_BRIEFING", "_blank")
+      } else if (selectedTier === 'lazarus') {
+        // Lazarus Flow
+        window.open("https://wa.me/15550123456?text=LAZARUS_PROTOCOL_INITIATION_REQUEST_NDA_SIGNED", "_blank")
+      }
+    }
   }
 
   const tiers = (isWhale || isLazarus) ? [
@@ -116,9 +128,29 @@ function ServiciosContent() {
   ]
 
   const handleSelectPlan = (planKey: string) => {
-    const params = new URLSearchParams({ plan: planKey, billing: 'monthly', platform, interest, location })
-    funnelTracker.track('STEP_3_CHECKOUT_ENTRY', { plan: planKey })
-    router.push(`/checkout?${params.toString()}`)
+    // 1. Standard / Pro -> Checkout
+    if (['starter', 'pro', 'standard', 'professional'].includes(planKey)) {
+      const params = new URLSearchParams({ plan: planKey, billing: 'monthly', platform, interest, location })
+      funnelTracker.track('STEP_3_CHECKOUT_ENTRY', { plan: planKey })
+      router.push(`/checkout?${params.toString()}`)
+      return
+    }
+
+    // 2. Elite -> NDA -> WhatsApp
+    if (planKey === 'elite' || planKey === 'professional-authority') { // Handling variations
+      setSelectedTier('elite')
+      setShowNDA(true)
+      // Logic: Open NDA Modal if not signed, or directly if signed (assuming simulation for now)
+      // For this flow we assume they must "Sign" via the modal we show.
+      return
+    }
+
+    // 3. Lazarus -> Block -> NDA -> WhatsApp
+    if (planKey === 'lazarus') {
+      setSelectedTier('lazarus')
+      setShowNDA(true)
+      return
+    }
   }
 
   return (
@@ -245,20 +277,26 @@ function ServiciosContent() {
         </div>
 
         {/* NDA LOCK OVERLAY - THE BLUR */}
-        {!isAuthenticated && (
-          <div className="absolute inset-0 z-50 flex items-center justify-center bg-[#020205]/10 backdrop-blur-sm pt-[200px]">
-            <div className="bg-[#020205] border border-indigo-500/50 p-10 max-w-lg text-center shadow-[0_0_100px_rgba(0,0,0,0.9)] relative overflow-hidden group">
-              <div className="absolute top-0 left-0 w-full h-0.5 bg-indigo-500 animate-slide-x" />
+        {(!isAuthenticated || showNDA) && (
+          <div className="absolute inset-0 z-50 flex items-center justify-center bg-[#020205]/95 backdrop-blur-xl pt-[0px] fixed top-0 left-0 w-full h-full">
+            {/* Changed positions to fixed full screen overlay for impact */}
+            <div className="bg-[#020205] border border-[#d4af37]/50 p-10 max-w-lg text-center shadow-[0_0_100px_rgba(0,0,0,0.9)] relative overflow-hidden group">
+              <div className="absolute top-0 left-0 w-full h-0.5 bg-[#d4af37] animate-slide-x" />
 
               <Shield className="w-16 h-16 text-indigo-500 mx-auto mb-8 animate-pulse" />
 
-              <h3 className="text-2xl font-verdict text-white mb-4 uppercase tracking-wide italic">Security Protocol Active</h3>
+              <h3 className="text-2xl font-verdict text-white mb-4 uppercase tracking-wide italic">
+                {showNDA ? "Vortex Custody Agreement" : "Security Protocol Active"}
+              </h3>
               <p className="text-[10px] text-slate-400 font-mono uppercase tracking-widest mb-10 leading-relaxed max-w-xs mx-auto">
-                The forensic data contained in this report reveals sensitive algorithmic vulnerabilities. Electronic signature required to decrypt results.
+                {showNDA
+                  ? "The asset requires high-level clearance. By proceeding, you agree to the Non-Disclosure of our proprietary algorithmic injection methods."
+                  : "The forensic data contained in this report reveals sensitive algorithmic vulnerabilities. Electronic signature required to decrypt results."
+                }
               </p>
 
-              <Button onClick={handleNDASign} className="w-full bg-white text-black hover:bg-indigo-50 hover:text-indigo-900 border border-transparent hover:border-indigo-500 rounded-none text-xs font-mono uppercase tracking-[0.3em] h-14 transition-all">
-                Activar Custodia Confidencial vía NDA
+              <Button onClick={handleNDASign} className="w-full bg-white text-black hover:bg-[#d4af37] hover:text-black border border-transparent hover:border-[#d4af37] rounded-none text-xs font-mono uppercase tracking-[0.3em] h-14 transition-all">
+                {showNDA ? "Sign & Request Briefing" : "Activar Custodia Confidencial vía NDA"}
               </Button>
 
               <div className="mt-8 flex justify-center gap-4 text-[8px] text-slate-600 font-mono uppercase tracking-widest">
@@ -322,7 +360,7 @@ function ServiciosContent() {
               <p className="text-xs text-red-400 font-mono uppercase tracking-widest mb-6 max-w-md text-center">
                 Asset Integrity Critical. Standard intervention protocols suspended. Eligibility review required.
               </p>
-              <Button className="bg-red-900 border border-red-500 text-white hover:bg-red-800 rounded-none px-8 py-4 text-xs tracking-[0.2em] uppercase">
+              <Button onClick={() => handleSelectPlan('lazarus')} className="bg-red-900 border border-red-500 text-white hover:bg-red-800 rounded-none px-8 py-4 text-xs tracking-[0.2em] uppercase">
                 Solicitar Evaluación de Elegibilidad
               </Button>
             </div>

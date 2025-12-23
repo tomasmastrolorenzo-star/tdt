@@ -9,6 +9,7 @@ import { LOCATIONS, INTERESTS, GENDERS, type LocationId, type InterestId, type G
 import { useI18n } from "@/lib/i18n/context"
 import { funnelTracker } from "@/lib/analytics/funnel"
 import { createClient } from "@/lib/supabase/client"
+import { AlertCircle } from "lucide-react"
 
 const OrbitalLoader = ({ isLazarus }: { isLazarus: boolean }) => (
     <div className="relative w-32 h-32 flex items-center justify-center">
@@ -124,8 +125,14 @@ export default function SmartGrowthConsultant() {
     const [currentStep, setCurrentStep] = useState(0) // 0: Config, 1: Objectives, 2: Scan
 
     // Lazarus State
-    const [followers, setFollowers] = useState<string>("")
-    const [avgLikes, setAvgLikes] = useState<string>("")
+    const [followers, setFollowers] = useState<number>(0)
+    const [avgLikes, setAvgLikes] = useState<number>(0)
+    const [peakFollowers, setPeakFollowers] = useState<number>(0)
+
+    // RapidAPI State
+    const [isVerifying, setIsVerifying] = useState(false)
+    const [verificationError, setVerificationError] = useState<string | null>(null)
+    const [verifiedUser, setVerifiedUser] = useState<{ full_name: string, profile_pic_url: string } | null>(null)
 
     const [isLazarusDetected, setIsLazarusDetected] = useState(false)
 
@@ -148,7 +155,51 @@ export default function SmartGrowthConsultant() {
         setIsAuthenticating(false)
 
         if (currentStep === 0) {
-            setCurrentStep(1)
+            // STEP 1: RAPID API IDENTITY VERIFICATION
+            setIsVerifying(true)
+            setVerificationError(null)
+
+            try {
+                // Check if API Key exists (Client Side Check)
+                // Check if API Key exists (Client Side Check) or use Fallback
+                const apiKey = process.env.NEXT_PUBLIC_RAPIDAPI_KEY || 'b3f8d26681msh591240419c64bfbp149aedjsn0b86a8fd85b2'
+
+                if (handle) {
+                    // Using the "Instagram Scraper Stable API" endpoint: get_ig_user_info.php
+                    const response = await fetch(`https://instagram-scraper-stable-api.p.rapidapi.com/get_ig_user_info.php`, {
+                        method: 'POST',
+                        headers: {
+                            'x-rapidapi-key': apiKey,
+                            'x-rapidapi-host': 'instagram-scraper-stable-api.p.rapidapi.com',
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: new URLSearchParams({ username: handle })
+                    })
+
+                    if (!response.ok) {
+                        throw new Error(`Error ${response.status}: Identidad No Validada en el Nodo Central.`)
+                    }
+
+                    const data = await response.json()
+                    // Adjust based on actual response structure. Usually data is at root or data property.
+                    // Assuming root for PHP endpoint or checking fields.
+                    if (!data || (!data.id && !data.username_id)) {
+                        throw new Error("Error: Identidad No Encontrada.")
+                    }
+
+                    setVerifiedUser({
+                        full_name: data.full_name || data.username || "Usuario Verificado",
+                        profile_pic_url: data.profile_pic_url || data.profile_pic_url_hd || ""
+                    })
+                }
+
+                // If success or dev bypass
+                setCurrentStep(1)
+            } catch (err: any) {
+                setVerificationError(err.message || "Error 403: Identidad No Validada en el Nodo Central")
+            } finally {
+                setIsVerifying(false)
+            }
             return
         }
         if (currentStep === 1) {
@@ -158,8 +209,10 @@ export default function SmartGrowthConsultant() {
         }
 
         // Sovereignty Engine V7.0 (The Deity Logic)
-        const fCount = parseInt(followers) || 0
-        const lCount = parseInt(avgLikes) || 0
+        const fCount = followers || 0
+        // Simulate Likes as 3% of followers (Standard baseline) since input was removed
+        const simulatedLikes = Math.floor(fCount * 0.03)
+        const lCount = simulatedLikes
 
         // 1. Deterministic Heuristics (Simulation of Grok Analysis)
         const pseudoHash = (str: string) => {
@@ -175,20 +228,22 @@ export default function SmartGrowthConsultant() {
         const handleSeed = pseudoHash(handle)
 
         // Human Entropy (H.E.)
-        // Formula: (avg_comments_length / 10) * (unique_words_ratio) * (heuristic_variance)
-        // Deterministic Simulation: Use seed % 100 to generate consistent variance [0.1 - 0.9]
         const variance = (handleSeed % 30) / 100
-        const baseEntropy = 0.45 // Assumed base without scraper
+        const baseEntropy = 0.45
         let humanEntropy = Math.min(0.98, Math.max(0.1, baseEntropy + variance))
 
         // Trusted Multiplier (T.M.)
-        // Formula: (avg_likes + (avg_comments * 2)) / followers
-        // Note: We lack avg_comments in input, so we simulate it as 2% of likes deterministically
         const simulatedComments = lCount * 0.02
         let trustedMultiplier = (lCount + (simulatedComments * 2)) / fCount
 
-        // Lazarus Logic: IF (T.M. < 0.01 && followers > 100000) THEN is_lazarus = true
-        const isLazarus = (trustedMultiplier < 0.01 && fCount > 100000)
+        // 2. Erosion Factor: (Peak - Current) / Peak
+        // User Input Peak
+        const calcPeak = peakFollowers > fCount ? peakFollowers : fCount * 1.1
+        const erosionFactor = (calcPeak - fCount) / calcPeak
+
+        // Lazarus Logic: IF (T.M. < 0.01) OR (Erosion > 0.3) THEN is_lazarus = true
+        // If they lost >30% of peak, they are Lazarus.
+        const isLazarus = (trustedMultiplier < 0.01 && fCount > 100000) || (erosionFactor > 0.3)
         setIsLazarusDetected(isLazarus)
 
         // Sovereignty Engine V7.0 Financial Logic
@@ -199,17 +254,9 @@ export default function SmartGrowthConsultant() {
         else if (['medical', 'legal'].includes(interest)) { nicheMultiplier = 1.4; avgTicket = 1200 }
         else if (['business', 'finance'].includes(interest)) { nicheMultiplier = 1.3; avgTicket = 500 }
 
-        // 2. Erosion Factor: (Peak - Current) / Peak
-        // Simulated Peak: Current * (1 + (Variance 0.1 to 0.5))
-        const peakVariance = 1.0 + ((handleSeed % 50) / 100)
-        const peakFollowers = Math.floor(fCount * peakVariance)
-        const erosionFactor = (peakFollowers - fCount) / peakFollowers
-
         // 3. Cost of Inaction (Lucro Cesante)
-        // Formula: Followers * ConversionRate (0.5%) * Ticket * 12 months
-        // Adjusted by Niche Multiplier
-        const conversionRate = 0.005
-        const costOfInaction = fCount * conversionRate * avgTicket * nicheMultiplier
+        // Formula Update: (Followers * 0.05) * (NicheMultiplier * 0.08)
+        const costOfInaction = (fCount * 0.05) * (nicheMultiplier * 0.08)
 
         let nicheTier = 'SILVER'
         if (isLazarus) nicheTier = 'LAZARUS'
@@ -385,16 +432,29 @@ export default function SmartGrowthConsultant() {
                                                 <div className="text-[8px] text-slate-600 uppercase font-mono tracking-tighter">Algorithm Drift</div>
                                                 <div className="text-[#d4af37] font-mono text-sm leading-none">-{15 + (interest.length % 5)}% traction</div>
                                             </div>
-                                            <Shield className="w-4 h-4 text-indigo-500 opacity-20" />
+                                            {verifiedUser && (
+                                                <div className="flex items-center gap-2">
+                                                    {verifiedUser.profile_pic_url && <img src={verifiedUser.profile_pic_url} alt="Profile" className="w-8 h-8 rounded-full border border-[#d4af37]" />}
+                                                    <div className="text-right">
+                                                        <div className="text-[8px] text-[#d4af37] font-mono uppercase">{verifiedUser.full_name}</div>
+                                                        <div className="text-[7px] text-slate-500 font-mono">VERIFIED_NODE</div>
+                                                    </div>
+                                                </div>
+                                            )}
+                                            {!verifiedUser && <Shield className="w-4 h-4 text-indigo-500 opacity-20" />}
                                         </div>
                                     </div>
                                 </div>
 
-                                <div className="flex justify-center pt-8">
-                                    <Button onClick={handleNext} className="w-full md:w-auto bg-white text-black hover:bg-[#d4af37] transition-colors text-xs font-mono uppercase tracking-[0.2em] py-8 px-16 rounded-none shadow-[4px_4px_0px_#d4af37]">
-                                        Execute Authentication <ArrowRight className="ml-2 w-4 h-4" />
-                                    </Button>
-                                </div>
+                                <Button onClick={handleNext} disabled={!handle || isVerifying} className="w-full md:w-auto bg-white text-black hover:bg-[#d4af37] transition-colors text-xs font-mono uppercase tracking-[0.2em] py-8 px-16 rounded-none shadow-[4px_4px_0px_#d4af37] disabled:opacity-50">
+                                    {isVerifying ? <><Loader2 className="w-4 h-4 animate-spin mr-2" /> VERIFYING...</> : <><span className="mr-2">EXECUTE AUTHENTICATION</span> <ArrowRight className="w-4 h-4" /></>}
+                                </Button>
+                                {verificationError && (
+                                    <div className="absolute -bottom-12 items-center gap-2 text-red-500 font-mono text-[10px] animate-pulse flex">
+                                        <AlertCircle className="w-3 h-3" />
+                                        {verificationError}
+                                    </div>
+                                )}
                             </motion.div>
                         )}
 
@@ -444,14 +504,47 @@ export default function SmartGrowthConsultant() {
                                     </div>
                                 </div>
 
-                                <div className="grid md:grid-cols-2 gap-8">
-                                    <div className="space-y-3">
-                                        <label className="text-[10px] font-mono text-slate-500 uppercase tracking-widest pl-1">Magnitude (Followers)</label>
-                                        <input type="number" value={followers} onChange={(e) => setFollowers(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-lg py-5 px-6 text-white font-mono text-xl focus:border-indigo-500 outline-none" placeholder="0" />
+                                <div className="grid md:grid-cols-2 gap-12 px-4">
+                                    {/* PRECISION SLIDER 1: CURRENT VOLUME */}
+                                    <div className="space-y-6">
+                                        <div className="flex justify-between items-end">
+                                            <label className="text-[10px] font-mono text-slate-500 uppercase tracking-widest pl-1">Current Volume</label>
+                                            <span className="text-xl font-mono text-white tracking-tight">{followers.toLocaleString()}</span>
+                                        </div>
+                                        <input
+                                            type="range"
+                                            min="0"
+                                            max="1000000"
+                                            step="100"
+                                            value={followers}
+                                            onChange={(e) => setFollowers(Number(e.target.value))}
+                                            className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-[#d4af37]"
+                                        />
+                                        <div className="flex justify-between text-[9px] text-slate-600 font-mono">
+                                            <span>0</span>
+                                            <span>1M+</span>
+                                        </div>
                                     </div>
-                                    <div className="space-y-3">
-                                        <label className="text-[10px] font-mono text-slate-500 uppercase tracking-widest pl-1">Entropy (Avg Likes)</label>
-                                        <input type="number" value={avgLikes} onChange={(e) => setAvgLikes(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-lg py-5 px-6 text-white font-mono text-xl focus:border-indigo-500 outline-none" placeholder="0" />
+
+                                    {/* PRECISION SLIDER 2: HISTORICAL PEAK */}
+                                    <div className="space-y-6">
+                                        <div className="flex justify-between items-end">
+                                            <label className="text-[10px] font-mono text-slate-500 uppercase tracking-widest pl-1">Historical Peak</label>
+                                            <span className={`text-xl font-mono tracking-tight ${peakFollowers < followers ? 'text-red-500' : 'text-[#d4af37]'}`}>{peakFollowers.toLocaleString()}</span>
+                                        </div>
+                                        <input
+                                            type="range"
+                                            min="0"
+                                            max="2000000"
+                                            step="100"
+                                            value={peakFollowers}
+                                            onChange={(e) => setPeakFollowers(Number(e.target.value))}
+                                            className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-[#d4af37]"
+                                        />
+                                        <div className="text-[9px] text-slate-600 font-mono flex gap-2 items-center">
+                                            <span>Input Max Detected Signal</span>
+                                            {peakFollowers < followers && <span className="text-red-500 font-bold ml-auto animate-pulse">Error: Incoherencia en historial de activo detectada.</span>}
+                                        </div>
                                     </div>
                                 </div>
 
@@ -466,8 +559,8 @@ export default function SmartGrowthConsultant() {
                                     <button onClick={() => setCurrentStep(0)} className="text-slate-600 hover:text-indigo-400 font-mono text-[10px] uppercase tracking-widest">
                                         Retry Configuration
                                     </button>
-                                    <Button onClick={handleNext} disabled={!followers || !avgLikes} className="w-full md:w-auto bg-[#d4af37] text-black hover:bg-[#b5952f] text-xs font-mono uppercase tracking-[0.2em] py-8 px-20 rounded-none shadow-[4px_4px_0px_white]">
-                                        Initiate Final Scan <Rocket className="ml-2 w-4 h-4" />
+                                    <Button onClick={handleNext} disabled={!followers || peakFollowers < followers} className="w-full md:w-auto bg-[#d4af37] text-black hover:bg-[#b5952f] text-xs font-mono uppercase tracking-[0.2em] py-8 px-20 rounded-none shadow-[4px_4px_0px_white] disabled:opacity-50 disabled:cursor-not-allowed">
+                                        {peakFollowers < followers ? "ERROR: INCOHERENCE" : <><span className="mr-2">INITIATE FINAL SCAN</span> <Rocket className="w-4 h-4" /></>}
                                     </Button>
                                 </div>
                             </motion.div>
