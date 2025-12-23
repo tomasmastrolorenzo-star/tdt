@@ -119,17 +119,37 @@ export default function HomePage() {
         {/* AUTHORITY STRIP */}
         <div className="absolute bottom-0 left-0 w-full border-t border-[#d4af37]/10 bg-[#000000] py-8 z-20">
           <div className="flex justify-center gap-16 items-center opacity-90 transition-opacity duration-700">
-            <div className="flex items-center gap-2 transition-all">
-              <span className="text-xl font-serif text-white tracking-widest font-bold">Meta</span>
-              <span className="text-[10px] text-gray-500 uppercase tracking-widest text-[#d4af37]">/ Graph Partner</span>
+            {/* META */}
+            <div className="flex items-center gap-3 group transition-all">
+              <svg viewBox="0 0 24 24" className="w-8 h-8 fill-white group-hover:fill-[#d4af37] transition-colors" role="img" aria-label="Meta">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+              </svg>
+              <div className="flex flex-col">
+                <span className="text-xl font-serif text-white tracking-widest font-bold leading-none">Instagram</span>
+                <span className="text-[9px] text-gray-500 uppercase tracking-widest group-hover:text-[#d4af37]"> Verified Node</span>
+              </div>
             </div>
-            <div className="flex items-center gap-2 transition-all">
-              <span className="text-xl font-serif text-white tracking-widest font-bold">TikTok</span>
-              <span className="text-[10px] text-gray-500 uppercase tracking-widest text-[#d4af37]">/ Algorithm Certified</span>
+
+            {/* TIKTOK */}
+            <div className="flex items-center gap-3 group transition-all">
+              <svg viewBox="0 0 24 24" className="w-8 h-8 fill-white group-hover:fill-[#d4af37] transition-colors" role="img" aria-label="TikTok">
+                <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93v6.16c0 2.52-1.12 4.84-2.98 6.45-1.24 1.08-2.68 1.69-4.23 1.79-3.26.23-6.62-1.75-7.94-4.81-1.33-3.09-.32-6.72 2.37-8.37 1.25-.76 2.72-1.16 4.18-1.14v4.21c-.81-.05-1.63.26-2.26.83-1.09 1-1.26 2.92-.35 4.12.91 1.19 2.78 1.54 4.09.77.83-.49 1.34-1.4 1.34-2.38V.02h1.69z" />
+              </svg>
+              <div className="flex flex-col">
+                <span className="text-xl font-serif text-white tracking-widest font-bold leading-none">TikTok</span>
+                <span className="text-[9px] text-gray-500 uppercase tracking-widest group-hover:text-[#d4af37]"> Algorithm Certified</span>
+              </div>
             </div>
-            <div className="flex items-center gap-2 transition-all">
-              <span className="text-xl font-serif text-white tracking-widest font-bold">Instagram</span>
-              <span className="text-[10px] text-gray-500 uppercase tracking-widest text-[#d4af37]">/ Verified Node</span>
+
+            {/* META */}
+            <div className="flex items-center gap-3 group transition-all">
+              <svg viewBox="0 0 24 24" className="w-8 h-8 fill-white group-hover:fill-[#d4af37] transition-colors" role="img" aria-label="Meta">
+                <path d="M16.98 4a7.07 7.07 0 00-4.99 2.06A6.97 6.97 0 007.02 4a7.03 7.03 0 00-4.98 12.03c1.33 1.32 3.08 2.03 4.96 2.03 1.33 0 2.59-.35 3.73-.97a14.53 14.53 0 001.27-.78L12 16.27l.79.48c.19.11.38.22.58.33A6.97 6.97 0 0016.98 18c1.9 0 3.66-.71 4.99-2.03A7.03 7.03 0 0016.98 4zm-1.87 9.53a3.52 3.52 0 11-2.47-6.02 3.52 3.52 0 012.47 6.02zm-6.22 0a3.52 3.52 0 11-2.47-6.02 3.52 3.52 0 012.47 6.02z" />
+              </svg>
+              <div className="flex flex-col">
+                <span className="text-xl font-serif text-white tracking-widest font-bold leading-none">Meta</span>
+                <span className="text-[9px] text-gray-500 uppercase tracking-widest group-hover:text-[#d4af37]"> Graph Partner</span>
+              </div>
             </div>
           </div>
         </div>

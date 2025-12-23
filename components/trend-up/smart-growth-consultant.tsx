@@ -138,8 +138,8 @@ export default function SmartGrowthConsultant() {
 
     useEffect(() => {
         const insights: Record<string, string> = {
-            real_estate: "CRITICAL: EXIF Metadata Stripping Syndrome detected. Meta is classifying your luxury listings as 'Duplicate/Low-Value' due to missing digital signatures.",
-            medical: "WARNING: SAM-3 Manipulation Artifacts found. Algorithm is flagging your before/after content as 'Synthetic/Edited', suppressing reach by 65%.",
+            real_estate: "CRITICAL: EXIF Metadata Stripping Syndrome detected. Meta is classifying your luxury listings as 'Duplicate/Low-Value'.",
+            medical: "WARNING: SAM-3 Manipulation Artifacts found. Algorithm is flagging your content as 'Synthetic/Edited'.",
             finance: "ALERT: Vanilla Insight Vector Collapse. Your content lacks the 'Polarizing Hook' metadata required to break into the High-Net-Worth allocator cluster.",
             business: "Market authority logic. Corporate accounts are facing 40% less reach without pattern interrupt.",
             trading: "Compliance filter active. Financial niches require immediate neural warmup.",
@@ -190,10 +190,14 @@ export default function SmartGrowthConsultant() {
                         full_name: data.full_name || data.username || "Usuario Verificado",
                         profile_pic_url: data.profile_pic_url || data.profile_pic_url_hd || ""
                     })
-                }
 
-                // If success or dev bypass
-                setCurrentStep(1)
+                    // Auto-advance on success
+                    setCurrentStep(1)
+
+                } else {
+                    // Dev Mode / No Key Fallback (Should not happen in Prod)
+                    setCurrentStep(1)
+                }
             } catch (err: any) {
                 setVerificationError(err.message || "Error 403: Identidad No Validada en el Nodo Central")
             } finally {
@@ -449,9 +453,9 @@ export default function SmartGrowthConsultant() {
                                     {isVerifying ? <><Loader2 className="w-4 h-4 animate-spin mr-2" /> VERIFYING...</> : <><span className="mr-2">EXECUTE AUTHENTICATION</span> <ArrowRight className="w-4 h-4" /></>}
                                 </Button>
                                 {verificationError && (
-                                    <div className="absolute -bottom-12 items-center gap-2 text-red-500 font-mono text-[10px] animate-pulse flex">
-                                        <AlertCircle className="w-3 h-3" />
-                                        {verificationError}
+                                    <div className="mt-4 p-3 bg-red-950/50 border border-red-500/50 rounded flex items-center gap-3 text-red-200 font-mono text-xs animate-in fade-in slide-in-from-top-2">
+                                        <AlertCircle className="w-4 h-4 text-red-500 flex-shrink-0" />
+                                        <span>{verificationError}</span>
                                     </div>
                                 )}
                             </motion.div>
