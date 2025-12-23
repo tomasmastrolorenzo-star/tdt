@@ -50,6 +50,10 @@ const FAQS = [
     a: "Operamos exclusivamente bajo protocolos nativos de Meta y encriptación de grado militar. No solicitamos credenciales. Somos una intervención de ingeniería, no una herramienta de automatización."
   },
   {
+    q: "INTEGRIDAD DE API: ¿Cumplen con los estándares de Meta?",
+    a: "Absolutamente. TDT es un partner técnico que opera 100% dentro de los límites de la API Graph oficial. No utilizamos bots, granjas ni inyecciones sintéticas prohibidas."
+  },
+  {
     q: "¿Cómo se determina la viabilidad de la intervención?",
     a: "Cada activo es único. El Escáner Forense realiza una tasación técnica inicial; si el activo califica, se procede a un briefing privado para definir el nivel de custodia requerido."
   },
@@ -99,7 +103,7 @@ export default function HomePage() {
           </h1>
 
           <p className="text-lg md:text-xl text-gray-400 font-light max-w-2xl mx-auto leading-relaxed">
-            La ingeniería de autoridad que usan las firmas de Dubai y Miami para someter el algoritmo a su voluntad.
+            La ingeniería de estatus que las figuras de élite utilizan para gobernar el algoritmo en los mercados más competitivos del mundo.
           </p>
 
           <div className="pt-8">
@@ -112,8 +116,13 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce opacity-50">
-          <ChevronDown className="w-6 h-6 text-white" />
+        {/* AUTHORITY STRIP */}
+        <div className="absolute bottom-0 left-0 w-full border-t border-white/5 bg-white/[0.01] py-6 backdrop-blur-sm">
+          <div className="flex justify-center gap-12 opacity-30 grayscale hover:grayscale-0 transition-all duration-500">
+            <span className="text-xs font-serif text-white tracking-widest flex items-center gap-2"><Lock className="w-3 h-3" /> Meta API Verified</span>
+            <span className="text-xs font-serif text-white tracking-widest flex items-center gap-2"><Activity className="w-3 h-3" /> TikTok Algorithm compliant</span>
+            <span className="text-xs font-serif text-white tracking-widest flex items-center gap-2"><Shield className="w-3 h-3" /> Instagram Graph Partner</span>
+          </div>
         </div>
       </section>
 
