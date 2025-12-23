@@ -118,18 +118,18 @@ export default function HomePage() {
 
         {/* AUTHORITY STRIP */}
         <div className="absolute bottom-0 left-0 w-full border-t border-[#d4af37]/10 bg-[#000000] py-8 z-20">
-          <div className="flex justify-center gap-16 items-center opacity-40 hover:opacity-100 transition-opacity duration-700">
-            <div className="flex items-center gap-2 grayscale brightness-50 hover:grayscale-0 hover:brightness-100 transition-all">
+          <div className="flex justify-center gap-16 items-center opacity-90 transition-opacity duration-700">
+            <div className="flex items-center gap-2 transition-all">
               <span className="text-xl font-serif text-white tracking-widest font-bold">Meta</span>
-              <span className="text-[10px] text-gray-500 uppercase tracking-widest group-hover:text-[#d4af37]">/ Graph Partner</span>
+              <span className="text-[10px] text-gray-500 uppercase tracking-widest text-[#d4af37]">/ Graph Partner</span>
             </div>
-            <div className="flex items-center gap-2 grayscale brightness-50 hover:grayscale-0 hover:brightness-100 transition-all">
+            <div className="flex items-center gap-2 transition-all">
               <span className="text-xl font-serif text-white tracking-widest font-bold">TikTok</span>
-              <span className="text-[10px] text-gray-500 uppercase tracking-widest group-hover:text-[#d4af37]">/ Algorithm Certified</span>
+              <span className="text-[10px] text-gray-500 uppercase tracking-widest text-[#d4af37]">/ Algorithm Certified</span>
             </div>
-            <div className="flex items-center gap-2 grayscale brightness-50 hover:grayscale-0 hover:brightness-100 transition-all">
+            <div className="flex items-center gap-2 transition-all">
               <span className="text-xl font-serif text-white tracking-widest font-bold">Instagram</span>
-              <span className="text-[10px] text-gray-500 uppercase tracking-widest group-hover:text-[#d4af37]">/ Verified Node</span>
+              <span className="text-[10px] text-gray-500 uppercase tracking-widest text-[#d4af37]">/ Verified Node</span>
             </div>
           </div>
         </div>

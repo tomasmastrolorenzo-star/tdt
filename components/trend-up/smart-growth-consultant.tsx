@@ -162,18 +162,17 @@ export default function SmartGrowthConsultant() {
             try {
                 // Check if API Key exists (Client Side Check)
                 // Check if API Key exists (Client Side Check) or use Fallback
-                const apiKey = process.env.NEXT_PUBLIC_RAPIDAPI_KEY || 'b3f8d26681msh591240419c64bfbp149aedjsn0b86a8fd85b2'
+                // Note: We move the key usage to the Server Side Route for security/CORS, 
+                // but we might pass it if needed. The internal route handles it.
 
                 if (handle) {
-                    // Using the "Instagram Scraper Stable API" endpoint: get_ig_user_info.php
-                    const response = await fetch(`https://instagram-scraper-stable-api.p.rapidapi.com/get_ig_user_info.php`, {
+                    // Use Internal Proxy to avoid CORS and hide keys
+                    const response = await fetch('/api/verify-identity', {
                         method: 'POST',
                         headers: {
-                            'x-rapidapi-key': apiKey,
-                            'x-rapidapi-host': 'instagram-scraper-stable-api.p.rapidapi.com',
-                            'Content-Type': 'application/x-www-form-urlencoded'
+                            'Content-Type': 'application/json'
                         },
-                        body: new URLSearchParams({ username: handle })
+                        body: JSON.stringify({ username: handle })
                     })
 
                     if (!response.ok) {
