@@ -8,7 +8,7 @@ import { ArrowRight, Sparkles, Loader2, User, Globe, Rocket, BarChart3, Database
 import { LOCATIONS, INTERESTS, GENDERS, type LocationId, type InterestId, type GenderId } from "@/lib/el-faro/selectors"
 import { useI18n } from "@/lib/i18n/context"
 import { funnelTracker } from "@/lib/analytics/funnel"
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import { createClient } from "@/lib/supabase/client"
 
 const NeuralAuthentication = () => (
     <motion.div
@@ -105,7 +105,7 @@ const LoadingOverlay = ({ t, values, isLazarus }: { t: any, values: any, isLazar
 export default function SmartGrowthConsultant() {
     const { t } = useI18n()
     const router = useRouter()
-    const supabase = createClientComponentClient()
+    const supabase = createClient()
     const [isLoading, setIsLoading] = useState(false)
     const [isAuthenticating, setIsAuthenticating] = useState(false)
 
