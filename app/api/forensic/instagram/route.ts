@@ -22,6 +22,14 @@ export async function POST(request: Request) {
             return NextResponse.json(cached.data);
         }
 
+        // DEBUG OVERRIDE
+        if (normalizedHandle === 'debug_s') {
+            return NextResponse.json({
+                status: 'restricted',
+                message: 'DEBUG: Restricted Mode Test OK'
+            });
+        }
+
         console.log(`[FORENSIC_SCAN_INIT] ${normalizedHandle}`);
 
         // 2. CALL APIFY
@@ -100,10 +108,10 @@ export async function POST(request: Request) {
 
     } catch (e) {
         console.error("[FORENSIC_FAILURE]", e);
-        // 6. INSTITUTIONAL ERROR RESPONSE
         return NextResponse.json({
             status: 'restricted',
-            message: 'Visual data under forensic verification protocol.'
+            message: 'Visual data under forensic verification protocol.',
+            debug: e instanceof Error ? e.message : String(e)
         });
     }
 }
