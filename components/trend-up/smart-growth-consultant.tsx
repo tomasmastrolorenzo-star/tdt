@@ -82,7 +82,7 @@ export default function SmartGrowthConsultant() {
     const [handle, setHandle] = useState("")
     const [revenue, setRevenue] = useState<string>("500k-2m")
     const [interest, setInterest] = useState<InterestId>("business")
-    const [verifiedUser, setVerifiedUser] = useState<{ full_name: string, profile_pic_url: string, follower_count?: number } | null>(null)
+    const [verifiedUser, setVerifiedUser] = useState<{ full_name: string, profile_pic_url: string, biography?: string, follower_count?: number } | null>(null)
 
     // Logic State
     const [isVerifying, setIsVerifying] = useState(false)
@@ -112,14 +112,15 @@ export default function SmartGrowthConsultant() {
             const data = await response.json()
 
             setVerifiedUser({
-                full_name: data.full_name || data.username,
-                profile_pic_url: data.profile_pic_url,
-                follower_count: data.follower_count
+                full_name: data.full_name || data.username || handle,
+                profile_pic_url: data.profile_pic_url || data.profile_pic_url_hd,
+                follower_count: data.follower_count || data.edge_followed_by?.count,
+                biography: data.biography || data.biography_with_entities?.raw_text
             })
 
         } catch (e) {
-            // Silently fail to fallback UI (Silhouette)
-            console.error(e)
+            console.error("API Error:", e)
+            // Graceful fallback: null verifiedUser triggers silhouette state
         } finally {
             setIsVerifying(false)
         }
@@ -229,15 +230,25 @@ export default function SmartGrowthConsultant() {
                             <div className="flex flex-col items-center gap-4">
                                 <div className="w-24 h-24 rounded-full border border-[#d4af37]/50 p-1 relative">
                                     {verifiedUser?.profile_pic_url ? (
-                                        <img src={verifiedUser.profile_pic_url} alt="Profile" className="w-full h-full rounded-full grayscale hover:grayscale-0 transition-all duration-700" />
+                                        <img src={verifiedUser.profile_pic_url} alt="Profile" className="w-full h-full rounded-full grayscale hover:grayscale-0 transition-all duration-700 object-cover" />
                                     ) : (
                                         <div className="w-full h-full bg-slate-900 rounded-full flex items-center justify-center"><Shield className="w-8 h-8 text-slate-700" /></div>
                                     )}
                                     <div className="absolute bottom-0 right-0 w-4 h-4 bg-emerald-500 border-2 border-black rounded-full" />
                                 </div>
-                                <div className="font-mono text-sm text-white uppercase tracking-widest">@{handle}</div>
-                                {/* Fake Grid */}
-                                <div className="grid grid-cols-3 gap-1 w-64 opacity-50">
+                                <div className="space-y-1">
+                                    <div className="font-mono text-sm text-white uppercase tracking-widest">@{handle}</div>
+                                    {verifiedUser?.full_name && <div className="text-[10px] font-mono text-slate-500 uppercase">{verifiedUser.full_name}</div>}
+                                </div>
+
+                                {verifiedUser?.biography && (
+                                    <p className="text-[10px] text-slate-400 font-mono italic max-w-xs line-clamp-2">
+                                        "{verifiedUser.biography}"
+                                    </p>
+                                )}
+
+                                {/* Fake Grid (Always shown as decorative if no real media, to maintain aesthetic) */}
+                                <div className="grid grid-cols-3 gap-1 w-64 opacity-30 mt-2">
                                     {[1, 2, 3, 4, 5, 6].map(i => <div key={i} className="aspect-square bg-slate-800/50 border border-slate-700/30" />)}
                                 </div>
                             </div>
@@ -249,9 +260,9 @@ export default function SmartGrowthConsultant() {
                             <Button onClick={startDiscovery} className="w-full bg-white text-black hover:bg-slate-200 rounded-none uppercase tracking-[0.2em] font-mono text-xs py-6">
                                 Confirmar Identidad & Proceder
                             </Button>
-                            {!verifiedUser && (
-                                <p className="text-[9px] text-red-400 font-mono">
-                                    Los detalles visuales no pudieron cargarse, pero el análisis continúa.
+                            {(!verifiedUser || !verifiedUser.profile_pic_url) && (
+                                <p className="text-[9px] text-red-400 font-mono bg-red-950/20 p-2 border border-red-900/30">
+                                    ⚠️ Los detalles visuales no pudieron cargarse, pero el análisis continúa.
                                 </p>
                             )}
                         </div>
