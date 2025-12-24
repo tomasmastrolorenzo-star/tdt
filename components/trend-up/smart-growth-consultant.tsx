@@ -97,6 +97,28 @@ export default function SmartGrowthConsultant() {
 
     const handleConnection = async () => {
         if (!handle) return
+
+        // DEBUG CLIENT SIDE (Bypass Backend)
+        if (handle === 'debug_client') {
+            setIsVerifying(true)
+            setTimeout(() => {
+                setVerifiedUser({
+                    username: 'debug_client',
+                    full_name: 'Debug Protocol Verified',
+                    profilePicUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop',
+                    biography: "DEBUG_MODE_ACTIVE: System visual rendering checks passed. UI integrity verified. Backend bypass active.",
+                    posts: [
+                        { id: 1, imageUrl: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=400&h=400&fit=crop' },
+                        { id: 2, imageUrl: 'https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?w=400&h=400&fit=crop' },
+                        { id: 3, imageUrl: 'https://images.unsplash.com/photo-1611162618071-b39a2ec055fb?w=400&h=400&fit=crop' },
+                    ]
+                })
+                setIsVerifying(false)
+            }, 1000)
+            setStep(AnalyzerStep.CONNECTION)
+            return
+        }
+
         setStep(AnalyzerStep.CONNECTION)
         setIsVerifying(true)
         setVerificationError(null)
