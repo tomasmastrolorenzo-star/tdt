@@ -8,6 +8,7 @@ import { CheckCircle2, Database, Zap, Shield, Activity, BarChart3, Lock, Cpu, Al
 import { LOCATIONS, INTERESTS } from "@/lib/el-faro/selectors"
 import { useI18n } from "@/lib/i18n/context"
 import { funnelTracker } from "@/lib/analytics/funnel"
+import confetti from "canvas-confetti"
 
 function ServiciosContent() {
   const { t } = useI18n()
@@ -21,8 +22,39 @@ function ServiciosContent() {
   const location = searchParams.get("location") || "us"
   const interest = searchParams.get("interest") || "fitness"
   const leadClass = searchParams.get("lead_class") || "STANDARD"
+  const verdict = searchParams.get("verdict") || "At-Risk Authority"
+  const coi = parseInt(searchParams.get('coi') || '0')
   const isWhale = leadClass === "WHALE"
   const isLazarus = leadClass === "LAZARUS"
+
+  useEffect(() => {
+    if (coi > 50000 && !isPageLoading) {
+      const duration = 3 * 1000
+      const end = Date.now() + duration
+
+      const frame = () => {
+        confetti({
+          particleCount: 2,
+          angle: 60,
+          spread: 55,
+          origin: { x: 0 },
+          colors: ['#d4af37', '#fcebb6']
+        })
+        confetti({
+          particleCount: 2,
+          angle: 120,
+          spread: 55,
+          origin: { x: 1 },
+          colors: ['#d4af37', '#fcebb6']
+        })
+
+        if (Date.now() < end) {
+          requestAnimationFrame(frame)
+        }
+      }
+      frame()
+    }
+  }, [coi, isPageLoading])
 
   const interestData = INTERESTS.find(i => i.id === interest)
   const nicheName = interestData?.name || interest
@@ -154,10 +186,10 @@ function ServiciosContent() {
   }
 
   return (
-    <main className={`min-h-screen bg-[#02040a] font-mono relative overflow-hidden terminal-scanlines ${isLazarus ? 'crimson-flicker' : ''}`}>
+    <main className={`min-h-screen bg-[#000000] font-mono relative overflow-hidden terminal-scanlines ${isLazarus ? 'crimson-flicker' : ''}`}>
       {/* Bureau Overlays */}
       {isLazarus && <div className="absolute inset-0 bg-red-950/20 pointer-events-none z-0" />}
-      <div className={`absolute top-0 left-0 w-full h-[600px] bg-gradient-to-b ${isLazarus ? 'from-red-900/40' : 'from-indigo-900/30'} to-transparent pointer-events-none z-0`} />
+      <div className={`absolute top-0 left-0 w-full h-[600px] bg-gradient-to-b ${isLazarus ? 'from-red-900/40' : 'from-[#d4af37]/10'} to-transparent pointer-events-none z-0`} />
 
       <div className="container mx-auto px-4 py-16 relative z-10">
         <button onClick={() => router.back()} className="text-slate-500 hover:text-white flex items-center gap-2 mb-12 transition-colors text-[10px] uppercase tracking-widest">
@@ -166,15 +198,15 @@ function ServiciosContent() {
 
         {/* THE VERDICT */}
         <div className="text-center mb-20 space-y-6">
-          <div className={`inline-flex items-center gap-2 px-4 py-1 rounded-full ${isLazarus ? 'bg-red-500/10 border border-red-500/20 text-red-500' : 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400'} text-[10px] font-black uppercase tracking-[0.4em] animate-fade-in`}>
-            {isLazarus ? 'CRITICAL_LEAD_DETECTED' : 'ANALYSIS_SYNCHRONIZED'}
+          <div className={`inline-flex items-center gap-2 px-4 py-1 rounded-full ${isLazarus ? 'bg-red-500/10 border border-red-500/20 text-red-500' : 'bg-[#d4af37]/10 border border-[#d4af37]/20 text-[#d4af37]'} text-[10px] font-black uppercase tracking-[0.4em] animate-fade-in`}>
+            {verdict.toUpperCase()}
           </div>
 
           {!isAuthenticated && (
             <div className="flex justify-center mb-4">
-              <div className="bg-amber-500/10 border border-amber-500/20 px-4 py-2 flex items-center gap-3 rounded-none animate-pulse">
-                <Lock className="w-3 h-3 text-amber-500" />
-                <span className="text-[10px] font-mono text-amber-500 uppercase tracking-widest">
+              <div className="bg-[#d4af37]/10 border border-[#d4af37]/20 px-4 py-2 flex items-center gap-3 rounded-none animate-pulse">
+                <Lock className="w-3 h-3 text-[#d4af37]" />
+                <span className="text-[10px] font-mono text-[#d4af37] uppercase tracking-widest">
                   SLOT LAZARUS RESERVED: {timeLeft.h}:{timeLeft.m.toString().padStart(2, '0')}:{timeLeft.s.toString().padStart(2, '0')}
                 </span>
               </div>
@@ -184,17 +216,15 @@ function ServiciosContent() {
           <h1 className="text-5xl md:text-7xl font-verdict text-white italic leading-tight">
             {isLazarus ? (
               <>The <span className="text-red-600">Lazarus</span> Verdict</>
-            ) : isWhale ? (
-              <>Bypass <span className="text-indigo-500">Authorized</span></>
             ) : (
-              <>Final <span className="text-indigo-400">Diagnosis</span></>
+              <>{verdict.split(' ')[0]} <span className="text-[#d4af37]">{verdict.split(' ').slice(1).join(' ')}</span></>
             )}
           </h1>
 
           <p className="text-slate-500 text-xs uppercase tracking-[0.2em] max-w-xl mx-auto leading-relaxed">
             {isLazarus
-              ? "NEURAL FLATLINE DETECTED. IMMEDIATE RESURRECTION PROTOCOL ENGAGED TO BYPASS LATENT SPACE REPULSION."
-              : `BUREAU CLASSIFICATION: ${leadClass}. DEPLOYING ${nicheName.toUpperCase()}-SPECIFIC GROWTH SCHEMA.`}
+              ? "NEURAL FLATLINE DETECTED. IMMEDIATE RESURRECTION PROTOCOL ENGAGED."
+              : `BUREAU CLASSIFICATION: ${verdict.toUpperCase()}. DEPLOYING ${nicheName.toUpperCase()} PROTOCOL.`}
           </p>
         </div>
 
@@ -203,36 +233,36 @@ function ServiciosContent() {
 
           {/* GOLDEN METRICS PANEL */}
           <div className="max-w-4xl mx-auto mb-20">
-            <div className={`bg-[#02040a]/80 border ${isLazarus ? 'border-red-500/30' : 'border-indigo-500/20'} rounded-none p-8 backdrop-blur-3xl relative overflow-hidden group shadow-[0_0_50px_rgba(0,0,0,1)]`}>
+            <div className={`bg-[#02040a]/80 border ${isLazarus ? 'border-red-500/30' : 'border-[#d4af37]/20'} rounded-none p-8 backdrop-blur-3xl relative overflow-hidden group shadow-[0_0_50px_rgba(212,175,55,0.05)]`}>
               <div className="grid md:grid-cols-3 gap-12">
                 <div className="space-y-4">
                   <div className="flex items-center gap-2 text-[10px] text-slate-500 uppercase tracking-widest">
-                    <Activity className="w-3 h-3 text-indigo-500" /> Latent Repulsion
+                    <Activity className={`w-3 h-3 ${isLazarus ? 'text-red-500' : 'text-[#d4af37]'}`} /> Latent Repulsion
                   </div>
                   <div className="text-3xl font-mono text-white">
-                    {searchParams.get('auth_score') || (isLazarus ? "94.2" : "12.4")}<span className="text-indigo-500 text-lg">%</span>
+                    {searchParams.get('auth_score') || "12.4"}<span className={`${isLazarus ? 'text-red-500' : 'text-[#d4af37]'} text-lg`}>%</span>
                   </div>
                   <div className="h-1 bg-slate-900 w-full overflow-hidden">
-                    <motion.div initial={{ width: 0 }} animate={{ width: isLazarus ? "94.2%" : `${searchParams.get('auth_score') || 12}%` }} className={`h-full ${isLazarus ? 'bg-red-600 shadow-[0_0_10px_red]' : 'bg-indigo-500'}`} />
+                    <motion.div initial={{ width: 0 }} animate={{ width: isLazarus ? "94.2%" : `${searchParams.get('auth_score') || 12}%` }} className={`h-full ${isLazarus ? 'bg-red-600 shadow-[0_0_10px_red]' : 'bg-[#d4af37] shadow-[0_0_10px_#d4af37]'}`} />
                   </div>
                 </div>
                 <div className="space-y-4">
                   <div className="flex items-center gap-2 text-[10px] text-slate-500 uppercase tracking-widest">
-                    <Cpu className="w-3 h-3 text-indigo-500" /> Compositional Entropy
+                    <Cpu className={`w-3 h-3 ${isLazarus ? 'text-red-500' : 'text-[#d4af37]'}`} /> Compositional Entropy
                   </div>
                   <div className="text-3xl font-mono text-white">
-                    {searchParams.get('entropy_score') || (isLazarus ? "0.02" : "0.89")}<span className="text-indigo-500 text-lg">σ</span>
+                    {searchParams.get('entropy_score') || "0.89"}<span className={`${isLazarus ? 'text-red-500' : 'text-[#d4af37]'} text-lg`}>σ</span>
                   </div>
                   <div className="h-1 bg-slate-900 w-full overflow-hidden">
-                    <motion.div initial={{ width: 0 }} animate={{ width: isLazarus ? "5%" : `${(parseFloat(searchParams.get('entropy_score') || '0.89') * 100)}%` }} className={`h-full ${isLazarus ? 'bg-red-600 shadow-[0_0_10px_red]' : 'bg-indigo-500'}`} />
+                    <motion.div initial={{ width: 0 }} animate={{ width: isLazarus ? "5%" : `${(parseFloat(searchParams.get('entropy_score') || '0.89') * 100)}%` }} className={`h-full ${isLazarus ? 'bg-red-600 shadow-[0_0_10px_red]' : 'bg-[#d4af37] shadow-[0_0_10px_#d4af37]'}`} />
                   </div>
                 </div>
                 <div className="space-y-4 text-left">
-                  <div className="text-[10px] text-indigo-400 uppercase tracking-[0.3em] mb-2">Audit Status</div>
+                  <div className={`text-[10px] ${isLazarus ? 'text-red-400' : 'text-[#d4af37]'} uppercase tracking-[0.3em] mb-2`}>Audit Classification</div>
                   <div className={`text-xs font-mono leading-relaxed ${isLazarus ? 'text-red-400 animate-pulse' : 'text-slate-400'}`}>
                     {isLazarus
-                      ? "> ENGAGEMENT MISMATCH DETECTED. GHOST-METADATA SUPPRESSION ACTIVE."
-                      : "> SIGNALS CALIBRATED. NICHE AUTHORITY BYPASS ENGAED."}
+                      ? "> ENGAGEMENT MISMATCH DETECTED."
+                      : "> SIGNALS CALIBRATED. AUTHORITY VERIFIED."}
                   </div>
                 </div>
               </div>
@@ -286,7 +316,7 @@ function ServiciosContent() {
               <Shield className="w-16 h-16 text-indigo-500 mx-auto mb-8 animate-pulse" />
 
               <h3 className="text-2xl font-verdict text-white mb-4 uppercase tracking-wide italic">
-                {showNDA ? "Vortex Custody Agreement" : "Security Protocol Active"}
+                Activación de Custodia Confidencial
               </h3>
               <p className="text-[10px] text-slate-400 font-mono uppercase tracking-widest mb-10 leading-relaxed max-w-xs mx-auto">
                 {showNDA
@@ -420,7 +450,7 @@ function ServiciosContent() {
 
 export default function ServiciosPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[#02040a] flex items-center justify-center"><div className="text-indigo-500 font-mono text-xs tracking-widest animate-pulse">BOOTING_DIAGNOSTIC_BUREAU...</div></div>}>
+    <Suspense fallback={<div className="min-h-screen bg-[#02040a] flex items-center justify-center"><div className="text-[#d4af37] font-mono text-xs tracking-widest animate-pulse">DECRYPTING_BUREAU_LEDGER...</div></div>}>
       <ServiciosContent />
     </Suspense>
   )

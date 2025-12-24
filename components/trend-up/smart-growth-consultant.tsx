@@ -62,12 +62,12 @@ const LoadingOverlay = ({ t, values, isLazarus }: { t: any, values: any, isLazar
 
     const nicheName = values.interest
     const messages = [
-        { text: "ACCESSING_GLOBAL_LEDGER...", color: "text-gray-400" },
-        { text: "QUANTIFYING_AUTHORITY_CAPITAL...", color: "text-[#d4af37]" },
-        { text: "DETECTING_ALGORITHMIC_FRICTION...", color: "text-white" },
-        { text: "CALCULATING_ENTROPY_LOSS...", color: "text-[#d4af37]" },
-        { text: isLazarus ? "FATAL_ERROR: VITAL_SIGNS_CRITICAL" : "FORENSIC_BIOPSIA_COMPLETE", color: isLazarus ? "text-red-500" : "text-emerald-400" },
-        { text: "GENERATING_SOVEREIGNTY_ROADMAP...", color: "text-white" }
+        { text: "Correlacionando señales declaradas vs. autoridad real...", color: "text-gray-400" },
+        { text: "Detectando vectores de interferencia externa...", color: "text-[#d4af37]" },
+        { text: "Extrayendo clasificación latente de soberanía...", color: "text-white" },
+        { text: "Calculando Lucro Cesante por Invisibilidad...", color: "text-[#d4af37]" },
+        { text: isLazarus ? "ALERTA: RESIDUO ALGORÍTMICO DETECTADO" : "ACTIVO DE PRIORIDAD IDENTIFICADO", color: isLazarus ? "text-red-500" : "text-emerald-400" },
+        { text: "Generando Protocolo de Custodia...", color: "text-white" }
     ]
 
     return (
@@ -120,6 +120,7 @@ export default function SmartGrowthConsultant() {
     const [gender, setGender] = useState<GenderId>("any")
     const [location, setLocation] = useState<LocationId>("us")
     const [interest, setInterest] = useState<InterestId>("business")
+    const [revenue, setRevenue] = useState<string>("500k-2m") // V20 Input
     const [objective, setObjective] = useState<string>("dominion") // New V7 Input
     const [diagnosis, setDiagnosis] = useState<string>("")
     const [currentStep, setCurrentStep] = useState(0) // 0: Config, 1: Objectives, 2: Scan
@@ -320,8 +321,12 @@ export default function SmartGrowthConsultant() {
             payment_status: 'PENDING'
         })
 
-        const isWhale = fCount > 50000 || ['business', 'trading', 'tech', 'medical', 'real_estate'].includes(interest)
+        const isWhale = fCount > 50000 || ['business', 'trading', 'tech', 'medical', 'real_estate'].includes(interest) || revenue === "+2m"
         const leadClassification = isLazarus ? 'LAZARUS' : (isWhale ? 'WHALE' : 'STANDARD')
+
+        let verdict = "At-Risk Authority"
+        if (isLazarus) verdict = "Algorithmic Residue"
+        else if (isWhale) verdict = "Priority Asset"
 
 
         funnelTracker.track('lead_attempt', { platform, interest, lead_classification: leadClassification })
@@ -331,6 +336,7 @@ export default function SmartGrowthConsultant() {
         const params = new URLSearchParams({
             platform, gender, location, interest,
             lead_class: leadClassification,
+            verdict: verdict,
             auth_score: (trustedMultiplier * 100).toFixed(2), // Scale for UI % display
             entropy_score: humanEntropy.toFixed(2),
             coi: costOfInaction.toFixed(0),
@@ -368,7 +374,7 @@ export default function SmartGrowthConsultant() {
                     <div className="flex gap-1.5 font-mono text-[9px] text-[#d4af37]/60 uppercase tracking-widest">
                         <span>SESSION: 0x{Math.random().toString(16).slice(2, 8).toUpperCase()}</span>
                         <span className="text-[#d4af37]/20">|</span>
-                        <span>STATUS: OP_READY</span>
+                        <span>SLOTS: 3/20</span>
                     </div>
                     <div className="flex items-center gap-2">
                         <span className="text-[8px] text-gray-500 font-serif">SECURE CONNECTION</span>
@@ -417,6 +423,14 @@ export default function SmartGrowthConsultant() {
                                             <label className="block text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-4">Strategic Niche</label>
                                             <select value={interest} onChange={(e) => setInterest(e.target.value as InterestId)} className="w-full bg-[#02040a] border border-slate-800 rounded-lg py-3 px-4 text-white font-mono text-xs focus:border-indigo-500 outline-none">
                                                 {INTERESTS.map(i => <option key={i.id} value={i.id}>{i.name.toUpperCase()}</option>)}
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label className="block text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-4">Annual Revenue</label>
+                                            <select value={revenue} onChange={(e) => setRevenue(e.target.value)} className="w-full bg-[#02040a] border border-slate-800 rounded-lg py-3 px-4 text-white font-mono text-xs focus:border-indigo-500 outline-none">
+                                                <option value="<500k">&lt;$500k / Year</option>
+                                                <option value="500k-2m">$500k - $2M / Year</option>
+                                                <option value="+2m">+$2M / Year</option>
                                             </select>
                                         </div>
                                     </div>
@@ -580,7 +594,7 @@ export default function SmartGrowthConsultant() {
                         <Lock className="w-3 h-3 text-[#d4af37]" /> 256-Bit Encryption
                     </div>
                     <div className="flex items-center gap-2 text-[9px] font-mono text-gray-400 uppercase tracking-widest">
-                        <Database className="w-3 h-3 text-[#d4af37]" /> Data Protected
+                        <Database className="w-3 h-3 text-[#d4af37]" /> 256-Bit SOC2 Compliant
                     </div>
                 </div>
 

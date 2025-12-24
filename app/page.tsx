@@ -10,18 +10,18 @@ import TrendUpFooter from "@/components/trend-up/footer"
 
 const METHOD_PILLARS = [
   {
-    title: "Auditoría Multimodal",
-    desc: "Mapeamos la entropía visual y los metadatos nativos de tu activo para detectar bloqueos de visibilidad invisibles para el ojo humano.",
+    title: "Auditoría Forense",
+    desc: "Identificamos las fallas invisibles en tu contenido que Meta penaliza activamente.",
     icon: <Activity className="w-6 h-6 text-[#d4af37]" />
   },
   {
-    title: "Diagnóstico de Patologías",
-    desc: "Identificamos los vectores de repulsión que hacen que Meta clasifique tu marca como contenido genérico, limitando tu acceso al 0.1% del mercado.",
+    title: "Diagnóstico Clínico",
+    desc: "Analizamos la brecha entre tu estatus real y tu alcance digital frente al Top 1% de tu industria.",
     icon: <Hexagon className="w-6 h-6 text-[#d4af37]" />
   },
   {
     title: "Protocolo de Soberanía",
-    desc: "Ejecutamos una re-alineación algorítmica diseñada para devolverte el mando absoluto de tu nicho y proteger tu legado digital.",
+    desc: "Inyectamos señales de autoridad para que el algoritmo te reconozca como el líder indiscutible.",
     icon: <Shield className="w-6 h-6 text-[#d4af37]" />
   }
 ]
@@ -93,17 +93,16 @@ export default function HomePage() {
 
         <div className="relative z-10 text-center max-w-4xl mx-auto space-y-8">
           <div className="inline-flex items-center gap-2 border border-[#d4af37]/30 rounded-full px-4 py-1 mb-4">
-            <div className="w-1.5 h-1.5 bg-[#d4af37] rounded-full animate-pulse" />
             <span className="text-[10px] uppercase tracking-[0.2em] text-[#d4af37]">Bureau of Digital Intelligence</span>
           </div>
 
           <h1 className="text-5xl md:text-7xl font-serif text-white leading-[1.1] tracking-tight">
-            Domina el <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#d4af37] to-[#fcebb6]">Escenario Global.</span>
+            Recupera tu <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#d4af37] to-[#fcebb6]">Autoridad Digital.</span>
           </h1>
 
           <p className="text-lg md:text-xl text-gray-400 font-light max-w-2xl mx-auto leading-relaxed">
-            La ingeniería de estatus que las figuras de élite utilizan para gobernar el algoritmo en los mercados más competitivos del mundo.
+            La primera firma de ingeniería forense dedicada a rescatar el alcance y el estatus de las figuras más influyentes del mundo. No gestionamos redes; blindamos legados.
           </p>
 
           <div className="pt-8">
@@ -111,7 +110,7 @@ export default function HomePage() {
               onClick={scrollToTerminal}
               className="bg-white text-black hover:bg-[#d4af37] transition-colors duration-300 px-8 py-4 text-xs font-bold uppercase tracking-[0.2em] min-w-[240px]"
             >
-              Iniciar Diagnóstico de Autoridad
+              Obtener Diagnóstico de Alcance Elite
             </button>
           </div>
         </div>
@@ -160,18 +159,18 @@ export default function HomePage() {
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="relative p-8 border border-white/5 hover:border-[#d4af37]/20 transition-colors group">
-              <div className="text-[#d4af37] text-4xl font-serif mb-4 opacity-30 group-hover:opacity-100 transition-opacity">I</div>
-              <h3 className="text-xl text-white font-serif mb-2">Interceptación</h3>
+              <div className="text-[#d4af37] text-4xl font-serif mb-4 opacity-50 transition-opacity">I</div>
+              <h3 className="text-xl text-white font-serif mb-2">Auditoría Forense</h3>
               <p className="text-sm text-gray-500 font-light leading-relaxed">Extraemos metadatos nativos y analizamos la entropía visual para auditoría forense.</p>
             </div>
             <div className="relative p-8 border border-white/5 hover:border-[#d4af37]/20 transition-colors group">
-              <div className="text-[#d4af37] text-4xl font-serif mb-4 opacity-30 group-hover:opacity-100 transition-opacity">II</div>
-              <h3 className="text-xl text-white font-serif mb-2">Diagnóstico</h3>
+              <div className="text-[#d4af37] text-4xl font-serif mb-4 opacity-50 transition-opacity">II</div>
+              <h3 className="text-xl text-white font-serif mb-2">Diagnóstico Clínico</h3>
               <p className="text-sm text-gray-500 font-light leading-relaxed">Identificamos vectores de repulsión algorítmica que invisibilizan el activo ante clientes Elite.</p>
             </div>
             <div className="relative p-8 border border-white/5 hover:border-[#d4af37]/20 transition-colors group">
-              <div className="text-[#d4af37] text-4xl font-serif mb-4 opacity-30 group-hover:opacity-100 transition-opacity">III</div>
-              <h3 className="text-xl text-white font-serif mb-2">Soberanía</h3>
+              <div className="text-[#d4af37] text-4xl font-serif mb-4 opacity-50 transition-opacity">III</div>
+              <h3 className="text-xl text-white font-serif mb-2">Protocolo de Soberanía</h3>
               <p className="text-sm text-gray-500 font-light leading-relaxed">Inyectamos señales de autoridad de alta pureza para recuperar el mando del nicho.</p>
             </div>
           </div>
