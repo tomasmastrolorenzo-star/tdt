@@ -1,69 +1,51 @@
 "use client"
 
 import Link from "next/link"
-import { Instagram, Twitter, Youtube, Mail } from "lucide-react"
-import { useI18n } from "@/lib/i18n/context"
 
 export default function TrendUpFooter() {
-  const { t } = useI18n()
-
   return (
-    <footer className="py-12 bg-slate-950 border-t border-slate-800">
-      <div className="container mx-auto px-4">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-          {/* Logo */}
-          <div className="text-center md:text-left">
-            <h3 className="text-xl font-bold bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
+    <footer className="py-20 bg-black border-t border-[#d4af37]/20">
+      <div className="container mx-auto px-6">
+        <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-12 text-center md:text-left">
+
+          {/* Institutional Branding */}
+          <div className="space-y-4">
+            <h3 className="text-xl font-serif text-white tracking-tight italic">
               Trend Digital Trade
             </h3>
-            <p className="text-slate-400 text-sm mt-1">{t.footer_v2?.tagline || "Boost your digital presence"}</p>
+            <div className="flex flex-col gap-1">
+              <span className="text-[10px] font-mono text-[#d4af37] uppercase tracking-[0.2em]">Bureau of Digital Intelligence</span>
+              <span className="text-[10px] font-mono text-slate-600 uppercase tracking-widest">Est. 2024 · Geneva / Miami</span>
+            </div>
           </div>
 
-          {/* Links */}
-          <nav className="flex flex-wrap justify-center gap-6">
-            <Link href="/terms" className="text-slate-400 hover:text-white text-sm transition-colors">
-              Terms of Service
+          {/* Legal / Custody Links */}
+          <div className="flex gap-8">
+            <Link href="#" className="text-[10px] font-mono text-slate-500 hover:text-[#d4af37] uppercase tracking-widest transition-colors">
+              Authority Custody
             </Link>
-            <Link href="/login" className="text-slate-400 hover:text-white text-sm transition-colors">
-              Login
+            <Link href="#" className="text-[10px] font-mono text-slate-500 hover:text-[#d4af37] uppercase tracking-widest transition-colors">
+              Legal Protocol
             </Link>
-          </nav>
-
-          {/* Social */}
-          <div className="flex gap-4">
-            <a
-              href="#"
-              className="w-10 h-10 bg-slate-800 hover:bg-pink-500 rounded-full flex items-center justify-center text-slate-400 hover:text-white transition-all duration-300"
-            >
-              <Instagram className="w-5 h-5" />
-            </a>
-            <a
-              href="#"
-              className="w-10 h-10 bg-slate-800 hover:bg-blue-500 rounded-full flex items-center justify-center text-slate-400 hover:text-white transition-all duration-300"
-            >
-              <Twitter className="w-5 h-5" />
-            </a>
-            <a
-              href="#"
-              className="w-10 h-10 bg-slate-800 hover:bg-red-500 rounded-full flex items-center justify-center text-slate-400 hover:text-white transition-all duration-300"
-            >
-              <Youtube className="w-5 h-5" />
-            </a>
-            <a
-              href="mailto:hola@trenddigitaltrade.com"
-              className="w-10 h-10 bg-slate-800 hover:bg-purple-500 rounded-full flex items-center justify-center text-slate-400 hover:text-white transition-all duration-300"
-            >
-              <Mail className="w-5 h-5" />
-            </a>
+            <Link href="#" className="text-[10px] font-mono text-slate-500 hover:text-[#d4af37] uppercase tracking-widest transition-colors">
+              Secure Access
+            </Link>
           </div>
+
         </div>
 
-        {/* Copyright */}
-        <div className="mt-8 pt-8 border-t border-slate-800 text-center">
-          <p className="text-slate-500 text-sm">
-            © {new Date().getFullYear()} Trend Digital Trade. {t.footer_v2?.copyright || "All rights reserved."}
+        {/* Notarial Seal / Copyright */}
+        <div className="mt-16 pt-8 border-t border-[#d4af37]/10 flex flex-col md:flex-row justify-between items-center gap-6">
+          <p className="text-[9px] font-mono text-slate-700 uppercase tracking-widest">
+            © {new Date().getFullYear()} TDT Structure. All Rights Reserved.
           </p>
+          <div className="flex items-center gap-2 opacity-30">
+            <div className="w-2 h-2 rounded-full border border-white/20" />
+            <div className="w-2 h-2 rounded-full bg-[#d4af37]" />
+            <span className="text-[9px] font-mono text-slate-500">SYSTEM_ACTIVE</span>
+          </div>
         </div>
+
       </div>
     </footer>
   )
