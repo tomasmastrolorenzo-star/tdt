@@ -82,7 +82,7 @@ export default function SmartGrowthConsultant() {
     const [handle, setHandle] = useState("")
     const [revenue, setRevenue] = useState<string>("500k-2m")
     const [interest, setInterest] = useState<InterestId>("business")
-    const [verifiedUser, setVerifiedUser] = useState<{ full_name: string, profile_pic_url: string, biography?: string, follower_count?: number } | null>(null)
+    const [verifiedUser, setVerifiedUser] = useState<{ username: string, full_name?: string, profilePicUrl?: string, biography?: string, posts?: any[] } | null>(null)
 
     // Logic State
     const [isVerifying, setIsVerifying] = useState(false)
@@ -102,25 +102,39 @@ export default function SmartGrowthConsultant() {
         setVerificationError(null)
 
         try {
-            const response = await fetch('/api/verify-identity', {
+            const response = await fetch('/api/forensic/instagram', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username: handle })
+                body: JSON.stringify({ handle })
             })
 
-            if (!response.ok) throw new Error("Connection Refused")
             const data = await response.json()
 
-            setVerifiedUser({
-                full_name: data.full_name || data.username || handle,
-                profile_pic_url: data.profile_pic_url || data.profile_pic_url_hd,
-                follower_count: data.follower_count || data.edge_followed_by?.count,
-                biography: data.biography || data.biography_with_entities?.raw_text
-            })
+            // Strict status check (even if 200 OK)
+            if (data.status === 'restricted') {
+                // FALLBACK MODE
+                setVerifiedUser({
+                    username: handle,
+                    full_name: handle,
+                    profilePicUrl: undefined, // Triggers Silhouette
+                    biography: "Visual data restricted by forensic protocol.",
+                    posts: []
+                })
+            } else {
+                // SUCCESS MODE
+                setVerifiedUser(data)
+            }
 
         } catch (e) {
-            console.error("API Error:", e)
-            // Graceful fallback: null verifiedUser triggers silhouette state
+            console.error("Forensic Link Error")
+            // SAFETY NET: Fallback
+            setVerifiedUser({
+                username: handle,
+                full_name: handle,
+                profilePicUrl: undefined,
+                biography: "Connection secure. Visuals sequestered.",
+                posts: []
+            })
         } finally {
             setIsVerifying(false)
         }
@@ -143,7 +157,7 @@ export default function SmartGrowthConsultant() {
 
     const calculateVerdict = () => {
         // Iron Logic V21
-        const followers = verifiedUser?.follower_count || 10000 // Fallback estimate
+        const followers = 10000 // Metrics censored - use default
 
         if (revenue === "+2m" || followers > 100000) {
             setVerdict("FRAGILE")
@@ -243,8 +257,8 @@ export default function SmartGrowthConsultant() {
                             <div className="flex flex-col items-center gap-6">
                                 <div className="relative">
                                     <div className="w-24 h-24 rounded-full border border-[#d4af37]/30 p-1">
-                                        {verifiedUser?.profile_pic_url ? (
-                                            <img src={verifiedUser.profile_pic_url} alt="Profile" className="w-full h-full rounded-full grayscale hover:grayscale-0 transition-all duration-1000 object-cover" />
+                                        {verifiedUser?.profilePicUrl ? (
+                                            <img src={verifiedUser.profilePicUrl} alt="Profile" className="w-full h-full rounded-full grayscale hover:grayscale-0 transition-all duration-1000 object-cover" />
                                         ) : (
                                             <div className="w-full h-full bg-slate-900 rounded-full flex items-center justify-center"><Shield className="w-8 h-8 text-slate-800" /></div>
                                         )}
@@ -261,9 +275,17 @@ export default function SmartGrowthConsultant() {
                                     )}
                                 </div>
 
-                                {/* Abstract Grid */}
-                                <div className="grid grid-cols-3 gap-px w-48 opacity-20 hover:opacity-30 transition-opacity">
-                                    {[1, 2, 3, 4, 5, 6].map(i => <div key={i} className="aspect-square bg-white/10" />)}
+                                {/* Abstract Grid - NOW REAL OR SIMULATED */}
+                                <div className="grid grid-cols-3 gap-px w-48 transition-opacity">
+                                    {verifiedUser?.posts && verifiedUser.posts.length > 0 ? (
+                                        verifiedUser.posts.slice(0, 6).map((post: any, i: number) => (
+                                            <div key={post.id || i} className="aspect-square bg-slate-900 relative group overflow-hidden">
+                                                <img src={post.imageUrl} alt="" className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" />
+                                            </div>
+                                        ))
+                                    ) : (
+                                        [1, 2, 3, 4, 5, 6].map(i => <div key={i} className="aspect-square bg-white/10 opacity-20" />)
+                                    )}
                                 </div>
                             </div>
                         )}
@@ -277,7 +299,7 @@ export default function SmartGrowthConsultant() {
                             >
                                 CONFIRMAR & PROCEDER
                             </button>
-                            {(!verifiedUser || !verifiedUser.profile_pic_url) && (
+                            {(!verifiedUser?.profilePicUrl) && (
                                 <p className="text-[8px] text-slate-500 font-mono uppercase tracking-widest">
                                     <span className="text-[#d4af37] mr-2">⚠</span>
                                     Vectores visuales protegidos. Análisis procedimental activo.
