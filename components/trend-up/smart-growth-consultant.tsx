@@ -245,9 +245,16 @@ export default function SmartGrowthConsultant() {
                     </div>
 
                     {!isVerifying && (
-                        <Button onClick={startDiscovery} className="w-full bg-white text-black hover:bg-slate-200 rounded-none uppercase tracking-[0.2em] font-mono text-xs py-6">
-                            Confirmar Identidad & Proceder
-                        </Button>
+                        <div className="w-full space-y-4">
+                            <Button onClick={startDiscovery} className="w-full bg-white text-black hover:bg-slate-200 rounded-none uppercase tracking-[0.2em] font-mono text-xs py-6">
+                                Confirmar Identidad & Proceder
+                            </Button>
+                            {!verifiedUser && (
+                                <p className="text-[9px] text-red-400 font-mono">
+                                    Los detalles visuales no pudieron cargarse, pero el análisis continúa.
+                                </p>
+                            )}
+                        </div>
                     )}
 
                     <div className="text-[9px] text-slate-600 font-mono max-w-xs">
