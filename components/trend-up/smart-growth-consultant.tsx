@@ -177,23 +177,34 @@ export default function SmartGrowthConsultant() {
     return (
         <div className="min-h-[600px] flex flex-col items-center justify-center relative bg-[#02040a] border border-[#d4af37]/20 shadow-[0_0_50px_rgba(212,175,55,0.05)]">
 
-            {/* S0: PRE-ENTRY (COMMITMENT) */}
+            {/* S0: PRE-ENTRY (COMMITMENT) - CLINICAL */}
             {step === AnalyzerStep.PRE_ENTRY && (
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-md w-full p-8 text-center space-y-8">
-                    <div className="space-y-4">
-                        <h2 className="text-2xl font-verdict text-white italic">Este análisis no mide popularidad.</h2>
-                        <p className="text-sm font-mono text-slate-400">Evalúa clasificación algorítmica y autoridad percibida.</p>
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-md w-full py-12 text-center space-y-12">
+                    <div className="space-y-6">
+                        <h2 className="text-3xl font-serif text-white italic">Protocolo de Entrada</h2>
+                        <p className="text-xs font-mono text-slate-500 uppercase tracking-widest max-w-xs mx-auto">
+                            Este nodo evalúa autoridad estructural. <br /> No métricas de vanidad.
+                        </p>
                     </div>
 
-                    <div className="space-y-4 text-left bg-slate-900/50 p-6 border border-slate-800">
-                        <div className="flex flex-col gap-4">
-                            <div>
-                                <label className="text-[10px] font-mono text-[#d4af37] uppercase tracking-widest">Target Handle</label>
-                                <input value={handle} onChange={e => setHandle(e.target.value)} placeholder="@username" className="w-full bg-black border-b border-slate-700 focus:border-[#d4af37] outline-none text-white py-2 font-mono" />
+                    <div className="space-y-8 text-left max-w-sm mx-auto">
+                        <div className="space-y-6">
+                            <div className="border-b border-slate-800 focus-within:border-[#d4af37] transition-colors">
+                                <label className="text-[9px] font-mono text-slate-600 block mb-2">TARGET IDENTITY</label>
+                                <input
+                                    value={handle}
+                                    onChange={e => setHandle(e.target.value)}
+                                    placeholder="@username"
+                                    className="w-full bg-transparent outline-none text-white py-2 font-mono text-sm placeholder:text-slate-800 uppercase tracking-widest"
+                                />
                             </div>
-                            <div>
-                                <label className="text-[10px] font-mono text-[#d4af37] uppercase tracking-widest">Est. Revenue</label>
-                                <select value={revenue} onChange={e => setRevenue(e.target.value)} className="w-full bg-black border-b border-slate-700 focus:border-[#d4af37] outline-none text-white py-2 font-mono">
+                            <div className="border-b border-slate-800 focus-within:border-[#d4af37] transition-colors">
+                                <label className="text-[9px] font-mono text-slate-600 block mb-2">ESTIMATED REVENUE</label>
+                                <select
+                                    value={revenue}
+                                    onChange={e => setRevenue(e.target.value)}
+                                    className="w-full bg-transparent outline-none text-white py-2 font-mono text-sm uppercase tracking-widest [&>option]:bg-black"
+                                >
                                     <option value="<500k">&lt;$500k / Year</option>
                                     <option value="500k-2m">$500k - $2M / Year</option>
                                     <option value="+2m">+$2M / Year</option>
@@ -202,106 +213,109 @@ export default function SmartGrowthConsultant() {
                         </div>
                     </div>
 
-                    <ul className="text-left space-y-2 text-[10px] font-mono text-slate-500 uppercase tracking-widest">
-                        <li className="flex items-center gap-2"><div className="w-1 h-1 bg-[#d4af37] rounded-full" /> Resultados no editables</li>
-                        <li className="flex items-center gap-2"><div className="w-1 h-1 bg-[#d4af37] rounded-full" /> Diagnóstico irreversible</li>
-                        <li className="flex items-center gap-2"><div className="w-1 h-1 bg-[#d4af37] rounded-full" /> Acceso limitado</li>
+                    <ul className="text-left space-y-3 text-[9px] font-mono text-slate-600 uppercase tracking-widest max-w-xs mx-auto pt-4">
+                        <li className="flex items-center gap-3"><div className="w-1 h-1 bg-[#d4af37]" /> Diagnóstico Irreversible</li>
+                        <li className="flex items-center gap-3"><div className="w-1 h-1 bg-[#d4af37]" /> Acceso Restringido</li>
                     </ul>
 
-                    <Button onClick={handleConnection} disabled={!handle} className="w-full bg-[#d4af37] text-black hover:bg-[#b5952f] rounded-none uppercase tracking-[0.2em] font-mono text-xs py-6">
-                        Iniciar Análisis Confidencial
-                    </Button>
+                    <button
+                        onClick={handleConnection}
+                        disabled={!handle}
+                        className="group w-full max-w-sm mx-auto border border-[#d4af37]/30 text-[#d4af37] hover:bg-[#d4af37] hover:text-black transition-all duration-500 uppercase tracking-[0.3em] font-mono text-[10px] py-4 disabled:opacity-30 disabled:cursor-not-allowed"
+                    >
+                        {isVerifying ? "VERIFYING..." : "INICIAR ANÁLISIS CONFIDENCIAL"}
+                    </button>
                 </motion.div>
             )}
 
-            {/* S1: CONNECTION (VISUALS) */}
+            {/* S1: CONNECTION (VISUALS) - CLINICAL */}
             {step === AnalyzerStep.CONNECTION && (
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-full max-w-lg p-8 flex flex-col items-center text-center space-y-10">
-                    <div className="space-y-2">
-                        <div className="text-[10px] font-mono text-[#d4af37] animate-pulse">SYSTEM_HANDSHAKE_ESTABLISHED</div>
-                        <h3 className="text-xl font-verdict text-white italic">Activo Detectado</h3>
-                        <p className="text-xs text-slate-500 font-mono">Iniciando correlación de señales visibles vs señales reales.</p>
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-full max-w-lg py-12 flex flex-col items-center text-center space-y-12">
+                    <div className="space-y-4">
+                        <div className="text-[9px] font-mono text-[#d4af37]/50 animate-pulse">CONNECTION_SECURE</div>
+                        <h3 className="text-2xl font-serif text-white italic">Activo Identificado</h3>
                     </div>
 
-                    <div className="relative">
+                    <div className="relative group">
                         {isVerifying ? (
                             <OrbitalLoader isLazarus={false} />
                         ) : (
-                            <div className="flex flex-col items-center gap-4">
-                                <div className="w-24 h-24 rounded-full border border-[#d4af37]/50 p-1 relative">
-                                    {verifiedUser?.profile_pic_url ? (
-                                        <img src={verifiedUser.profile_pic_url} alt="Profile" className="w-full h-full rounded-full grayscale hover:grayscale-0 transition-all duration-700 object-cover" />
-                                    ) : (
-                                        <div className="w-full h-full bg-slate-900 rounded-full flex items-center justify-center"><Shield className="w-8 h-8 text-slate-700" /></div>
+                            <div className="flex flex-col items-center gap-6">
+                                <div className="relative">
+                                    <div className="w-24 h-24 rounded-full border border-[#d4af37]/30 p-1">
+                                        {verifiedUser?.profile_pic_url ? (
+                                            <img src={verifiedUser.profile_pic_url} alt="Profile" className="w-full h-full rounded-full grayscale hover:grayscale-0 transition-all duration-1000 object-cover" />
+                                        ) : (
+                                            <div className="w-full h-full bg-slate-900 rounded-full flex items-center justify-center"><Shield className="w-8 h-8 text-slate-800" /></div>
+                                        )}
+                                    </div>
+                                    <div className="absolute -bottom-2 right-1/2 translate-x-1/2 text-[9px] bg-black px-2 text-[#d4af37] border border-[#d4af37]/30 shadow-xl">LIVE</div>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <div className="font-mono text-sm text-white uppercase tracking-[0.2em]">@{handle}</div>
+                                    {verifiedUser?.biography && (
+                                        <p className="text-[9px] text-slate-500 font-mono italic max-w-xs line-clamp-2 mx-auto leading-relaxed border-l border-[#d4af37]/20 pl-3 text-left">
+                                            {verifiedUser.biography}
+                                        </p>
                                     )}
-                                    <div className="absolute bottom-0 right-0 w-4 h-4 bg-emerald-500 border-2 border-black rounded-full" />
-                                </div>
-                                <div className="space-y-1">
-                                    <div className="font-mono text-sm text-white uppercase tracking-widest">@{handle}</div>
-                                    {verifiedUser?.full_name && <div className="text-[10px] font-mono text-slate-500 uppercase">{verifiedUser.full_name}</div>}
                                 </div>
 
-                                {verifiedUser?.biography && (
-                                    <p className="text-[10px] text-slate-400 font-mono italic max-w-xs line-clamp-2">
-                                        "{verifiedUser.biography}"
-                                    </p>
-                                )}
-
-                                {/* Fake Grid (Always shown as decorative if no real media, to maintain aesthetic) */}
-                                <div className="grid grid-cols-3 gap-1 w-64 opacity-30 mt-2">
-                                    {[1, 2, 3, 4, 5, 6].map(i => <div key={i} className="aspect-square bg-slate-800/50 border border-slate-700/30" />)}
+                                {/* Abstract Grid */}
+                                <div className="grid grid-cols-3 gap-px w-48 opacity-20 hover:opacity-30 transition-opacity">
+                                    {[1, 2, 3, 4, 5, 6].map(i => <div key={i} className="aspect-square bg-white/10" />)}
                                 </div>
                             </div>
                         )}
                     </div>
 
                     {!isVerifying && (
-                        <div className="w-full space-y-4">
-                            <Button onClick={startDiscovery} className="w-full bg-white text-black hover:bg-slate-200 rounded-none uppercase tracking-[0.2em] font-mono text-xs py-6">
-                                Confirmar Identidad & Proceder
-                            </Button>
+                        <div className="w-full max-w-sm space-y-6">
+                            <button
+                                onClick={startDiscovery}
+                                className="w-full border border-white/20 text-white hover:border-[#d4af37] hover:text-[#d4af37] transition-all duration-500 uppercase tracking-[0.2em] font-mono text-[10px] py-4"
+                            >
+                                CONFIRMAR & PROCEDER
+                            </button>
                             {(!verifiedUser || !verifiedUser.profile_pic_url) && (
-                                <p className="text-[9px] text-red-400 font-mono bg-red-950/20 p-2 border border-red-900/30">
-                                    ⚠️ Los detalles visuales no pudieron cargarse, pero el análisis continúa.
+                                <p className="text-[8px] text-slate-500 font-mono uppercase tracking-widest">
+                                    <span className="text-[#d4af37] mr-2">⚠</span>
+                                    Vectores visuales protegidos. Análisis procedimental activo.
                                 </p>
                             )}
                         </div>
                     )}
-
-                    <div className="text-[9px] text-slate-600 font-mono max-w-xs">
-                        El 92% de los activos se clasifican incorrectamente por sus propias agencias.
-                    </div>
                 </motion.div>
             )}
 
-            {/* S2: DISCOVERY (LOADER/TRUTH) */}
+            {/* S2: DISCOVERY (LOADER/TRUTH) - CLINICAL */}
             {step === AnalyzerStep.DISCOVERY && (
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 z-50 bg-black flex flex-col items-center justify-center p-8 text-center space-y-12">
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 z-50 bg-[#02040a] flex flex-col items-center justify-center p-8 text-center space-y-16">
                     <OrbitalLoader isLazarus={false} />
 
-                    <div className="h-20 flex flex-col items-center justify-center">
+                    <div className="h-16 flex flex-col items-center justify-center">
                         <AnimatePresence mode="wait">
                             <motion.p
                                 key={loaderIndex}
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -10 }}
-                                className="text-sm font-mono text-[#d4af37] tracking-widest uppercase"
+                                initial={{ opacity: 0, filter: 'blur(5px)' }}
+                                animate={{ opacity: 1, filter: 'blur(0px)' }}
+                                exit={{ opacity: 0, filter: 'blur(5px)' }}
+                                className="text-xs font-mono text-[#d4af37] tracking-[0.2em] uppercase"
                             >
                                 {[
-                                    "Extrayendo patrones de publicación…",
-                                    "Analizando coherencia narrativa…",
-                                    "Contrastando autoridad percibida…",
-                                    "Detectando dependencia de volumen…",
-                                    "Localizando señales omitidas…",
-                                    "Generando veredicto final…"
+                                    "Extrayendo patrones...",
+                                    "Analizando narrativa...",
+                                    "Contrastando autoridad...",
+                                    "Detectando volumen...",
+                                    "Localizando señales...",
+                                    "CLASIFICACIÓN FINAL..."
                                 ][loaderIndex]}
                             </motion.p>
                         </AnimatePresence>
                     </div>
 
-                    <p className="text-xs text-slate-500 font-mono max-w-xs uppercase tracking-wide">
-                        El sistema no evalúa esfuerzo.<br />Evalúa estatus operativo.
+                    <p className="text-[9px] text-slate-600 font-mono max-w-xs uppercase tracking-widest leading-relaxed">
+                        Sistema en observación pasiva.<br />No cierre la terminal.
                     </p>
                 </motion.div>
             )}
