@@ -43,36 +43,41 @@ export default function HomePage() {
             <span className="text-[10px] font-mono text-[#d4af37] uppercase tracking-[0.3em]">Bureau of Digital Intelligence</span>
           </div>
 
-          {/* Headline */}
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif text-white leading-[1.1] italic">
+          <h1 className="text-5xl md:text-7xl font-serif text-white italic tracking-tight leading-tight">
             Recupera tu <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-b from-[#d4af37] to-[#8a7020]">Autoridad Digital</span>.
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#d4af37] to-[#fcebb6]">Soberanía Digital</span>
           </h1>
 
-          {/* Subhead */}
-          <p className="text-xs md:text-sm font-mono text-slate-500 max-w-xl mx-auto leading-loose uppercase tracking-widest">
-            La primera firma de ingeniería forense dedicada a rescatar el alcance y el estatus de las figuras más influyentes del mundo.
-            <br /><br />
-            No gestionamos redes; blindamos legados.
+          <p className="text-xs md:text-sm font-mono text-slate-400 uppercase tracking-widest max-w-xl mx-auto leading-loose">
+            La única firma de auditoría forense capaz de desbloquear el alcance restringido por el algoritmo de Meta™.
           </p>
 
-          {/* Authority Strip */}
-          <div className="flex justify-center gap-12 pt-12 opacity-60 grayscale hover:grayscale-0 transition-all duration-700">
-            {/* Instagram */}
-            <div className="flex items-center gap-3 opacity-80">
-              <svg viewBox="0 0 24 24" className="w-6 h-6 fill-white" role="img"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" /></svg>
-              <div className="flex flex-col">
-                <span className="text-[10px] font-mono text-white uppercase tracking-widest">Verified Node</span>
-              </div>
-            </div>
-            {/* Meta */}
-            <div className="flex items-center gap-3 opacity-80">
-              <svg viewBox="0 0 24 24" className="w-6 h-6 fill-white" role="img"><path d="M16.98 4a7.07 7.07 0 00-4.99 2.06A6.97 6.97 0 007.02 4a7.03 7.03 0 00-4.98 12.03c1.33 1.32 3.08 2.03 4.96 2.03 1.33 0 2.59-.35 3.73-.97a14.53 14.53 0 001.27-.78L12 16.27l.79.48c.19.11.38.22.58.33A6.97 6.97 0 0016.98 18c1.9 0 3.66-.71 4.99-2.03A7.03 7.03 0 0016.98 4zm-1.87 9.53a3.52 3.52 0 11-2.47-6.02 3.52 3.52 0 012.47 6.02zm-6.22 0a3.52 3.52 0 11-2.47-6.02 3.52 3.52 0 012.47 6.02z" /></svg>
-              <div className="flex flex-col">
-                <span className="text-[10px] font-mono text-white uppercase tracking-widest">Graph Partner</span>
-              </div>
+          <div className="flex flex-col items-center gap-8 pt-8">
+            <button
+              onClick={scrollToTerminal}
+              className="group relative px-8 py-4 bg-[#d4af37] hover:bg-[#b5952f] transition-all duration-500"
+            >
+              <div className="absolute inset-0 border border-[#fcebb6]/30 translate-x-1 translate-y-1 group-hover:translate-x-0 group-hover:translate-y-0 transition-transform duration-500" />
+              <span className="text-[10px] font-mono text-black font-bold uppercase tracking-[0.3em] relative z-10">
+                Iniciar Protocolo
+              </span>
+            </button>
+
+            {/* Authority Strip (Meta/IG) */}
+            <div className="flex items-center gap-6 opacity-40 grayscale hover:grayscale-0 transition-all duration-700">
+              <span className="text-[9px] font-mono text-slate-600 uppercase tracking-widest">Systems Audited By:</span>
+              {/* Meta Logo SVG */}
+              <svg className="h-5 w-auto text-white" viewBox="0 0 100 20" fill="currentColor">
+                <path d="M60.3,5.6c-0.8,0-1.6,0.3-2.1,0.8L54,10.7l-4.1-4.3c-0.6-0.6-1.3-0.8-2.1-0.8 c-1.6,0-2.9,1.3-2.9,2.9c0,0.8,0.3,1.5,0.8,2.1l5.4,5.6c0.4,0.4,0.9,0.6,1.4,0.6s1.1-0.2,1.4-0.6l5.4-5.6 c0.6-0.6,0.8-1.3,0.8-2.1C63.2,6.9,61.9,5.6,60.3,5.6z" />
+                <path d="M80.5,5.6c-1.6,0-2.9,1.3-2.9,2.9c0,1,0.5,1.8,1.2,2.4l-4.7,4.8h4l2.4-2.5l2.4,2.5h4l-4.7-4.8 c0.7-0.6,1.2-1.4,1.2-2.4C83.4,6.9,82.1,5.6,80.5,5.6z M80.5,9.6c-0.6,0-1.1-0.5-1.1-1.1s0.5-1.1,1.1-1.1s1.1,0.5,1.1,1.1 S81.1,9.6,80.5,9.6z" />
+              </svg>
+              {/* Instagram Logo SVG */}
+              <svg className="h-5 w-auto text-white" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+              </svg>
             </div>
           </div>
+
         </motion.div>
       </section>
 
