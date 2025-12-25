@@ -3,22 +3,27 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
-import { ChevronRight, Activity, Database, Check } from "lucide-react"
+import { ChevronRight, Activity, Database, Check, Lock, AlertTriangle } from "lucide-react"
 
 // --- MACHINE STATES ---
 enum MachineStep {
     IDLE = 0,         // Input State
     SCANNING = 1,     // "Cartografiando..." (0-2s)
-    FINDING = 2,      // The Core Finding (2-8s)
-    DYNAMICS = 3,     // Explanation
-    DECISION = 4,     // Option A / B
-    CAPTURE = 5       // Email
+    IDENTITY = 2,     // **NEW**: Identity Confirmation (Stats)
+    FINDING = 3,      // The Core Finding (2-8s)
+    DYNAMICS = 4,     // Explanation
+    DECISION = 5,     // Option A / B
+    CAPTURE = 6       // Email
 }
 
 // --- VISUALIZATION DATA ---
-// We will eventually populate this from API
 interface AnalysisData {
     username: string
+    profilePicUrl?: string
+    followers_count: number
+    posts_count: number
+    last_post_date: string
+    latest_posts: { url: string, caption?: string, date: number }[]
     finding_title: string
     finding_value: string
     finding_evidence: string
@@ -40,27 +45,22 @@ export default function SmartGrowthConsultant() {
     // --- ACTIONS ---
 
     const initiateScan = async () => {
-        // 1. Validate
         // 1. Validate & Normalize
         let cleanHandle = handle.trim()
         if (!cleanHandle.startsWith('@')) {
             cleanHandle = '@' + cleanHandle
         }
-        setHandle(cleanHandle) // Update UI
+        setHandle(cleanHandle)
 
-        if (cleanHandle.length < 3) { // "@a" is too short
+        if (cleanHandle.length < 3) {
             setError("ERR: CADENA_INSUFICIENTE")
             return
         }
+        setError("")
 
-
-        // 2. Transition (Fade Out Landing done via parent layout usually, but here we just switch state)
+        // 2. Transition
         setStep(MachineStep.SCANNING)
         setLoadingMsg("Cartografiando capas de la arquitectura pública...")
-
-        // 3. Scan Sequence
-        // 0-2s: Cartography
-        // Parallel: Start Fetch
         const startTime = Date.now()
 
         try {
@@ -71,54 +71,44 @@ export default function SmartGrowthConsultant() {
             })
 
             const result = await response.json()
-            // We'll need to adapt `route.ts` to give us specific "Findings" later.
-            // For now, let's map what we have or generic fallback.
 
-            // Mocking the "Finding" structure based on current API response or Fallback
-            // (Phase 4 requirement: Finding in <10s)
-
+            // Map Data
             const findingData: AnalysisData = {
                 username: result.username || handle,
+                profilePicUrl: result.profilePicUrl,
+                followers_count: result.followers_count || 0,
+                posts_count: result.posts_count || 0,
+                last_post_date: result.last_post_date,
+                latest_posts: result.latest_posts || [],
+
                 finding_title: "PATRÓN DE EMISIÓN DETECTADO",
                 finding_value: result.indicators?.intencion_comercial?.val > 6 ? "ALTA SATURACIÓN DE CTA" : "BAJA FRECUENCIA DE IMPACTO",
                 finding_evidence: `Métrica de densidad: ${result.indicators?.intencion_comercial?.val || 5}/10`,
                 dynamics_text: "Esta configuración genera ventanas de fricción que reducen la eficiencia de la captura de valor en capas frías."
             }
 
-            // Ensure min 2s delay for "Cartografiando"
             const elapsed = Date.now() - startTime
-            const remaining = Math.max(0, 2000 - elapsed)
+            const remaining = Math.max(0, 1500 - elapsed)
 
             setTimeout(() => {
                 setData(findingData)
-                setStep(MachineStep.FINDING)
+                setStep(MachineStep.IDENTITY) // NEW: Go to Identity first
             }, remaining)
 
         } catch (e) {
             console.error(e)
-            // Fallback
             setTimeout(() => {
-                setData({
-                    username: handle,
-                    finding_title: "ANOMALÍA DE LECTURA",
-                    finding_value: "ARQUITECTURA PRIVADA / RESTRINGIDA",
-                    finding_evidence: "No se detectaron nodos públicos",
-                    dynamics_text: "La opacidad de la cuenta impide el cálculo de eficiencia de distribución."
-                })
-                setStep(MachineStep.FINDING)
+                setStep(MachineStep.IDLE)
+                setError("ERR: CONEXION FALLIDA")
             }, 2000)
         }
     }
 
-    const nextToDynamics = () => {
-        // Auto-transition or manual? 
-        // "Phase 5 & 6: Dynamics & Decision"
-        // Let's transition after a viewing duration or click? 
-        // User said "Mostrar una segunda capa: Relación...". 
-        // Let's make it interactive "VER IMPACTO"
-        setStep(MachineStep.DYNAMICS)
+    const confirmIdentity = () => {
+        setStep(MachineStep.FINDING)
     }
 
+    const nextToDynamics = () => setStep(MachineStep.DYNAMICS)
     const toDecision = () => setStep(MachineStep.DECISION)
 
     const handleOption = (opt: "A" | "B") => {
@@ -128,7 +118,7 @@ export default function SmartGrowthConsultant() {
 
     // --- RENDERERS ---
 
-    // 1. INPUT (ACTIVATOR)
+    // 1. INPUT
     if (step === MachineStep.IDLE) {
         return (
             <div className="w-full max-w-md mx-auto space-y-8 animate-in fade-in duration-500">
@@ -144,28 +134,18 @@ export default function SmartGrowthConsultant() {
                         />
                     </div>
                 </div>
-
-                {error && (
-                    <p className="text-[10px] text-red-500 font-mono text-center tracking-widest uppercase animate-pulse">
-                        {error}
-                    </p>
-                )}
-
+                {error && <p className="text-[10px] text-red-500 font-mono text-center tracking-widest uppercase animate-pulse">{error}</p>}
                 <button
                     onClick={initiateScan}
                     className="w-full bg-[#d4af37] hover:bg-white text-black transition-all duration-300 py-4 font-mono text-xs uppercase tracking-[0.25em] font-bold border border-transparent hover:border-[#d4af37] active:scale-[0.99]"
                 >
                     INICIAR DIAGNÓSTICO
                 </button>
-
-                <p className="text-[9px] text-slate-600 font-mono text-center uppercase tracking-widest">
-                    Acceso al núcleo de inteligencia v1.4
-                </p>
             </div>
         )
     }
 
-    // 2. SCANNING (TRANSITION)
+    // 2. SCANNING
     if (step === MachineStep.SCANNING) {
         return (
             <div className="w-full max-w-md mx-auto text-center space-y-6 pt-12">
@@ -180,62 +160,80 @@ export default function SmartGrowthConsultant() {
         )
     }
 
-    // 3. FINDING (THE CORE)
-    if (step === MachineStep.FINDING && data) {
+    // 2.5 IDENTITY (NEW SCREENER)
+    if (step === MachineStep.IDENTITY && data) {
         return (
-            <div className="w-full max-w-xl mx-auto bg-[#02040a] border border-white/10 p-8 space-y-8 animate-in slide-in-from-bottom-5 duration-700">
-                {/* Header */}
-                <div className="flex justify-between items-end border-b border-white/5 pb-4">
-                    <div className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">
-                        Hallazgo Técnico
+            <div className="w-full max-w-xl mx-auto bg-[#02040a] border border-white/10 p-6 space-y-8 animate-in zoom-in-95 duration-500">
+                {/* Header: Identity */}
+                <div className="flex items-center gap-6 border-b border-white/5 pb-6">
+                    <div className="w-20 h-20 rounded-full overflow-hidden border border-white/10 relative">
+                        {data.profilePicUrl && <img src={`https://wsrv.nl/?url=${encodeURIComponent(data.profilePicUrl)}`} className="w-full h-full object-cover grayscale opacity-90" />}
                     </div>
-                    <div className="text-[10px] font-mono text-white uppercase tracking-widest">
-                        {data.username}
+                    <div className="space-y-2">
+                        <div className="text-[10px] text-[#d4af37] font-mono uppercase tracking-widest">Objetivo Localizado</div>
+                        <div className="text-2xl text-white font-mono tracking-tight">@{data.username}</div>
+                        <div className="flex gap-4 text-[10px] font-mono text-slate-500 uppercase">
+                            <span>{data.followers_count.toLocaleString()} Segs</span>
+                            <span>{data.posts_count} Pubs</span>
+                        </div>
                     </div>
                 </div>
 
-                {/* The Finding */}
+                {/* Evidence Grid (Latest 3 Posts) */}
+                <div className="grid grid-cols-3 gap-2 opacity-60 hover:opacity-100 transition-opacity">
+                    {data.latest_posts.slice(0, 3).map((post, i) => (
+                        <div key={i} className="aspect-square bg-slate-900 border border-white/5 overflow-hidden relative">
+                            {post.url && <img src={`https://wsrv.nl/?url=${encodeURIComponent(post.url)}`} className="w-full h-full object-cover grayscale" />}
+                            <div className="absolute bottom-0 w-full bg-black/50 text-[8px] text-white p-1 truncate font-mono">
+                                {new Date(post.date * 1000).toLocaleDateString()}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                {/* Confirm Logic */}
+                <button
+                    onClick={confirmIdentity}
+                    className="w-full bg-white text-black hover:bg-slate-200 py-3 font-mono text-xs uppercase tracking-[0.2em] font-bold"
+                >
+                    CONFIRMAR IDENTIDAD PARA ANÁLISIS
+                </button>
+            </div>
+        )
+    }
+
+    // 3. FINDING
+    if (step === MachineStep.FINDING && data) {
+        return (
+            <div className="w-full max-w-xl mx-auto bg-[#02040a] border border-white/10 p-8 space-y-8 animate-in slide-in-from-bottom-5 duration-700">
+                <div className="flex justify-between items-end border-b border-white/5 pb-4">
+                    <div className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">Hallazgo Técnico</div>
+                    <div className="text-[10px] font-mono text-white uppercase tracking-widest">{data.username}</div>
+                </div>
                 <div className="space-y-2">
                     <h3 className="text-sm font-mono text-slate-400 uppercase tracking-widest">{data.finding_title}</h3>
-                    <div className="text-2xl md:text-3xl font-serif text-white italic">
-                        {data.finding_value}
-                    </div>
+                    <div className="text-2xl md:text-3xl font-serif text-white italic">{data.finding_value}</div>
                     <div className="inline-block bg-slate-900 border border-white/10 px-3 py-1 mt-2">
                         <span className="text-[10px] font-mono text-[#d4af37] uppercase">{data.finding_evidence}</span>
                     </div>
                 </div>
-
-                {/* Continue CTA */}
                 <div className="pt-4 flex justify-end">
-                    <button
-                        onClick={nextToDynamics}
-                        className="flex items-center gap-2 text-xs font-mono text-slate-300 hover:text-white transition-colors uppercase tracking-widest group"
-                    >
-                        Analizar Impacto
-                        <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    <button onClick={nextToDynamics} className="flex items-center gap-2 text-xs font-mono text-slate-300 hover:text-white transition-colors uppercase tracking-widest group">
+                        Analizar Impacto <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </button>
                 </div>
             </div>
         )
     }
 
-    // 4. DYNAMICS (CONSEQUENCE)
+    // 4. DYNAMICS
     if (step === MachineStep.DYNAMICS && data) {
         return (
             <div className="w-full max-w-xl mx-auto bg-[#02040a] border border-white/10 p-8 space-y-8 animate-in fade-in duration-700 text-left">
-                <div className="text-[10px] font-mono text-slate-500 uppercase tracking-widest border-b border-white/5 pb-4">
-                    Dinámica Estructural
-                </div>
-
-                <p className="text-lg font-serif text-slate-200 leading-relaxed italic">
-                    "{data.dynamics_text}"
-                </p>
-
+                <div className="text-[10px] font-mono text-slate-500 uppercase tracking-widest border-b border-white/5 pb-4">Dinámica Estructural</div>
+                <p className="text-lg font-serif text-slate-200 leading-relaxed italic">"{data.dynamics_text}"</p>
                 <div className="pt-8">
-                    <button
-                        onClick={toDecision}
-                        className="w-full border border-[#d4af37] text-[#d4af37] hover:bg-[#d4af37] hover:text-black py-4 font-mono text-xs uppercase tracking-[0.2em] transition-all font-bold"
-                    >
+                    <button onClick={toDecision} className="w-full border border-[#d4af37] text-[#d4af37] hover:bg-[#d4af37] hover:text-black py-4 font-mono text-xs uppercase tracking-[0.2em] transition-all font-bold">
                         VER OPCIONES TÉCNICAS
                     </button>
                 </div>
@@ -251,21 +249,13 @@ export default function SmartGrowthConsultant() {
                     <h3 className="text-xs font-mono text-slate-500 uppercase tracking-widest">Protocolo de Intervención</h3>
                     <p className="text-white font-serif italic text-lg">Seleccione vector de corrección:</p>
                 </div>
-
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <button
-                        onClick={() => handleOption("A")}
-                        className="p-6 border border-white/5 hover:border-[#d4af37] bg-white/5 hover:bg-[#d4af37]/10 transition-all text-left space-y-4 group"
-                    >
+                    <button onClick={() => handleOption("A")} className="p-6 border border-white/5 hover:border-[#d4af37] bg-white/5 hover:bg-[#d4af37]/10 transition-all text-left space-y-4 group">
                         <div className="text-[10px] font-mono text-slate-500 group-hover:text-[#d4af37]">OPCIÓN A</div>
                         <div className="text-sm font-bold text-slate-200 uppercase tracking-wider">Modificar Dinámica</div>
                         <p className="text-[10px] text-slate-500 leading-relaxed">Alterar los patrones de emisión para reducir fricción estructural.</p>
                     </button>
-
-                    <button
-                        onClick={() => handleOption("B")}
-                        className="p-6 border border-white/5 hover:border-[#d4af37] bg-white/5 hover:bg-[#d4af37]/10 transition-all text-left space-y-4 group"
-                    >
+                    <button onClick={() => handleOption("B")} className="p-6 border border-white/5 hover:border-[#d4af37] bg-white/5 hover:bg-[#d4af37]/10 transition-all text-left space-y-4 group">
                         <div className="text-[10px] font-mono text-slate-500 group-hover:text-[#d4af37]">OPCIÓN B</div>
                         <div className="text-sm font-bold text-slate-200 uppercase tracking-wider">Intensificar Patrón</div>
                         <p className="text-[10px] text-slate-500 leading-relaxed">Maximizar la saturación actual para forzar ruptura de alcance.</p>
@@ -286,7 +276,6 @@ export default function SmartGrowthConsultant() {
                         Para procesar la simulación de la {decision === 'A' ? 'Opción A' : 'Opción B'}, se requiere un punto de entrega seguro.
                     </p>
                 </div>
-
                 <div className="space-y-4">
                     <input
                         value={email}
@@ -294,10 +283,7 @@ export default function SmartGrowthConsultant() {
                         placeholder="correo_corporativo@dominio.com"
                         className="w-full bg-slate-900/50 border border-white/10 text-white font-mono text-sm py-4 px-4 focus:border-[#d4af37] outline-none"
                     />
-                    <button
-                        className="w-full bg-white text-black hover:bg-slate-200 py-4 font-mono text-xs uppercase tracking-[0.2em] font-bold transition-colors"
-                        onClick={() => alert("Simulacion enviada (Mock)")}
-                    >
+                    <button className="w-full bg-white text-black hover:bg-slate-200 py-4 font-mono text-xs uppercase tracking-[0.2em] font-bold transition-colors" onClick={() => alert("Simulacion enviada (Mock)")}>
                         ENVIAR REPORTE TÉCNICO
                     </button>
                 </div>

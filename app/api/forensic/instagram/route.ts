@@ -361,6 +361,9 @@ export async function POST(request: Request) {
             asset_type: detectedType, // MEDICAL, REAL_ESTATE, etc
             confidence: confidence, // 0.0 - 1.0
             last_post_date: normalizedPosts.length > 0 ? new Date(normalizedPosts[0].timestamp).toISOString() : null,
+            followers_count: normalizedData.followersCount,
+            posts_count: normalizedData.postsCount,
+            latest_posts: normalizedPosts.slice(0, 4).map(p => ({ url: p.imageUrl, caption: p.caption, date: p.timestamp })),
 
             // ANALYZER OUTPUT
             narrative_level: segment,
