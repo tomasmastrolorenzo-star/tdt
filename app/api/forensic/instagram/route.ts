@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { runForensicPipeline, RawInputData } from '@/app/lib/forensic/intelligence';
 
 // Simple in-memory cache
 const CACHE = new Map<string, { data: any, timestamp: number }>();
@@ -351,6 +352,30 @@ export async function POST(request: Request) {
             disclaimer: "Proyección estimada basada en benchmarks de la industria. No constituye garantía."
         };
 
+
+
+        // --- INTELLIGENCE PIPELINE V1 ---
+        // Map to RawInputData
+        const rawInput: RawInputData = {
+            username: normalizedData.username,
+            biography: normalizedData.biography,
+            followers_count: normalizedData.followersCount,
+            following_count: normalizedData.followsCount,
+            posts_count: normalizedData.postsCount,
+            recent_posts: normalizedPosts.map(p => ({
+                is_video: p.type === 'Video',
+                caption: p.caption || '',
+                likes: p.likesCount || 0,
+                comments: p.commentsCount || 0,
+                timestamp: p.timestamp ? new Date(p.timestamp).getTime() / 1000 : Date.now() / 1000
+            })),
+            is_verified: normalizedData.isVerified,
+            external_url: normalizedData.externalUrl
+        };
+
+        const diagnosis = runForensicPipeline(rawInput);
+        // --------------------------------
+
         return NextResponse.json({
             status: 'success',
             username: normalizedData.username,
@@ -358,20 +383,23 @@ export async function POST(request: Request) {
             biography: normalizedData.biography,
 
             // FORENSIC DATA
-            asset_type: detectedType, // MEDICAL, REAL_ESTATE, etc
-            confidence: confidence, // 0.0 - 1.0
+            asset_type: diagnosis.asset_classification.subtype, // Use new Intelligence Subtype
+            confidence: diagnosis.asset_classification.confidence,
             last_post_date: normalizedPosts.length > 0 ? new Date(normalizedPosts[0].timestamp).toISOString() : null,
             followers_count: normalizedData.followersCount,
             posts_count: normalizedData.postsCount,
             latest_posts: normalizedPosts.slice(0, 4).map(p => ({ url: p.imageUrl, caption: p.caption, date: p.timestamp })),
 
-            // ANALYZER OUTPUT
-            narrative_level: segment,
-            routing_target: routingTarget,
-            access_level: accessLevel,
-            human_access: accessLevel > 0,
-            sales_alert: salesAlert,
-            risk_flags: riskFlags,
+            // INTELLIGENCE OUTPUT (THE BRAIN)
+            _forensic_diagnosis: diagnosis,
+
+            // ANALYZER OUTPUT (Legacy - gradually replace)
+            narrative_level: diagnosis.asset_stage.stage, // Sync with new stage
+            routing_target: diagnosis.asset_stage.stage === 'HIGH' ? 'CALENDAR' : 'CHECKOUT',
+            access_level: diagnosis.asset_stage.stage === 'HIGH' ? 2 : 1,
+            human_access: diagnosis.asset_stage.stage !== 'LOW',
+            sales_alert: diagnosis.asset_stage.stage === 'HIGH',
+            risk_flags: diagnosis.problems.critical.map(p => p.code),
 
             // UX
             ux: uxContent,
