@@ -281,7 +281,7 @@ export default function SmartGrowthConsultant() {
                                     <div className="w-24 h-24 rounded-full border border-[#d4af37]/30 p-1">
                                         {verifiedUser?.profilePicUrl ? (
                                             <img
-                                                src={verifiedUser.profilePicUrl}
+                                                src={`https://wsrv.nl/?url=${encodeURIComponent(verifiedUser.profilePicUrl)}`}
                                                 referrerPolicy="no-referrer"
                                                 alt="Profile"
                                                 className="w-full h-full rounded-full grayscale hover:grayscale-0 transition-all duration-1000 object-cover"
@@ -308,7 +308,7 @@ export default function SmartGrowthConsultant() {
                                         verifiedUser.posts.slice(0, 6).map((post: any, i: number) => (
                                             <div key={post.id || i} className="aspect-square bg-slate-900 relative group overflow-hidden">
                                                 <img
-                                                    src={post.imageUrl}
+                                                    src={`https://wsrv.nl/?url=${encodeURIComponent(post.imageUrl)}`}
                                                     referrerPolicy="no-referrer"
                                                     alt=""
                                                     className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity"
