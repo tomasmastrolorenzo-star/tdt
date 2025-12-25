@@ -1,14 +1,11 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { motion, AnimatePresence } from "framer-motion"
-import { ArrowRight, Sparkles, Loader2, Lock, Shield, Database, AlertCircle, CheckCircle2, Cpu, Activity, Zap, TrendingUp, AlertTriangle } from "lucide-react"
-import { useI18n } from "@/lib/i18n/context"
+import { Lock, Shield, Activity } from "lucide-react"
 import { funnelTracker } from "@/lib/analytics/funnel"
-import { createClient } from "@/lib/supabase/client"
-import { INTERESTS, type InterestId } from "@/lib/el-faro/selectors"
 
 // --- TYPES & ENUMS ---
 enum AnalyzerStep {
@@ -72,7 +69,6 @@ const IndicatorCard = ({ label, value, type }: { label: string, value: string, t
 
 export default function SmartGrowthConsultant() {
     const router = useRouter()
-    const supabase = createClient()
     const [step, setStep] = useState<AnalyzerStep>(AnalyzerStep.PRE_ENTRY)
 
     // Data State

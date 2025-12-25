@@ -1,4 +1,4 @@
-import { Shield, Lock, Activity, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Shield, Activity } from "lucide-react";
 import SmartGrowthConsultant from "@/components/trend-up/smart-growth-consultant";
 
 export default function Home() {
