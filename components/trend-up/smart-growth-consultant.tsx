@@ -41,15 +41,18 @@ export default function SmartGrowthConsultant() {
 
     const initiateScan = async () => {
         // 1. Validate
-        if (!handle.startsWith('@')) {
-            setError("ERR: FORMATO_INVALIDO // REQUIERE @")
-            return
+        // 1. Validate & Normalize
+        let cleanHandle = handle.trim()
+        if (!cleanHandle.startsWith('@')) {
+            cleanHandle = '@' + cleanHandle
         }
-        if (handle.length < 3) {
+        setHandle(cleanHandle) // Update UI
+
+        if (cleanHandle.length < 3) { // "@a" is too short
             setError("ERR: CADENA_INSUFICIENTE")
             return
         }
-        setError("")
+
 
         // 2. Transition (Fade Out Landing done via parent layout usually, but here we just switch state)
         setStep(MachineStep.SCANNING)
@@ -64,7 +67,7 @@ export default function SmartGrowthConsultant() {
             const response = await fetch('/api/forensic/instagram', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ handle })
+                body: JSON.stringify({ handle: cleanHandle })
             })
 
             const result = await response.json()
