@@ -33,7 +33,7 @@ export async function POST(request: Request) {
         console.log(`[FORENSIC_SCAN_INIT] ${normalizedHandle}`);
 
         // 2. CALL APIFY
-        const apifyToken = process.env.APIFY_TOKEN;
+        const apifyToken = process.env.APIFY_TOKEN || process.env.apify_api_;
         if (!apifyToken) {
             console.error("CRITICAL: APIFY_TOKEN missing in env");
             // Fail safe -> Restricted Mode
@@ -53,6 +53,7 @@ export async function POST(request: Request) {
                 scrapeReels: false,
             })
         });
+
 
         if (!runResponse.ok) {
             console.error(`[APIFY_ERROR] Status: ${runResponse.status}`);
