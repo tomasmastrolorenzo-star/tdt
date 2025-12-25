@@ -42,7 +42,6 @@ export async function POST(request: Request) {
         // 2. CALL APIFY - SMART TOKEN SEARCH
         let apifyToken = process.env.APIFY_TOKEN || process.env.apify_api_;
 
-        // If not found by standard names, scan all env vars for a value that looks like an Apify token
         if (!apifyToken) {
             const foundKey = Object.keys(process.env).find(key => process.env[key]?.startsWith('apify_api_'));
             if (foundKey) {
@@ -53,7 +52,6 @@ export async function POST(request: Request) {
 
         if (!apifyToken) {
             console.error("CRITICAL: APIFY_TOKEN missing in env");
-            // Fail safe -> Restricted Mode
             return NextResponse.json({ status: 'restricted', message: 'Validation Protocol Active' });
         }
 
@@ -93,7 +91,10 @@ export async function POST(request: Request) {
                 username: first.ownerUsername || first.owner?.username || normalizedHandle,
                 profilePicUrl: first.ownerProfilePicUrl || first.owner?.profile_pic_url,
                 biography: first.owner?.biography || "",
-                externalUrl: first.owner?.external_url || first.externalUrl || null
+                externalUrl: first.owner?.external_url || first.externalUrl || null,
+                followersCount: first.owner?.followers_count || first.owner?.edge_followed_by?.count || 0,
+                postsCount: first.owner?.edge_owner_to_timeline_media?.count || first.owner?.posts_count || 0,
+                isBusiness: first.owner?.is_business_account || false
             };
             posts = items;
         }
@@ -104,21 +105,25 @@ export async function POST(request: Request) {
                 username: p.username,
                 profilePicUrl: p.profilePicUrl || p.profilePicUrlHD,
                 biography: p.biography,
-                externalUrl: p.externalUrl || p.externalUrlShimmed || null
+                externalUrl: p.externalUrl || p.externalUrlShimmed || null,
+                followersCount: p.followersCount || 0,
+                postsCount: p.postsCount || 0,
+                isBusiness: p.isBusinessAccount || false
             };
-            // Profile scraper sometimes creates a child dataset for posts, OR puts them in latestPosts
             posts = p.latestPosts || [];
         }
 
         if (!profile) {
-            // Fallback: assume first item is relevant if it has an image
-            console.warn("[APIFY_STRUCT] Unknown structure, attempting force-read.");
+            // Fallback
             const p = items[0];
             profile = {
                 username: normalizedHandle,
                 profilePicUrl: p.displayUrl || p.images?.[0] || null,
                 biography: "Visual vectors extracted.",
-                externalUrl: null
+                externalUrl: null,
+                followersCount: 0,
+                postsCount: 0,
+                isBusiness: false
             };
             posts = items;
         }
@@ -134,118 +139,172 @@ export async function POST(request: Request) {
             username: profile.username || normalizedHandle,
             profilePicUrl: profile.profilePicUrl || null,
             biography: profile.biography || "",
+            followersCount: profile.followersCount,
+            postsCount: profile.postsCount,
             posts: normalizedPosts
         };
 
-        // --- FORENSIC LOGIC ENGINE ---
+        // --- ANALYZER CORE V1.1 LOGIC ---
 
-        // Keywords / Signals
-        const NICHE_KEYWORDS = ['marketing', 'real estate', 'inmobiliaria', 'cirugia', 'surgeon', 'fitness', 'coach', 'consultor', 'agency', 'agencia', 'b2b', 'high ticket', 'inversiones', 'crypto', 'ecommerce', 'dropshipping', 'mentoria', 'negocio', 'growth'];
-        const CTA_KEYWORDS = ['link', 'bio', 'dm', 'mensaje', 'clase', 'agendar', 'agenda', 'reserva', 'comprar', 'acceder', 'registro', 'ignite', 'apply', 'aplicar', 'click', 'info'];
-        const PREMIUM_KEYWORDS = ['luxury', '7 figures', '7 cifras', 'cifr', 'millon', 'highticket', 'premium', 'exclusive', 'elite', 'ceo', 'founder', 'dueño', 'propietario', 'autoridad', 'líder', 'top 1%', 'global'];
-        const AUTHORITY_KEYWORDS = ['casos', 'case study', 'resultados', 'testimonio', 'cliente', 'student', 'estudiante', 'exito', 'award', 'premio', 'prensa', 'forbes', 'tedx', 'conferencia'];
-
-        // 1. Posicionamiento (1-10)
-        let posScore = 3;
+        // 1. ENTITY CLASSIFICATION MODULE
         const bioLower = (profile.biography || '').toLowerCase();
-        const hasNiche = NICHE_KEYWORDS.some(k => bioLower.includes(k));
-        const hasLink = !!profile.externalUrl;
-        if (hasNiche) posScore += 3;
-        if (hasLink) posScore += 2;
-        if (hasLink && hasNiche && bioLower.length > 30) posScore += 2;
-        posScore = Math.min(10, posScore);
+        let entityType = 'personal';
 
-        // 2. Intencion Comercial (1-10)
-        let ctaCount = 0;
-        normalizedPosts.forEach(p => {
-            const cap = (p.caption || '').toLowerCase();
-            if (CTA_KEYWORDS.some(k => cap.includes(k))) ctaCount++;
-        });
-        const bioHasCTA = CTA_KEYWORDS.some(k => bioLower.includes(k)) || hasLink; // Link implies commercial intent usually.
-        let intentScore = 3;
-        if (bioHasCTA) intentScore += 2;
-        const ctaRatio = normalizedPosts.length > 0 ? ctaCount / normalizedPosts.length : 0;
-        if (ctaRatio > 0.1) intentScore += 2;
-        if (ctaRatio >= 0.3) intentScore += 3;
-        intentScore = Math.min(10, intentScore);
-
-        // 3. Coherencia Tematica (1-10) - (Proxy: Niche Keyword Consistency)
-        let nichePostCount = 0;
-        if (hasNiche) {
-            normalizedPosts.forEach(p => {
-                if (NICHE_KEYWORDS.some(k => (p.caption || '').toLowerCase().includes(k))) nichePostCount++;
-            });
-        }
-        const consistencyRatio = normalizedPosts.length > 0 ? nichePostCount / normalizedPosts.length : 0;
-        let cohScore = 4;
-        if (consistencyRatio > 0.2) cohScore = 6;
-        if (consistencyRatio > 0.5) cohScore = 9;
-
-        // 4. Consistencia Operativa (1-10) - (Posts Frequency)
-        let opScore = 2;
-        if (normalizedPosts.length >= 2) {
-            const newest = normalizedPosts[0].timestamp;
-            const oldest = normalizedPosts[normalizedPosts.length - 1].timestamp;
-            const diffDays = Math.max(1, (newest - oldest) / (1000 * 60 * 60 * 24));
-            const diffWeeks = diffDays / 7;
-
-            if (diffWeeks > 0) {
-                const freq = normalizedPosts.length / diffWeeks;
-                if (freq >= 1) opScore = 6;
-                if (freq >= 3) opScore = 9;
-            } else {
-                opScore = 5;
-            }
-        }
-
-        // 5. Brecha Aspiracional (1-10) - (High Income Claim vs Low Proof)
-        const hasPremium = PREMIUM_KEYWORDS.some(k => bioLower.includes(k));
-        let authorityPostCount = 0;
-        normalizedPosts.forEach(p => {
-            if (AUTHORITY_KEYWORDS.some(k => (p.caption || '').toLowerCase().includes(k))) authorityPostCount++;
-        });
-        const authorityRatio = normalizedPosts.length > 0 ? authorityPostCount / normalizedPosts.length : 0;
-
-        let gapScore = 2;
-        if (hasPremium) {
-            gapScore = 5;
-            if (authorityRatio < 0.2) gapScore = 9; // High Gap (Good Lead)
-            else gapScore = 4; // Low Gap (Has proof)
-        }
-
-        const indicators = {
-            posicionamiento: posScore,
-            intencion_comercial: intentScore,
-            coherencia: cohScore,
-            consistencia: opScore,
-            brecha_aspiracional: gapScore
+        const KEYWORDS = {
+            specialist: ['founder', 'ceo', 'dueño', 'fundador', 'coach', 'consultor', 'mentor', 'asesor', 'md', 'dr.', 'dra.', 'architect', 'abogado', 'expert', 'especialista'],
+            business: ['llc', 'inc', 's.a.', 'shop', 'tienda', 'envios', 'shipping', 'store', 'oficial', 'official', 'marca', 'brand', 'estudio', 'agency', 'agencia'],
+            artist: ['artist', 'art', 'music', 'dj', 'producer', 'model', 'modelo', 'actor', 'actriz', 'singer', 'cantante', 'creator', 'creador', 'blog'],
+            hybrid: ['personal brand', 'marca personal', 'entrepreneur', 'emprendedor', 'lifestyle']
         };
 
-        // Classification Logic
-        let altos = 0;
-        let medios = 0;
-        Object.values(indicators).forEach(v => {
-            if (v >= 8) altos++;
-            else if (v >= 5) medios++;
-        });
+        // Priority Logic: Business terms usually imply business, unless it's a "Founder of X" (Specialist)
+        if (KEYWORDS.business.some(k => bioLower.includes(k)) || (profile.isBusiness && !KEYWORDS.specialist.some(k => bioLower.includes(k)))) {
+            entityType = 'empresa';
+        }
+        if (KEYWORDS.artist.some(k => bioLower.includes(k))) entityType = 'artista';
+        if (KEYWORDS.hybrid.some(k => bioLower.includes(k))) entityType = 'hibrido';
+        if (KEYWORDS.specialist.some(k => bioLower.includes(k))) entityType = 'especialista';
+
+        // 2. INDICATORS CORE (1-10)
+
+        // Signals
+        const hasLink = !!profile.externalUrl;
+        const NICHE_KEYS = ['marketing', 'real estate', 'inmo', 'cirug', 'surg', 'fit', 'gym', 'crypto', 'invest', 'b2b', 'high ticket', 'grow', 'scale', 'money', 'dinero', 'ventas', 'sales'];
+        const hasNiche = NICHE_KEYS.some(k => bioLower.includes(k));
+
+        // A. Posicionamiento (Clarity)
+        let scorePos = 3;
+        if (hasNiche) scorePos += 3;
+        if (hasLink) scorePos += 2;
+        if (bioLower.length > 50) scorePos += 2;
+        scorePos = Math.min(10, scorePos);
+
+        // B. Intención Comercial (CTA Density)
+        const CTA_KEYS = ['dm', 'link', 'bio', 'agenda', 'call', 'clase', 'info', 'baja', 'ebook', 'regalo', 'compra'];
+        let ctaCount = 0;
+        normalizedPosts.forEach(p => { if (CTA_KEYS.some(k => (p.caption || '').toLowerCase().includes(k))) ctaCount++; });
+        let scoreIntent = 3;
+        if (hasLink && hasNiche) scoreIntent += 2; // Passive intent
+        const ctaRatio = normalizedPosts.length ? ctaCount / normalizedPosts.length : 0;
+        if (ctaRatio > 0.3) scoreIntent += 3;
+        if (ctaRatio > 0.6) scoreIntent += 2;
+        scoreIntent = Math.min(10, scoreIntent);
+
+        // C. Coherencia Temática (Consistency)
+        let nichePostCount = 0;
+        if (hasNiche) {
+            normalizedPosts.forEach(p => { if (NICHE_KEYS.some(k => (p.caption || '').toLowerCase().includes(k))) nichePostCount++; });
+        }
+        let scoreCoh = 4;
+        const nicheRatio = normalizedPosts.length ? nichePostCount / normalizedPosts.length : 0;
+        if (nicheRatio > 0.3) scoreCoh = 7;
+        if (nicheRatio > 0.6) scoreCoh = 9;
+        scoreCoh = Math.min(10, scoreCoh);
+
+        // D. Consistencia Operativa (Frequency)
+        let scoreOps = 5;
+        if (normalizedPosts.length > 1) {
+            const days = (normalizedPosts[0].timestamp - normalizedPosts[normalizedPosts.length - 1].timestamp) / (1000 * 3600 * 24);
+            // Default 1 week if < 1 day diff
+            const safeDays = Math.max(days, 1);
+            const postsPerWeek = normalizedPosts.length / (safeDays / 7);
+
+            if (postsPerWeek < 1) scoreOps = 3;
+            else if (postsPerWeek > 3) scoreOps = 9;
+            else scoreOps = 6;
+        }
+        scoreOps = Math.min(10, scoreOps);
+
+        // E. Brecha Aspiracional (Vulnerability)
+        // High Gap = High Claims (Premium) + Low Proof -> Score HIGH (Bad/Vulnerable)
+        const PREMIUM_KEYS = ['7 figures', 'million', 'millon', 'luxury', 'elite', 'ceo', 'founder', 'leader'];
+        const AUTH_KEYS = ['case', 'result', 'testimoni', 'client', 'award', 'prensa', 'forber', 'inc.'];
+        const hasPremium = PREMIUM_KEYS.some(k => bioLower.includes(k));
+        let authCount = 0;
+        normalizedPosts.forEach(p => { if (AUTH_KEYS.some(k => (p.caption || '').toLowerCase().includes(k))) authCount++; });
+
+        let scoreGap = 5;
+        if (hasPremium && authCount === 0) scoreGap = 9; // High Gap (Vulnerable)
+        else if (hasPremium && authCount > 0) scoreGap = 3; // Verified Authority
+        else if (!hasPremium && authCount === 0) scoreGap = 2; // Humble/Standard
+        scoreGap = Math.min(10, scoreGap);
+
+        // F. Arquitectura de Autoridad (New)
+        // Does the structure support the claim? 
+        let scoreArch = 4;
+        if (profile.followersCount > 10000) scoreArch += 2;
+        if (profile.followersCount > 100000) scoreArch += 2;
+        if (hasLink && bioLower.includes('http')) scoreArch += 1;
+        if (profile.postsCount > 100) scoreArch += 1;
+        scoreArch = Math.min(10, scoreArch);
+
+        // 3. WEIGHTING SYSTEM (BY ENTITY) - Used for classification hints?
+        // Actually the prompt says "Weights alter the score". 
+        // We will keep raw scores for display/narrative, but use WEIGHTED logic for final Classification.
+
+        // 4. LOGIC GATES & VETO
+        // History Logic
+        let history = 'estable';
+        if (profile.postsCount < 20) history = 'nueva';
+        if (profile.postsCount > 300) history = 'consolidada';
 
         let ticketClass = "LOW_TICKET";
-        if (altos >= 3) ticketClass = "HIGH_TICKET";
-        else if (medios >= 3 || altos >= 1) ticketClass = "MEDIUM_TICKET";
+        let flag = null;
 
+        // VETO RULES
+        const isNewAndHighScoring = (history === 'nueva' && profile.followersCount > 10000);
+        if (isNewAndHighScoring) flag = "FLAG_REVIEW";
+
+        // Complex Checks
+        const isVulnerable = scoreGap > 7;
+        const lowAuthority = scoreArch < 4;
+        if (isVulnerable && lowAuthority) flag = "MEDIUM_TICKET"; // Veto Hard Cap (Rule 5)
+
+        // Classification Logic
+        if (!flag) {
+            // HIGH POTENTIAL: Big audience, low monetization logic
+            if (profile.followersCount > 50000 && scoreIntent < 4) ticketClass = "HIGH_POTENTIAL";
+
+            // HIGH TICKET: 
+            // Specialist with High Gap (Needs help) OR 
+            // Company with Good Positioning but Bad Ops (Needs help)
+            else if (entityType === 'especialista' && scoreGap > 6) ticketClass = "HIGH_TICKET";
+            else if (entityType === 'empresa' && scorePos > 7 && scoreOps < 4) ticketClass = "HIGH_TICKET";
+
+            // MEDIUM
+            else if (profile.followersCount > 10000) ticketClass = "MEDIUM_TICKET";
+
+            // LOW
+            else ticketClass = "LOW_TICKET";
+        } else {
+            ticketClass = flag;
+        }
+
+        // 5. NARRATIVE OUTPUT (Impact & Complexity)
         const impact = {
-            credibilidad: posScore > 7 ? "ALTO" : (posScore > 4 ? "MEDIO" : "BAJO"),
-            conversion: intentScore > 7 ? "ALTO" : (intentScore > 4 ? "MEDIO" : "BAJO"),
-            complejidad: cohScore > 7 ? "ESTRUCTURADA" : (cohScore > 4 ? "SIMPLE" : "COMPLEJA")
+            credibilidad: scoreArch > 7 ? "RESILIENTE" : (scoreArch > 4 ? "ESTABLE" : "FRÁGIL"),
+            conversion: scoreIntent > 7 ? "AGRESIVA" : (scoreIntent > 4 ? "MODERADA" : "LATENTE"),
+            complejidad: (entityType === 'empresa' || entityType === 'hibrido') ? "SISTÉMICA" : "LINEAR"
+        };
+
+        const indicators = {
+            posicionamiento: { val: scorePos, label: scorePos > 7 ? "CLARO" : "CONFUSO" },
+            intencion_comercial: { val: scoreIntent, label: scoreIntent > 7 ? "ALTA" : "BAJA" },
+            coherencia_tematica: { val: scoreCoh, label: scoreCoh > 7 ? "DEFINIDA" : "DILUIDA" },
+            consistencia_operativa: { val: scoreOps, label: scoreOps > 7 ? "ALTA" : "ERRÁTICA" },
+            brecha_aspiracional: { val: scoreGap, label: scoreGap > 7 ? "CRÍTICA" : "ALINEADA" },
+            arquitectura_autoridad: { val: scoreArch, label: scoreArch > 7 ? "SÓLIDA" : "INCIPIENTE" }
         };
 
         const analysisResult = {
+            entity_type: entityType,
+            history_factor: history,
             indicators,
             impact,
             ticket_class: ticketClass
         };
 
-        // 5. CACHE & RETURN
+        // 6. CACHE & RETURN
         const finalPayload = { ...normalizedData, ...analysisResult };
 
         CACHE.set(normalizedHandle, { data: finalPayload, timestamp: Date.now() });
