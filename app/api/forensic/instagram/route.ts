@@ -123,26 +123,67 @@ export async function POST(request: Request) {
         // 1. INPUTS Y CALCULADORES
         const bioLower = (profile.biography || '').toLowerCase();
 
-        // Keywords
-        const NICHE_KEYS = ['marketing', 'real estate', 'inmobiliaria', 'cirugia', 'surgeon', 'fit', 'gym', 'crypto', 'invest', 'b2b', 'high ticket', 'growth', 'scale', 'money', 'dinero', 'ventas', 'sales'];
+        // ASSET CLASS DETECTION (Strict Categories)
+        const ASSET_TYPES = {
+            'MEDIC': ['cirugia', 'surgeon', 'medico', 'doctor', 'dr.', 'clinica', 'estetica', 'salud', 'pacientes', 'md', 'plastic', 'derma'],
+            'REAL_ESTATE': ['real estate', 'inmobiliaria', 'bienes raices', 'realtor', 'propiedades', 'broker', 'invest', 'renta'],
+            'ATHLETE': ['athlete', 'atleta', 'player', 'jugador', 'fit', 'fitness', 'coach', 'gym', 'training', 'entrenador'],
+            'FOUNDER': ['founder', 'ceo', 'co-founder', 'dueño', 'owner', 'startup', 'saas', 'tech', 'software', 'cto'],
+            'BROKER': ['trader', 'trading', 'forex', 'crypto', 'bitcoin', 'finance', 'finanzas', 'inversion', 'capital', 'stocks'],
+            'INFLUENCER': ['creator', 'creador', 'blog', 'lifestyle', 'viajes', 'travel', 'fashion', 'moda', 'embajador']
+        };
+
+        let detectedType = 'OTHER';
+        let confidence = 0;
+        let maxMatches = 0;
+
+        // Keyword Matching
+        Object.entries(ASSET_TYPES).forEach(([type, keywords]) => {
+            let matches = 0;
+            keywords.forEach(k => {
+                if (bioLower.includes(k)) matches++;
+            });
+            // Check formatted captions too? (Expensive but accurate)
+            // Lets stick to Bio + Top 3 posts captions for speed
+            normalizedPosts.slice(0, 3).forEach(p => {
+                const capt = (p.caption || '').toLowerCase();
+                keywords.forEach(k => { if (capt.includes(k)) matches += 0.5; });
+            });
+
+            if (matches > maxMatches) {
+                maxMatches = matches;
+                detectedType = type;
+            }
+        });
+
+        // Confidence Calculation
+        confidence = maxMatches >= 3 ? 0.9 : maxMatches >= 1 ? 0.6 : 0.3;
+
+        // Return "Unsure" if low confidence
+        if (confidence < 0.4) detectedType = 'OTHER';
+
+
+        // METRICS MAPPING (0-10)
+        // ... (Existing Logic refined with Asset Type Nuance?)
+        // For V1 Core, use generic logic but report Type for Frontend Nuance
+        const NICHE_KEYS = Object.values(ASSET_TYPES).flat(); // Aggregate for generic "Niche" check
+
         const CTA_KEYS = ['dm', 'link', 'bio', 'agenda', 'call', 'clase', 'info', 'baja', 'ebook', 'regalo', 'compra'];
         const PREMIUM_KEYS = ['7 figures', 'million', 'millon', 'luxury', 'elite', 'ceo', 'founder', 'leader'];
         const AUTH_KEYS = ['case', 'result', 'testimoni', 'client', 'award', 'prensa', 'forbes', 'inc.'];
 
         const hasLink = !!profile.externalUrl;
-        const hasNiche = NICHE_KEYS.some(k => bioLower.includes(k));
+        const hasNiche = maxMatches > 0;
         const hasPremium = PREMIUM_KEYS.some(k => bioLower.includes(k));
 
-        // -- METRICS MAPPING (0-10) --
-
-        // PC: Coherencia Estratégica (Positioning + Thematic Consistency)
+        // PC: Coherencia Estratégica
         let PC = 3;
         if (hasNiche) PC += 3;
         if (hasLink) PC += 2;
         if (bioLower.length > 50) PC += 2;
         PC = Math.min(10, PC);
 
-        // IC: Intención Comercial (CTA Density)
+        // IC: Intención Comercial
         let ctaCount = 0;
         normalizedPosts.forEach(p => { if (CTA_KEYS.some(k => (p.caption || '').toLowerCase().includes(k))) ctaCount++; });
         const ctaRatio = normalizedPosts.length ? ctaCount / normalizedPosts.length : 0;
@@ -152,7 +193,7 @@ export async function POST(request: Request) {
         if (ctaRatio > 0.6) IC += 2;
         IC = Math.min(10, IC);
 
-        // CO: Consistencia Operativa (Frequency)
+        // CO: Consistencia Operativa
         let CO = 5;
         if (normalizedPosts.length > 1) {
             const days = (normalizedPosts[0].timestamp - normalizedPosts[normalizedPosts.length - 1].timestamp) / (1000 * 3600 * 24);
@@ -164,41 +205,34 @@ export async function POST(request: Request) {
         }
         CO = Math.min(10, CO);
 
-        // PI: Infraestructura de Autoridad (Followers, Structure)
+        // PI: Infraestructura de Autoridad
         let PI = 4;
         if (profile.followersCount > 5000) PI += 1;
         if (profile.followersCount > 20000) PI += 2;
         if (profile.followersCount > 100000) PI += 2;
-        if (hasLink && bioLower.includes('http')) PI += 1; // Real site logic
+        if (hasLink && bioLower.includes('http')) PI += 1;
         PI = Math.min(10, PI);
 
-        // BA: Brecha de Autoridad (Mismatch between Claims and Proof)
-        // High BA = High Claim + Low Proof = "Gap" (Needs help)
-        // Note: The prompt usually checks `BA >= 8` as a Veto condition for "Empty Influencer".
-        // Let's calculate:
+        // BA: Brecha de Autoridad
         let authCount = 0;
         normalizedPosts.forEach(p => { if (AUTH_KEYS.some(k => (p.caption || '').toLowerCase().includes(k))) authCount++; });
 
-        let BA = 4; // Baseline
+        let BA = 4;
         if (hasPremium) {
-            if (authCount === 0) BA = 9; // Huge Gap (Claims Premium, No Proof)
-            else BA = 3; // Verified (Claims Premium, Has Proof)
+            if (authCount === 0) BA = 9;
+            else BA = 3;
         } else {
-            // Modest profile
             BA = 2;
         }
 
-        // VH: Vulnerabilidad Estratégica
-        // Defined as High Intent (trying hard) but Low Proof or Low Coherence? 
-        // Or "Churn Risk". 
-        // Let's model VH as: High Commercial Intent + Low Infrastructure/Coherence
+        // H: Historia
+        const H = Math.max(1, Math.round(profile.postsCount / 4));
+
+        // VH: Vulnerabilidad
         let VH = 4;
         if (IC >= 7 && PI < 5) VH = 8;
         if (IC >= 7 && PC < 5) VH = 9;
 
-        // H: Historia (Months)
-        // Estimate from postsCount (approx 4/month)
-        const H = Math.max(1, Math.round(profile.postsCount / 4));
 
         // 2. LOGIC GATES (BASE)
         let segment = "LOW";
@@ -317,21 +351,37 @@ export async function POST(request: Request) {
             disclaimer: "Proyección estimada basada en benchmarks de la industria. No constituye garantía."
         };
 
-        const finalOutput = {
-            segment_internal: segment,
+        return NextResponse.json({
+            status: 'success',
+            username: normalizedData.username,
+            profilePicUrl: normalizedData.profilePicUrl,
+            biography: normalizedData.biography,
+
+            // FORENSIC DATA
+            asset_type: detectedType, // MEDICAL, REAL_ESTATE, etc
+            confidence: confidence, // 0.0 - 1.0
+            last_post_date: normalizedPosts.length > 0 ? new Date(normalizedPosts[0].timestamp).toISOString() : null,
+
+            // ANALYZER OUTPUT
+            narrative_level: segment,
             routing_target: routingTarget,
             access_level: accessLevel,
+            human_access: accessLevel > 0,
             sales_alert: salesAlert,
-            risk_flags: [...riskFlags, "api_fallback_safe"], // Default safe
+            risk_flags: riskFlags,
+
+            // UX
             ux: uxContent,
+            indicators: {
+                posicionamiento: { val: PC, label: PC >= 7 ? 'CLARO' : 'DIFUSO', evidence: PC >= 7 ? 'Keyword Density High' : 'Low Niche Signals' },
+                intencion_comercial: { val: IC, label: IC >= 7 ? 'ALTA' : 'BAJA', evidence: `CTA Ration: ${ctaRatio.toFixed(2)}` },
+                brecha_aspiracional: { val: BA, label: BA >= 7 ? 'CRITICA' : 'ALINEADA', evidence: 'Claim/Proof Ratio' },
+                infraestructura: { val: PI, label: PI >= 7 ? 'ROBUSTA' : 'INCIPIENTE', evidence: 'Follower/Link Structure' }
+            },
 
-            // Raw scores hidden in meta for debug, NOT for UI
-            _meta: { PC, PI, BA, IC, CO, VH, H }
-        };
-
-        CACHE.set(normalizedHandle, { data: finalOutput, timestamp: Date.now() });
-        return NextResponse.json(finalOutput);
-
+            // INTERNAL DEBUG
+            _meta: { PC, IC, CO, PI, BA, VH, match_score: maxMatches }
+        });
     } catch (e) {
         console.error("[FORENSIC_FAILURE]", e);
         return NextResponse.json({
