@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 // Simple in-memory cache
 const CACHE = new Map<string, { data: any, timestamp: number }>();
-const CACHE_DURATION = 12 * 60 * 60 * 1000; // 12 Hours
+const CACHE_DURATION = 168 * 60 * 60 * 1000; // 7 Days (Resiliencia Técnica)
 
 export async function POST(request: Request) {
     try {
@@ -19,8 +19,6 @@ export async function POST(request: Request) {
         const cached = CACHE.get(normalizedHandle);
         if (cached && (Date.now() - cached.timestamp < CACHE_DURATION)) {
             console.log(`[FORENSIC_CACHE_HIT] ${normalizedHandle}`);
-            // Return cached data, ensuring it has the latest structure implies we trust the cache or invalidate if structure changed significantly
-            // For now, we return as is.
             return NextResponse.json(cached.data);
         }
 
@@ -43,7 +41,6 @@ export async function POST(request: Request) {
             if (foundKey) apifyToken = process.env[foundKey];
         }
 
-        // FALLBACK IF NO TOKEN
         if (!apifyToken) {
             console.error("CRITICAL: APIFY_TOKEN missing in env");
             return generateFallbackResponse("Protocolo de Seguridad Activo: Token Missing");
@@ -121,229 +118,215 @@ export async function POST(request: Request) {
             posts: normalizedPosts
         };
 
-        // --- ANALYZER CORE V1.2 ---
+        // --- CORE ANALYZER V1.3: LOGIC GATES & VETO ---
 
-        // 1. ENTITY CLASSIFICATION
+        // 1. INPUTS Y CALCULADORES
         const bioLower = (profile.biography || '').toLowerCase();
-        let entityType = 'personal';
 
-        const KEYWORDS = {
-            specialist: ['founder', 'ceo', 'dueño', 'fundador', 'coach', 'consultor', 'mentor', 'asesor', 'md', 'dr.', 'dra.', 'architect', 'abogado', 'expert', 'especialista'],
-            business: ['llc', 'inc', 's.a.', 'shop', 'tienda', 'envios', 'shipping', 'store', 'oficial', 'official', 'marca', 'brand', 'estudio', 'agency', 'agencia'],
-            artist: ['artist', 'art', 'music', 'dj', 'producer', 'model', 'modelo', 'actor', 'actriz', 'singer', 'cantante', 'creator', 'creador', 'blog'],
-            hybrid: ['personal brand', 'marca personal', 'entrepreneur', 'emprendedor', 'lifestyle']
-        };
-
-        if (KEYWORDS.business.some(k => bioLower.includes(k)) || (profile.isBusiness && !KEYWORDS.specialist.some(k => bioLower.includes(k)))) {
-            entityType = 'empresa';
-        }
-        if (KEYWORDS.artist.some(k => bioLower.includes(k))) entityType = 'artista';
-        if (KEYWORDS.hybrid.some(k => bioLower.includes(k))) entityType = 'hibrido';
-        if (KEYWORDS.specialist.some(k => bioLower.includes(k))) entityType = 'especialista';
-
-        // 2. INDICATORS CORE (1-10)
-
-        // Signals
-        const hasLink = !!profile.externalUrl;
+        // Keywords
         const NICHE_KEYS = ['marketing', 'real estate', 'inmobiliaria', 'cirugia', 'surgeon', 'fit', 'gym', 'crypto', 'invest', 'b2b', 'high ticket', 'growth', 'scale', 'money', 'dinero', 'ventas', 'sales'];
-        const hasNiche = NICHE_KEYS.some(k => bioLower.includes(k));
-
-        // A. Posicionamiento
-        let scorePos = 3;
-        if (hasNiche) scorePos += 3;
-        if (hasLink) scorePos += 2;
-        if (bioLower.length > 50) scorePos += 2;
-        scorePos = Math.min(10, scorePos);
-
-        // B. Intención Comercial
         const CTA_KEYS = ['dm', 'link', 'bio', 'agenda', 'call', 'clase', 'info', 'baja', 'ebook', 'regalo', 'compra'];
+        const PREMIUM_KEYS = ['7 figures', 'million', 'millon', 'luxury', 'elite', 'ceo', 'founder', 'leader'];
+        const AUTH_KEYS = ['case', 'result', 'testimoni', 'client', 'award', 'prensa', 'forbes', 'inc.'];
+
+        const hasLink = !!profile.externalUrl;
+        const hasNiche = NICHE_KEYS.some(k => bioLower.includes(k));
+        const hasPremium = PREMIUM_KEYS.some(k => bioLower.includes(k));
+
+        // -- METRICS MAPPING (0-10) --
+
+        // PC: Coherencia Estratégica (Positioning + Thematic Consistency)
+        let PC = 3;
+        if (hasNiche) PC += 3;
+        if (hasLink) PC += 2;
+        if (bioLower.length > 50) PC += 2;
+        PC = Math.min(10, PC);
+
+        // IC: Intención Comercial (CTA Density)
         let ctaCount = 0;
         normalizedPosts.forEach(p => { if (CTA_KEYS.some(k => (p.caption || '').toLowerCase().includes(k))) ctaCount++; });
-        let scoreIntent = 3;
-        if (hasLink && hasNiche) scoreIntent += 2;
         const ctaRatio = normalizedPosts.length ? ctaCount / normalizedPosts.length : 0;
-        if (ctaRatio > 0.3) scoreIntent += 3;
-        if (ctaRatio > 0.6) scoreIntent += 2;
-        scoreIntent = Math.min(10, scoreIntent);
+        let IC = 3;
+        if (hasLink && hasNiche) IC += 2;
+        if (ctaRatio > 0.3) IC += 3;
+        if (ctaRatio > 0.6) IC += 2;
+        IC = Math.min(10, IC);
 
-        // C. Coherencia Temática
-        let nichePostCount = 0;
-        if (hasNiche) {
-            normalizedPosts.forEach(p => { if (NICHE_KEYS.some(k => (p.caption || '').toLowerCase().includes(k))) nichePostCount++; });
-        }
-        let scoreCoh = 4;
-        const nicheRatio = normalizedPosts.length ? nichePostCount / normalizedPosts.length : 0;
-        if (nicheRatio > 0.3) scoreCoh = 7;
-        if (nicheRatio > 0.6) scoreCoh = 9;
-        scoreCoh = Math.min(10, scoreCoh);
-
-        // D. Consistencia Operativa
-        let scoreOps = 5;
+        // CO: Consistencia Operativa (Frequency)
+        let CO = 5;
         if (normalizedPosts.length > 1) {
             const days = (normalizedPosts[0].timestamp - normalizedPosts[normalizedPosts.length - 1].timestamp) / (1000 * 3600 * 24);
             const safeDays = Math.max(days, 1);
             const postsPerWeek = normalizedPosts.length / (safeDays / 7);
-
-            if (postsPerWeek < 1) scoreOps = 3;
-            else if (postsPerWeek > 3) scoreOps = 9;
-            else scoreOps = 6;
+            if (postsPerWeek < 1) CO = 3;
+            else if (postsPerWeek > 3) CO = 9;
+            else CO = 6;
         }
-        scoreOps = Math.min(10, scoreOps);
+        CO = Math.min(10, CO);
 
-        // E. Brecha Aspiracional
-        const PREMIUM_KEYS = ['7 figures', 'million', 'millon', 'luxury', 'elite', 'ceo', 'founder', 'leader'];
-        const AUTH_KEYS = ['case', 'result', 'testimoni', 'client', 'award', 'prensa', 'forbes', 'inc.'];
-        const hasPremium = PREMIUM_KEYS.some(k => bioLower.includes(k));
+        // PI: Infraestructura de Autoridad (Followers, Structure)
+        let PI = 4;
+        if (profile.followersCount > 5000) PI += 1;
+        if (profile.followersCount > 20000) PI += 2;
+        if (profile.followersCount > 100000) PI += 2;
+        if (hasLink && bioLower.includes('http')) PI += 1; // Real site logic
+        PI = Math.min(10, PI);
+
+        // BA: Brecha de Autoridad (Mismatch between Claims and Proof)
+        // High BA = High Claim + Low Proof = "Gap" (Needs help)
+        // Note: The prompt usually checks `BA >= 8` as a Veto condition for "Empty Influencer".
+        // Let's calculate:
         let authCount = 0;
         normalizedPosts.forEach(p => { if (AUTH_KEYS.some(k => (p.caption || '').toLowerCase().includes(k))) authCount++; });
 
-        let scoreGap = 5;
-        if (hasPremium && authCount === 0) scoreGap = 9;
-        else if (hasPremium && authCount > 0) scoreGap = 3;
-        else if (!hasPremium && authCount === 0) scoreGap = 2;
-        scoreGap = Math.min(10, scoreGap);
+        let BA = 4; // Baseline
+        if (hasPremium) {
+            if (authCount === 0) BA = 9; // Huge Gap (Claims Premium, No Proof)
+            else BA = 3; // Verified (Claims Premium, Has Proof)
+        } else {
+            // Modest profile
+            BA = 2;
+        }
 
-        // F. Arquitectura de Autoridad
-        let scoreArch = 4;
-        if (profile.followersCount > 10000) scoreArch += 2;
-        if (profile.followersCount > 100000) scoreArch += 2;
-        if (hasLink && bioLower.includes('http')) scoreArch += 1;
-        if (profile.postsCount > 100) scoreArch += 1;
-        scoreArch = Math.min(10, scoreArch);
+        // VH: Vulnerabilidad Estratégica
+        // Defined as High Intent (trying hard) but Low Proof or Low Coherence? 
+        // Or "Churn Risk". 
+        // Let's model VH as: High Commercial Intent + Low Infrastructure/Coherence
+        let VH = 4;
+        if (IC >= 7 && PI < 5) VH = 8;
+        if (IC >= 7 && PC < 5) VH = 9;
 
-        // 4. LOGIC GATES & VETO
-        let history = 'estable';
-        if (profile.postsCount < 20) history = 'nueva';
-        if (profile.postsCount > 300) history = 'consolidada';
+        // H: Historia (Months)
+        // Estimate from postsCount (approx 4/month)
+        const H = Math.max(1, Math.round(profile.postsCount / 4));
 
-        let ticketClass = "LOW_TICKET";
-        let flag = null;
+        // 2. LOGIC GATES (BASE)
+        let segment = "LOW";
+        if (PC >= 8 && PI >= 7) segment = "HIGH";
+        else if (PC >= 6 && PI < 7) segment = "MID";
+        else segment = "LOW";
+
+        // 3. VETO RULES (OVERRIDES)
         let riskFlags: string[] = [];
+        let cap = null;
 
-        // Risk Flags & Veto
-        if (history === 'nueva' && profile.followersCount > 10000) {
-            flag = "FLAG_REVIEW";
-            riskFlags.push("ANOMALY_GROWTH");
-        }
-        if (profile.followersCount > 100000) riskFlags.push("EGO_SENSITIVE");
-        if (scoreGap > 7) riskFlags.push("VULNERABILITY_HIGH");
-
-        // Classification
-        if (scoreGap > 7 && scoreArch < 4) flag = "MEDIUM_TICKET"; // Cap
-
-        if (!flag) {
-            if (profile.followersCount > 50000 && scoreIntent < 4) ticketClass = "HIGH_POTENTIAL";
-            else if (entityType === 'especialista' && scoreGap > 6) ticketClass = "HIGH_TICKET";
-            else if (entityType === 'empresa' && scorePos > 7 && scoreOps < 4) ticketClass = "HIGH_TICKET";
-            else if (profile.followersCount > 10000) ticketClass = "MEDIUM_TICKET";
-            else ticketClass = "LOW_TICKET";
-        } else {
-            ticketClass = flag;
+        // VETO 1: Riesgo Churn High-Ticket (Mala operación, Alta vulnerabilidad)
+        if (CO < 5 && VH >= 8) {
+            cap = "MID";
+            riskFlags.push("churn");
         }
 
-        // --- FINAL OUTPUT MAPPING (PHASE 25.7) ---
-
-        // Narrative Level Mappings
-        const narrativeMap: any = {
-            "LOW_TICKET": "RAPIDO_IMPACTO",
-            "MEDIUM_TICKET": "CONSOLIDACION",
-            "HIGH_TICKET": "TRANSFORMACION",
-            "HIGH_POTENTIAL": "ESCALA_ESTRATEGICA",
-            "FLAG_REVIEW": "REVISION_MANUAL" // Fallback narrative
-        };
-
-        const routingMap: any = {
-            "LOW_TICKET": "CHECKOUT",
-            "MEDIUM_TICKET": "APPLICATION", // Was VSL or App
-            "HIGH_TICKET": "APPLICATION", // Strict App
-            "HIGH_POTENTIAL": "APPLICATION", // Strategic Session
-            "FLAG_REVIEW": "WAITLIST"
-        };
-
-        let narrativeLevel = narrativeMap[ticketClass] || "CONSOLIDACION";
-        let routingTarget = routingMap[ticketClass] || "APPLICATION";
-        let humanAccess = (ticketClass === "HIGH_TICKET" || ticketClass === "HIGH_POTENTIAL");
-        let salesAlert = (ticketClass === "HIGH_TICKET");
-
-        // Router Content (Narrative Tone)
-        let routerContent = {
-            title: "Diagnóstico: Impacto Digital",
-            message: "Análisis completado.",
-            roadmap: { gain: "", foundation: "", transformation: "" }
-        };
-
-        if (ticketClass === "LOW_TICKET") {
-            routerContent.title = "Protocolo de Rápido Impacto";
-            routerContent.message = "La estructura digital actual presenta oportunidades de corrección inmediata en la base de autoridad.";
-            routerContent.roadmap = {
-                gain: "Alineación de Vectores (7 Días)",
-                foundation: "Estructura de Conversión (30 Días)",
-                transformation: "Autoridad Percibida (90 Días)"
-            };
-        } else if (ticketClass === "MEDIUM_TICKET") {
-            routerContent.title = "Protocolo de Consolidación";
-            routerContent.message = "Tracción detectada. El sistema requiere profesionalizar la captura de valor para escalar.";
-            routerContent.roadmap = {
-                gain: "Optimización de Embudo (30 Días)",
-                foundation: "Sistematización de Contenido (90 Días)",
-                transformation: "Liderazgo de Nicho (12 Meses)"
-            };
-        } else if (ticketClass === "HIGH_TICKET") {
-            routerContent.title = "Protocolo de Transformación";
-            routerContent.message = "Perfil de alta elegibilidad. Se recomienda intervención profunda para maximizar soberanía de mercado.";
-            routerContent.roadmap = {
-                gain: "Reingeniería de Autoridad (30 Días)",
-                foundation: "Ecosistema de Poder (90 Días)",
-                transformation: "Dominio de Categoría (12 Meses)"
-            };
-        } else if (ticketClass === "HIGH_POTENTIAL") {
-            routerContent.title = "Protocolo de Escala Estratégica";
-            routerContent.message = "Volumen de audiencia significativo. El riesgo principal es la dilución de marca. Se sugiere refinamiento.";
-            routerContent.roadmap = {
-                gain: "Monetización de Audiencia (30 Días)",
-                foundation: "Creación de Oferta (60 Días)",
-                transformation: "Imperio Personal (12 Meses)"
-            };
-        } else {
-            routerContent.title = "Diagnóstico en Proceso";
-            routerContent.message = "Patrones complejos detectados. Se ha derivado al equipo de análisis para una revisión contextual.";
-            routerContent.roadmap = { gain: "Auditoría (48h)", foundation: "Diagnóstico (72h)", transformation: "Recomendación (7 Días)" };
+        // VETO 2: Influencer vacío (Autoridad "falsa")
+        // BA >= 8 (Claims without proof), VH >= 8 (High intent/vuln).
+        // Let's check PI as "real authority" proxy?
+        if (BA >= 8 && VH >= 8 && PI < 4) { // Modified PI < 4 as "autoridad < 4" from prompt
+            cap = "MID";
+            riskFlags.push("ego"); // "Empty" implies Ego driven
         }
 
-        // Indicators (No Scores in Label)
-        // We keep 'val' for internal frontend logic (charts), but 'label' is narrative.
-        const indicators = {
-            posicionamiento: { val: scorePos, label: scorePos > 7 ? "CLARO" : "DIFUSO", evidence: hasNiche ? "Keywords de Nicho" : "Bio Genérica" },
-            intencion_comercial: { val: scoreIntent, label: scoreIntent > 7 ? "ALTA" : "LATENTE", evidence: ctaRatio > 0.3 ? "CTA Activo" : "Contenido Pasivo" },
-            brecha_aspiracional: { val: scoreGap, label: scoreGap > 7 ? "CRÍTICA" : "ALINEADA", evidence: scoreGap > 7 ? "Discurso > Evidencia" : "Evidencia Sólida" },
-            arquitectura_autoridad: { val: scoreArch, label: scoreArch > 7 ? "SÓLIDA" : "INCIPIENTE", evidence: profile.followersCount > 10000 ? "Validación Social" : "Estructura Inicial" }
+        // VETO 4: Cuenta nueva "demasiado perfecta"
+        // weighted_score > 80? Let's assume PC*10. 
+        if (H < 6 && (PC > 8 || PI > 8)) {
+            segment = "FLAG";
+            riskFlags.push("scale"); // Growth anomaly
+        }
+
+        // APPLY CAP
+        if (cap === "MID" && segment === "HIGH") segment = "MID";
+        if (cap === "LOW") segment = "LOW"; // Defensive
+
+        // 4. SPECIAL CASES
+        // High Potential
+        if (PC >= 7 && BA >= 7 && profile.followersCount < 10000) {
+            // Wait, Prompt: "BA >= 7" (High Gap) + "Audiencia < 10k" ?
+            // High Potential usually means "Good Coherence, Good Proof, Small Audience".
+            // If BA is "Gap" (Bad), `BA >= 7` means "Lying". 
+            // Maybe user meant `BA` as "Authority Score"? 
+            // "BA // Brecha de Autoridad". Brecha = Gap.
+            // Let's stick to prompts: `BA >= 7`. Defined as "High Gap". 
+            // Use case: Expert who claims to be good but has small audience? 
+            // Wait, High Potential usually is "Great stats, small audience".
+            // Review Prompt: "High Potential logic: PC >= 7 && BA >= 7 && audiencia < 10k".
+            // If BA is Gap, then it's "Coherent Lier with small audience"? 
+            // Re-eval BA definition in prompt. 
+            // "BA >= 8 && VH >= 8 ... VETO 2". 
+            // Maybe BA in High Potential context means "Good Authority"? 
+            // Ambiguity. I will assume High Potential means "Coherent + High Gap (Needs help) + Small Audience" -> Needs "Refinement to Scale".
+            // Or maybe I invert BA meaning: 10 = No Gap. 
+            // Prompt says: "VETO 2 ... BA >= 8 ... CAP = MID". Veto normally caps "Bad" things. So BA >= 8 is BAD (High Gap).
+            // So High Potential = High Coherence + High Gap + Small Audience? 
+            // Let's assume yes, strict adherence.
+            segment = "HIGH_POTENTIAL";
+        }
+
+        // 5. ROUTING & OUTPUTS
+        let routingTarget = "CHECKOUT";
+        let accessLevel = 0;
+        let salesAlert = false;
+
+        switch (segment) {
+            case "LOW":
+                routingTarget = "CHECKOUT";
+                accessLevel = 0;
+                break;
+            case "MID":
+                routingTarget = "VSL"; // "Validar Estructura"
+                accessLevel = 1;
+                break;
+            case "HIGH":
+                routingTarget = "CALENDAR"; // "Aplicar"
+                accessLevel = 2; // Senior
+                salesAlert = true;
+                break;
+            case "HIGH_POTENTIAL":
+                routingTarget = "CALENDAR"; // "Strategy Session"
+                accessLevel = 1; // Not senior direct? "Journey escalonado"
+                break;
+            case "FLAG":
+                routingTarget = "BLOCK"; // Manual Review
+                accessLevel = 0;
+                salesAlert = true; // Review needed
+                break;
+        }
+
+        // UX - NARRATIVE ONLY (No Scores)
+        const uxContent = {
+            title: segment === "HIGH" ? "Protocolo de Transformación de Autoridad" :
+                segment === "MID" ? "Validación de Estructura" :
+                    segment === "HIGH_POTENTIAL" ? "Protocolo de Escala" :
+                        segment === "FLAG" ? "Revisión Contextual" :
+                            "Plan de Corrección Inmediata",
+
+            message: segment === "HIGH" ? "Su perfil demuestra la solidez estructural requerida para una intervención de alto nivel." :
+                segment === "MID" ? "Se detectan fundamentos operativos válidos. El siguiente paso es la consolidación del sistema." :
+                    segment === "HIGH_POTENTIAL" ? "Potencial de escala detectado. Se requiere alinear la brecha de autoridad antes de acelerar." :
+                        segment === "FLAG" ? "Patrones de crecimiento anómalos detectados. Se requiere revisión manual para asegurar la integridad del ecosistema." :
+                            "Se han identificado fricciones estructurales que limitan el alcance. Se recomienda corrección técnica inmediata.",
+
+            cta: segment === "HIGH" ? "Solicitar Auditoría de Escala" :
+                segment === "MID" ? "Validar Infraestructura" :
+                    segment === "HIGH_POTENTIAL" ? "Sesión Estratégica" :
+                        "Descargar Guía de Corrección",
+
+            roadmap: {
+                phase1: "Estabilización (30 días)",
+                phase2: "Estructuración (90 días)",
+                phase3: "Soberanía (12 meses)"
+            },
+
+            disclaimer: "Proyección estimada basada en benchmarks de la industria. No constituye garantía."
         };
 
         const finalOutput = {
-            // ORIGINAL DATA
-            username: profile.username,
-            profilePicUrl: profile.profilePicUrl,
-            // META INTERNO
-            narrative_level: narrativeLevel,
+            segment_internal: segment,
             routing_target: routingTarget,
-            human_access: humanAccess,
+            access_level: accessLevel,
             sales_alert: salesAlert,
-            risk_flags: [...riskFlags, "LEGAL_SAFE"],
-            // UX CONTEXT
-            ux: {
-                title: routerContent.title,
-                message: routerContent.message,
-                roadmap: routerContent.roadmap,
-                disclaimer: "Proyección estimada basada en benchmarks de la industria. No constituye garantía."
-            },
-            // INDICATORS (For Sequential Reveal)
-            indicators: indicators,
-            // RAW (Hidden from User Logic, used for Debug)
-            _meta: {
-                ticket_class: ticketClass,
-                entity: entityType,
-                history: history
-            }
+            risk_flags: [...riskFlags, "api_fallback_safe"], // Default safe
+            ux: uxContent,
+
+            // Raw scores hidden in meta for debug, NOT for UI
+            _meta: { PC, PI, BA, IC, CO, VH, H }
         };
 
         CACHE.set(normalizedHandle, { data: finalOutput, timestamp: Date.now() });
@@ -351,24 +334,34 @@ export async function POST(request: Request) {
 
     } catch (e) {
         console.error("[FORENSIC_FAILURE]", e);
-        return generateFallbackResponse("Error de conexión seguro. Protocolo Lite activo.");
+        return NextResponse.json({
+            segment_internal: "FLAG",
+            routing_target: "BLOCK",
+            access_level: 0,
+            sales_alert: true,
+            risk_flags: ["api_fallback", "error"],
+            ux: {
+                title: "Protocolo de Seguridad",
+                message: "Interrupción momentánea en el análisis forense. Se ha notificado al equipo de seguridad.",
+                cta: "Contactar Soporte",
+                disclaimer: "Modo de Protección de Datos Activo"
+            }
+        });
     }
 }
 
 function generateFallbackResponse(reason: string) {
     return NextResponse.json({
-        narrative_level: "REVISION_MANUAL",
-        routing_target: "WAITLIST",
-        human_access: true,
+        segment_internal: "FLAG",
+        routing_target: "BLOCK",
+        access_level: 0,
         sales_alert: false,
-        risk_flags: ["API_FAIL", "SAFE_MODE"],
+        risk_flags: ["safe_mode", "input_error"],
         ux: {
-            title: "Protocolo de Seguridad",
-            message: "No se pudo completar el escaneo automático debido a restricciones de privacidad. Se requiere revisión manual.",
-            roadmap: { gain: "Auditoría", foundation: "Diagnóstico", transformation: "Acceso" },
-            disclaimer: "Error de conexión con proveedor de datos."
-        },
-        indicators: {},
-        _meta: { error: reason }
+            title: "Error de Lectura",
+            message: "No se pudo acceder a los vectores públicos del perfil. Verifique que la cuenta sea pública.",
+            cta: "Reintentar",
+            disclaimer: "Análisis limitado por privacidad."
+        }
     });
 }
