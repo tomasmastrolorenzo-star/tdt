@@ -57,17 +57,14 @@ export async function POST(request: Request) {
             return NextResponse.json({ status: 'restricted', message: 'Validation Protocol Active' });
         }
 
-        const runResponse = await fetch(`https://api.apify.com/v2/acts/apify~instagram-scraper/run-sync-get-dataset-items?token=${apifyToken}`, {
+        const runResponse = await fetch(`https://api.apify.com/v2/acts/apify~instagram-profile-scraper/run-sync-get-dataset-items?token=${apifyToken}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                directUrls: [`https://www.instagram.com/${normalizedHandle}/`],
-                resultsLimit: 9,
-                scrapePosts: true,
-                scrapeStories: false,
-                scrapeHighlights: false,
-                scrapeTaggedPosts: false,
-                scrapeReels: false,
+                usernames: [normalizedHandle],
+                proxy: {
+                    useApifyProxy: true
+                }
             })
         });
 
@@ -80,39 +77,59 @@ export async function POST(request: Request) {
         const items = await runResponse.json();
 
         // 3. VALIDATE DATA
-        if (!items || items.length === 0 || !items[0].ownerUsername) {
+        if (!items || items.length === 0) {
             console.warn(`[APIFY_EMPTY] No data found for ${normalizedHandle}`);
             return NextResponse.json({ status: 'restricted', message: 'Asset not visible to public scanner.' });
         }
 
-        const item = items[0]; // First item contains profile data + post info usually? 
-        // Apify structure varies, but usually 'ownerUsername' is top level in the dataset item for posts.
-        // Wait, 'run-sync-get-dataset-items' returns an ARRAY of items (posts).
-        // Each post has 'owner' data. Let's extract from the first post.
+        // 4. NORMALIZATION (Adapter for Profile Scraper)
+        let profile = null;
+        let posts: any[] = [];
 
-        // Safer check:
-        // Does the scraper return specific "profile" item or just posts?
-        // The standard "instagram-scraper" (apify/instagram-scraper) returns posts.
-        // We can extract profile info from the first post's 'owner' object.
+        // Check format A: Array of Posts (items[0] is a post)
+        if (items[0].ownerUsername || items[0].owner) {
+            const first = items[0];
+            profile = {
+                username: first.ownerUsername || first.owner?.username || normalizedHandle,
+                profilePicUrl: first.ownerProfilePicUrl || first.owner?.profile_pic_url,
+                biography: first.owner?.biography || ""
+            };
+            posts = items;
+        }
+        // Check format B: Single Profile Object (items[0] IS the profile)
+        else if (items[0].username) {
+            const p = items[0];
+            profile = {
+                username: p.username,
+                profilePicUrl: p.profilePicUrl || p.profilePicUrlHD,
+                biography: p.biography
+            };
+            // Profile scraper sometimes creates a child dataset for posts, OR puts them in latestPosts
+            posts = p.latestPosts || [];
+        }
 
-        // However, if the user requested 'scrapePosts: true', we get posts.
-        // Let's assume standard output.
+        if (!profile) {
+            // Fallback: assume first item is relevant if it has an image
+            console.warn("[APIFY_STRUCT] Unknown structure, attempting force-read.");
+            const p = items[0];
+            profile = {
+                username: normalizedHandle,
+                profilePicUrl: p.displayUrl || p.images?.[0] || null,
+                biography: "Visual vectors extracted."
+            };
+            posts = items;
+        }
 
-        // 4. NORMALIZE (Strict Censorship)
         const normalizedData = {
-            username: item.ownerUsername || normalizedHandle,
-            profilePicUrl: item.ownerProfilePicUrl || null,
-            biography: item.owner?.biography || item.biography || "", // Attempt to find bio
-            // Note: apify/instagram-scraper standard output for posts might NOT include full bio in every post.
-            // If bio is critical, we might need a "profile" scrape mode. 
-            // BUT, the user prompt said: "const normalized = { username: item.ownerUsername... }"
-            // I will follow the USER'S provided snippet logic strictly where possible.
+            username: profile.username || normalizedHandle,
+            profilePicUrl: profile.profilePicUrl || null,
+            biography: profile.biography || "",
 
-            posts: items.slice(0, 9).map((p: any) => ({
-                id: p.id,
-                imageUrl: p.displayUrl,
-                caption: p.caption,
-                timestamp: p.takenAtTimestamp
+            posts: posts.slice(0, 9).map((p: any) => ({
+                id: p.id || Math.random().toString(),
+                imageUrl: p.displayUrl || p.url || p.images?.[0],
+                caption: p.caption || "",
+                timestamp: p.timestamp ? new Date(p.timestamp).getTime() : Date.now()
             }))
         };
 
