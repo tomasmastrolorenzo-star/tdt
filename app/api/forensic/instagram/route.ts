@@ -22,18 +22,35 @@ export async function POST(request: Request) {
             return NextResponse.json(cached.data);
         }
 
-        // DEBUG OVERRIDE
-        if (normalizedHandle === 'debug_s') {
+        // DEBUG: ENV CHECK
+        if (normalizedHandle === 'debug_env') {
+            const apifyKeys = Object.keys(process.env).filter(k => k.toLowerCase().includes('apif'));
+            const potentialTokens = Object.entries(process.env).filter(([k, v]) => v?.startsWith('apify_api_')).map(([k]) => k);
             return NextResponse.json({
                 status: 'restricted',
-                message: 'DEBUG: Restricted Mode Test OK'
+                message: 'DEBUG ENV KEYS',
+                debug: {
+                    keys_found: apifyKeys,
+                    smart_matches: potentialTokens,
+                    env_example: Object.keys(process.env).slice(0, 5) // Sample
+                }
             });
         }
 
         console.log(`[FORENSIC_SCAN_INIT] ${normalizedHandle}`);
 
-        // 2. CALL APIFY
-        const apifyToken = process.env.APIFY_TOKEN || process.env.apify_api_;
+        // 2. CALL APIFY - SMART TOKEN SEARCH
+        let apifyToken = process.env.APIFY_TOKEN || process.env.apify_api_;
+
+        // If not found by standard names, scan all env vars for a value that looks like an Apify token
+        if (!apifyToken) {
+            const foundKey = Object.keys(process.env).find(key => process.env[key]?.startsWith('apify_api_'));
+            if (foundKey) {
+                console.log(`[FORENSIC] Found token in var: ${foundKey}`);
+                apifyToken = process.env[foundKey];
+            }
+        }
+
         if (!apifyToken) {
             console.error("CRITICAL: APIFY_TOKEN missing in env");
             // Fail safe -> Restricted Mode
