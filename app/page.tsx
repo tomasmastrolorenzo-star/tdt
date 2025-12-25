@@ -67,8 +67,10 @@ export default function HomePage() {
             <div className="flex items-center gap-6 opacity-40 grayscale hover:grayscale-0 transition-all duration-700">
               <span className="text-[9px] font-mono text-slate-600 uppercase tracking-widest">Systems Audited By:</span>
               {/* Meta Logo (Simple Path) */}
-              <svg className="h-5 w-auto text-white fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M16.98 4a7.07 7.07 0 00-4.99 2.06A6.97 6.97 0 007.02 4a7.03 7.03 0 00-4.98 12.03c1.33 1.32 3.08 2.03 4.96 2.03 1.33 0 2.59-.35 3.73-.97a14.53 14.53 0 001.27-.78L12 16.27l.79.48c.19.11.38.22.58.33A6.97 6.97 0 0016.98 18c1.9 0 3.66-.71 4.99-2.03A7.03 7.03 0 0016.98 4zm-1.87 9.53a3.52 3.52 0 11-2.47-6.02 3.52 3.52 0 012.47 6.02zm-6.22 0a3.52 3.52 0 11-2.47-6.02 3.52 3.52 0 012.47 6.02z" />
+              <svg className="h-4 w-auto text-white fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z" fill="none" />
+                {/* Visual "Infinity" Loop for Meta */}
+                <path d="M17.305 4.96c-2.31 0-3.328 1.096-4.576 2.502C11.535 8.8 10.748 9.68 9.576 9.68c-1.397 0-2.388-1.047-2.388-2.527 0-1.42.92-2.336 2.228-2.336 1.134 0 1.95.836 1.95 2.155h2.937c0-2.903-2.17-4.883-4.887-4.883-2.97 0-5.163 2.14-5.163 5.064 0 3.016 2.28 5.258 5.4 5.258 2.22 0 3.256-1.11 4.542-2.553C15.42 8.64 16.273 7.69 17.514 7.69c1.54 0 2.536 1.082 2.536 2.658 0 1.33-.87 2.37-2.35 2.37-1.125 0-2.14-.94-2.14-2.28h-2.946c0 3.076 2.33 5.008 5.087 5.008 3.076 0 5.29-2.235 5.29-5.1 0-3.18-2.45-5.385-5.688-5.385z" />
               </svg>
               {/* Instagram Logo (Simple Path) */}
               <svg className="h-5 w-auto text-white fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

@@ -280,7 +280,12 @@ export default function SmartGrowthConsultant() {
                                 <div className="relative">
                                     <div className="w-24 h-24 rounded-full border border-[#d4af37]/30 p-1">
                                         {verifiedUser?.profilePicUrl ? (
-                                            <img src={verifiedUser.profilePicUrl} alt="Profile" className="w-full h-full rounded-full grayscale hover:grayscale-0 transition-all duration-1000 object-cover" />
+                                            <img
+                                                src={verifiedUser.profilePicUrl}
+                                                referrerPolicy="no-referrer"
+                                                alt="Profile"
+                                                className="w-full h-full rounded-full grayscale hover:grayscale-0 transition-all duration-1000 object-cover"
+                                            />
                                         ) : (
                                             <div className="w-full h-full bg-slate-900 rounded-full flex items-center justify-center"><Shield className="w-8 h-8 text-slate-800" /></div>
                                         )}
@@ -302,7 +307,12 @@ export default function SmartGrowthConsultant() {
                                     {verifiedUser?.posts && verifiedUser.posts.length > 0 ? (
                                         verifiedUser.posts.slice(0, 6).map((post: any, i: number) => (
                                             <div key={post.id || i} className="aspect-square bg-slate-900 relative group overflow-hidden">
-                                                <img src={post.imageUrl} alt="" className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" />
+                                                <img
+                                                    src={post.imageUrl}
+                                                    referrerPolicy="no-referrer"
+                                                    alt=""
+                                                    className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity"
+                                                />
                                             </div>
                                         ))
                                     ) : (
