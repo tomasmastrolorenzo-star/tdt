@@ -52,7 +52,7 @@ export async function POST(request: Request) {
 
         if (!apifyToken) {
             console.error("CRITICAL: APIFY_TOKEN missing in env");
-            return NextResponse.json({ status: 'restricted', message: 'Validation Protocol Active' });
+            return NextResponse.json({ status: 'restricted', message: 'Validation Protocol Active', router_action: 'MANUAL_REVIEW_PATH' });
         }
 
         const runResponse = await fetch(`https://api.apify.com/v2/acts/apify~instagram-profile-scraper/run-sync-get-dataset-items?token=${apifyToken}`, {
@@ -69,7 +69,7 @@ export async function POST(request: Request) {
 
         if (!runResponse.ok) {
             console.error(`[APIFY_ERROR] Status: ${runResponse.status}`);
-            return NextResponse.json({ status: 'restricted', message: 'Visual data under forensic verification protocol.' });
+            return NextResponse.json({ status: 'restricted', message: 'Visual data under forensic verification protocol.', router_action: 'MANUAL_REVIEW_PATH' });
         }
 
         const items = await runResponse.json();
@@ -77,14 +77,13 @@ export async function POST(request: Request) {
         // 3. VALIDATE DATA
         if (!items || items.length === 0) {
             console.warn(`[APIFY_EMPTY] No data found for ${normalizedHandle}`);
-            return NextResponse.json({ status: 'restricted', message: 'Asset not visible to public scanner.' });
+            return NextResponse.json({ status: 'restricted', message: 'Asset not visible to public scanner.', router_action: 'MANUAL_REVIEW_PATH' });
         }
 
         // 4. NORMALIZATION (Adapter for Profile Scraper)
         let profile = null;
         let posts: any[] = [];
 
-        // Check format A: Array of Posts (items[0] is a post)
         if (items[0].ownerUsername || items[0].owner) {
             const first = items[0];
             profile = {
@@ -98,7 +97,6 @@ export async function POST(request: Request) {
             };
             posts = items;
         }
-        // Check format B: Single Profile Object (items[0] IS the profile)
         else if (items[0].username) {
             const p = items[0];
             profile = {
@@ -114,7 +112,6 @@ export async function POST(request: Request) {
         }
 
         if (!profile) {
-            // Fallback
             const p = items[0];
             profile = {
                 username: normalizedHandle,
@@ -157,7 +154,6 @@ export async function POST(request: Request) {
             hybrid: ['personal brand', 'marca personal', 'entrepreneur', 'emprendedor', 'lifestyle']
         };
 
-        // Priority Logic: Business terms usually imply business, unless it's a "Founder of X" (Specialist)
         if (KEYWORDS.business.some(k => bioLower.includes(k)) || (profile.isBusiness && !KEYWORDS.specialist.some(k => bioLower.includes(k)))) {
             entityType = 'empresa';
         }
@@ -184,7 +180,7 @@ export async function POST(request: Request) {
         let ctaCount = 0;
         normalizedPosts.forEach(p => { if (CTA_KEYS.some(k => (p.caption || '').toLowerCase().includes(k))) ctaCount++; });
         let scoreIntent = 3;
-        if (hasLink && hasNiche) scoreIntent += 2; // Passive intent
+        if (hasLink && hasNiche) scoreIntent += 2;
         const ctaRatio = normalizedPosts.length ? ctaCount / normalizedPosts.length : 0;
         if (ctaRatio > 0.3) scoreIntent += 3;
         if (ctaRatio > 0.6) scoreIntent += 2;
@@ -205,7 +201,6 @@ export async function POST(request: Request) {
         let scoreOps = 5;
         if (normalizedPosts.length > 1) {
             const days = (normalizedPosts[0].timestamp - normalizedPosts[normalizedPosts.length - 1].timestamp) / (1000 * 3600 * 24);
-            // Default 1 week if < 1 day diff
             const safeDays = Math.max(days, 1);
             const postsPerWeek = normalizedPosts.length / (safeDays / 7);
 
@@ -216,7 +211,6 @@ export async function POST(request: Request) {
         scoreOps = Math.min(10, scoreOps);
 
         // E. Brecha Aspiracional (Vulnerability)
-        // High Gap = High Claims (Premium) + Low Proof -> Score HIGH (Bad/Vulnerable)
         const PREMIUM_KEYS = ['7 figures', 'million', 'millon', 'luxury', 'elite', 'ceo', 'founder', 'leader'];
         const AUTH_KEYS = ['case', 'result', 'testimoni', 'client', 'award', 'prensa', 'forber', 'inc.'];
         const hasPremium = PREMIUM_KEYS.some(k => bioLower.includes(k));
@@ -224,13 +218,12 @@ export async function POST(request: Request) {
         normalizedPosts.forEach(p => { if (AUTH_KEYS.some(k => (p.caption || '').toLowerCase().includes(k))) authCount++; });
 
         let scoreGap = 5;
-        if (hasPremium && authCount === 0) scoreGap = 9; // High Gap (Vulnerable)
-        else if (hasPremium && authCount > 0) scoreGap = 3; // Verified Authority
-        else if (!hasPremium && authCount === 0) scoreGap = 2; // Humble/Standard
+        if (hasPremium && authCount === 0) scoreGap = 9;
+        else if (hasPremium && authCount > 0) scoreGap = 3;
+        else if (!hasPremium && authCount === 0) scoreGap = 2;
         scoreGap = Math.min(10, scoreGap);
 
         // F. Arquitectura de Autoridad (New)
-        // Does the structure support the claim? 
         let scoreArch = 4;
         if (profile.followersCount > 10000) scoreArch += 2;
         if (profile.followersCount > 100000) scoreArch += 2;
@@ -238,12 +231,7 @@ export async function POST(request: Request) {
         if (profile.postsCount > 100) scoreArch += 1;
         scoreArch = Math.min(10, scoreArch);
 
-        // 3. WEIGHTING SYSTEM (BY ENTITY) - Used for classification hints?
-        // Actually the prompt says "Weights alter the score". 
-        // We will keep raw scores for display/narrative, but use WEIGHTED logic for final Classification.
-
         // 4. LOGIC GATES & VETO
-        // History Logic
         let history = 'estable';
         if (profile.postsCount < 20) history = 'nueva';
         if (profile.postsCount > 300) history = 'consolidada';
@@ -251,36 +239,23 @@ export async function POST(request: Request) {
         let ticketClass = "LOW_TICKET";
         let flag = null;
 
-        // VETO RULES
         const isNewAndHighScoring = (history === 'nueva' && profile.followersCount > 10000);
         if (isNewAndHighScoring) flag = "FLAG_REVIEW";
 
-        // Complex Checks
         const isVulnerable = scoreGap > 7;
         const lowAuthority = scoreArch < 4;
-        if (isVulnerable && lowAuthority) flag = "MEDIUM_TICKET"; // Veto Hard Cap (Rule 5)
+        if (isVulnerable && lowAuthority) flag = "MEDIUM_TICKET";
 
-        // Classification Logic
         if (!flag) {
-            // HIGH POTENTIAL: Big audience, low monetization logic
             if (profile.followersCount > 50000 && scoreIntent < 4) ticketClass = "HIGH_POTENTIAL";
-
-            // HIGH TICKET: 
-            // Specialist with High Gap (Needs help) OR 
-            // Company with Good Positioning but Bad Ops (Needs help)
             else if (entityType === 'especialista' && scoreGap > 6) ticketClass = "HIGH_TICKET";
             else if (entityType === 'empresa' && scorePos > 7 && scoreOps < 4) ticketClass = "HIGH_TICKET";
-
-            // MEDIUM
             else if (profile.followersCount > 10000) ticketClass = "MEDIUM_TICKET";
-
-            // LOW
             else ticketClass = "LOW_TICKET";
         } else {
             ticketClass = flag;
         }
 
-        // 5. NARRATIVE OUTPUT (Impact & Complexity)
         const impact = {
             credibilidad: scoreArch > 7 ? "RESILIENTE" : (scoreArch > 4 ? "ESTABLE" : "FRÁGIL"),
             conversion: scoreIntent > 7 ? "AGRESIVA" : (scoreIntent > 4 ? "MODERADA" : "LATENTE"),
@@ -296,15 +271,111 @@ export async function POST(request: Request) {
             arquitectura_autoridad: { val: scoreArch, label: scoreArch > 7 ? "SÓLIDA" : "INCIPIENTE" }
         };
 
+        // --- ROUTING ENGINE (PHASE 25.6) ---
+
+        let routerAction = "DIGITAL_FAST_IMPACT";
+        let roadmapData = {
+            gain: "Estabilización de Perfil (30 Días)",
+            foundation: "Infraestructura de Conversión",
+            transformation: "Escalamiento Digital"
+        };
+        let uxContent = {
+            title: "Diagnóstico: Impacto Digital",
+            message: "Se detectan oportunidades de corrección inmediata en la estructura de autoridad.",
+            cta: "Acceder a Solución",
+            restrictions: [] as string[]
+        };
+
+        switch (ticketClass) {
+            case "LOW_TICKET":
+                routerAction = "DIGITAL_FAST_IMPACT";
+                roadmapData = {
+                    gain: "Corrección de Bio y Enlaces (7 Días)",
+                    foundation: "Estructura de Contenido (30 Días)",
+                    transformation: "Autoridad Percibida (3 Meses)"
+                };
+                uxContent = {
+                    title: "Protocolo: Rápido Impacto",
+                    message: "La cuenta requiere intervención estructural básica antes de escalar.",
+                    cta: "Acceso Inmediato",
+                    restrictions: ["No Agenda Humana", "Acceso Digital Único"]
+                };
+                break;
+
+            case "MEDIUM_TICKET":
+                routerAction = "STRUCTURED_CONSOLIDATION";
+                roadmapData = {
+                    gain: "Optimización de Embudo (30 Días)",
+                    foundation: "Sistematización de Contenido (90 Días)",
+                    transformation: "Liderazgo de Nicho (12 Meses)"
+                };
+                uxContent = {
+                    title: "Protocolo: Consolidación Estratégica",
+                    message: "Se detecta tracción. Se requiere profesionalizar la conversión.",
+                    cta: "Acceder al Programa",
+                    restrictions: ["Soporte vía Account Manager", "Sin Acceso a Founders"]
+                };
+                break;
+
+            case "HIGH_TICKET":
+                routerAction = "AUTHORITY_TRANSFORMATION";
+                roadmapData = {
+                    gain: "Reingeniería de Autoridad (30 Días)",
+                    foundation: "Ecosistema de Poder (90 Días)",
+                    transformation: "Soberanía de Mercado (12 Meses)"
+                };
+                uxContent = {
+                    title: "Protocolo: Transformación de Autoridad",
+                    message: "Perfil elegible para intervención de alto nivel. Requiere validación presupuestaria.",
+                    cta: "Solicitar Intervención",
+                    restrictions: ["Requiere Presupuesto >$10k", "Lista de Espera Activa"]
+                };
+                break;
+
+            case "HIGH_POTENTIAL":
+                routerAction = "HIGH_POTENTIAL_PATH";
+                roadmapData = {
+                    gain: "Monetización de Audiencia (30 Días)",
+                    foundation: "Creación de Oferta (60 Días)",
+                    transformation: "Imperio Personal (12 Meses)"
+                };
+                uxContent = {
+                    title: "Protocolo: Ambición Controlada",
+                    message: "Gran volumen detectado. Riesgo de dilución de marca. Se sugiere refinamiento.",
+                    cta: "Sesión Estratégica Limitada",
+                    restrictions: ["Solo para dueños de cuenta", "Validación de Identidad"]
+                };
+                break;
+
+            case "FLAG_REVIEW":
+                routerAction = "MANUAL_REVIEW_PATH";
+                roadmapData = {
+                    gain: "Auditoría de Veracidad (7 Días)",
+                    foundation: "???",
+                    transformation: "???"
+                };
+                uxContent = {
+                    title: "Alerta: Revisión Contextual Requerida",
+                    message: "Los patrones detectados requieren análisis humano para descartar anomalías.",
+                    cta: "Solicitar Revisión Manual",
+                    restrictions: ["Bloqueo Preventivo de Compra", "Contacto Humano Obligatorio"]
+                };
+                break;
+        }
+
         const analysisResult = {
             entity_type: entityType,
             history_factor: history,
             indicators,
             impact,
-            ticket_class: ticketClass
+            ticket_class: ticketClass,
+            // ROUTER OUTPUTS
+            router_action: routerAction,
+            roadmap: roadmapData,
+            ux_context: uxContent,
+            disclaimer: "Estimaciones basadas en benchmarks de industria. No constituyen garantía."
         };
 
-        // 6. CACHE & RETURN
         const finalPayload = { ...normalizedData, ...analysisResult };
 
         CACHE.set(normalizedHandle, { data: finalPayload, timestamp: Date.now() });
@@ -312,9 +383,17 @@ export async function POST(request: Request) {
 
     } catch (e) {
         console.error("[FORENSIC_FAILURE]", e);
+        // FALLBACK: ANALYSIS_LITE_MODE / MANUAL REVIEW
         return NextResponse.json({
             status: 'restricted',
             message: 'Visual data under forensic verification protocol.',
+            router_action: 'MANUAL_REVIEW_PATH',
+            ux_context: {
+                title: "Protocolo de Seguridad Activo",
+                message: "No se pudo completar el escaneo automático. Se requiere revisión manual.",
+                cta: "Solicitar Soporte",
+                restrictions: ["Error de Conexión Seguro"]
+            },
             debug: e instanceof Error ? e.message : String(e)
         });
     }
