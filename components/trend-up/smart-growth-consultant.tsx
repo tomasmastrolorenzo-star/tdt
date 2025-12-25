@@ -52,12 +52,6 @@ export default function SmartGrowthConsultant() {
         }
         setHandle(cleanHandle)
 
-        if (cleanHandle.length < 3) {
-            setError("ERR: CADENA_INSUFICIENTE")
-            return
-        }
-        setError("")
-
         // 2. Transition
         setStep(MachineStep.SCANNING)
         setLoadingMsg("Cartografiando capas de la arquitectura pública...")
@@ -92,7 +86,7 @@ export default function SmartGrowthConsultant() {
 
             setTimeout(() => {
                 setData(findingData)
-                setStep(MachineStep.IDENTITY) // NEW: Go to Identity first
+                setStep(MachineStep.IDENTITY)
             }, remaining)
 
         } catch (e) {
@@ -160,44 +154,64 @@ export default function SmartGrowthConsultant() {
         )
     }
 
-    // 2.5 IDENTITY (NEW SCREENER)
+    // 2.5 IDENTITY (NEW SCREENER - INSTAGRAM AESTHETIC)
     if (step === MachineStep.IDENTITY && data) {
         return (
-            <div className="w-full max-w-xl mx-auto bg-[#02040a] border border-white/10 p-6 space-y-8 animate-in zoom-in-95 duration-500">
-                {/* Header: Identity */}
-                <div className="flex items-center gap-6 border-b border-white/5 pb-6">
-                    <div className="w-20 h-20 rounded-full overflow-hidden border border-white/10 relative">
-                        {data.profilePicUrl && <img src={`https://wsrv.nl/?url=${encodeURIComponent(data.profilePicUrl)}`} className="w-full h-full object-cover grayscale opacity-90" />}
+            <div className="w-full max-w-sm mx-auto bg-black border border-white/10 rounded-lg p-6 space-y-6 animate-in zoom-in-95 duration-500 font-sans">
+
+                {/* Profile Header */}
+                <div className="flex items-center gap-6">
+                    <div className="w-20 h-20 rounded-full p-[2px] bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-500">
+                        <div className="w-full h-full rounded-full border-2 border-black overflow-hidden bg-black">
+                            {data.profilePicUrl && <img src={`https://wsrv.nl/?url=${encodeURIComponent(data.profilePicUrl)}`} className="w-full h-full object-cover" />}
+                        </div>
                     </div>
-                    <div className="space-y-2">
-                        <div className="text-[10px] text-[#d4af37] font-mono uppercase tracking-widest">Objetivo Localizado</div>
-                        <div className="text-2xl text-white font-mono tracking-tight">@{data.username}</div>
-                        <div className="flex gap-4 text-[10px] font-mono text-slate-500 uppercase">
-                            <span>{data.followers_count.toLocaleString()} Segs</span>
-                            <span>{data.posts_count} Pubs</span>
+
+                    <div className="flex-1 space-y-3">
+                        <div className="text-white font-semibold text-lg leading-none tracking-tight">
+                            {data.username}
+                        </div>
+
+                        <div className="flex gap-6 text-white">
+                            <div className="text-center">
+                                <div className="font-bold text-sm">{data.posts_count}</div>
+                                <div className="text-[10px] text-gray-400">Publicac.</div>
+                            </div>
+                            <div className="text-center">
+                                <div className="font-bold text-sm">{data.followers_count.toLocaleString()}</div>
+                                <div className="text-[10px] text-gray-400">Seguidores</div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 {/* Evidence Grid (Latest 3 Posts) */}
-                <div className="grid grid-cols-3 gap-2 opacity-60 hover:opacity-100 transition-opacity">
+                <div className="grid grid-cols-3 gap-1">
                     {data.latest_posts.slice(0, 3).map((post, i) => (
-                        <div key={i} className="aspect-square bg-slate-900 border border-white/5 overflow-hidden relative">
-                            {post.url && <img src={`https://wsrv.nl/?url=${encodeURIComponent(post.url)}`} className="w-full h-full object-cover grayscale" />}
-                            <div className="absolute bottom-0 w-full bg-black/50 text-[8px] text-white p-1 truncate font-mono">
-                                {new Date(post.date * 1000).toLocaleDateString()}
-                            </div>
+                        <div key={i} className="aspect-square bg-slate-900 border border-white/5 overflow-hidden relative group cursor-pointer hover:opacity-90">
+                            {post.url && <img src={`https://wsrv.nl/?url=${encodeURIComponent(post.url)}`} className="w-full h-full object-cover" />}
                         </div>
                     ))}
                 </div>
 
                 {/* Confirm Logic */}
-                <button
-                    onClick={confirmIdentity}
-                    className="w-full bg-white text-black hover:bg-slate-200 py-3 font-mono text-xs uppercase tracking-[0.2em] font-bold"
-                >
-                    CONFIRMAR IDENTIDAD PARA ANÁLISIS
-                </button>
+                <div className="pt-2">
+                    <div className="text-[10px] text-[#d4af37] font-mono uppercase tracking-widest text-center mb-4">
+                        Objetivo Localizado // Confirmar
+                    </div>
+                    <button
+                        onClick={confirmIdentity}
+                        className="w-full bg-[#0095f6] hover:bg-[#007cc0] text-white py-2 rounded font-semibold text-sm transition-colors"
+                    >
+                        Confirmar Cuenta
+                    </button>
+                    <button
+                        onClick={() => setStep(MachineStep.IDLE)}
+                        className="w-full text-slate-500 py-2 text-xs mt-2 hover:text-white transition-colors"
+                    >
+                        No es esta cuenta
+                    </button>
+                </div>
             </div>
         )
     }
