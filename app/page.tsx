@@ -2,40 +2,39 @@ import SmartGrowthConsultant from "@/components/trend-up/smart-growth-consultant
 
 export default function Home() {
   return (
-    <main className="h-screen w-full bg-[#02040a] text-slate-300 font-mono flex flex-col items-center justify-center p-6 relative overflow-hidden selection:bg-[#d4af37] selection:text-black">
+    <main className="h-screen w-full bg-[#02040a] text-slate-300 font-mono flex flex-col relative overflow-hidden selection:bg-[#d4af37] selection:text-black">
 
-      {/* Background Noise */}
-      <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.04] pointer-events-none mix-blend-overlay" />
+      {/* Background Noise (Subtle Texture) */}
+      <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.03] pointer-events-none mix-blend-overlay" />
 
-      {/* 1. SINGLE SCREEN BLOCK (NO SCROLL) */}
-      <div className="w-full max-w-2xl relative z-10 flex flex-col items-center text-center space-y-10">
+      {/* HEADER: Minimal */}
+      <header className="absolute top-0 left-0 w-full p-6 flex justify-between items-center z-20">
+        <div className="font-bold text-white tracking-widest text-xs">TDT // PROTOCOL</div>
+        <div className="text-[10px] text-slate-500 uppercase tracking-widest hover:text-white cursor-pointer transition-colors">Sistema v1.4</div>
+      </header>
 
-        {/* Header - Simple & Technical */}
-        <div className="space-y-4">
-          <h1 className="text-xs text-[#64748B] tracking-[0.3em] uppercase">
-            TDT // SYSTEM CORE
+      {/* CORE ACTIVATOR [CENTERED] */}
+      <div className="flex-1 flex flex-col items-center justify-center relative z-10 w-full max-w-2xl mx-auto px-6">
+
+        {/* HEADLINES: Technical only */}
+        <div className="text-center space-y-6 mb-12">
+          <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
+            DIAGNÓSTICO DE ARQUITECTURA
           </h1>
-          <h2 className="text-xl md:text-2xl font-bold text-white tracking-tight">
-            DIAGNÓSTICO DE ARQUITECTURA DIGITAL
-          </h2>
-          <p className="text-[10px] text-[#4A5568] uppercase tracking-widest max-w-md mx-auto">
-            Auditoría forense de activos de alto valor
+          <p className="text-xs text-slate-500 uppercase tracking-[0.2em] max-w-md mx-auto leading-relaxed">
+            Análisis forense de emisión, distribución y captura de valor en activos digitales.
           </p>
         </div>
 
-        {/* 2. THE TERMINAL (SmartGrowthConsultant) */}
-        {/* This component handles Input -> Analysis -> Result in-place */}
+        {/* INPUT COMPONENT */}
         <div className="w-full">
           <SmartGrowthConsultant />
         </div>
 
       </div>
 
-      {/* Footer Branding - Fixed Bottom */}
-      <div className="absolute bottom-8 text-[9px] text-[#334155] tracking-widest uppercase flex gap-4">
-        <span>System Ready v1.3</span>
-        <span>Secure Protocol</span>
-      </div>
+      {/* FOOTER: Minimal (Only if needed, user said 'Footer minimal with indicators ONLY if real data') */}
+      {/* Keeping empty for now to satisfy Phase 1 Elimination */}
 
     </main>
   );

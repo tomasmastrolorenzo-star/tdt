@@ -3,65 +3,62 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
-import { ChevronRight, AlertTriangle, Activity, Lock } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { ChevronRight, Activity, Database, Check } from "lucide-react"
 
-// --- TYPES & ENUMS ---
-enum CoreStep {
-    INPUT = 0,
-    FETCHING = 1,
-    IDENTITY_VERIFICATION = 2,
-    TYPE_CONFIRMATION = 3,
-    ASYMMETRY_FINDING = 4,
-    ROUTING_OPTIONS = 5,
-    MANUAL_FALLBACK = 99
+// --- MACHINE STATES ---
+enum MachineStep {
+    IDLE = 0,         // Input State
+    SCANNING = 1,     // "Cartografiando..." (0-2s)
+    FINDING = 2,      // The Core Finding (2-8s)
+    DYNAMICS = 3,     // Explanation
+    DECISION = 4,     // Option A / B
+    CAPTURE = 5       // Email
 }
 
-interface AnalysisResult {
+// --- VISUALIZATION DATA ---
+// We will eventually populate this from API
+interface AnalysisData {
     username: string
-    profilePicUrl?: string
-    biography?: string
-    asset_type: string // MEDIC, REAL_ESTATE, etc
-    confidence: number
-    last_post_date: string | null
-    narrative_level: string
-    routing_target: string
-    indicators: any
+    finding_title: string
+    finding_value: string
+    finding_evidence: string
+    dynamics_text: string
 }
-
-const ASSET_TYPE_OPTIONS = [
-    { id: 'MEDIC', label: 'Médico / Clínica' },
-    { id: 'REAL_ESTATE', label: 'Real Estate / Inversión' },
-    { id: 'ATHLETE', label: 'Deportista / Fitness' },
-    { id: 'FOUNDER', label: 'Founder / Tech' },
-    { id: 'BROKER', label: 'Broker / Finanzas' },
-    { id: 'INFLUENCER', label: 'Marca Personal / Creator' },
-    { id: 'OTHER', label: 'Otro' }
-];
 
 export default function SmartGrowthConsultant() {
     const router = useRouter()
 
     // State
-    const [step, setStep] = useState<CoreStep>(CoreStep.INPUT)
+    const [step, setStep] = useState<MachineStep>(MachineStep.IDLE)
     const [handle, setHandle] = useState("")
     const [error, setError] = useState("")
-    const [data, setData] = useState<AnalysisResult | null>(null)
-    const [manualType, setManualType] = useState("")
+    const [loadingMsg, setLoadingMsg] = useState("")
+    const [data, setData] = useState<AnalysisData | null>(null)
+    const [decision, setDecision] = useState<"A" | "B" | null>(null)
+    const [email, setEmail] = useState("")
 
     // --- ACTIONS ---
 
-    const validateAndStart = async () => {
+    const initiateScan = async () => {
+        // 1. Validate
         if (!handle.startsWith('@')) {
-            setError("Error Técnico: Formato de handle inválido. Debe iniciar con @.")
+            setError("ERR: FORMATO_INVALIDO // REQUIERE @")
             return
         }
         if (handle.length < 3) {
-            setError("Error Técnico: Handle demasiado corto.")
+            setError("ERR: CADENA_INSUFICIENTE")
             return
         }
         setError("")
-        setStep(CoreStep.FETCHING)
+
+        // 2. Transition (Fade Out Landing done via parent layout usually, but here we just switch state)
+        setStep(MachineStep.SCANNING)
+        setLoadingMsg("Cartografiando capas de la arquitectura pública...")
+
+        // 3. Scan Sequence
+        // 0-2s: Cartography
+        // Parallel: Start Fetch
+        const startTime = Date.now()
 
         try {
             const response = await fetch('/api/forensic/instagram', {
@@ -70,248 +67,237 @@ export default function SmartGrowthConsultant() {
                 body: JSON.stringify({ handle })
             })
 
-            if (!response.ok) throw new Error("API Failure")
-
             const result = await response.json()
+            // We'll need to adapt `route.ts` to give us specific "Findings" later.
+            // For now, let's map what we have or generic fallback.
 
-            if (result.status === 'restricted') {
-                setStep(CoreStep.MANUAL_FALLBACK)
-                return
+            // Mocking the "Finding" structure based on current API response or Fallback
+            // (Phase 4 requirement: Finding in <10s)
+
+            const findingData: AnalysisData = {
+                username: result.username || handle,
+                finding_title: "PATRÓN DE EMISIÓN DETECTADO",
+                finding_value: result.indicators?.intencion_comercial?.val > 6 ? "ALTA SATURACIÓN DE CTA" : "BAJA FRECUENCIA DE IMPACTO",
+                finding_evidence: `Métrica de densidad: ${result.indicators?.intencion_comercial?.val || 5}/10`,
+                dynamics_text: "Esta configuración genera ventanas de fricción que reducen la eficiencia de la captura de valor en capas frías."
             }
 
-            setData(result)
+            // Ensure min 2s delay for "Cartografiando"
+            const elapsed = Date.now() - startTime
+            const remaining = Math.max(0, 2000 - elapsed)
 
-            // DELAY 1: Simulate "Localizing..." for 1.5s then show Identity
             setTimeout(() => {
-                setStep(CoreStep.IDENTITY_VERIFICATION)
-            }, 1500)
+                setData(findingData)
+                setStep(MachineStep.FINDING)
+            }, remaining)
 
         } catch (e) {
             console.error(e)
-            setStep(CoreStep.MANUAL_FALLBACK)
+            // Fallback
+            setTimeout(() => {
+                setData({
+                    username: handle,
+                    finding_title: "ANOMALÍA DE LECTURA",
+                    finding_value: "ARQUITECTURA PRIVADA / RESTRINGIDA",
+                    finding_evidence: "No se detectaron nodos públicos",
+                    dynamics_text: "La opacidad de la cuenta impide el cálculo de eficiencia de distribución."
+                })
+                setStep(MachineStep.FINDING)
+            }, 2000)
         }
     }
 
-    const confirmIdentity = () => {
-        if (!data) return
-
-        // Logic: If confidence is low, go to Manual Type Selection
-        if (data.confidence < 0.4 || data.asset_type === 'OTHER') {
-            setStep(CoreStep.TYPE_CONFIRMATION)
-        } else {
-            // High confidence -> Asymmetry
-            setTimeout(() => setStep(CoreStep.ASYMMETRY_FINDING), 500)
-        }
+    const nextToDynamics = () => {
+        // Auto-transition or manual? 
+        // "Phase 5 & 6: Dynamics & Decision"
+        // Let's transition after a viewing duration or click? 
+        // User said "Mostrar una segunda capa: Relación...". 
+        // Let's make it interactive "VER IMPACTO"
+        setStep(MachineStep.DYNAMICS)
     }
 
-    const selectManualType = (typeId: string) => {
-        setManualType(typeId)
-        // Update local data context
-        if (data) data.asset_type = typeId
-        setStep(CoreStep.ASYMMETRY_FINDING)
-    }
+    const toDecision = () => setStep(MachineStep.DECISION)
 
-    const goToRouting = () => {
-        setStep(CoreStep.ROUTING_OPTIONS)
+    const handleOption = (opt: "A" | "B") => {
+        setDecision(opt)
+        setStep(MachineStep.CAPTURE)
     }
-
-    const handleRouteAction = (action: string) => {
-        // Simple routing mapping
-        const routeValues: any = {
-            'CHECKOUT': '/checkout?product=audit_protocol',
-            'VSL': '/briefing/logic-v2',
-            'APPLICATION': '/apply/consultant',
-            'WAITLIST': '/waitlist',
-        }
-        // Default to VSL or user choice logic
-        // For Core V1, we map the backend routing_target to a URL
-        const target = data?.routing_target || 'CHECKOUT';
-        const url = routeValues[target] || '/checkout?product=audit_protocol';
-        router.push(url);
-    }
-
 
     // --- RENDERERS ---
 
-    // 1. INPUT
-    if (step === CoreStep.INPUT) {
+    // 1. INPUT (ACTIVATOR)
+    if (step === MachineStep.IDLE) {
         return (
-            <div className="w-full max-w-md mx-auto space-y-6 animate-in fade-in">
-                <div className="bg-[#02040a] border border-white/10 p-2 flex items-center gap-4 rounded-lg focus-within:border-[#d4af37]/50 transition-colors">
-                    <input
-                        value={handle}
-                        onChange={(e) => setHandle(e.target.value)}
-                        placeholder="@usuario_instagram"
-                        className="bg-transparent border-none text-white font-mono text-lg py-3 w-full focus:ring-0 placeholder:text-slate-700 outline-none text-center"
-                        onKeyDown={(e) => e.key === 'Enter' && validateAndStart()}
-                    />
+            <div className="w-full max-w-md mx-auto space-y-8 animate-in fade-in duration-500">
+                <div className="relative group">
+                    <div className="absolute -inset-0.5 bg-gradient-to-r from-[#d4af37] to-slate-600 rounded-sm blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
+                    <div className="relative bg-[#02040a] border border-white/10 p-2 flex items-center gap-4 rounded-sm">
+                        <input
+                            value={handle}
+                            onChange={(e) => setHandle(e.target.value)}
+                            placeholder="@usuario"
+                            className="bg-transparent border-none text-white font-mono text-xl py-4 w-full focus:ring-0 placeholder:text-slate-800 outline-none text-center tracking-wider"
+                            onKeyDown={(e) => e.key === 'Enter' && initiateScan()}
+                        />
+                    </div>
                 </div>
-                {error && <p className="text-[10px] text-red-500 font-mono text-center uppercase tracking-widest">{error}</p>}
+
+                {error && (
+                    <p className="text-[10px] text-red-500 font-mono text-center tracking-widest uppercase animate-pulse">
+                        {error}
+                    </p>
+                )}
 
                 <button
-                    onClick={validateAndStart}
-                    className="w-full bg-[#d4af37] hover:bg-white text-black transition-colors py-4 font-mono text-xs uppercase tracking-[0.2em] font-bold"
+                    onClick={initiateScan}
+                    className="w-full bg-[#d4af37] hover:bg-white text-black transition-all duration-300 py-4 font-mono text-xs uppercase tracking-[0.25em] font-bold border border-transparent hover:border-[#d4af37] active:scale-[0.99]"
                 >
-                    INICIAR DIAGNÓSTICO DE ARQUITECTURA
+                    INICIAR DIAGNÓSTICO
                 </button>
-            </div>
-        )
-    }
 
-    // 2. FETCHING
-    if (step === CoreStep.FETCHING) {
-        return (
-            <div className="w-full max-w-md mx-auto text-center space-y-4">
-                <div className="inline-block animate-spin duration-1000">
-                    <Activity className="w-6 h-6 text-[#d4af37]" />
-                </div>
-                <p className="text-[10px] text-slate-500 font-mono uppercase tracking-widest animate-pulse">
-                    Estableciendo enlace forense...
+                <p className="text-[9px] text-slate-600 font-mono text-center uppercase tracking-widest">
+                    Acceso al núcleo de inteligencia v1.4
                 </p>
             </div>
         )
     }
 
-    // 3. IDENTITY VERIFICATION (SCREENER REAL)
-    if (step === CoreStep.IDENTITY_VERIFICATION && data) {
-        const lastDate = data.last_post_date ? new Date(data.last_post_date).toLocaleDateString() : 'N/A';
-
+    // 2. SCANNING (TRANSITION)
+    if (step === MachineStep.SCANNING) {
         return (
-            <div className="w-full max-w-md mx-auto bg-[#02040a] border border-white/10 p-6 space-y-8 animate-in zoom-in-95 duration-500">
-                <div className="flex items-center gap-6 border-b border-white/5 pb-6">
-                    <div className="w-16 h-16 rounded-full overflow-hidden border border-white/10">
-                        {data.profilePicUrl && <img src={`https://wsrv.nl/?url=${encodeURIComponent(data.profilePicUrl)}`} className="w-full h-full object-cover grayscale" />}
+            <div className="w-full max-w-md mx-auto text-center space-y-6 pt-12">
+                <div className="relative w-16 h-16 mx-auto">
+                    <div className="absolute inset-0 border-t-2 border-[#d4af37] rounded-full animate-spin"></div>
+                    <div className="absolute inset-2 border-r-2 border-slate-700 rounded-full animate-spin-slow"></div>
+                </div>
+                <p className="text-xs text-[#d4af37] font-mono uppercase tracking-widest animate-pulse">
+                    {loadingMsg}
+                </p>
+            </div>
+        )
+    }
+
+    // 3. FINDING (THE CORE)
+    if (step === MachineStep.FINDING && data) {
+        return (
+            <div className="w-full max-w-xl mx-auto bg-[#02040a] border border-white/10 p-8 space-y-8 animate-in slide-in-from-bottom-5 duration-700">
+                {/* Header */}
+                <div className="flex justify-between items-end border-b border-white/5 pb-4">
+                    <div className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">
+                        Hallazgo Técnico
                     </div>
-                    <div className="text-left space-y-1">
-                        <div className="text-[9px] text-slate-500 font-mono uppercase tracking-widest">Identidad Localizada</div>
-                        <div className="text-lg text-white font-mono">@{data.username}</div>
-                        <div className="text-[9px] text-[#d4af37] font-mono uppercase">Última Emisión: {lastDate}</div>
+                    <div className="text-[10px] font-mono text-white uppercase tracking-widest">
+                        {data.username}
                     </div>
+                </div>
+
+                {/* The Finding */}
+                <div className="space-y-2">
+                    <h3 className="text-sm font-mono text-slate-400 uppercase tracking-widest">{data.finding_title}</h3>
+                    <div className="text-2xl md:text-3xl font-serif text-white italic">
+                        {data.finding_value}
+                    </div>
+                    <div className="inline-block bg-slate-900 border border-white/10 px-3 py-1 mt-2">
+                        <span className="text-[10px] font-mono text-[#d4af37] uppercase">{data.finding_evidence}</span>
+                    </div>
+                </div>
+
+                {/* Continue CTA */}
+                <div className="pt-4 flex justify-end">
+                    <button
+                        onClick={nextToDynamics}
+                        className="flex items-center gap-2 text-xs font-mono text-slate-300 hover:text-white transition-colors uppercase tracking-widest group"
+                    >
+                        Analizar Impacto
+                        <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    </button>
+                </div>
+            </div>
+        )
+    }
+
+    // 4. DYNAMICS (CONSEQUENCE)
+    if (step === MachineStep.DYNAMICS && data) {
+        return (
+            <div className="w-full max-w-xl mx-auto bg-[#02040a] border border-white/10 p-8 space-y-8 animate-in fade-in duration-700 text-left">
+                <div className="text-[10px] font-mono text-slate-500 uppercase tracking-widest border-b border-white/5 pb-4">
+                    Dinámica Estructural
+                </div>
+
+                <p className="text-lg font-serif text-slate-200 leading-relaxed italic">
+                    "{data.dynamics_text}"
+                </p>
+
+                <div className="pt-8">
+                    <button
+                        onClick={toDecision}
+                        className="w-full border border-[#d4af37] text-[#d4af37] hover:bg-[#d4af37] hover:text-black py-4 font-mono text-xs uppercase tracking-[0.2em] transition-all font-bold"
+                    >
+                        VER OPCIONES TÉCNICAS
+                    </button>
+                </div>
+            </div>
+        )
+    }
+
+    // 5. DECISION
+    if (step === MachineStep.DECISION) {
+        return (
+            <div className="w-full max-w-xl mx-auto bg-[#02040a] border border-white/10 p-8 space-y-8 animate-in fade-in duration-700">
+                <div className="text-center space-y-2">
+                    <h3 className="text-xs font-mono text-slate-500 uppercase tracking-widest">Protocolo de Intervención</h3>
+                    <p className="text-white font-serif italic text-lg">Seleccione vector de corrección:</p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <button
+                        onClick={() => handleOption("A")}
+                        className="p-6 border border-white/5 hover:border-[#d4af37] bg-white/5 hover:bg-[#d4af37]/10 transition-all text-left space-y-4 group"
+                    >
+                        <div className="text-[10px] font-mono text-slate-500 group-hover:text-[#d4af37]">OPCIÓN A</div>
+                        <div className="text-sm font-bold text-slate-200 uppercase tracking-wider">Modificar Dinámica</div>
+                        <p className="text-[10px] text-slate-500 leading-relaxed">Alterar los patrones de emisión para reducir fricción estructural.</p>
+                    </button>
+
+                    <button
+                        onClick={() => handleOption("B")}
+                        className="p-6 border border-white/5 hover:border-[#d4af37] bg-white/5 hover:bg-[#d4af37]/10 transition-all text-left space-y-4 group"
+                    >
+                        <div className="text-[10px] font-mono text-slate-500 group-hover:text-[#d4af37]">OPCIÓN B</div>
+                        <div className="text-sm font-bold text-slate-200 uppercase tracking-wider">Intensificar Patrón</div>
+                        <p className="text-[10px] text-slate-500 leading-relaxed">Maximizar la saturación actual para forzar ruptura de alcance.</p>
+                    </button>
+                </div>
+            </div>
+        )
+    }
+
+    // 6. CAPTURE
+    if (step === MachineStep.CAPTURE) {
+        return (
+            <div className="w-full max-w-md mx-auto bg-[#02040a] border border-white/10 p-8 space-y-8 animate-in fade-in">
+                <div className="text-center space-y-4">
+                    <Database className="w-8 h-8 text-[#d4af37] mx-auto opacity-80" />
+                    <h3 className="text-xs font-mono text-slate-400 uppercase tracking-widest">Simulación de Impacto</h3>
+                    <p className="text-sm border-l-2 border-[#d4af37] pl-4 text-left text-slate-300 font-serif italic">
+                        Para procesar la simulación de la {decision === 'A' ? 'Opción A' : 'Opción B'}, se requiere un punto de entrega seguro.
+                    </p>
                 </div>
 
                 <div className="space-y-4">
-                    <p className="text-xs text-slate-400 font-mono leading-relaxed">
-                        Sistema listo para auditar arquitectura de autoridad. Confirme identidad para proceder.
-                    </p>
+                    <input
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="correo_corporativo@dominio.com"
+                        className="w-full bg-slate-900/50 border border-white/10 text-white font-mono text-sm py-4 px-4 focus:border-[#d4af37] outline-none"
+                    />
                     <button
-                        onClick={confirmIdentity}
-                        className="w-full bg-slate-100 hover:bg-white text-black py-3 font-mono text-xs uppercase tracking-widest font-bold"
+                        className="w-full bg-white text-black hover:bg-slate-200 py-4 font-mono text-xs uppercase tracking-[0.2em] font-bold transition-colors"
+                        onClick={() => alert("Simulacion enviada (Mock)")}
                     >
-                        CONFIRMAR ACTIVO
+                        ENVIAR REPORTE TÉCNICO
                     </button>
                 </div>
-            </div>
-        )
-    }
-
-    // 3b. TYPE CONFIRMATION (Fallback)
-    if (step === CoreStep.TYPE_CONFIRMATION) {
-        return (
-            <div className="w-full max-w-md mx-auto bg-[#02040a] border border-white/10 p-6 space-y-6 animate-in fade-in">
-                <p className="text-xs text-slate-400 font-mono text-center uppercase tracking-widest">
-                    Clasificación Forense Requerida
-                </p>
-                <div className="grid grid-cols-1 gap-2">
-                    {ASSET_TYPE_OPTIONS.map((opt) => (
-                        <button
-                            key={opt.id}
-                            onClick={() => selectManualType(opt.id)}
-                            className="text-left px-4 py-3 border border-white/5 hover:border-[#d4af37]/50 text-slate-300 hover:text-white font-mono text-xs transition-colors"
-                        >
-                            {opt.label}
-                        </button>
-                    ))}
-                </div>
-            </div>
-        )
-    }
-
-    // 4. ASYMMETRY FINDING
-    if (step === CoreStep.ASYMMETRY_FINDING && data) {
-        return (
-            <div className="w-full max-w-lg mx-auto bg-[#02040a] border border-white/10 p-8 space-y-8 animate-in slide-in-from-bottom-5 duration-700">
-                <div className="flex items-center justify-center mb-4">
-                    <AlertTriangle className="w-8 h-8 text-[#d4af37] opacity-80" />
-                </div>
-
-                <div className="text-center space-y-2">
-                    <h3 className="text-lg font-serif italic text-white">Asimetría Estructural Detectada</h3>
-                    <div className="w-12 h-[1px] bg-[#d4af37]/50 mx-auto" />
-                </div>
-
-                <p className="text-sm font-mono text-slate-400 leading-relaxed text-justify border-l-2 border-[#d4af37]/20 pl-4">
-                    El activo proyecta una autoridad superior a su capacidad actual de captura de valor. Se detecta "Lucro Cesante" en la brecha entre el posicionamiento visible ({data.asset_type}) y la infraestructura de conversión.
-                </p>
-
-                <div className="pt-4">
-                    <button
-                        onClick={goToRouting}
-                        className="w-full bg-transparent border border-[#d4af37] text-[#d4af37] hover:bg-[#d4af37] hover:text-black py-4 font-mono text-xs uppercase tracking-[0.2em] transition-all"
-                    >
-                        VER PROTOCOLO DE CORRECCIÓN
-                    </button>
-                </div>
-            </div>
-        )
-    }
-
-    // 5. ROUTING OPTIONS
-    if (step === CoreStep.ROUTING_OPTIONS && data) {
-        return (
-            <div className="w-full max-w-lg mx-auto bg-[#02040a] border border-white/10 p-8 space-y-8 animate-in fade-in">
-                <div className="text-center space-y-2">
-                    <h3 className="text-xs font-mono text-slate-500 uppercase tracking-widest">Protocolo Asignado</h3>
-                    <h2 className="text-xl font-serif text-white italic">{data.ux.title}</h2>
-                </div>
-
-                <div className="space-y-4 border-t border-white/5 pt-8">
-                    <p className="text-xs font-mono text-slate-400 mb-4">Opciones de Ejecución:</p>
-
-                    {/* Primary Option */}
-                    <button
-                        onClick={() => handleRouteAction('primary')}
-                        className="w-full flex items-center justify-between p-4 bg-[#d4af37] text-black hover:bg-white transition-colors group"
-                    >
-                        <span className="font-mono text-xs uppercase font-bold tracking-widest">01 / Ejecución Inmediata</span>
-                        <ChevronRight className="w-4 h-4" />
-                    </button>
-
-                    {/* Secondary Option (Info) */}
-                    <button
-                        onClick={() => handleRouteAction('secondary')}
-                        className="w-full flex items-center justify-between p-4 border border-white/10 text-slate-400 hover:text-white hover:border-white/30 transition-colors"
-                    >
-                        <span className="font-mono text-xs uppercase tracking-widest">02 / Briefing Técnico (VSL)</span>
-                        <ChevronRight className="w-4 h-4" />
-                    </button>
-                </div>
-
-                <div className="text-center pt-8">
-                    <p className="text-[9px] text-slate-600 font-mono uppercase">
-                        Vortex Intelligence // System Core
-                    </p>
-                </div>
-            </div>
-        )
-    }
-
-    // 99. MANUAL FALLBACK
-    if (step === CoreStep.MANUAL_FALLBACK) {
-        return (
-            <div className="w-full max-w-md mx-auto bg-[#02040a] border border-white/10 p-8 space-y-6 text-center animate-in fade-in">
-                <Lock className="w-8 h-8 text-red-900/50 mx-auto" />
-                <div className="space-y-2">
-                    <h3 className="text-white font-mono text-sm uppercase">Acceso Restringido</h3>
-                    <p className="text-xs text-slate-500 font-mono">
-                        La capa pública del activo no permite lectura remota o no existe.
-                    </p>
-                </div>
-                <button
-                    onClick={() => setStep(CoreStep.INPUT)}
-                    className="text-[#d4af37] font-mono text-xs uppercase underline tracking-widest"
-                >
-                    Intentar con otro activo
-                </button>
             </div>
         )
     }
