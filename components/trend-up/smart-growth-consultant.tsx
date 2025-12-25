@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
-import { Shield, Fingerprint, ChevronRight, AlertTriangle, User, Activity, Lock } from "lucide-react"
+import { ChevronRight, AlertTriangle, Activity, Lock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 // --- TYPES & ENUMS ---
