@@ -66,11 +66,11 @@ export default function HomePage() {
             {/* Authority Strip (Meta/IG) */}
             <div className="flex items-center gap-6 opacity-40 grayscale hover:grayscale-0 transition-all duration-700">
               <span className="text-[9px] font-mono text-slate-600 uppercase tracking-widest">Systems Audited By:</span>
-              {/* Meta Logo (PNG) */}
-              <img src="/assets/meta-logo.png" alt="Meta Protocol" className="h-5 w-auto opacity-90" />
+              {/* Meta Logo (PNG) - Inverted for Dark Mode */}
+              <img src="/assets/meta-logo.png" alt="Meta Protocol" className="h-8 w-auto opacity-80 invert brightness-0" />
 
-              {/* Instagram Logo (PNG) */}
-              <img src="/assets/ig-logo.png" alt="Instagram Forensics" className="h-5 w-auto opacity-90" />
+              {/* Instagram Logo (PNG) - Inverted for Dark Mode */}
+              <img src="/assets/ig-logo.png" alt="Instagram Forensics" className="h-8 w-auto opacity-80 invert brightness-0" />
             </div>
           </div>
 
