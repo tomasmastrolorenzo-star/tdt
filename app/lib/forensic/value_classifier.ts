@@ -1,5 +1,5 @@
 import { DiagnosisObject } from './intelligence';
-import { detectVertical, VERTICALS } from './knowledge_base';
+import { detectVertical, detectSubvertical, VERTICALS } from './knowledge_base';
 
 // --- TYPES ---
 
@@ -11,6 +11,7 @@ export interface ClassifierResult {
     decision: GateDecision;
     rationale: string;
     vertical_detected?: string;
+    subvertical_detected?: string;
 }
 
 // --- LOGIC ---
@@ -23,8 +24,10 @@ export function classifyValueRisk(diagnosis: DiagnosisObject): ClassifierResult 
     const intentNature = intent_analysis?.declared.nature || '';
     const ambition = intent_analysis?.declared.ambition || '';
 
-    // 0. DETECT VERTICAL
+    // 0. DETECT VERTICAL & SUBVERTICAL
     const verticalDef = detectVertical(subtype, intentNature);
+    // Passing empty string for handle for now as it's not in DiagnosisObject, relying on Intent/Subtype.
+    const subverticalDef = detectSubvertical(subtype, intentNature, "");
 
     // 1. CHECK KB BIAS AND RISKS
 
@@ -58,7 +61,22 @@ export function classifyValueRisk(diagnosis: DiagnosisObject): ClassifierResult 
         };
     }
 
-    // 2. CHECK LEGACY / HARD RISK (Fallback)
+    // 2. CHECK LEGACY / HARD RISK (Fallback + Subvertical Multiplier)
+
+    // Calculate Effective Risk
+    const effectiveRisk = riskScore * subverticalDef.risk_multiplier;
+
+    if (subtype === 'MEDICO_SALUD') {
+        if (effectiveRisk > 0.8 || subverticalDef.visual_severity === 'MAX') {
+            return { tier: 'RISK', decision: 'BLOCK', rationale: `Sector Salud (${subverticalDef.subvertical}) con Riesgo Crítico/Visual.`, vertical_detected: verticalDef.vertical, subvertical_detected: subverticalDef.subvertical };
+        }
+    }
+
+    // Trading Funds / High Risk Finance
+    if (subverticalDef.subvertical === 'TRADING_FUND' && stage !== 'HIGH') {
+        return { tier: 'RISK', decision: 'BLOCK', rationale: "Trading Fund requiere validación HIGH STAGE obligatoria.", vertical_detected: verticalDef.vertical, subvertical_detected: subverticalDef.subvertical };
+    }
+
     if (subtype === 'MEDICO_SALUD' && riskScore > 0.7) {
         return { tier: 'RISK', decision: 'BLOCK', rationale: "Sector Salud con Alto Riesgo Visual/Compliance.", vertical_detected: verticalDef.vertical };
     }
@@ -77,26 +95,31 @@ export function classifyValueRisk(diagnosis: DiagnosisObject): ClassifierResult 
             tier: 'HIGH_VALUE',
             decision: 'ALLOW_PLAYBOOK',
             rationale: `Vertical ${verticalDef.vertical}: Activo Validado y Estructura Detectada.`,
-            vertical_detected: verticalDef.vertical
+            vertical_detected: verticalDef.vertical,
+            subvertical_detected: subverticalDef.subvertical
         };
     }
 
     // Legacy Finance Check
     if (verticalDef.vertical === 'FINANCE_TRADING' && isMidHigh && highAmbition) {
-        return { tier: 'HIGH_VALUE', decision: 'ALLOW_PLAYBOOK', rationale: "Activo Premium con Estructura y Ambición Coherente.", vertical_detected: verticalDef.vertical };
+        // Stricter check for Trading Educator
+        if (subverticalDef.subvertical === 'TRADING_EDUCATOR' && subverticalDef.authority_expectation === 'HIGH' && stage !== 'HIGH') {
+            return { tier: 'LOW_VALUE', decision: 'DOWNGRADE_ONLY', rationale: "Trading Educator requiere High Authority para Intervención.", vertical_detected: verticalDef.vertical, subvertical_detected: subverticalDef.subvertical };
+        }
+        return { tier: 'HIGH_VALUE', decision: 'ALLOW_PLAYBOOK', rationale: "Activo Premium con Estructura y Ambición Coherente.", vertical_detected: verticalDef.vertical, subvertical_detected: subverticalDef.subvertical };
     }
 
     // General Premium
     if (isPremiumSubtype && isMidHigh && highAmbition) {
-        return { tier: 'HIGH_VALUE', decision: 'ALLOW_PLAYBOOK', rationale: "Activo Premium con Estructura y Ambición Coherente.", vertical_detected: verticalDef.vertical };
+        return { tier: 'HIGH_VALUE', decision: 'ALLOW_PLAYBOOK', rationale: "Activo Premium con Estructura y Ambición Coherente.", vertical_detected: verticalDef.vertical, subvertical_detected: subverticalDef.subvertical };
     }
 
     // 4. CHECK GENERIC/LOW VALUE
     // If bias is DOWNGRADE_IF_GENERIC
     if (verticalDef.decision_bias === 'DOWNGRADE_IF_GENERIC' && !highAmbition) {
-        return { tier: 'LOW_VALUE', decision: 'DOWNGRADE_ONLY', rationale: "Vertical requiere ambición probada para escalado.", vertical_detected: verticalDef.vertical };
+        return { tier: 'LOW_VALUE', decision: 'DOWNGRADE_ONLY', rationale: "Vertical requiere ambición probada para escalado.", vertical_detected: verticalDef.vertical, subvertical_detected: subverticalDef.subvertical };
     }
 
     // Default Fallback
-    return { tier: 'LOW_VALUE', decision: 'DOWNGRADE_ONLY', rationale: "Clasificación Estándar.", vertical_detected: verticalDef.vertical };
+    return { tier: 'LOW_VALUE', decision: 'DOWNGRADE_ONLY', rationale: "Clasificación Estándar.", vertical_detected: verticalDef.vertical, subvertical_detected: subverticalDef.subvertical };
 }
