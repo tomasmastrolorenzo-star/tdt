@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { runForensicPipeline, RawInputData } from '../../../lib/forensic/intelligence';
-import { runPlaybookEngine } from '../../../lib/forensic/playbook_engine';
+import { runPlaybookEngine, PlaybookResult } from '../../../lib/forensic/playbook_engine';
+import { classifyValueRisk } from '../../../lib/forensic/value_classifier';
 
 // Simple in-memory cache
 const CACHE = new Map<string, { data: any, timestamp: number }>();
@@ -17,7 +18,7 @@ export async function POST(request: Request) {
 
         const normalizedHandle = handle.toLowerCase().replace('@', '').trim();
 
-        // 1. CHECK CACHE (Bypass if Intent present to ensure fresh playbook run)
+        // 1. CHECK CACHE (Bypass if Intent present)
         const cached = CACHE.get(normalizedHandle);
         if (cached && (Date.now() - cached.timestamp < CACHE_DURATION)) {
             if (!intent) {
@@ -148,22 +149,52 @@ export async function POST(request: Request) {
         // 1. FORENSIC DIAGNOSIS (Layer 0 + Intelligence)
         const diagnosis = runForensicPipeline(rawInput, intent);
 
-        // 2. PLAYBOOK ENGINE (Layer 4 - Phase 38)
-        const playbookResult = runPlaybookEngine(diagnosis);
+        // 2. LAYER 3.5: VALUE & RISK CLASSIFIER (New)
+        const classification = classifyValueRisk(diagnosis);
 
-        // 3. COMMERCIAL LOGIC MERGE
+        // 3. PLAYBOOK ENGINE (Layer 4 - Gated)
+        let playbookResult: PlaybookResult;
+
+        if (classification.decision === 'ALLOW_PLAYBOOK' || classification.decision === 'DOWNGRADE_ONLY') {
+            playbookResult = runPlaybookEngine(diagnosis);
+
+            // Override if Down grade
+            if (classification.decision === 'DOWNGRADE_ONLY' && playbookResult.commercial_route === 'HIGH_TICKET') {
+                playbookResult.commercial_route = 'LOW_TICKET'; // Force Downgrade
+                playbookResult.outcomes.push("Adjusted by Value Classifier: Low Ticket Route Enforced.");
+            }
+        } else {
+            // Blocked or No Intervenir
+            playbookResult = {
+                playbook_id: null,
+                status: classification.decision === 'BLOCK' ? 'ABORTED' : 'NO_INTERVENIR',
+                executed_steps: [],
+                failed_step: 'CLASSIFIER_GATE',
+                outcomes: [classification.rationale],
+                commercial_route: 'NO_OFFER'
+            };
+        }
+
+        // 4. COMMERCIAL LOGIC MERGE
         let routingTarget = 'CHECKOUT';
         let accessLevel = 0;
 
         if (playbookResult.status === 'COMPLETED' && playbookResult.commercial_route === 'HIGH_TICKET') {
             routingTarget = 'CALENDAR';
             accessLevel = 2;
-        } else if (playbookResult.status === 'ABORTED') {
+        } else if (playbookResult.status === 'ABORTED' || classification.decision === 'BLOCK') {
             routingTarget = 'BLOCK';
             accessLevel = 0;
+        } else if (playbookResult.commercial_route === 'LOW_TICKET' || diagnosis.asset_stage.stage === 'LOW') {
+            routingTarget = 'CHECKOUT';
+            accessLevel = 0;
         } else if (diagnosis.asset_stage.stage === 'HIGH') {
-            routingTarget = 'CALENDAR';
-            accessLevel = 2;
+            // Fallback if no playbook but high stage? 
+            // If classification was NO_INTERVENIR, we respect it.
+            if (classification.decision !== 'NO_INTERVENIR') {
+                routingTarget = 'CALENDAR';
+                accessLevel = 2;
+            }
         }
 
         // UX - PLAYBOOK AWARE
@@ -172,14 +203,16 @@ export async function POST(request: Request) {
             if (playbookResult.status === 'COMPLETED') {
                 uxMessage = `PROTOCOLO ACTIVADO: ${playbookResult.playbook_id}. Secuencia de validación exitosa.`;
             } else {
-                uxMessage = `PROTOCOLO ABORTADO: Fallo en etapa ${playbookResult.failed_step}. Infraestructura insuficiente.`;
+                uxMessage = `PROTOCOLO ABORTADO: Fallo en etapa ${playbookResult.failed_step || 'VALIDACION'}.`;
             }
+        } else if (classification.decision === 'BLOCK') {
+            uxMessage = `PROTOCOLO DE SEGURIDAD: ${classification.rationale}`;
         } else {
             uxMessage = diagnosis.intervention_decision.rationale;
         }
 
         const uxContent = {
-            title: playbookResult.status === 'ABORTED' ? "Procedimiento Detenido" : "Dictamen Técnico",
+            title: (playbookResult.status === 'ABORTED' || classification.tier === 'RISK') ? "Procedimiento Detenido" : "Dictamen Técnico",
             message: uxMessage,
             cta: routingTarget === 'CALENDAR' ? "Solicitar Despliegue" : "Descargar Informe",
             roadmap: { phase1: "Diagnóstico", phase2: "Intervención", phase3: "Escala" },
@@ -204,7 +237,8 @@ export async function POST(request: Request) {
             // INTELLIGENCE
             _forensic_diagnosis: diagnosis,
 
-            // PLAYBOOK RESULT (New)
+            // LAYERS
+            _value_classifier: classification,
             _playbook_engine: playbookResult,
 
             // ANALYZER OUTPUT
@@ -217,14 +251,14 @@ export async function POST(request: Request) {
 
             ux: uxContent,
             indicators: {
-                // Legacy mapping for UI compatibility (Placeholders)
+                // Legacy placeholders
                 posicionamiento: { val: 5, label: 'ESTANDAR', evidence: 'Metrics' },
                 intencion_comercial: { val: 5, label: 'MEDIA', evidence: 'Metrics' },
                 brecha_aspiracional: { val: 5, label: 'MEDIA', evidence: 'Metrics' },
                 infraestructura: { val: 5, label: 'MEDIA', evidence: 'Metrics' }
             },
 
-            _meta: { intent_received: !!intent, playbook: playbookResult.playbook_id }
+            _meta: { intent_received: !!intent, playbook: playbookResult.playbook_id, gate: classification.decision }
         };
 
         if (!intent) {
