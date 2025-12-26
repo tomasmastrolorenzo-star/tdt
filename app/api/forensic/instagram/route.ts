@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { runForensicPipeline, RawInputData } from '@/app/lib/forensic/intelligence';
+import { runForensicPipeline, RawInputData } from '../../../lib/forensic/intelligence';
 
 // Simple in-memory cache
 const CACHE = new Map<string, { data: any, timestamp: number }>();
