@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { Globe, ShieldCheck, CheckCircle2, Lock, Terminal, Activity, AlertTriangle } from "lucide-react"
+import { Globe, ShieldCheck, Lock, Terminal } from "lucide-react"
 
 // --- TYPES ---
 
