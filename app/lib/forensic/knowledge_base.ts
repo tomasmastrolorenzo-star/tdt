@@ -165,7 +165,7 @@ export const SUBVERTICALS: Record<SubverticalID, SubverticalDefinition> = {
     // HEALTH / MEDICAL
     'MEDICAL_AESTHETICS': {
         subvertical: 'MEDICAL_AESTHETICS',
-        parent_vertical: 'EDUCATION_INFO', // Usually fits here or specialized Health
+        parent_vertical: 'EDUCATION_INFO',
         risk_multiplier: 1.2,
         authority_expectation: 'HIGH',
         visual_severity: 'CRITICAL',
@@ -199,7 +199,7 @@ export const SUBVERTICALS: Record<SubverticalID, SubverticalDefinition> = {
     // REAL ESTATE
     'REAL_ESTATE_LUXURY': {
         subvertical: 'REAL_ESTATE_LUXURY',
-        parent_vertical: 'FINANCE_TRADING', // Fits high risk sales profile
+        parent_vertical: 'FINANCE_TRADING',
         risk_multiplier: 1.0,
         authority_expectation: 'HIGH',
         visual_severity: 'HIGH',
@@ -284,4 +284,90 @@ export function detectSubvertical(subtype: string, intentNature: string, rawHand
     }
 
     return SUBVERTICALS.GENERIC_SUBVERTICAL;
+}
+
+// --- PROTOCOLS (Phase 52) ---
+
+export type StepType =
+    | 'VISUAL_COMPLIANCE'
+    | 'AUTHORITY_POSITIONING'
+    | 'INFRASTRUCTURE_SETUP'
+    | 'CONVERSION_OPTIMIZATION'
+    | 'SCALING_CONTROLLED'
+    | 'RISK_MITIGATION'
+    | 'AUDIT_DEEP_DIVE';
+
+export interface ProtocolStep {
+    step: StepType;
+    blocking: boolean;
+    prerequisites: StepType[];
+    reason: string;
+}
+
+export interface ProtocolDefinition {
+    id: string;
+    verticals: (VerticalID | SubverticalID)[];
+    sequence: ProtocolStep[];
+}
+
+export const PROTOCOLS: Record<string, ProtocolDefinition> = {
+    'SURGEON_PRIVATE_PROTOCOL': {
+        id: 'SURGEON_PRIVATE_PROTOCOL',
+        verticals: ['SURGEON_PRIVATE', 'MEDICAL_AESTHETICS'],
+        sequence: [
+            { step: 'VISUAL_COMPLIANCE', blocking: true, prerequisites: [], reason: "Legal and reputational risk" },
+            { step: 'AUTHORITY_POSITIONING', blocking: true, prerequisites: ['VISUAL_COMPLIANCE'], reason: "Authority mismatch correction" },
+            { step: 'INFRASTRUCTURE_SETUP', blocking: true, prerequisites: ['AUTHORITY_POSITIONING'], reason: "Patient capture without claims" },
+            { step: 'SCALING_CONTROLLED', blocking: false, prerequisites: ['INFRASTRUCTURE_SETUP'], reason: "Controlled growth only" }
+        ]
+    },
+    'REAL_ESTATE_LUXURY_PROTOCOL': {
+        id: 'REAL_ESTATE_LUXURY_PROTOCOL',
+        verticals: ['REAL_ESTATE_LUXURY'],
+        sequence: [
+            { step: 'AUTHORITY_POSITIONING', blocking: true, prerequisites: [], reason: "Aspirational mismatch" },
+            { step: 'INFRASTRUCTURE_SETUP', blocking: true, prerequisites: ['AUTHORITY_POSITIONING'], reason: "Lead qualification required" },
+            { step: 'CONVERSION_OPTIMIZATION', blocking: false, prerequisites: ['INFRASTRUCTURE_SETUP'], reason: "Traffic monetization" },
+            { step: 'SCALING_CONTROLLED', blocking: false, prerequisites: ['CONVERSION_OPTIMIZATION'], reason: "Market expansion" }
+        ]
+    },
+    'SAAS_B2B_PROTOCOL': {
+        id: 'SAAS_B2B_PROTOCOL',
+        verticals: ['SAAS_B2B', 'TRADING_FUND'],
+        sequence: [
+            { step: 'AUTHORITY_POSITIONING', blocking: true, prerequisites: [], reason: "Technical credibility gap" },
+            { step: 'INFRASTRUCTURE_SETUP', blocking: true, prerequisites: ['AUTHORITY_POSITIONING'], reason: "Lead qualification & demo flow" },
+            { step: 'AUDIT_DEEP_DIVE', blocking: false, prerequisites: ['INFRASTRUCTURE_SETUP'], reason: "Scale readiness validation" }
+        ]
+    },
+    'ECOMMERCE_DTC_PROTOCOL': {
+        id: 'ECOMMERCE_DTC_PROTOCOL',
+        verticals: ['ECOMMERCE_DTC'],
+        sequence: [
+            { step: 'INFRASTRUCTURE_SETUP', blocking: true, prerequisites: [], reason: "Checkout and funnel missing" },
+            { step: 'CONVERSION_OPTIMIZATION', blocking: false, prerequisites: ['INFRASTRUCTURE_SETUP'], reason: "Traffic quality improvement" }
+        ]
+    },
+    'STANDARD_PROTOCOL': {
+        id: 'STANDARD_PROTOCOL',
+        verticals: ['GENERIC_SUBVERTICAL', 'UNKNOWN', 'INFLUENCER_GENERAL', 'EDUCATION_INFO', 'B2B_SERVICES'],
+        sequence: [
+            { step: 'AUTHORITY_POSITIONING', blocking: true, prerequisites: [], reason: "Standard authority check" },
+            { step: 'INFRASTRUCTURE_SETUP', blocking: false, prerequisites: ['AUTHORITY_POSITIONING'], reason: "Conversion basics" },
+            { step: 'SCALING_CONTROLLED', blocking: false, prerequisites: ['INFRASTRUCTURE_SETUP'], reason: "Growth" }
+        ]
+    }
+};
+
+export function getProtocolFor(subvertical: SubverticalID, vertical: VerticalID): ProtocolDefinition {
+    // 1. Try Specific Subvertical match
+    const subMatch = Object.values(PROTOCOLS).find(p => p.verticals.includes(subvertical));
+    if (subMatch) return subMatch;
+
+    // 2. Try Vertical match
+    const vertMatch = Object.values(PROTOCOLS).find(p => p.verticals.includes(vertical));
+    if (vertMatch) return vertMatch;
+
+    // 3. Fallback
+    return PROTOCOLS.STANDARD_PROTOCOL;
 }

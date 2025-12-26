@@ -3,6 +3,8 @@ import { runForensicPipeline, RawInputData } from '../../../lib/forensic/intelli
 import { runPlaybookEngine, PlaybookResult } from '../../../lib/forensic/playbook_engine';
 import { classifyValueRisk } from '../../../lib/forensic/value_classifier';
 
+export const dynamic = 'force-dynamic';
+
 // Simple in-memory cache
 const CACHE = new Map<string, { data: any, timestamp: number }>();
 const CACHE_DURATION = 168 * 60 * 60 * 1000; // 7 Days (Resiliencia Técnica)
@@ -156,7 +158,7 @@ export async function POST(request: Request) {
         let playbookResult: PlaybookResult;
 
         if (classification.decision === 'ALLOW_PLAYBOOK' || classification.decision === 'DOWNGRADE_ONLY') {
-            playbookResult = runPlaybookEngine(diagnosis);
+            playbookResult = runPlaybookEngine(diagnosis, classification);
 
             // Override if Down grade
             if (classification.decision === 'DOWNGRADE_ONLY' && playbookResult.commercial_route === 'HIGH_TICKET') {
@@ -190,49 +192,64 @@ export async function POST(request: Request) {
             accessLevel = 0;
         } else if (diagnosis.asset_stage.stage === 'HIGH') {
             // Fallback if no playbook but high stage? 
-            // If classification was NO_INTERVENIR, we respect it.
             if (classification.decision !== 'NO_INTERVENIR') {
                 routingTarget = 'CALENDAR';
                 accessLevel = 2;
             }
         }
 
-        // UX - STRICT INDUSTRIAL PROTOCOL (Phase 40)
+        // 4. UX / MESSAGE GENERATION (Phase 40 + 52)
+        // ----------------------------------------------------
         let uxTitle = "ESTADO DEL ACTIVO: NO DETERMINADO";
         let uxMessage = "Análisis finalizado.";
         let uxCTA = "FINALIZAR SESIÓN";
+        let uxStatus = "DONE";
 
-        const isHighValue = classification.tier === 'HIGH_VALUE';
-        const isRisk = classification.tier === 'RISK' || classification.decision === 'BLOCK' || playbookResult.status === 'ABORTED';
-        const isDowngrade = !isRisk && !isHighValue; // Covers LOW_VALUE or Generic
+        // const isHighValue = classification.tier === 'HIGH_VALUE'; // These were inside the old block, but are not used outside.
+        // const isRisk = classification.tier === 'RISK' || classification.decision === 'BLOCK' || playbookResult.status === 'ABORTED';
+        // const isDowngrade = !isRisk && !isHighValue; // Covers LOW_VALUE or Generic
 
-        // SCENARIO 1: ALLOW_PLAYBOOK (High Ticket Enabled)
-        // Condition: Playbook Completed AND High Value Decision (Allow)
-        if (!isRisk && playbookResult.status === 'COMPLETED' && classification.decision === 'ALLOW_PLAYBOOK') {
-            uxTitle = "ESTADO DEL ACTIVO: VIABLE PARA INTERVENCIÓN ESTRUCTURAL";
-            uxMessage = "Se ha identificado una asimetría operativa entre la emisión de autoridad y la capacidad de captura. La configuración actual permite corrección técnica.\n\nDETALLE TÉCNICO:\n- Contexto operativo coherente\n- Riesgo controlado\n- Infraestructura parcialmente funcional";
-            uxCTA = "SOLICITAR PROTOCOLO DE INTERVENCIÓN";
-        }
-        // SCENARIO 2: DOWNGRADE_ONLY (Low Ticket / Generic)
-        else if (!isRisk && (isDowngrade || playbookResult.commercial_route === 'LOW_TICKET')) {
-            uxTitle = "ESTADO DEL ACTIVO: CONFIGURACIÓN NO APTA PARA INTERVENCIÓN ESTRUCTURAL";
-            uxMessage = "La magnitud declarada excede la capacidad operativa actual del activo.\n\nDETALLE TÉCNICO:\n- Disonancia entre ambición y soporte técnico\n- Riesgo de sobre-intervención";
-            uxCTA = "ACCEDER A OPTIMIZACIÓN BÁSICA";
-        }
-        // SCENARIO 3: BLOCK / PROTOCOLO DE SEGURIDAD
-        else {
+        if (classification.decision === 'BLOCK' || classification.decision === 'NO_INTERVENIR') {
             uxTitle = "ESTADO DEL ACTIVO: INTERVENCIÓN BLOQUEADA";
-            uxMessage = "Se han detectado condiciones que comprometen la integridad del activo ante una intervención operativa.\n\nPROTOCOLO DE SEGURIDAD ACTIVADO:\nLa ejecución de ajustes ha sido suspendida para preservar la estabilidad reputacional.";
-            uxCTA = "CONSULTAR PROTOCOLO DE SEGURIDAD";
+            uxMessage = classification.rationale.toUpperCase();
+            uxCTA = "PROTOCOLO DE SEGURIDAD";
+            uxStatus = "BLOCKED";
+        } else if (classification.decision === 'DOWNGRADE_ONLY' || playbookResult.commercial_route === 'LOW_TICKET') {
+            // Force Downgrade UX if route is Low Ticket OR Decision is Downgrade
+            uxTitle = "ESTADO DEL ACTIVO: CONFIGURACIÓN NO APTA PARA INTERVENCIÓN ESTRUCTURAL";
+            uxMessage = "RECOMENDACIÓN TÉCNICA: OPTIMIZACIÓN EN MÓDULO DE BAJA SEVERIDAD (TDT-LITE). " + classification.rationale;
+            uxCTA = "DOWNGRADE APLICADO";
+            uxStatus = "DOWNGRADE";
+        } else {
+            // ALLOW PLAYBOOK -> Check Protocol First Step (Phase 52)
+            const nextStep = playbookResult.next_step || 'GENERIC';
+
+            uxTitle = "ESTADO DEL ACTIVO: VIABLE PARA INTERVENCIÓN ESTRUCTURAL";
+
+            // Dynamic Message based on Step
+            if (nextStep === 'VISUAL_COMPLIANCE') {
+                uxMessage = "PROTOCOLO DE ACTIVACIÓN: BLOQUEO POR COMPLIANCE VISUAL. FASE 1 REQUERIDA PREVIO A ESCALADO.";
+            } else if (nextStep === 'AUTHORITY_POSITIONING') {
+                uxMessage = "PROTOCOLO DE ACTIVACIÓN: DÉFICIT DE AUTORIDAD DETECTADO. FASE DE POSICIONAMIENTO REQUERIDA.";
+            } else if (nextStep === 'INFRASTRUCTURE_SETUP') {
+                uxMessage = "PROTOCOLO DE ACTIVACIÓN: INFRAESTRUCTURA DE CONVERSIÓN AUSENTE. FASE DE INGENIERÍA REQUERIDA.";
+            } else {
+                uxMessage = "PROTOCOLO DE ACTIVACIÓN: " + playbookResult.reason.toUpperCase();
+            }
+
+            uxCTA = "INICIAR PROTOCOLO DE INTERVENCIÓN";
+            uxStatus = "ALLOW";
         }
 
         const uxContent = {
             title: uxTitle,
             message: uxMessage,
             cta: uxCTA,
+            status: uxStatus,
             roadmap: { phase1: "Diagnóstico", phase2: "Intervención", phase3: "Escala" },
             disclaimer: "Reporte generado por TDT Playbook Engine v1.0"
         };
+
 
 
         const responsePayload = {
