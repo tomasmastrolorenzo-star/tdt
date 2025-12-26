@@ -48,6 +48,16 @@ export function classifyValueRisk(diagnosis: DiagnosisObject): ClassifierResult 
         };
     }
 
+    // BIAS: DOWNGRADE_IF_NO_FUNNEL (e.g. Ecommerce)
+    if (verticalDef.decision_bias === 'DOWNGRADE_IF_NO_FUNNEL' && stage === 'LOW') {
+        return {
+            tier: 'LOW_VALUE',
+            decision: 'DOWNGRADE_ONLY',
+            rationale: `Vertical ${verticalDef.vertical}: Infraestructura de conversión no detectada (Funnel/Checkout).`,
+            vertical_detected: verticalDef.vertical
+        };
+    }
+
     // 2. CHECK LEGACY / HARD RISK (Fallback)
     if (subtype === 'MEDICO_SALUD' && riskScore > 0.7) {
         return { tier: 'RISK', decision: 'BLOCK', rationale: "Sector Salud con Alto Riesgo Visual/Compliance.", vertical_detected: verticalDef.vertical };
@@ -57,14 +67,27 @@ export function classifyValueRisk(diagnosis: DiagnosisObject): ClassifierResult 
     }
 
     // 3. CHECK HIGH VALUE
-    const isPremiumSubtype = ['MEDICO_SALUD', 'REAL_ESTATE', 'FOUNDER', 'ATHLETE', 'FINANCE', 'TRADING'].includes(subtype);
+    const isPremiumSubtype = ['MEDICO_SALUD', 'REAL_ESTATE', 'FOUNDER', 'ATHLETE', 'FINANCE', 'TRADING', 'SAAS', 'TECH', 'CONSULTING', 'AGENCY'].includes(subtype);
     const isMidHigh = ['MID', 'HIGH', 'HIGH_POTENTIAL'].includes(stage);
     const highAmbition = ['LIDERAZGO', 'EXPANSION'].includes(ambition);
 
-    // If Vertical is Finance/Trading, we are strict. Only High Stage allowed in logic above, or Mid if not Blocked.
-    // If we are here for Finance, it implies Stage >= MID (since Low was blocked).
+    // Allow SaaS/B2B Services if Stable/Real Product (Stage >= MID)
+    if ((verticalDef.decision_bias === 'ALLOW_IF_REAL_PRODUCT' || verticalDef.decision_bias === 'ALLOW_STABLE') && isMidHigh) {
+        return {
+            tier: 'HIGH_VALUE',
+            decision: 'ALLOW_PLAYBOOK',
+            rationale: `Vertical ${verticalDef.vertical}: Activo Validado y Estructura Detectada.`,
+            vertical_detected: verticalDef.vertical
+        };
+    }
 
-    if ((isPremiumSubtype || verticalDef.vertical === 'FINANCE_TRADING') && isMidHigh && highAmbition) {
+    // Legacy Finance Check
+    if (verticalDef.vertical === 'FINANCE_TRADING' && isMidHigh && highAmbition) {
+        return { tier: 'HIGH_VALUE', decision: 'ALLOW_PLAYBOOK', rationale: "Activo Premium con Estructura y Ambición Coherente.", vertical_detected: verticalDef.vertical };
+    }
+
+    // General Premium
+    if (isPremiumSubtype && isMidHigh && highAmbition) {
         return { tier: 'HIGH_VALUE', decision: 'ALLOW_PLAYBOOK', rationale: "Activo Premium con Estructura y Ambición Coherente.", vertical_detected: verticalDef.vertical };
     }
 
