@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { runForensicPipeline, RawInputData } from '../../../lib/forensic/intelligence';
 import { runPlaybookEngine, PlaybookResult } from '../../../lib/forensic/playbook_engine';
 import { classifyValueRisk } from '../../../lib/forensic/value_classifier';
+import { calculateImpliedPricing } from '../../../lib/forensic/pricing_engine';
 
 export const dynamic = 'force-dynamic';
 
@@ -168,76 +169,66 @@ export async function POST(request: Request) {
         } else {
             // Blocked or No Intervenir
             playbookResult = {
-                playbook_id: null,
+                selected_playbook: 'PB_BLOCK',
+                protocol_id: 'NONE',
+                next_step: 'NONE',
+                eligible: false,
+                reason: classification.rationale,
+                modules: [],
+                commercial_route: 'NO_OFFER',
                 status: classification.decision === 'BLOCK' ? 'ABORTED' : 'NO_INTERVENIR',
-                executed_steps: [],
-                failed_step: 'CLASSIFIER_GATE',
-                outcomes: [classification.rationale],
-                commercial_route: 'NO_OFFER'
+                outcomes: [classification.rationale]
             };
         }
 
-        // 4. COMMERCIAL LOGIC MERGE
+        // 4. IMPLICIT PRICING ENGINE (Phase 53)
+        // ----------------------------------------------------
+        const pricing = calculateImpliedPricing(diagnosis, classification, playbookResult);
+
+        // 5. COMMERCIAL ROUTING
         let routingTarget = 'CHECKOUT';
         let accessLevel = 0;
 
-        if (playbookResult.status === 'COMPLETED' && playbookResult.commercial_route === 'HIGH_TICKET') {
+        if (pricing.tier === 'HIGH_TICKET') {
             routingTarget = 'CALENDAR';
-            accessLevel = 2;
-        } else if (playbookResult.status === 'ABORTED' || classification.decision === 'BLOCK') {
+            accessLevel = 2; // Access to Human/Calendar
+        } else if (pricing.tier === 'MID_TICKET') {
+            routingTarget = 'CHECKOUT';
+            accessLevel = 1; // Guided Checkout
+        } else if (pricing.tier === 'LOW_TICKET') {
+            routingTarget = 'CHECKOUT';
+            accessLevel = 0; // Self-serve
+        } else {
             routingTarget = 'BLOCK';
             accessLevel = 0;
-        } else if (playbookResult.commercial_route === 'LOW_TICKET' || diagnosis.asset_stage.stage === 'LOW') {
-            routingTarget = 'CHECKOUT';
-            accessLevel = 0;
-        } else if (diagnosis.asset_stage.stage === 'HIGH') {
-            // Fallback if no playbook but high stage? 
-            if (classification.decision !== 'NO_INTERVENIR') {
-                routingTarget = 'CALENDAR';
-                accessLevel = 2;
-            }
         }
 
-        // 4. UX / MESSAGE GENERATION (Phase 40 + 52)
+        // 6. UX / MESSAGE GENERATION (Phase 40 + 52 + 53)
         // ----------------------------------------------------
         let uxTitle = "ESTADO DEL ACTIVO: NO DETERMINADO";
         let uxMessage = "Análisis finalizado.";
         let uxCTA = "FINALIZAR SESIÓN";
         let uxStatus = "DONE";
 
-        // const isHighValue = classification.tier === 'HIGH_VALUE'; // These were inside the old block, but are not used outside.
-        // const isRisk = classification.tier === 'RISK' || classification.decision === 'BLOCK' || playbookResult.status === 'ABORTED';
-        // const isDowngrade = !isRisk && !isHighValue; // Covers LOW_VALUE or Generic
-
         if (classification.decision === 'BLOCK' || classification.decision === 'NO_INTERVENIR') {
             uxTitle = "ESTADO DEL ACTIVO: INTERVENCIÓN BLOQUEADA";
             uxMessage = classification.rationale.toUpperCase();
             uxCTA = "PROTOCOLO DE SEGURIDAD";
             uxStatus = "BLOCKED";
-        } else if (classification.decision === 'DOWNGRADE_ONLY' || playbookResult.commercial_route === 'LOW_TICKET') {
-            // Force Downgrade UX if route is Low Ticket OR Decision is Downgrade
-            uxTitle = "ESTADO DEL ACTIVO: CONFIGURACIÓN NO APTA PARA INTERVENCIÓN ESTRUCTURAL";
-            uxMessage = "RECOMENDACIÓN TÉCNICA: OPTIMIZACIÓN EN MÓDULO DE BAJA SEVERIDAD (TDT-LITE). " + classification.rationale;
-            uxCTA = "DOWNGRADE APLICADO";
-            uxStatus = "DOWNGRADE";
         } else {
-            // ALLOW PLAYBOOK -> Check Protocol First Step (Phase 52)
-            const nextStep = playbookResult.next_step || 'GENERIC';
-
+            // Use Pricing Logic to drive UX
             uxTitle = "ESTADO DEL ACTIVO: VIABLE PARA INTERVENCIÓN ESTRUCTURAL";
+            uxMessage = "PROTOCOLO DE ACTIVACIÓN: " + pricing.reason; // Use Pricing Reason which is derived from Playbook+Logic
 
-            // Dynamic Message based on Step
-            if (nextStep === 'VISUAL_COMPLIANCE') {
-                uxMessage = "PROTOCOLO DE ACTIVACIÓN: BLOQUEO POR COMPLIANCE VISUAL. FASE 1 REQUERIDA PREVIO A ESCALADO.";
-            } else if (nextStep === 'AUTHORITY_POSITIONING') {
-                uxMessage = "PROTOCOLO DE ACTIVACIÓN: DÉFICIT DE AUTORIDAD DETECTADO. FASE DE POSICIONAMIENTO REQUERIDA.";
-            } else if (nextStep === 'INFRASTRUCTURE_SETUP') {
-                uxMessage = "PROTOCOLO DE ACTIVACIÓN: INFRAESTRUCTURA DE CONVERSIÓN AUSENTE. FASE DE INGENIERÍA REQUERIDA.";
-            } else {
-                uxMessage = "PROTOCOLO DE ACTIVACIÓN: " + playbookResult.reason.toUpperCase();
+            // Override message with Playbook Next Step detail if locked
+            if (pricing.is_locked && playbookResult.next_step) {
+                uxMessage = `PROTOCOLO ACTIVO (${pricing.label}): ${playbookResult.reason.toUpperCase()}\n\nFASE OBLIGATORIA DETECTADA: ${playbookResult.next_step}`;
             }
 
-            uxCTA = "INICIAR PROTOCOLO DE INTERVENCIÓN";
+            uxCTA = pricing.tier === 'HIGH_TICKET' ? "SOLICITAR INTERVENCIÓN" : "INICIAR OPTIMIZACIÓN";
+            if (pricing.tier === 'MID_TICKET') uxCTA = "INICIAR AJUSTE TÉCNICO";
+            if (pricing.tier === 'LOW_TICKET') uxCTA = "ACCEDER A GUÍA TÉCNICA";
+
             uxStatus = "ALLOW";
         }
 
@@ -249,8 +240,6 @@ export async function POST(request: Request) {
             roadmap: { phase1: "Diagnóstico", phase2: "Intervención", phase3: "Escala" },
             disclaimer: "Reporte generado por TDT Playbook Engine v1.0"
         };
-
-
 
         const responsePayload = {
             status: 'success',
@@ -272,6 +261,7 @@ export async function POST(request: Request) {
             // LAYERS
             _value_classifier: classification,
             _playbook_engine: playbookResult,
+            _pricing_engine: pricing,
 
             // ANALYZER OUTPUT
             narrative_level: diagnosis.asset_stage.stage,
@@ -290,7 +280,7 @@ export async function POST(request: Request) {
                 infraestructura: { val: 5, label: 'MEDIA', evidence: 'Metrics' }
             },
 
-            _meta: { intent_received: !!intent, playbook: playbookResult.playbook_id, gate: classification.decision }
+            _meta: { intent_received: !!intent, playbook: playbookResult.protocol_id, gate: classification.decision }
         };
 
         if (!intent) {
