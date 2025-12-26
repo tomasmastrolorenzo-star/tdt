@@ -52,6 +52,7 @@ export default function SmartGrowthConsultant() {
 
     // Data Containers
     const [diagnosis, setDiagnosis] = useState<DiagnosisData | null>(null)
+    const [backendUX, setBackendUX] = useState<{ title: string, message: string, cta: string } | null>(null)
     const [fragments, setFragments] = useState<{ url: string, caption?: string }[]>([])
     const [profile, setProfile] = useState<{ username: string, img: string } | null>(null)
 
@@ -106,6 +107,7 @@ export default function SmartGrowthConsultant() {
             const data = await res.json()
             if (data._forensic_diagnosis) {
                 setDiagnosis(data._forensic_diagnosis)
+                setBackendUX(data.ux)
                 setFragments(data.latest_posts || [])
 
                 // Trigger Visual Sequence
@@ -127,21 +129,9 @@ export default function SmartGrowthConsultant() {
             setCalibrationStep(prev => prev + 1)
         } else {
             // Finished Calibration
-            // Need to pass the updated intent, state update might lag so use newIntent
-            // But performDeepScan reads from state. Let's fix that or use state
-            // Better to update state then trigger effect or just call with arg.
-            // For simplicity in this structure:
             setStep(VisualStep.PROCESSING_2)
 
-            // Re-fetch using newIntent manually passed? logic in performDeepScan uses state `intent`.
-            // State update is async. So let's wrap logic.
-            // Actually, let's just cheat and wait a ms or pass it.
-            // Rewriting performDeepScan to accept optional intent or read from state.
-            // We'll trust React batching or just pass it.
-
-            // To be safe:
             setTimeout(() => {
-                // Call fetch directly here or via modified function
                 fetch('/api/forensic/instagram', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -149,6 +139,7 @@ export default function SmartGrowthConsultant() {
                 }).then(res => res.json()).then(data => {
                     if (data._forensic_diagnosis) {
                         setDiagnosis(data._forensic_diagnosis)
+                        setBackendUX(data.ux)
                         setFragments(data.latest_posts || [])
                         setTimeout(() => setStep(VisualStep.VALIDATION), 3000)
                     }
@@ -166,19 +157,6 @@ export default function SmartGrowthConsultant() {
         if (step === VisualStep.INERTIA) setTimeout(() => setStep(VisualStep.PROCESSING_3), 3000)
         if (step === VisualStep.PROCESSING_3) setTimeout(() => setStep(VisualStep.SENTENCE), 3000)
     }, [step])
-
-    // --- RENDER HELPERS ---
-
-    const getInterventionCopy = (type: InterventionDecision['recommended_intervention']) => {
-        switch (type) {
-            case 'NO_INTERVENIR': return { status: "CONFIGURACIÓN ACTUAL NO APTA PARA ESCALA.", action: "PROCEDIMIENTO ABORTADO" }
-            case 'AJUSTE_TECNICO_PUNTUAL': return { status: "DESVIACIÓN OPERATIVA DETECTADA.", action: "REQUERIDO: REALINEACIÓN DE CAPA DE SUPERFICIE" }
-            case 'OPTIMIZACION_GUIADA': return { status: "POTENCIAL ESTRUCTURAL DETECTADO.", action: "REQUIERE ESTRUCTURACIÓN DE SALIDA" }
-            case 'INTERVENCION_ESTRUCTURAL': return { status: "FALLA CRÍTICA EN ARQUITECTURA.", action: "INTERVENCIÓN INMEDIATA REQUERIDA" }
-            case 'AUDITORIA_PROFUNDA': return { status: "ALTO VALOR ESTRATÉGICO.", action: "SOLICITAR DESGLOSE DE CAPITALIZACIÓN" }
-            default: return { status: "ERROR", action: "N/A" }
-        }
-    }
 
     // --- VIEWS ---
 
@@ -353,17 +331,16 @@ export default function SmartGrowthConsultant() {
     }
 
     // 6. FINAL SENTENCE
-    if (step === VisualStep.SENTENCE && diagnosis) {
+    if (step === VisualStep.SENTENCE && diagnosis && backendUX) { // Require backendUX
         const decision = diagnosis.intervention_decision;
-        const copy = getInterventionCopy(decision.recommended_intervention);
 
         return (
             <div className="w-full max-w-xl mx-auto bg-[#02040a] border-t-2 border-[#d4af37] p-8 space-y-8 animate-in slide-in-from-bottom-2 duration-700">
                 <div className="flex justify-between items-start">
                     <div className="space-y-1">
                         <div className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">SENTENCIA TÉCNICA FINAL</div>
-                        <h1 className="text-3xl font-mono text-white tracking-tight uppercase leading-none">
-                            {decision.recommended_intervention.replace(/_/g, " ")}
+                        <h1 className="text-xl font-mono text-white tracking-tight uppercase leading-snug">
+                            {backendUX.title}
                         </h1>
                     </div>
                     {decision.complexity_level === 'critica' || decision.complexity_level === 'alta' ?
@@ -374,13 +351,8 @@ export default function SmartGrowthConsultant() {
 
                 <div className="space-y-6">
                     <div className="bg-slate-900/30 p-6 border-l-2 border-white/20">
-                        <div className="text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-2">ESTADO DEL ACTIVO</div>
-                        <p className="text-sm font-mono text-white leading-relaxed">{copy.status}</p>
-                    </div>
-
-                    <div className="bg-[#d4af37]/5 p-6 border-l-2 border-[#d4af37]">
-                        <div className="text-[10px] font-mono text-[#d4af37] uppercase tracking-widest mb-2">JUSTIFICACIÓN TÉCNICA</div>
-                        <p className="text-xs font-mono text-slate-300 leading-relaxed text-justify">{decision.rationale}</p>
+                        <div className="text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-2">DETALLE TÉCNICO</div>
+                        <p className="text-xs font-mono text-white leading-relaxed whitespace-pre-line">{backendUX.message}</p>
                     </div>
 
                     <div className="flex items-center justify-between text-[10px] font-mono border-t border-white/5 pt-4">
@@ -391,7 +363,7 @@ export default function SmartGrowthConsultant() {
 
                 <div className="pt-8 space-y-4">
                     <button className="w-full bg-white text-black hover:bg-slate-200 py-4 font-mono text-xs uppercase tracking-[0.2em] font-bold transition-all" onClick={() => alert("PROTOCOLO_BLOQUEADO_24H")}>
-                        {copy.action}
+                        {backendUX.cta}
                     </button>
                     <div className="text-center">
                         <span className="text-[10px] text-slate-600 uppercase tracking-widest">ACTIVO EN ESTADO DE DIAGNÓSTICO. DATOS CONSOLIDADOS.</span>

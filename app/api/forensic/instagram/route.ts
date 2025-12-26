@@ -197,24 +197,39 @@ export async function POST(request: Request) {
             }
         }
 
-        // UX - PLAYBOOK AWARE
-        let uxMessage = "Análisis completado.";
-        if (playbookResult.playbook_id) {
-            if (playbookResult.status === 'COMPLETED') {
-                uxMessage = `PROTOCOLO ACTIVADO: ${playbookResult.playbook_id}. Secuencia de validación exitosa.`;
-            } else {
-                uxMessage = `PROTOCOLO ABORTADO: Fallo en etapa ${playbookResult.failed_step || 'VALIDACION'}.`;
-            }
-        } else if (classification.decision === 'BLOCK') {
-            uxMessage = `PROTOCOLO DE SEGURIDAD: ${classification.rationale}`;
-        } else {
-            uxMessage = diagnosis.intervention_decision.rationale;
+        // UX - STRICT INDUSTRIAL PROTOCOL (Phase 40)
+        let uxTitle = "ESTADO DEL ACTIVO: NO DETERMINADO";
+        let uxMessage = "Análisis finalizado.";
+        let uxCTA = "FINALIZAR SESIÓN";
+
+        const isHighValue = classification.tier === 'HIGH_VALUE';
+        const isRisk = classification.tier === 'RISK' || classification.decision === 'BLOCK' || playbookResult.status === 'ABORTED';
+        const isDowngrade = !isRisk && !isHighValue; // Covers LOW_VALUE or Generic
+
+        // SCENARIO 1: ALLOW_PLAYBOOK (High Ticket Enabled)
+        // Condition: Playbook Completed AND High Value Decision (Allow)
+        if (!isRisk && playbookResult.status === 'COMPLETED' && classification.decision === 'ALLOW_PLAYBOOK') {
+            uxTitle = "ESTADO DEL ACTIVO: VIABLE PARA INTERVENCIÓN ESTRUCTURAL";
+            uxMessage = "Se ha identificado una asimetría operativa entre la emisión de autoridad y la capacidad de captura. La configuración actual permite corrección técnica.\n\nDETALLE TÉCNICO:\n- Contexto operativo coherente\n- Riesgo controlado\n- Infraestructura parcialmente funcional";
+            uxCTA = "SOLICITAR PROTOCOLO DE INTERVENCIÓN";
+        }
+        // SCENARIO 2: DOWNGRADE_ONLY (Low Ticket / Generic)
+        else if (!isRisk && (isDowngrade || playbookResult.commercial_route === 'LOW_TICKET')) {
+            uxTitle = "ESTADO DEL ACTIVO: CONFIGURACIÓN NO APTA PARA INTERVENCIÓN ESTRUCTURAL";
+            uxMessage = "La magnitud declarada excede la capacidad operativa actual del activo.\n\nDETALLE TÉCNICO:\n- Disonancia entre ambición y soporte técnico\n- Riesgo de sobre-intervención";
+            uxCTA = "ACCEDER A OPTIMIZACIÓN BÁSICA";
+        }
+        // SCENARIO 3: BLOCK / PROTOCOLO DE SEGURIDAD
+        else {
+            uxTitle = "ESTADO DEL ACTIVO: INTERVENCIÓN BLOQUEADA";
+            uxMessage = "Se han detectado condiciones que comprometen la integridad del activo ante una intervención operativa.\n\nPROTOCOLO DE SEGURIDAD ACTIVADO:\nLa ejecución de ajustes ha sido suspendida para preservar la estabilidad reputacional.";
+            uxCTA = "CONSULTAR PROTOCOLO DE SEGURIDAD";
         }
 
         const uxContent = {
-            title: (playbookResult.status === 'ABORTED' || classification.tier === 'RISK') ? "Procedimiento Detenido" : "Dictamen Técnico",
+            title: uxTitle,
             message: uxMessage,
-            cta: routingTarget === 'CALENDAR' ? "Solicitar Despliegue" : "Descargar Informe",
+            cta: uxCTA,
             roadmap: { phase1: "Diagnóstico", phase2: "Intervención", phase3: "Escala" },
             disclaimer: "Reporte generado por TDT Playbook Engine v1.0"
         };
