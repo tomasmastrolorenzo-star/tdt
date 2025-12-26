@@ -100,6 +100,12 @@ export default function SmartGrowthConsultant() {
     const [backendUX, setBackendUX] = useState<{ title: string, message: string, cta: string } | null>(null)
     const [diagnosis, setDiagnosis] = useState<DiagnosisData | null>(null)
 
+    // Audit State
+    const [showAudit, setShowAudit] = useState(false)
+    const sessionId = useRef(Math.random().toString(36).substring(7).toUpperCase()).current
+    const timestamp = useRef(new Date().toUTCString()).current
+
+
     // Timers & Logic
     const [revelationStep, setRevelationStep] = useState(0) // 0: Asymmetry, 1: Inertia
     const [calibrationStep, setCalibrationStep] = useState(0)
@@ -114,7 +120,6 @@ export default function SmartGrowthConsultant() {
         setState(OperationalState.INGEST)
 
         // 1. Ingest (Simulated Silence 3.5s + Fetch)
-        // We fetch immediately but show Result after delay
         try {
             const res = await fetch('/api/forensic/instagram', {
                 method: 'POST',
@@ -127,7 +132,7 @@ export default function SmartGrowthConsultant() {
                 // Wait for visual timing
                 setTimeout(() => setState(OperationalState.VALIDATION), 3500)
             } else {
-                setState(OperationalState.IDLE) // Fail silent or reset
+                setState(OperationalState.IDLE)
             }
         } catch (e) {
             setState(OperationalState.IDLE)
@@ -141,7 +146,6 @@ export default function SmartGrowthConsultant() {
     const runDeepAnalysis = async () => {
         setState(OperationalState.DEEP_ANALYSIS)
 
-        // Fetch full diagnosis with intent
         fetch('/api/forensic/instagram', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -154,9 +158,8 @@ export default function SmartGrowthConsultant() {
                 // Enforce 10s Deep Analysis Silence
                 setTimeout(() => {
                     setState(OperationalState.REVELATION)
-                    // Revelation Sequence
-                    setTimeout(() => setRevelationStep(1), 5000) // 5s Asymmetry
-                    setTimeout(() => setState(OperationalState.SENTENCE), 8000) // 3s Inertia
+                    setTimeout(() => setRevelationStep(1), 5000)
+                    setTimeout(() => setState(OperationalState.SENTENCE), 8000)
                 }, 10000)
             }
         })
@@ -201,6 +204,77 @@ export default function SmartGrowthConsultant() {
     )
 
     // --- VIEWS ---
+
+    // AUDIT TRACE OVERLAY
+    if (showAudit && diagnosis && intent && backendUX) {
+        return (
+            <div className="fixed inset-0 z-[100] bg-[#0B0E11] p-4 md:p-8 overflow-y-auto animate-in slide-in-from-bottom-10">
+                <div className="max-w-3xl mx-auto bg-white text-black p-8 md:p-12 font-mono shadow-2xl relative">
+                    <button onClick={() => setShowAudit(false)} className="absolute top-4 right-4 text-xs font-bold uppercase hover:bg-black hover:text-white px-4 py-2 border border-black transition-colors">
+                        CLOSE AUDIT
+                    </button>
+
+                    {/* HEADER */}
+                    <div className="border-b-2 border-black pb-8 mb-8 flex justify-between items-start">
+                        <div>
+                            <h1 className="text-2xl font-bold tracking-tighter">TECHNICAL AUDIT RECORD</h1>
+                            <div className="text-xs uppercase mt-2 text-slate-600">
+                                CLASSIFICATION REPORT // PHASE 46 EXPORT
+                            </div>
+                        </div>
+                        <div className="text-right text-[10px] uppercase leading-relaxed">
+                            SESSION: {sessionId}<br />
+                            TIME: {timestamp}<br />
+                            ENGINE: v43.1.0<br />
+                            LANG: {lang}
+                        </div>
+                    </div>
+
+                    {/* CONTEXT */}
+                    <div className="grid grid-cols-2 gap-8 mb-8 text-xs border-b border-slate-200 pb-8">
+                        <div>
+                            <h3 className="font-bold uppercase mb-4 border-b border-black inline-block">DECLARED CONTEXT (L0)</h3>
+                            <ul className="space-y-2">
+                                <li className="flex justify-between border-b border-dashed border-slate-300 pb-1"><span>NATURE:</span> <span>{intent.nature}</span></li>
+                                <li className="flex justify-between border-b border-dashed border-slate-300 pb-1"><span>MARKET:</span> <span>{intent.market}</span></li>
+                                <li className="flex justify-between border-b border-dashed border-slate-300 pb-1"><span>AUDIENCE:</span> <span>{intent.audience}</span></li>
+                                <li className="flex justify-between border-b border-dashed border-slate-300 pb-1"><span>AMBITION:</span> <span>{intent.ambition}</span></li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 className="font-bold uppercase mb-4 border-b border-black inline-block">ASSET IDENTIFICATION</h3>
+                            <ul className="space-y-2">
+                                <li className="flex justify-between border-b border-dashed border-slate-300 pb-1"><span>HANDLE:</span> <span>{handle.toUpperCase()}</span></li>
+                                <li className="flex justify-between border-b border-dashed border-slate-300 pb-1"><span>SUBTYPE:</span> <span>{diagnosis.asset_classification.subtype}</span></li>
+                                <li className="flex justify-between border-b border-dashed border-slate-300 pb-1"><span>RISK FACTOR:</span> <span>{diagnosis.intervention_risk.toUpperCase()}</span></li>
+                                <li className="flex justify-between border-b border-dashed border-slate-300 pb-1"><span>DECISION:</span> <span>{backendUX.title.split(':')[0]}</span></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    {/* TECHNICAL FINDINGS */}
+                    <div className="mb-12">
+                        <h3 className="font-bold uppercase mb-4 border-b border-black inline-block">TECHNICAL DIAGNOSIS</h3>
+                        <div className="bg-slate-50 p-6 border-l-4 border-black mb-4">
+                            <p className="text-sm leading-relaxed whitespace-pre-line">
+                                {backendUX.message}
+                            </p>
+                        </div>
+                        <div className="text-[10px] uppercase text-slate-500">
+                            CRITICAL FLAGS: {diagnosis.problems.critical.map(p => p.code).join(', ') || "NONE"}
+                        </div>
+                    </div>
+
+                    {/* DISCLAIMER */}
+                    <div className="text-[10px] text-slate-400 border-t border-slate-200 pt-8 text-justify uppercase">
+                        SCOPE NOTE: This document reflects a technical analysis based on public signals available at the time of ingestion.
+                        It does not constitute a commercial recommendation, financial guarantee, or binding consulting agreement.
+                        The "Decision" field indicates system eligibility only.
+                    </div>
+                </div>
+            </div>
+        )
+    }
 
     if (state === OperationalState.IDLE) {
         return (
@@ -363,8 +437,6 @@ export default function SmartGrowthConsultant() {
                         {/* Main Sentence */}
                         <div className="space-y-4">
                             <h1 className="text-xl md:text-2xl text-[#E6E8EB] font-mono font-bold tracking-tight uppercase leading-snug">
-                                {/* Translate Title if Needed or Use Backend */}
-                                {/* Ideally Backend returns EN. We might map it. For now use Backend as Authority */}
                                 {backendUX.title}
                             </h1>
                             <div className="space-y-2">
@@ -375,9 +447,14 @@ export default function SmartGrowthConsultant() {
                             </div>
                         </div>
 
-                        <button className="w-full bg-[#E6E8EB] hover:bg-white text-black py-4 font-mono text-xs font-bold tracking-[0.2em] uppercase transition-all" onClick={() => { }}>
-                            [ {backendUX.cta} ]
-                        </button>
+                        <div className="space-y-3 pt-4">
+                            <button className="w-full bg-[#E6E8EB] hover:bg-white text-black py-4 font-mono text-xs font-bold tracking-[0.2em] uppercase transition-all" onClick={() => { }}>
+                                [ {backendUX.cta} ]
+                            </button>
+                            <button onClick={() => setShowAudit(true)} className="w-full text-[#5f6368] hover:text-[#9AA0A6] py-2 font-mono text-[10px] uppercase tracking-widest transition-colors flex items-center justify-center gap-2">
+                                <Terminal className="w-3 h-3" /> [ VIEW AUDIT TRACE ]
+                            </button>
+                        </div>
                     </div>
                 </div>
                 <Footer msg="SESSION ENDED" />
