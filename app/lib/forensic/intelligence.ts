@@ -83,6 +83,30 @@ export interface DiagnosisObject {
     };
     metrics_context: MetricsContext;
     intervention_decision: InterventionDecision;
+    intent_analysis?: IntentAnalysis; // New field
+}
+
+// --- LAYER 0: INTENT DEFINITIONS ---
+
+export type AssetNature = 'MARCA_PERSONAL' | 'MARCA_COMERCIAL' | 'EVENTO_PROYECTO' | 'ENTIDAD_INSTITUCIONAL' | 'MEDIO_PUBLICACION';
+export type TargetMarket = 'NORTEAMERICA' | 'LATAM' | 'EUROPA' | 'ASIA_PACIFICO' | 'MENA' | 'GLOBAL';
+export type TargetAudience = 'B2C' | 'B2B' | 'B2G' | 'MIXTA';
+export type OperativeAmbition = 'SOBREVIVENCIA' | 'COMPETENCIA' | 'LIDERAZGO' | 'EXPANSION';
+
+export interface DeclaredIntent {
+    nature: AssetNature;
+    market: TargetMarket;
+    audience: TargetAudience;
+    ambition: OperativeAmbition;
+}
+
+export interface IntentAnalysis {
+    coherence: 'ALTA' | 'MEDIA' | 'BAJA' | 'CRITICA';
+    flags: string[];
+    risk_multipliers: {
+        latency: number;
+        conversion: number;
+    };
 }
 
 const KEYWORDS = {
@@ -203,12 +227,55 @@ export function getMetricsContext(classification: AssetClassification): MetricsC
     }
 }
 
-// --- INTERVENTION ENGINE (PHASE 34) ---
+// --- LAYER 0 LOGIC: CROSS-REFERENCE ---
+
+export function analyzeIntent(intent: DeclaredIntent, stage: AssetStageResult, classification: AssetClassification): IntentAnalysis {
+    const flags: string[] = [];
+    let coherence: IntentAnalysis['coherence'] = 'ALTA';
+    let risk_latency = 1.0;
+
+    // 1. Ambition vs Stage Incoherence
+    if (intent.ambition === 'EXPANSION' && stage.stage === 'LOW') {
+        // High ambition, low reality -> Friction
+        flags.push("DISONANCIA: AMBICION_NO_SOPORTADA_POR_ESTRUCTURA");
+        coherence = 'MEDIA';
+        risk_latency = 1.5;
+    }
+
+    if (intent.ambition === 'LIDERAZGO' && stage.stage !== 'HIGH') {
+        flags.push("BRECHA_DE_AUTORIDAD: LIDERAZGO_REQUIERE_VALIDACION_ALTA");
+        coherence = 'BAJA';
+    }
+
+    // 2. Nature vs Audience (Invalid cases)
+    if (intent.nature === 'MARCA_PERSONAL' && intent.audience === 'B2G') {
+        flags.push("ERROR_TACTICO: PERSONAL_BRAND_EN_SECTOR_GOBIERNO");
+        coherence = 'CRITICA'; // Blocks advance often
+    }
+
+    // 3. Market Expansion Risks
+    if (intent.market === 'GLOBAL' && stage.stage === 'LOW') {
+        flags.push("RIESGO_DILUCION: ALCANCE_GLOBAL_SIN_BASE_LOCAL");
+        risk_latency = 2.0;
+    }
+
+    return {
+        coherence,
+        flags,
+        risk_multipliers: {
+            latency: risk_latency,
+            conversion: 1.0 // Placeholder
+        }
+    };
+}
+
+// --- INTERVENTION ENGINE (UPDATED) ---
 
 export function decideIntervention(
     classification: AssetClassification,
     stage: AssetStageResult,
-    problems: { critical: Problem[], tolerable: Problem[] }
+    problems: { critical: Problem[], tolerable: Problem[] },
+    intent?: DeclaredIntent // Optional for backward compatibility, but required for Layer 0
 ): InterventionDecision {
 
     let recommendation: InterventionType = 'NO_INTERVENIR';
@@ -220,17 +287,34 @@ export function decideIntervention(
     const isHighStage = stage.stage === 'HIGH';
     const isMedical = classification.subtype === 'MEDICO_SALUD';
 
-    const hasCapacity = stage.dimension_scores.consistencia > 0.6 && stage.composite_score > 0.4;
+    // --- SENSITIVITY ADJUSTMENT (LAYER 0) ---
+    // If ambition is HIGH, we are stricter.
+    const strictMode = intent?.ambition === 'LIDERAZGO' || intent?.ambition === 'EXPANSION';
+
+    // --- BLOCK 2: COHERENCE MATRIX ---
 
     if (criticalCount === 0) {
         if (stage.stage === 'LOW') {
-            recommendation = 'OPTIMIZACION_GUIADA';
-            rationale = "Sin fallos críticos. Fase de expansión habilitada.";
+            if (strictMode) {
+                recommendation = 'OPTIMIZACION_GUIADA'; // Must grow to meet ambition
+                rationale = "Estructura sana pero insuficiente para ambición declarada. Requiere aceleración vectorizada.";
+            } else {
+                recommendation = 'NO_INTERVENIR'; // Fine for Survival/Competition
+                rationale = "Alineación correcta para objetivos de mantenimiento.";
+            }
         } else {
-            recommendation = 'NO_INTERVENIR';
-            rationale = "Estructura estable y madura. No se requiere intervención.";
+            // High Stage + No Problems
+            if (intent?.ambition === 'EXPANSION') {
+                recommendation = 'INTERVENCION_ESTRUCTURAL'; // Scaling is hard
+                complexity = 'alta';
+                rationale = "La expansión agresiva requiere refactorización de arquitectura de retención.";
+            } else {
+                recommendation = 'NO_INTERVENIR';
+                rationale = "Posición dominante consolidada. No se requiere intervención.";
+            }
         }
     } else {
+        // Has Critical Problems
         if (isHighStage) {
             recommendation = 'AUDITORIA_PROFUNDA';
             complexity = 'critica';
@@ -240,20 +324,33 @@ export function decideIntervention(
             complexity = 'alta';
             rationale = "Fricción estructural en etapa de consolidación. Requiere reingeniería.";
         } else {
+            // Low Stage
             recommendation = 'AJUSTE_TECNICO_PUNTUAL';
             complexity = 'media';
             rationale = "Iniciando tracción. Corregir bloqueo técnico específico.";
         }
     }
 
+    // --- BLOCK 3: PROTECTION & VALIDATION rules ---
+
+    // Rule: Regulatory Block (Medical)
     if (isMedical && ['OPTIMIZACION_GUIADA'].includes(recommendation)) {
         recommendation = 'AJUSTE_TECNICO_PUNTUAL';
         rationale += " [LIMITACION REGULATORIA: INTERVENCION MINIMA]";
         avoidance.push('INTERVENCION_ESTRUCTURAL', 'OPTIMIZACION_GUIADA');
     }
 
-    if (stage.stage === 'LOW' && recommendation === 'AUDITORIA_PROFUNDA') {
+    // Rule: Incoherence Block (Layer 0)
+    // If Intent is Critically Incoherent, we might enforce Structural Intervention to fix strategy
+    if (intent && AnalyzeIntentHelper(intent, stage, classification).coherence === 'CRITICA') {
         recommendation = 'INTERVENCION_ESTRUCTURAL';
+        complexity = 'critica';
+        rationale = "DISONANCIA ESTRATÉGICA TOTAL. La configuración operativa contradice la naturaleza del activo.";
+    }
+
+    // Rule: Over-intervention (Low Stage getting Deep Audit)
+    if (stage.stage === 'LOW' && recommendation === 'AUDITORIA_PROFUNDA') {
+        recommendation = 'INTERVENCION_ESTRUCTURAL'; // Downgrade
         complexity = 'alta';
         rationale = "Ajuste de alcance por madurez del activo.";
     }
@@ -261,25 +358,40 @@ export function decideIntervention(
     return {
         recommended_intervention: recommendation,
         complexity_level: complexity,
-        investment_coherence: hasCapacity,
+        investment_coherence: stage.dimension_scores.consistencia > 0.6 && stage.composite_score > 0.4,
         intervention_risk: isMedical ? 'alto' : 'bajo',
         do_not_recommend: avoidance,
         rationale: rationale
     };
 }
 
-export function runForensicPipeline(input: RawInputData): DiagnosisObject {
+// Helper because I can't call exported function easily inside another exported function in the same var scope sometimes depending on bundler, but here it's fine.
+// using a local wrapper just in case.
+function AnalyzeIntentHelper(intent: DeclaredIntent, stage: AssetStageResult, classification: AssetClassification) {
+    return analyzeIntent(intent, stage, classification);
+}
+
+export function runForensicPipeline(input: RawInputData, intent?: DeclaredIntent): DiagnosisObject {
     const classification = classifyAsset(input);
     const stage = detectStage(input, classification);
     const problems = prioritizeProblems(stage, classification);
     const context = getMetricsContext(classification);
-    const intervention = decideIntervention(classification, stage, problems);
+
+    // Analyze Intent if provided
+    let intentAnalysis: IntentAnalysis | undefined;
+    if (intent) {
+        intentAnalysis = analyzeIntent(intent, stage, classification);
+    }
+
+    // Decide based on all inputs
+    const intervention = decideIntervention(classification, stage, problems, intent);
 
     return {
         asset_classification: classification,
         asset_stage: stage,
         problems,
         metrics_context: context,
-        intervention_decision: intervention
+        intervention_decision: intervention,
+        intent_analysis: intentAnalysis
     };
 }
