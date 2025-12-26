@@ -56,6 +56,24 @@ export interface MetricsContext {
     ignore_metrics: string[];
 }
 
+// --- BLOCK 1: TAXONOMY (INTERVENTION) ---
+
+export type InterventionType =
+    'NO_INTERVENIR' |
+    'AJUSTE_TECNICO_PUNTUAL' |
+    'OPTIMIZACION_GUIADA' |
+    'INTERVENCION_ESTRUCTURAL' |
+    'AUDITORIA_PROFUNDA';
+
+export interface InterventionDecision {
+    recommended_intervention: InterventionType;
+    complexity_level: 'baja' | 'media' | 'alta' | 'critica';
+    investment_coherence: boolean;
+    intervention_risk: 'bajo' | 'medio' | 'alto';
+    do_not_recommend: InterventionType[];
+    rationale: string;
+}
+
 export interface DiagnosisObject {
     asset_classification: AssetClassification;
     asset_stage: AssetStageResult;
@@ -64,9 +82,8 @@ export interface DiagnosisObject {
         tolerable: Problem[];
     };
     metrics_context: MetricsContext;
+    intervention_decision: InterventionDecision;
 }
-
-// --- BLOCK 1: CLASSIFICATION ---
 
 const KEYWORDS = {
     MEDICO_SALUD: ['dr', 'dra', 'medicina', 'cirugia', 'salud', 'clinica', 'doctor', 'pacientes', 'estetica', 'dental', 'odontologo'],
@@ -83,7 +100,6 @@ export function classifyAsset(data: RawInputData): AssetClassification {
     let bestSubtype: AssetSubtype = 'OTHER';
     let maxMatches = 0;
 
-    // Heuristic: Check Keywords
     for (const [subtype, terms] of Object.entries(KEYWORDS)) {
         let matches = 0;
         terms.forEach(term => {
@@ -97,67 +113,44 @@ export function classifyAsset(data: RawInputData): AssetClassification {
         }
     }
 
-    // Determine Main Type based on Subtype & Signals
     let type: AssetType = 'UNK';
     if (['MEDICO_SALUD', 'REAL_ESTATE', 'FOUNDER'].includes(bestSubtype)) {
         type = 'PROFESIONAL';
     } else if (['VIDEO_CREATOR', 'ARTISTA_VISUAL'].includes(bestSubtype)) {
         type = 'CREADOR';
     } else {
-        // Fallback Heuristics
-        if (data.is_verified || data.followers_count > 100000) type = 'MARCA_ESTABLECIDA' as any; // Temporary mapping
-        else type = 'CREADOR'; // Default leans to creator on IG
+        if (data.is_verified || data.followers_count > 100000) type = 'MARCA_ESTABLECIDA' as any;
+        else type = 'CREADOR';
     }
 
-    // Confidence
     const confidence = Math.min(1.0, 0.4 + (maxMatches * 0.1));
 
     return { type, subtype: bestSubtype, confidence };
 }
 
-// --- BLOCK 2: STAGE DETECTION ---
-
 export function detectStage(data: RawInputData, classification: AssetClassification): AssetStageResult {
-    // 1. Escala (0-1)
-    // Logarithmic scale up to 1M
     const escala = Math.min(1, Math.log10(Math.max(1, data.followers_count)) / 6);
 
-    // 2. Engagement (0-1)
-    // Est. Avg Likes / Followers
     let avgLikes = 0;
     if (data.recent_posts.length > 0) {
         avgLikes = data.recent_posts.reduce((acc, p) => acc + (p.likes || 0), 0) / data.recent_posts.length;
     }
     const engRate = data.followers_count > 0 ? (avgLikes / data.followers_count) : 0;
-    // Benchmark roughly 5% is great (1.0), 0.5% is poor (0.1)
     const engagement = Math.min(1, engRate * 20);
 
-    // 3. Consistencia (0-1)
-    // Deviation of timestamps
     let consistencia = 0.5;
     if (data.recent_posts.length > 1) {
-        // Logic: if variance is high, consistency is low. 
-        // For mock, lets assume a standard rigidness calculation
-        consistencia = 0.7; // Placeholder logic
+        consistencia = 0.7;
     }
 
-    // 4. Autoridad (0-1)
-    // Verified + Links + specific keywords
     let autoridad = data.is_verified ? 0.8 : 0.3;
     if (classification.confidence > 0.7) autoridad += 0.2;
 
-    // 5. Riesgo (0-1)
-    // High Follow/Following ratio might indicate botting?
-    // Or low text density.
     let riesgo = 0.2;
-    if (data.followers_count > 10000 && engRate < 0.001) riesgo = 0.9; // High risk (Dead account)
+    if (data.followers_count > 10000 && engRate < 0.001) riesgo = 0.9;
 
     const scores: DimensionScores = { escala, engagement, consistencia, autoridad, riesgo };
 
-    // Composite
-    // Weights depend on Type?
-    // For Professional: Authority > Scale
-    // For Creator: Engagement > Authority
     let composite = 0;
 
     if (classification.type === 'PROFESIONAL') {
@@ -166,7 +159,6 @@ export function detectStage(data: RawInputData, classification: AssetClassificat
         composite = (scores.engagement * 0.4) + (scores.escala * 0.3) + (scores.consistencia * 0.2) + (scores.autoridad * 0.1);
     }
 
-    // Stage Classification
     let stage: AssetStage = 'LOW';
     if (composite > 0.75) stage = 'HIGH';
     else if (composite > 0.4) stage = 'MID';
@@ -174,62 +166,28 @@ export function detectStage(data: RawInputData, classification: AssetClassificat
     return { stage, composite_score: composite, dimension_scores: scores };
 }
 
-// --- BLOCK 3: PRIORITIZATION ---
-
 export function prioritizeProblems(stageRes: AssetStageResult, classification: AssetClassification): { critical: Problem[], tolerable: Problem[] } {
     const critical: Problem[] = [];
     const tolerable: Problem[] = [];
 
-    // Rules Engine
-
-    // Rule 1: High Risk is always Critical
     if (stageRes.dimension_scores.riesgo > 0.7) {
-        critical.push({
-            code: 'HIGH_ALGORITHM_RISK',
-            priority: 1,
-            metric: 'riesgo',
-            threshold: 0.7,
-            type: 'CRITICAL'
-        });
+        critical.push({ code: 'HIGH_ALGORITHM_RISK', priority: 1, metric: 'riesgo', threshold: 0.7, type: 'CRITICAL' });
     }
 
-    // Rule 2: Low Authority for Professionals is Critical
     if (classification.type === 'PROFESIONAL' && stageRes.dimension_scores.autoridad < 0.4) {
-        critical.push({
-            code: 'AUTHORITY_GAP',
-            priority: 1,
-            metric: 'autoridad',
-            threshold: 0.4,
-            type: 'CRITICAL'
-        });
+        critical.push({ code: 'AUTHORITY_GAP', priority: 1, metric: 'autoridad', threshold: 0.4, type: 'CRITICAL' });
     }
 
-    // Rule 3: Low Engagement for Creators is Critical
     if (classification.type === 'CREADOR' && stageRes.dimension_scores.engagement < 0.3) {
-        critical.push({
-            code: 'AUDIENCE_DISCONNECT',
-            priority: 2,
-            metric: 'engagement',
-            threshold: 0.3,
-            type: 'CRITICAL'
-        });
+        critical.push({ code: 'AUDIENCE_DISCONNECT', priority: 2, metric: 'engagement', threshold: 0.3, type: 'CRITICAL' });
     }
 
-    // Rule 4: Consistency issues are tolerable usually
     if (stageRes.dimension_scores.consistencia < 0.5) {
-        tolerable.push({
-            code: 'INCONSISTENT_SIGNAL',
-            priority: 3,
-            metric: 'consistencia',
-            threshold: 0.5,
-            type: 'TOLERABLE'
-        });
+        tolerable.push({ code: 'INCONSISTENT_SIGNAL', priority: 3, metric: 'consistencia', threshold: 0.5, type: 'TOLERABLE' });
     }
 
-    return { critical: critical.slice(0, 3), tolerable }; // Limit top 3
+    return { critical: critical.slice(0, 3), tolerable };
 }
-
-// --- BLOCK 4: CONTEXT ---
 
 export function getMetricsContext(classification: AssetClassification): MetricsContext {
     if (classification.type === 'PROFESIONAL') {
@@ -245,25 +203,83 @@ export function getMetricsContext(classification: AssetClassification): MetricsC
     }
 }
 
-// --- BLOCK 5: PIPELINE ---
+// --- INTERVENTION ENGINE (PHASE 34) ---
+
+export function decideIntervention(
+    classification: AssetClassification,
+    stage: AssetStageResult,
+    problems: { critical: Problem[], tolerable: Problem[] }
+): InterventionDecision {
+
+    let recommendation: InterventionType = 'NO_INTERVENIR';
+    let rationale = "El activo opera dentro de parámetros aceptables.";
+    let complexity: InterventionDecision['complexity_level'] = 'baja';
+    let avoidance: InterventionType[] = [];
+
+    const criticalCount = problems.critical.length;
+    const isHighStage = stage.stage === 'HIGH';
+    const isMedical = classification.subtype === 'MEDICO_SALUD';
+
+    const hasCapacity = stage.dimension_scores.consistencia > 0.6 && stage.composite_score > 0.4;
+
+    if (criticalCount === 0) {
+        if (stage.stage === 'LOW') {
+            recommendation = 'OPTIMIZACION_GUIADA';
+            rationale = "Sin fallos críticos. Fase de expansión habilitada.";
+        } else {
+            recommendation = 'NO_INTERVENIR';
+            rationale = "Estructura estable y madura. No se requiere intervención.";
+        }
+    } else {
+        if (isHighStage) {
+            recommendation = 'AUDITORIA_PROFUNDA';
+            complexity = 'critica';
+            rationale = "Activo de alto valor con riesgos críticos detectados. Requiere diagnóstico forense profundo.";
+        } else if (stage.stage === 'MID') {
+            recommendation = 'INTERVENCION_ESTRUCTURAL';
+            complexity = 'alta';
+            rationale = "Fricción estructural en etapa de consolidación. Requiere reingeniería.";
+        } else {
+            recommendation = 'AJUSTE_TECNICO_PUNTUAL';
+            complexity = 'media';
+            rationale = "Iniciando tracción. Corregir bloqueo técnico específico.";
+        }
+    }
+
+    if (isMedical && ['OPTIMIZACION_GUIADA'].includes(recommendation)) {
+        recommendation = 'AJUSTE_TECNICO_PUNTUAL';
+        rationale += " [LIMITACION REGULATORIA: INTERVENCION MINIMA]";
+        avoidance.push('INTERVENCION_ESTRUCTURAL', 'OPTIMIZACION_GUIADA');
+    }
+
+    if (stage.stage === 'LOW' && recommendation === 'AUDITORIA_PROFUNDA') {
+        recommendation = 'INTERVENCION_ESTRUCTURAL';
+        complexity = 'alta';
+        rationale = "Ajuste de alcance por madurez del activo.";
+    }
+
+    return {
+        recommended_intervention: recommendation,
+        complexity_level: complexity,
+        investment_coherence: hasCapacity,
+        intervention_risk: isMedical ? 'alto' : 'bajo',
+        do_not_recommend: avoidance,
+        rationale: rationale
+    };
+}
 
 export function runForensicPipeline(input: RawInputData): DiagnosisObject {
-    // 1. Classify
     const classification = classifyAsset(input);
-
-    // 2. Score
     const stage = detectStage(input, classification);
-
-    // 3. Prioritize
     const problems = prioritizeProblems(stage, classification);
-
-    // 4. Context
     const context = getMetricsContext(classification);
+    const intervention = decideIntervention(classification, stage, problems);
 
     return {
         asset_classification: classification,
         asset_stage: stage,
         problems,
-        metrics_context: context
+        metrics_context: context,
+        intervention_decision: intervention
     };
 }
