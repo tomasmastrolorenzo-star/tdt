@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import { Globe, ShieldCheck, Lock, Terminal } from "lucide-react"
+import AuditTrace from "./audit-trace"
 
 // --- TYPES ---
 
@@ -96,16 +97,13 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent }: 
     const [state, setState] = useState<OperationalState>(OperationalState.IDLE)
     const [handle, setHandle] = useState(initialHandle || "")
     const [lang, setLang] = useState<'EN' | 'ES' | 'PT'>('EN')
+    const [showAudit, setShowAudit] = useState(false)
 
     // Data
     const [profile, setProfile] = useState<{ username: string, img: string, bio: string } | null>(null)
     const [backendUX, setBackendUX] = useState<{ title: string, message: string, cta: string } | null>(null)
     const [diagnosis, setDiagnosis] = useState<DiagnosisData | null>(null)
 
-    // Audit State
-    const [showAudit, setShowAudit] = useState(false)
-    const sessionId = useRef(Math.random().toString(36).substring(7).toUpperCase()).current
-    const timestamp = useRef(new Date().toUTCString()).current
 
 
     // Timers & Logic
@@ -477,5 +475,15 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent }: 
         )
     }
 
-    return null
+    return (
+        <>
+            {showAudit && diagnosis && (
+                <AuditTrace
+                    data={diagnosis}
+                    intent={intent}
+                    onClose={() => setShowAudit(false)}
+                />
+            )}
+        </>
+    )
 }
