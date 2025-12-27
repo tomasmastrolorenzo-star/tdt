@@ -3,37 +3,76 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-type SequenceState = 'HERO' | 'ACKNOWLEDGED' | 'INPUT_READY';
+type SequenceState = 'UMBRAL_LOGS' | 'UMBRAL_DECLARATION' | 'HERO' | 'HANDSHAKE';
 type Language = 'EN' | 'ES' | 'PT';
 
-// --- TEXT CONTENT (PHASE 63 STRICT) ---
+// PHASE 66 TECHNICAL COPY
 const COPY = {
     EN: {
-        line1: "ARCHITECTURE OF DIGITAL CAPITALIZATION",
-        line2: "PRIVATE DIAGNOSTIC SYSTEM FOR HIGH-COMPLEXITY ASSETS",
-        line3: "THE SYSTEM DOES NOT ADVISE. IT DETERMINES STRUCTURAL VIABILITY.",
-        acknowledge: "ACKNOWLEDGE OPERATIONAL PROTOCOL",
-        inputLabel: "ASSET IDENTIFIER",
-        execute: "[ EXECUTE EVALUATION ]",
-        placeholder: "username"
+        logs: ["INITIALIZING TDT_CORE_V3.0_STABLE...", "LOADING FORENSIC MODULES...", "ESTABLISHING SECURE SESSION... [OK]"],
+        declaration: [
+            "THIS SYSTEM EXECUTES A FORENSIC AUDIT OF DIGITAL ARCHITECTURES.",
+            "THE OUTPUT IS A TECHNICAL VERDICT, NOT A COMMERCIAL SUGGESTION.",
+            "BY PROCEEDING, YOU ACKNOWLEDGE THE OBJECTIVITY OF THE SYSTEM."
+        ],
+        acknowledge: "[ ACKNOWLEDGE PROTOCOL & ENTER ]",
+        hero: {
+            headerLeft: "TDT // SYSTEM_CORE V3.0",
+            headerRight: "LATENCY: 24ms | STATUS: ACTIVE",
+            title: "DIGITAL CAPITALIZATION ARCHITECTURE",
+            subtitle: "FORENSIC AUDIT OF EMISSION, DISTRIBUTION,\nAND VALUE CAPTURE IN HIGH-COMPLEXITY ASSETS",
+            declaration: "The system does not analyze content.\nIt dictates structural viability and identifies latent profit loss\nthrough algorithmic cross-layer correlation."
+        },
+        input: {
+            label: "ENTER ASSET ID",
+            placeholder: "@entity_name",
+            cta: "INITIATE AUDIT SEQUENCE",
+            cert: ["○ Public Signal Analysis Only", "○ Meta Platform Compliance"]
+        }
     },
     ES: {
-        line1: "ARQUITECTURA DE CAPITALIZACIÓN DIGITAL",
-        line2: "SISTEMA DE DIAGNÓSTICO PRIVADO PARA ACTIVOS DE ALTA COMPLEJIDAD",
-        line3: "EL SISTEMA NO ASESORA. DETERMINA VIABILIDAD ESTRUCTURAL.",
-        acknowledge: "ACEPTAR PROTOCOLO OPERATIVO",
-        inputLabel: "IDENTIFICADOR DE ACTIVO",
-        execute: "[ EJECUTAR EVALUACIÓN ]",
-        placeholder: "usuario"
+        logs: ["INICIALIZANDO TDT_CORE_V3.0_ESTABLE...", "CARGANDO MODULOS FORENSES...", "ESTABLECIENDO SESION SEGURA... [OK]"],
+        declaration: [
+            "ESTE SISTEMA EJECUTA UNA AUDITORIA FORENSE DE ARQUITECTURAS DIGITALES.",
+            "EL RESULTADO ES UN VEREDICTO TECNICO, NO UNA SUGERENCIA COMERCIAL.",
+            "AL PROCEDER, USTED RECONOCE LA OBJETIVIDAD DEL SISTEMA."
+        ],
+        acknowledge: "[ ACEPTAR PROTOCOLO & ENTRAR ]",
+        hero: {
+            headerLeft: "TDT // NUCLEO_SISTEMA V3.0",
+            headerRight: "LATENCIA: 24ms | ESTADO: ACTIVO",
+            title: "ARQUITECTURA DE CAPITALIZACION DIGITAL",
+            subtitle: "AUDITORIA FORENSE DE EMISION, DISTRIBUCION,\nY CAPTURA DE VALOR EN ACTIVOS DE ALTA COMPLEJIDAD",
+            declaration: "El sistema no analiza contenido.\nDictamina viabilidad estructural e identifica perdida de beneficio latente\nmediante correlacion algoritmica multicapa."
+        },
+        input: {
+            label: "INGRESAR ID DE ACTIVO",
+            placeholder: "@nombre_entidad",
+            cta: "INICIAR SECUENCIA DE AUDITORIA",
+            cert: ["○ Analisis de Señal Publica", "○ Cumplimiento Plataforma Meta"]
+        }
     },
     PT: {
-        line1: "ARQUITETURA DE CAPITALIZAÇÃO DIGITAL",
-        line2: "SISTEMA DE DIAGNÓSTICO PRIVADO PARA ATIVOS DE ALTA COMPLEXIDADE",
-        line3: "O SISTEMA NÃO ACONSELHA. DETERMINA VIABILIDADE ESTRUTURAL.",
-        acknowledge: "ACEITAR PROTOCOLO OPERACIONAL",
-        inputLabel: "IDENTIFICADOR DO ATIVO",
-        execute: "[ EXECUTAR AVALIAÇÃO ]",
-        placeholder: "usuario"
+        logs: ["INICIALIZANDO TDT_CORE_V3.0_ESTAVEL...", "CARREGANDO MODULOS FORENSES...", "ESTABELECENDO SESSAO SEGURA... [OK]"],
+        declaration: [
+            "ESTE SISTEMA EXECUTA UMA AUDITORIA FORENSE DE ARQUITETURAS DIGITAIS.",
+            "O RESULTADO É UM VEREDICTO TÉCNICO, NÃO UMA SUGESTÃO COMERCIAL.",
+            "AO PROCEDER, VOCÊ RECONHECE A OBJETIVIDADE DO SISTEMA."
+        ],
+        acknowledge: "[ ACEITAR PROTOCOLO & ENTRAR ]",
+        hero: {
+            headerLeft: "TDT // NUCLEO_SISTEMA V3.0",
+            headerRight: "LATENCIA: 24ms | ESTADO: ATIVO",
+            title: "ARQUITETURA DE CAPITALIZAÇÃO DIGITAL",
+            subtitle: "AUDITORIA FORENSE DE EMISSÃO, DISTRIBUIÇÃO,\nE CAPTURA DE VALOR EM ATIVOS DE ALTA COMPLEXIDADE",
+            declaration: "O sistema não analisa conteúdo.\nDetermina viabilidade estrutural e identifica perda de lucro latente\natravés de correlação algorítmica multicamada."
+        },
+        input: {
+            label: "INSERIR ID DO ATIVO",
+            placeholder: "@nome_entidade",
+            cta: "INICIAR SEQUENCIA DE AUDITORIA",
+            cert: ["○ Análise de Sinal Público", "○ Conformidade Plataforma Meta"]
+        }
     }
 };
 
@@ -44,41 +83,48 @@ interface SovereignEntryProps {
 }
 
 export default function SovereignEntry({ onExecute, lang, setLang }: SovereignEntryProps) {
-    const [step, setStep] = useState<SequenceState>('HERO');
+    const [step, setStep] = useState<SequenceState>('UMBRAL_LOGS');
+    const [logIndex, setLogIndex] = useState(0);
     const [inputValue, setInputValue] = useState("");
-    const [showButton, setShowButton] = useState(false);
 
-    // DELAY LOGIC (Block 2)
+    const txt = COPY[lang];
+
+    // 1. LOGS ANIMATION
+    useEffect(() => {
+        if (step === 'UMBRAL_LOGS') {
+            if (logIndex < txt.logs.length) {
+                const timeout = setTimeout(() => setLogIndex(prev => prev + 1), 800);
+                return () => clearTimeout(timeout);
+            } else {
+                const timeout = setTimeout(() => setStep('UMBRAL_DECLARATION'), 1000);
+                return () => clearTimeout(timeout);
+            }
+        }
+    }, [step, logIndex, txt.logs.length]);
+
+    // 2. HERO TO HANDSHAKE TIMEOUT
     useEffect(() => {
         if (step === 'HERO') {
-            const timer = setTimeout(() => {
-                setShowButton(true);
-            }, 3000); // 3s Delay
-            return () => clearTimeout(timer);
+            const timeout = setTimeout(() => setStep('HANDSHAKE'), 3000); // 3s delay per prompt
+            return () => clearTimeout(timeout);
         }
     }, [step]);
-
-    const handleAcknowledge = () => {
-        setStep('INPUT_READY');
-    };
 
     const handleExecute = () => {
         if (!inputValue) return;
         onExecute(inputValue);
     };
 
-    const content = COPY[lang];
-
     return (
-        <div className="h-screen w-full bg-[#050505] text-[#E5E5E5] font-mono flex flex-col items-center justify-center relative overflow-hidden selection:bg-white/20">
+        <div className="fixed inset-0 bg-[#000000] text-white font-mono flex flex-col items-center justify-center z-50 overflow-hidden cursor-default selection:bg-white selection:text-black">
 
-            {/* GLOBAL LANGUAGE SELECTOR (Block 3) - Visible in Hero */}
-            <div className="absolute top-8 right-8 flex gap-6 text-[10px] tracking-widest z-50">
+            {/* GLOBAL LANGUAGE SELECTOR (Persistent) */}
+            <div className="absolute top-8 right-8 flex gap-4 z-[60]">
                 {(['EN', 'ES', 'PT'] as Language[]).map((l) => (
                     <button
                         key={l}
-                        onClick={() => setLang(l)}
-                        className={`${lang === l ? 'text-white border-b border-white' : 'text-gray-600 hover:text-gray-400'} pb-1 transition-all duration-300`}
+                        onClick={() => { setLang(l); setLogIndex(0); }} // Reset logs on lang change if in logs
+                        className={`text-[10px] tracking-widest transition-opacity duration-300 ${lang === l ? 'opacity-100 border-b border-white' : 'opacity-40 hover:opacity-70'}`}
                     >
                         {l}
                     </button>
@@ -86,94 +132,143 @@ export default function SovereignEntry({ onExecute, lang, setLang }: SovereignEn
             </div>
 
             <AnimatePresence mode='wait'>
-                {step === 'HERO' && (
+
+                {/* SCREEN 0: UMBRAL (LOGS) */}
+                {step === 'UMBRAL_LOGS' && (
                     <motion.div
-                        key="hero"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0, filter: "blur(10px)" }}
-                        transition={{ duration: 1.5 }}
-                        className="flex flex-col items-center text-center space-y-12 max-w-4xl p-6"
+                        key="logs"
+                        exit={{ opacity: 0 }}
+                        className="flex flex-col items-start gap-2 w-full max-w-md p-6"
                     >
-                        {/* LINE 1 - DECLARATION */}
-                        <motion.h1
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.5, duration: 1 }}
-                            className="text-xs md:text-sm tracking-[0.3em] font-medium text-gray-500 uppercase"
-                        >
-                            {content.line1}
-                        </motion.h1>
-
-                        {/* LINE 2 - QUALIFIER */}
-                        <motion.h2
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 1.5, duration: 1 }}
-                            className="text-lg md:text-2xl font-bold tracking-widest text-[#E5E5E5] uppercase leading-tight"
-                        >
-                            {content.line2}
-                        </motion.h2>
-
-                        {/* LINE 3 - RULE */}
-                        <motion.p
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 2.5, duration: 1 }}
-                            className="text-[10px] md:text-xs tracking-[0.2em] text-[#d4af37] uppercase opacity-80"
-                        >
-                            {content.line3}
-                        </motion.p>
-
-                        {/* DELAYED ACTION */}
-                        <div className="h-16 flex items-center justify-center mt-12">
-                            {showButton && (
-                                <motion.button
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    transition={{ duration: 1 }}
-                                    onClick={handleAcknowledge}
-                                    className="text-[10px] border border-white/20 hover:border-white/60 hover:bg-white/5 text-gray-400 hover:text-white px-6 py-3 tracking-[0.25em] uppercase transition-all duration-500"
-                                >
-                                    [ {content.acknowledge} ]
-                                </motion.button>
-                            )}
-                        </div>
+                        {txt.logs.slice(0, logIndex + 1).map((log, i) => (
+                            <motion.span
+                                key={i}
+                                initial={{ opacity: 0, x: -10 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                className="text-xs text-green-500 font-mono tracking-tight"
+                            >
+                                {">"} {log}
+                            </motion.span>
+                        ))}
+                        <motion.div
+                            className="h-[1px] bg-green-900 w-full mt-4"
+                            initial={{ scaleX: 0 }}
+                            animate={{ scaleX: 1 }}
+                            transition={{ duration: 2, ease: "linear" }}
+                        />
                     </motion.div>
                 )}
 
-                {step === 'INPUT_READY' && (
+                {/* SCREEN 0: UMBRAL (DECLARATION) */}
+                {step === 'UMBRAL_DECLARATION' && (
                     <motion.div
-                        key="input"
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.8 }}
-                        className="flex flex-col items-center w-full max-w-md space-y-8"
+                        key="declaration"
+                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, filter: "blur(10px)" }}
+                        className="flex flex-col items-center text-center space-y-12 max-w-2xl p-6"
                     >
-                        <span className="text-[10px] tracking-[0.3em] text-gray-600 uppercase">
-                            {content.inputLabel}
-                        </span>
-
-                        <input
-                            type="text"
-                            value={inputValue}
-                            onChange={(e) => setInputValue(e.target.value)}
-                            onKeyDown={(e) => e.key === 'Enter' && handleExecute()}
-                            placeholder={content.placeholder}
-                            autoFocus
-                            className="w-full bg-transparent border-b border-white/20 py-4 text-center text-2xl text-white font-light tracking-widest focus:outline-none focus:border-[#d4af37] transition-all placeholder:text-white/10 placeholder:text-sm font-mono"
-                        />
+                        <div className="space-y-4">
+                            {txt.declaration.map((line, i) => (
+                                <p key={i} className="text-sm text-gray-300 font-mono uppercase tracking-wide leading-relaxed">
+                                    {line}
+                                </p>
+                            ))}
+                        </div>
 
                         <button
-                            onClick={handleExecute}
-                            className={`text-[10px] tracking-[0.2em] uppercase transition-all duration-500 ${inputValue ? 'text-[#d4af37] opacity-100' : 'text-gray-700 opacity-50 cursor-not-allowed'}`}
-                            disabled={!inputValue}
+                            onClick={() => setStep('HERO')}
+                            className="px-8 py-3 bg-[#111] border border-[#333] hover:border-white hover:bg-white hover:text-black transition-all duration-500 text-xs tracking-[0.2em] text-gray-400"
                         >
-                            {content.execute}
+                            {txt.acknowledge}
                         </button>
                     </motion.div>
                 )}
+
+                {/* SCREEN 1: HERO & HANDSHAKE */}
+                {(step === 'HERO' || step === 'HANDSHAKE') && (
+                    <motion.div
+                        key="main"
+                        initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                        className="w-full h-full flex flex-col items-center justify-between py-12 px-6"
+                    >
+                        {/* HEADER */}
+                        <div className="w-full flex justify-between items-start opacity-50 border-b border-white/10 pb-4 max-w-7xl mx-auto">
+                            <span className="text-[10px] tracking-widest font-mono">{txt.hero.headerLeft}</span>
+                            <span className="text-[10px] tracking-widest font-mono text-right">{txt.hero.headerRight}</span>
+                        </div>
+
+                        {/* CENTER CONTENT */}
+                        <div className="flex-1 flex flex-col items-center justify-center text-center gap-12 max-w-5xl">
+                            <div className="space-y-6">
+                                <motion.h1
+                                    layoutId="title"
+                                    className="text-4xl md:text-6xl font-[200] tracking-tight text-white uppercase"
+                                >
+                                    {txt.hero.title}
+                                </motion.h1>
+                                <motion.h2
+                                    className="text-sm md:text-base text-gray-500 font-mono tracking-widest uppercase leading-loose"
+                                >
+                                    {txt.hero.subtitle}
+                                </motion.h2>
+                            </div>
+
+                            <motion.p
+                                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }}
+                                className="text-sm text-gray-400 font-[300] max-w-2xl leading-relaxed whitespace-pre-line"
+                            >
+                                {txt.hero.declaration}
+                            </motion.p>
+
+                            {/* HANDSHAKE (INPUT) -- ONLY VISIBLE IN HANDSHAKE STATE */}
+                            <AnimatePresence>
+                                {step === 'HANDSHAKE' && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}
+                                        className="w-full max-w-md space-y-8 mt-12"
+                                    >
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] text-gray-500 uppercase tracking-widest pl-1">{txt.input.label}</label>
+                                            <div className="relative group">
+                                                <input
+                                                    type="text"
+                                                    value={inputValue}
+                                                    onChange={(e) => setInputValue(e.target.value)}
+                                                    onKeyDown={(e) => e.key === 'Enter' && handleExecute()}
+                                                    placeholder={txt.input.placeholder}
+                                                    className="w-full bg-transparent border-b border-[#333] text-2xl py-4 text-white placeholder-gray-800 focus:outline-none focus:border-white transition-colors font-mono"
+                                                    autoFocus
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <button
+                                            onClick={handleExecute}
+                                            disabled={!inputValue}
+                                            className="w-full py-4 bg-white text-black text-xs font-bold tracking-[0.2em] hover:bg-gray-200 transition-colors disabled:opacity-0 disabled:pointer-events-none"
+                                        >
+                                            {txt.input.cta}
+                                        </button>
+
+                                        <div className="flex justify-between pt-4 opacity-40">
+                                            {txt.input.cert.map((c, i) => (
+                                                <span key={i} className="text-[9px] font-mono uppercase">{c}</span>
+                                            ))}
+                                        </div>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
+
+                        {/* FOOTER */}
+                        <div className="w-full text-center pb-8 opacity-20">
+                            <div className="w-1 h-12 bg-white mx-auto mb-4" />
+                        </div>
+
+                    </motion.div>
+                )}
+
             </AnimatePresence>
         </div>
     );
 }
+
