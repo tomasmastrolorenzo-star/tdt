@@ -90,9 +90,9 @@ enum OperationalState {
     SENTENCE = 6         // Final Phase 40 Output
 }
 
-export default function SmartGrowthConsultant() {
+export default function SmartGrowthConsultant({ initialHandle }: { initialHandle?: string }) {
     const [state, setState] = useState<OperationalState>(OperationalState.IDLE)
-    const [handle, setHandle] = useState("")
+    const [handle, setHandle] = useState(initialHandle || "")
     const [lang, setLang] = useState<'EN' | 'ES' | 'PT'>('EN')
 
     // Data
@@ -113,10 +113,19 @@ export default function SmartGrowthConsultant() {
 
     const txt = LANG_TEXT[lang]
 
+    // --- EFFECT: AUTO START ---
+    useEffect(() => {
+        if (initialHandle && state === OperationalState.IDLE) {
+            initiateSequence(initialHandle);
+        }
+    }, [initialHandle]);
+
     // --- ACTIONS ---
 
-    const initiateSequence = async () => {
-        if (!handle) return
+    const initiateSequence = async (overrideHandle?: string) => {
+        const target = overrideHandle || handle;
+        if (!target) return
+
         setState(OperationalState.INGEST)
 
         // 1. Ingest (Simulated Silence 3.5s + Fetch)
@@ -124,7 +133,7 @@ export default function SmartGrowthConsultant() {
             const res = await fetch('/api/forensic/instagram', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ handle: handle.trim() })
+                body: JSON.stringify({ handle: target.trim() })
             })
             const data = await res.json()
             if (data.status === 'success') {
