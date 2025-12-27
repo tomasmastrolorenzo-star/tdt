@@ -32,9 +32,53 @@ export function calculateImpliedPricing(
         };
     }
 
-    const stage = diagnosis.asset_stage.stage;
-    const subvertical = (classification.subvertical_detected || 'GENERIC_SUBVERTICAL') as SubverticalID;
-    const nextStep = playbook.next_step;
+    const intent = diagnosis.declared_intent;
+
+    // --- PHASE 61: INTENT-BASED GATES ---
+
+    if (intent) {
+        // CASE C: MEDICAL RISK (Medical + Stage Low + Aggressive Ambition)
+        if (diagnosis.asset_classification.subtype === 'MEDICO_SALUD') {
+            if (diagnosis.asset_stage.stage === 'LOW' && (intent.ambition === 'EXPANSION' || intent.ambition === 'LIDERAZGO')) {
+                return {
+                    tier: 'NONE',
+                    label: 'PROTOCOLO DE SEGURIDAD',
+                    allowed_steps: [],
+                    reason: "Medical Entity with insufficient digital footprint for aggressive scaling. Risk of malpractice signaling.",
+                    is_locked: true,
+                    progressive_path: []
+                };
+            }
+        }
+
+        // CASE B: ASPIRATIONAL MISMATCH (Scale Ambition + Low Stage)
+        if (intent.ambition === 'EXPANSION' && diagnosis.asset_stage.stage === 'LOW') {
+            return {
+                tier: 'LOW_TICKET',
+                label: 'OPTIMIZACION_BASICA',
+                allowed_steps: ['INFRASTRUCTURE_SETUP', 'CONVERSION_OPTIMIZATION'],
+                reason: "Ambition (Scale) exceeds current structural capacity. Foundation required.",
+                is_locked: true,
+                progressive_path: ['LOW_TICKET', 'MID_TICKET']
+            };
+        }
+
+        // COMMITMENT FILTER (Not Full -> Mid Cap)
+        if (intent.commitment !== 'FULL') {
+            // Cannot access High Ticket
+            if (diagnosis.asset_stage.stage === 'HIGH') {
+                // Downgrade High to Mid if no commitment
+                return {
+                    tier: 'MID_TICKET',
+                    label: 'AJUSTE_TECNICO',
+                    allowed_steps: playbook.modules.slice(0, 3), // Partial access
+                    reason: "High Ticket requires FULL commitment. Scope limited to Technical Adjustments.",
+                    is_locked: false,
+                    progressive_path: ['MID_TICKET', 'HIGH_TICKET']
+                };
+            }
+        }
+    }
 
     // 2. STAGE GATES
     // LOW_STAGE + Any Vertical -> Never HIGH_TICKET

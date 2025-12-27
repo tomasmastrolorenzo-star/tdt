@@ -83,7 +83,8 @@ export interface DiagnosisObject {
     };
     metrics_context: MetricsContext;
     intervention_decision: InterventionDecision;
-    intent_analysis?: IntentAnalysis; // New field
+    intent_analysis?: IntentAnalysis;
+    declared_intent?: DeclaredIntent; // Added for Pricing Engine visibility
 }
 
 // --- LAYER 0: INTENT DEFINITIONS ---
@@ -98,6 +99,7 @@ export interface DeclaredIntent {
     market: TargetMarket;
     audience: TargetAudience;
     ambition: OperativeAmbition;
+    commitment?: 'TACTICAL' | 'STRUCTURAL' | 'FULL'; // Added for Phase 61
 }
 
 export interface IntentAnalysis {
@@ -392,6 +394,7 @@ export function runForensicPipeline(input: RawInputData, intent?: DeclaredIntent
         problems,
         metrics_context: context,
         intervention_decision: intervention,
-        intent_analysis: intentAnalysis
+        intent_analysis: intentAnalysis,
+        declared_intent: intent
     };
 }

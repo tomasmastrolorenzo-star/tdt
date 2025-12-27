@@ -132,6 +132,39 @@ export async function POST(request: Request) {
 
         // --- PIPELINE EXECUTION ---
 
+        // Map Phase 61 Intent to Forensic Intent
+        let forensicIntent: any = undefined;
+        if (intent) {
+            const natureMap: Record<string, string> = {
+                'PROFESSIONAL': 'MARCA_PERSONAL',
+                'CREATOR': 'MARCA_PERSONAL',
+                'BRAND': 'MARCA_COMERCIAL',
+                'REAL_ESTATE': 'MARCA_COMERCIAL',
+                'FINANCE': 'MARCA_COMERCIAL'
+            };
+            const marketMap: Record<string, string> = {
+                'NA': 'NORTEAMERICA',
+                'EU': 'EUROPA',
+                'LATAM': 'LATAM',
+                'ME': 'MENA'
+            };
+            const objMap: Record<string, string> = {
+                'AUTHORITY': 'LIDERAZGO',
+                'LEAD_GEN': 'COMPETENCIA',
+                'REPUTATION': 'SOBREVIVENCIA',
+                'MONETIZATION': 'COMPETENCIA',
+                'SCALE': 'EXPANSION'
+            };
+
+            forensicIntent = {
+                nature: natureMap[intent.nature] || 'MARCA_COMERCIAL',
+                market: marketMap[intent.market] || 'GLOBAL',
+                audience: 'MIXTA',
+                ambition: objMap[intent.objective] || 'COMPETENCIA',
+                commitment: intent.commitment
+            }; // Type casting handled by Partial<DeclaredIntent> in call
+        }
+
         const rawInput: RawInputData = {
             username: normalizedData.username,
             biography: normalizedData.biography,
@@ -150,7 +183,7 @@ export async function POST(request: Request) {
         };
 
         // 1. FORENSIC DIAGNOSIS (Layer 0 + Intelligence)
-        const diagnosis = runForensicPipeline(rawInput, intent);
+        const diagnosis = runForensicPipeline(rawInput, forensicIntent);
 
         // 2. LAYER 3.5: VALUE & RISK CLASSIFIER (New)
         const classification = classifyValueRisk(diagnosis);
