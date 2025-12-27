@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import EntryProtocol from "@/app/components/EntryProtocol";
+import EntryProtocol from "@/components/EntryProtocol";
 import SmartGrowthConsultant from "@/components/trend-up/smart-growth-consultant";
 
 export default function Home() {
