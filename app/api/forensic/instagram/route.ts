@@ -182,8 +182,9 @@ export async function POST(request: Request) {
             external_url: normalizedData.externalUrl
         };
 
-        // 1. FORENSIC DIAGNOSIS (Layer 0 + Intelligence)
-        const diagnosis = runForensicPipeline(rawInput, forensicIntent);
+        // 1. FORENSIC DIAGNOSIS (Layer 0 + Intelligence + Phase 65)
+        const operatorContext = (body as any).operatorContext;
+        const diagnosis = runForensicPipeline(rawInput, forensicIntent, operatorContext);
 
         // 2. LAYER 3.5: VALUE & RISK CLASSIFIER (New)
         const classification = classifyValueRisk(diagnosis);

@@ -33,6 +33,44 @@ export function calculateImpliedPricing(
     }
 
     const intent = diagnosis.declared_intent;
+    const ctx = diagnosis.operator_context;
+
+    // --- PHASE 65: OPERATOR CONSISTENCY CHECKS (Silent Veto) ---
+    if (ctx) {
+        // BLOCK 1: IMMEDIATE FAILURES
+        if (ctx.operative_horizon === 'IMMEDIATE_RESULTS' && ctx.sacrifice_model === 'CAPITAL_COMMITTED') {
+            return {
+                tier: 'NONE',
+                label: 'BLOQUEO_POR_COHERENCIA',
+                allowed_steps: [],
+                reason: "Capital cannot curb structural latency. Immediate results expectation with capital lever is a failure pattern.",
+                is_locked: true,
+                progressive_path: []
+            };
+        }
+        if (ctx.operational_veto === 'COMPLIANCE_ABSOLUTE' && ctx.failure_threshold === 'GROWTH_DRIVEN') {
+            return {
+                tier: 'NONE',
+                label: 'BLOQUEO_NORMATIVO',
+                allowed_steps: [],
+                reason: "Growth-driven failure threshold is incompatible with absolute compliance veto.",
+                is_locked: true,
+                progressive_path: []
+            };
+        }
+
+        // BLOCK 2: FORCED DOWNGRADES
+        if (ctx.sacrifice_model === 'CONTROL_CEDED' && ctx.operative_horizon === 'TRANSFORMATIONAL') {
+            return {
+                tier: 'LOW_TICKET',
+                label: 'ALINEACION_OPERATIVA',
+                allowed_steps: ['INFRASTRUCTURE_SETUP'],
+                reason: "Ceding control during transformational phase requires architectural oversight first.",
+                is_locked: true,
+                progressive_path: ['LOW_TICKET', 'MID_TICKET']
+            };
+        }
+    }
 
     // --- PHASE 61: INTENT-BASED GATES ---
 

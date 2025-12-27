@@ -92,8 +92,9 @@ enum OperationalState {
 }
 
 import { IntentDeclaration } from "@/components/protocol-calibration";
+import { OperatorContext } from "@/app/lib/forensic/intelligence";
 
-export default function SmartGrowthConsultant({ initialHandle, initialIntent, initialLang }: { initialHandle?: string, initialIntent?: IntentDeclaration, initialLang?: 'EN' | 'ES' | 'PT' }) {
+export default function SmartGrowthConsultant({ initialHandle, initialIntent, initialLang, initialContext }: { initialHandle?: string, initialIntent?: IntentDeclaration, initialLang?: 'EN' | 'ES' | 'PT', initialContext?: OperatorContext }) {
     const [state, setState] = useState<OperationalState>(OperationalState.IDLE)
     const [handle, setHandle] = useState(initialHandle || "")
     const [lang, setLang] = useState<'EN' | 'ES' | 'PT'>(initialLang || 'EN')
@@ -110,6 +111,7 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
     const [revelationStep, setRevelationStep] = useState(0) // 0: Asymmetry, 1: Inertia
     const [calibrationStep, setCalibrationStep] = useState(0)
     const [intent, setIntent] = useState<any>(initialIntent || {})
+    const [operatorContext, setOperatorContext] = useState<OperatorContext | undefined>(initialContext)
 
     const txt = LANG_TEXT[lang]
 
@@ -133,7 +135,11 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
             const res = await fetch('/api/forensic/instagram', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ handle: target.trim() })
+                body: JSON.stringify({
+                    handle: target.trim(),
+                    intent: intent,
+                    operatorContext: operatorContext
+                })
             })
             const data = await res.json()
             if (data.status === 'success') {

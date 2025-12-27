@@ -86,7 +86,12 @@ export interface DiagnosisObject {
     metrics_context: MetricsContext;
     intervention_decision: InterventionDecision;
     intent_analysis?: IntentAnalysis;
-    declared_intent?: DeclaredIntent; // Added for Pricing Engine visibility
+    declared_intent?: DeclaredIntent;
+
+    // Phase 65: Operator Context
+    operator_context?: OperatorContext;
+    risk_modifier?: number;
+    pricing_modifier?: number;
 }
 
 // --- LAYER 0: INTENT DEFINITIONS ---
@@ -101,7 +106,16 @@ export interface DeclaredIntent {
     market: TargetMarket;
     audience: TargetAudience;
     ambition: OperativeAmbition;
-    commitment?: 'TACTICAL' | 'STRUCTURAL' | 'FULL'; // Added for Phase 61
+    commitment?: 'TACTICAL' | 'STRUCTURAL' | 'FULL';
+}
+
+// --- PHASE 65: DEEP CALIBRATION TYPES ---
+export interface OperatorContext {
+    operative_horizon: 'IMMEDIATE_RESULTS' | 'STRATEGIC_BUILD' | 'TRANSFORMATIONAL' | 'LEGACY_BUILD';
+    sacrifice_model: 'OPERATOR_ACTIVE' | 'CAPITAL_COMMITTED' | 'CONTROL_CEDED' | 'SKIN_IN_GAME';
+    failure_threshold: 'ROI_SENSITIVE' | 'GROWTH_DRIVEN' | 'MARKET_SHARE_FOCUS' | 'CAPITAL_CONSTRAINED';
+    operational_veto: 'COMPLIANCE_ABSOLUTE' | 'CONTROL_REQUIRED' | 'SCALABILITY_CONSCIOUS' | 'AUDIENCE_PRIMARY';
+    context_hash: string;
 }
 
 export interface IntentAnalysis {
