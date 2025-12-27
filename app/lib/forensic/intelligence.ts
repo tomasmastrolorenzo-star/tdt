@@ -153,7 +153,13 @@ export function classifyAsset(data: RawInputData): AssetClassification {
 
     const confidence = Math.min(1.0, 0.4 + (maxMatches * 0.1));
 
-    return { type, subtype: bestSubtype, confidence };
+    return {
+        type,
+        subtype: bestSubtype,
+        confidence,
+        rationale: `Detected subtype ${bestSubtype} based on keywords.`,
+        decision: 'ALLOW'
+    };
 }
 
 export function detectStage(data: RawInputData, classification: AssetClassification): AssetStageResult {
