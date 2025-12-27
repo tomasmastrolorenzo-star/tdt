@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 type SequenceState = 'UMBRAL_LOGS' | 'UMBRAL_DECLARATION' | 'HERO' | 'HANDSHAKE';
 type Language = 'EN' | 'ES' | 'PT';
 
-// PHASE 66 TECHNICAL COPY
+// PHASE 67 TECHNICAL COPY (No Input)
 const COPY = {
     EN: {
         logs: ["INITIALIZING TDT_CORE_V3.0_STABLE...", "LOADING FORENSIC MODULES...", "ESTABLISHING SECURE SESSION... [OK]"],
@@ -24,9 +24,7 @@ const COPY = {
             declaration: "The system does not analyze content.\nIt dictates structural viability and identifies latent profit loss\nthrough algorithmic cross-layer correlation."
         },
         input: {
-            label: "ENTER ASSET ID",
-            placeholder: "@entity_name",
-            cta: "INITIATE AUDIT SEQUENCE",
+            cta: "INITIATE PROTOCOL CALIBRATION",
             cert: ["○ Public Signal Analysis Only", "○ Meta Platform Compliance"]
         }
     },
@@ -46,9 +44,7 @@ const COPY = {
             declaration: "El sistema no analiza contenido.\nDictamina viabilidad estructural e identifica perdida de beneficio latente\nmediante correlacion algoritmica multicapa."
         },
         input: {
-            label: "INGRESAR ID DE ACTIVO",
-            placeholder: "@nombre_entidad",
-            cta: "INICIAR SECUENCIA DE AUDITORIA",
+            cta: "INICIAR CALIBRACION DE PROTOCOLO",
             cert: ["○ Analisis de Señal Publica", "○ Cumplimiento Plataforma Meta"]
         }
     },
@@ -68,9 +64,7 @@ const COPY = {
             declaration: "O sistema não analisa conteúdo.\nDetermina viabilidade estrutural e identifica perda de lucro latente\natravés de correlação algorítmica multicamada."
         },
         input: {
-            label: "INSERIR ID DO ATIVO",
-            placeholder: "@nome_entidade",
-            cta: "INICIAR SEQUENCIA DE AUDITORIA",
+            cta: "INICIAR CALIBRAÇAO DE PROTOCOLO",
             cert: ["○ Análise de Sinal Público", "○ Conformidade Plataforma Meta"]
         }
     }
@@ -85,7 +79,6 @@ interface SovereignEntryProps {
 export default function SovereignEntry({ onExecute, lang, setLang }: SovereignEntryProps) {
     const [step, setStep] = useState<SequenceState>('UMBRAL_LOGS');
     const [logIndex, setLogIndex] = useState(0);
-    const [inputValue, setInputValue] = useState("");
 
     const txt = COPY[lang];
 
@@ -110,9 +103,10 @@ export default function SovereignEntry({ onExecute, lang, setLang }: SovereignEn
         }
     }, [step]);
 
-    const handleExecute = () => {
-        if (!inputValue) return;
-        onExecute(inputValue);
+    const handleStartCalibration = () => {
+        // We pass empty string because handle is now collected later.
+        // This signals to parent that Entry phase is done.
+        onExecute("");
     };
 
     return (
@@ -219,32 +213,16 @@ export default function SovereignEntry({ onExecute, lang, setLang }: SovereignEn
                                 {txt.hero.declaration}
                             </motion.p>
 
-                            {/* HANDSHAKE (INPUT) -- ONLY VISIBLE IN HANDSHAKE STATE */}
+                            {/* HANDSHAKE (BUTTON ONLY - NO INPUT) */}
                             <AnimatePresence>
                                 {step === 'HANDSHAKE' && (
                                     <motion.div
                                         initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}
                                         className="w-full max-w-md space-y-8 mt-12"
                                     >
-                                        <div className="space-y-2">
-                                            <label className="text-[10px] text-gray-500 uppercase tracking-widest pl-1">{txt.input.label}</label>
-                                            <div className="relative group">
-                                                <input
-                                                    type="text"
-                                                    value={inputValue}
-                                                    onChange={(e) => setInputValue(e.target.value)}
-                                                    onKeyDown={(e) => e.key === 'Enter' && handleExecute()}
-                                                    placeholder={txt.input.placeholder}
-                                                    className="w-full bg-transparent border-b border-[#333] text-2xl py-4 text-white placeholder-gray-800 focus:outline-none focus:border-white transition-colors font-mono"
-                                                    autoFocus
-                                                />
-                                            </div>
-                                        </div>
-
                                         <button
-                                            onClick={handleExecute}
-                                            disabled={!inputValue}
-                                            className="w-full py-4 bg-white text-black text-xs font-bold tracking-[0.2em] hover:bg-gray-200 transition-colors disabled:opacity-0 disabled:pointer-events-none"
+                                            onClick={handleStartCalibration}
+                                            className="w-full py-4 bg-white text-black text-xs font-bold tracking-[0.2em] hover:bg-gray-200 transition-colors"
                                         >
                                             {txt.input.cta}
                                         </button>
@@ -271,4 +249,3 @@ export default function SovereignEntry({ onExecute, lang, setLang }: SovereignEn
         </div>
     );
 }
-

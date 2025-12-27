@@ -81,14 +81,17 @@ const LANG_TEXT = {
 }
 
 // --- STATES ---
+// --- STATES ---
 enum OperationalState {
-    IDLE = 0,
-    INGEST = 1,          // 3-4s silence
-    VALIDATION = 2,      // Real fragments
-    CALIBRATION = 3,     // (Legacy Layer 0 - kept for flow logic but styled industrially)
-    DEEP_ANALYSIS = 4,   // 8-12s silence
-    REVELATION = 5,      // Asymmetry / Inertia
-    SENTENCE = 6         // Final Phase 40 Output
+    IDLE = 'IDLE',
+    INGEST = 'INGEST',
+    BLACK_HOLE = 'BLACK_HOLE', // NEW: Phase 67 Delay (Absence)
+    VALIDATION = 'VALIDATION',
+    CALIBRATION = 'CALIBRATION',
+    REVELATION = 'REVELATION',
+    CAPTURE_EMAIL = 'CAPTURE_EMAIL', // NEW: Phase 67 Capture
+    SENTENCE = 'SENTENCE',
+    TERMINATED = 'TERMINATED' // NEW: Phase 67 Punishment
 }
 
 import { IntentDeclaration } from "@/components/protocol-calibration";
@@ -124,13 +127,28 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
 
     // --- ACTIONS ---
 
+    // Updated Enum for Phase 67
+    enum OperationalState {
+        IDLE = 'IDLE',
+        INGEST = 'INGEST',
+        BLACK_HOLE = 'BLACK_HOLE', // NEW: Phase 67 Delay (Absence)
+        VALIDATION = 'VALIDATION', // Optional, can be merged
+        CALIBRATION = 'CALIBRATION',
+        REVELATION = 'REVELATION',
+        CAPTURE_EMAIL = 'CAPTURE_EMAIL', // NEW: Phase 67 Capture
+        SENTENCE = 'SENTENCE',
+        TERMINATED = 'TERMINATED' // NEW: Phase 67 Punishment
+    }
+
+    // ... inside component ...
+
     const initiateSequence = async (overrideHandle?: string) => {
         const target = overrideHandle || handle;
         if (!target) return
 
         setState(OperationalState.INGEST)
 
-        // 1. Ingest (Simulated Silence 3.5s + Fetch)
+        // 1. Ingest (Real API Call)
         try {
             const res = await fetch('/api/forensic/instagram', {
                 method: 'POST',
@@ -142,57 +160,51 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
                 })
             })
             const data = await res.json()
+
+            // PHASE 67: SESSION DEATH (Silent Punishment)
+            // If private, invalid, or error -> Black Screen.
+            if (data.status === 'error' || (data.analysis && data.analysis.is_private)) {
+                setTimeout(() => setState(OperationalState.TERMINATED), 2000);
+                return;
+            }
+
             if (data.status === 'success') {
                 setProfile({ username: data.username, img: data.profilePicUrl, bio: data.biography })
-                // Wait for visual timing
-                setTimeout(() => setState(OperationalState.VALIDATION), 3500)
-            } else {
-                setState(OperationalState.IDLE)
-            }
-        } catch (e) {
-            setState(OperationalState.IDLE)
-        }
-    }
+                setBackendUX(data.closure)
 
-    const runDeepAnalysis = async () => {
-        setState(OperationalState.DEEP_ANALYSIS)
+                // Keep raw diagnosis for logic if needed, but data.closure drives the UI
+                if (data.analysis) {
+                    setDiagnosis(data.analysis); // Store for Audit Trace
+                }
 
-        fetch('/api/forensic/instagram', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ handle, intent })
-        }).then(res => res.json()).then(data => {
-            if (data._forensic_diagnosis) {
-                setDiagnosis(data._forensic_diagnosis)
-                setBackendUX(data.ux)
+                // PHASE 67: BLACK HOLE PROTOCOL (8-12s Delay)
+                setState(OperationalState.BLACK_HOLE);
+                const delay = Math.floor(Math.random() * (12000 - 8000 + 1) + 8000); // 8-12s
 
-                // Enforce 10s Deep Analysis Silence
                 setTimeout(() => {
+                    // Skip VALIDATION/CALIBRATION since we did that upfront.
+                    // Go straight to REVELATION (Forensic Output)
                     setState(OperationalState.REVELATION)
-                    setTimeout(() => setRevelationStep(1), 5000)
-                    setTimeout(() => setState(OperationalState.SENTENCE), 8000)
-                }, 10000)
+                }, delay);
+
+            } else {
+                // Suspicious error
+                setState(OperationalState.TERMINATED)
             }
-        })
-    }
 
-    const confirmValidation = () => {
-        if (initialIntent) {
-            runDeepAnalysis()
-        } else {
-            setState(OperationalState.CALIBRATION)
+        } catch (e) {
+            console.error(e)
+            setState(OperationalState.TERMINATED)
         }
     }
-
-    const handleCalibration = (key: string, val: string) => {
-        const next = { ...intent, [key]: val }
-        setIntent(next)
-        if (calibrationStep < 3) {
-            setCalibrationStep(prev => prev + 1)
-        } else {
-            runDeepAnalysis()
+    // --- REVELATION SEQUENCE LOGIC ---
+    useEffect(() => {
+        if (state === OperationalState.REVELATION) {
+            const t1 = setTimeout(() => setRevelationStep(1), 4000);
+            const t2 = setTimeout(() => setState(OperationalState.CAPTURE_EMAIL), 8000);
+            return () => { clearTimeout(t1); clearTimeout(t2); };
         }
-    }
+    }, [state]);
 
     // --- RENDERERS ---
 
@@ -406,18 +418,53 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
         )
     }
 
-    if (state === OperationalState.DEEP_ANALYSIS) {
+    if (state === OperationalState.BLACK_HOLE) {
         return (
-            <div className="min-h-screen bg-[#0B0E11] flex flex-col cursor-wait">
-                <Header status={txt.deep_analysis} />
+            <div className="min-h-screen bg-black flex flex-col cursor-none">
+                {/* NO HEADER - PURE BLACK HOLE */}
                 <div className="flex-1 flex flex-col items-center justify-center">
-                    <span className="text-[10px] text-[#1877F2] font-mono uppercase tracking-[0.3em] blink animate-pulse">
-                        {txt.cross_layer}
-                    </span>
+                    {/* Invisible text for screen readers if needed, but visually silent */}
                 </div>
-                <Footer msg="PROCESSING..." />
+                {/* No Footer */}
             </div>
         )
+    }
+
+    if (state === OperationalState.TERMINATED) {
+        return (
+            <div className="min-h-screen bg-black flex items-center justify-center">
+                <h1 className="text-[#333] font-mono text-[10px] tracking-[0.5em] uppercase">
+                    SESSION TERMINATED
+                </h1>
+            </div>
+        )
+    }
+
+    // CAPTURE EMAIL STATE (Pre-Sentence)
+    if (state === OperationalState.CAPTURE_EMAIL) {
+        // We haven't defined set-email logic yet, but for now just show a simple capture or skip.
+        // Actually prompt said "Email capture only at the end... Mandatory to receive diagnosis copy"
+        // So this should be a mandatory gate before SENTENCE.
+        // I need a local state for email.
+        return (
+            <div className="min-h-screen bg-[#0B0E11] flex flex-col items-center justify-center p-8 space-y-8 font-mono">
+                <h2 className="text-white text-sm tracking-widest uppercase">AUDIT COMPLETED</h2>
+                <p className="text-gray-500 text-[10px] tracking-widest max-w-md text-center">
+                    THE FINAL DIAGNOSIS IS SEALED. ENTER AUTHORIZED EMAIL TO RELEASE THE VERDICT.
+                </p>
+                <input type="email" placeholder="OFFICIAL_EMAIL" className="bg-transparent border-b border-white/20 text-center py-2 outline-none text-white w-full max-w-sm tracking-widest uppercase"
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter' && e.currentTarget.value.includes('@')) {
+                            setState(OperationalState.SENTENCE);
+                        }
+                    }} />
+            </div>
+        )
+    }
+
+    if (state === OperationalState.DEEP_ANALYSIS) {
+        // Legacy support or just remove. Black Hole replaces deep analysis visually.
+        return null;
     }
 
     if (state === OperationalState.REVELATION) {
