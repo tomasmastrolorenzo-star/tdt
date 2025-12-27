@@ -93,10 +93,10 @@ enum OperationalState {
 
 import { IntentDeclaration } from "@/components/protocol-calibration";
 
-export default function SmartGrowthConsultant({ initialHandle, initialIntent }: { initialHandle?: string, initialIntent?: IntentDeclaration }) {
+export default function SmartGrowthConsultant({ initialHandle, initialIntent, initialLang }: { initialHandle?: string, initialIntent?: IntentDeclaration, initialLang?: 'EN' | 'ES' | 'PT' }) {
     const [state, setState] = useState<OperationalState>(OperationalState.IDLE)
     const [handle, setHandle] = useState(initialHandle || "")
-    const [lang, setLang] = useState<'EN' | 'ES' | 'PT'>('EN')
+    const [lang, setLang] = useState<'EN' | 'ES' | 'PT'>(initialLang || 'EN')
     const [showAudit, setShowAudit] = useState(false)
 
     // Data

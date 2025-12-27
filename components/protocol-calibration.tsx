@@ -68,9 +68,10 @@ const LAYERS = {
 
 interface ProtocolCalibrationProps {
     onComplete: (data: IntentDeclaration) => void;
+    lang?: 'EN' | 'ES' | 'PT';
 }
 
-export default function ProtocolCalibration({ onComplete }: ProtocolCalibrationProps) {
+export default function ProtocolCalibration({ onComplete, lang = 'EN' }: ProtocolCalibrationProps) {
     const [step, setStep] = useState<Step>('NATURE');
     const [data, setData] = useState<IntentDeclaration>({ nature: '', market: '', objective: '', commitment: '' });
     const [isLocking, setIsLocking] = useState(false); // Visual transition for "LOCKED"

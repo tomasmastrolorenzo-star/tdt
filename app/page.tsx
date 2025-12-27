@@ -8,12 +8,13 @@ import ProtocolCalibration, { IntentDeclaration } from "@/components/protocol-ca
 export default function Home() {
   const [activeHandle, setActiveHandle] = useState<string | null>(null);
   const [intent, setIntent] = useState<IntentDeclaration | null>(null);
+  const [lang, setLang] = useState<'EN' | 'ES' | 'PT'>('EN');
 
   // 1. ENTRY PHASE
   if (!activeHandle) {
     return (
       <main className="h-screen w-full bg-black text-slate-300 font-mono flex flex-col relative overflow-hidden selection:bg-[#d4af37] selection:text-black">
-        <SovereignEntry onExecute={setActiveHandle} />
+        <SovereignEntry onExecute={setActiveHandle} lang={lang} setLang={setLang} />
       </main>
     );
   }
@@ -22,7 +23,7 @@ export default function Home() {
   if (!intent) {
     return (
       <main className="h-screen w-full bg-[#050505] font-mono relative overflow-hidden">
-        <ProtocolCalibration onComplete={setIntent} />
+        <ProtocolCalibration onComplete={setIntent} lang={lang} />
       </main>
     );
   }
@@ -30,7 +31,7 @@ export default function Home() {
   // 3. ANALYSIS PHASE
   return (
     <main className="h-screen w-full bg-black text-slate-300 font-mono flex flex-col relative overflow-hidden selection:bg-[#d4af37] selection:text-black">
-      <SmartGrowthConsultant initialHandle={activeHandle} initialIntent={intent} />
+      <SmartGrowthConsultant initialHandle={activeHandle} initialIntent={intent} initialLang={lang} />
     </main>
   );
 }
