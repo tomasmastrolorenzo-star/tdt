@@ -3,7 +3,7 @@
 import { useState } from "react";
 import SovereignEntry from "@/components/sovereign-entry";
 import SmartGrowthConsultant from "@/components/trend-up/smart-growth-consultant";
-import ProtocolCalibration, { IntentDeclaration } from "@/components/ProtocolCalibration";
+import ProtocolCalibration, { IntentDeclaration } from "@/components/protocol-calibration";
 
 export default function Home() {
   const [activeHandle, setActiveHandle] = useState<string | null>(null);

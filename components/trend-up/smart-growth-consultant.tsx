@@ -90,7 +90,7 @@ enum OperationalState {
     SENTENCE = 6         // Final Phase 40 Output
 }
 
-import { IntentDeclaration } from "@/components/ProtocolCalibration";
+import { IntentDeclaration } from "@/components/protocol-calibration";
 
 export default function SmartGrowthConsultant({ initialHandle, initialIntent }: { initialHandle?: string, initialIntent?: IntentDeclaration }) {
     const [state, setState] = useState<OperationalState>(OperationalState.IDLE)
