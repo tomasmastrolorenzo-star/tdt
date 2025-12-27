@@ -395,9 +395,32 @@ function AnalyzeIntentHelper(intent: DeclaredIntent, stage: AssetStageResult, cl
     return analyzeIntent(intent, stage, classification);
 }
 
-export function runForensicPipeline(input: RawInputData, intent?: DeclaredIntent): DiagnosisObject {
+export type OperatorContext = {
+    operative_horizon: 'IMMEDIATE_RESULTS' | 'STRATEGIC_BUILD' | 'TRANSFORMATIONAL' | 'LEGACY_BUILD';
+    sacrifice_model: 'OPERATOR_ACTIVE' | 'CAPITAL_COMMITTED' | 'CONTROL_CEDED' | 'SKIN_IN_GAME';
+    failure_threshold: 'ROI_SENSITIVE' | 'GROWTH_DRIVEN' | 'MARKET_SHARE_FOCUS' | 'CAPITAL_CONSTRAINED';
+    operational_veto: 'COMPLIANCE_ABSOLUTE' | 'CONTROL_REQUIRED' | 'SCALABILITY_CONSCIOUS' | 'AUDIENCE_PRIMARY';
+    context_hash: string;
+}
+
+export function runForensicPipeline(input: RawInputData, intent?: DeclaredIntent, operatorContext?: OperatorContext): DiagnosisObject {
     const classification = classifyAsset(input);
     const stage = detectStage(input, classification);
+
+    // Phase 65: Apply Modifiers
+    let riskMod = 1.0;
+    let pricingMod = 1.0;
+
+    if (operatorContext) {
+        // Horizon Impact
+        if (operatorContext.operative_horizon === 'IMMEDIATE_RESULTS') riskMod *= 1.5;
+        if (operatorContext.operative_horizon === 'LEGACY_BUILD') riskMod *= 0.7;
+
+        // Sacrifice Impact
+        if (operatorContext.sacrifice_model === 'CAPITAL_COMMITTED') pricingMod *= 1.2;
+        if (operatorContext.sacrifice_model === 'OPERATOR_ACTIVE') pricingMod *= 0.9;
+    }
+
     const problems = prioritizeProblems(stage, classification);
     const context = getMetricsContext(classification);
 
@@ -417,6 +440,10 @@ export function runForensicPipeline(input: RawInputData, intent?: DeclaredIntent
         metrics_context: context,
         intervention_decision: intervention,
         intent_analysis: intentAnalysis,
-        declared_intent: intent
+        declared_intent: intent,
+        // Phase 65
+        operator_context: operatorContext,
+        risk_modifier: riskMod,
+        pricing_modifier: pricingMod
     };
 }
