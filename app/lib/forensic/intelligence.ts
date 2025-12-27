@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 // --- TYPES ---
 
 export type AssetType = 'PROFESIONAL' | 'CREADOR' | 'EMPRESA' | 'UNK';
-export type AssetSubtype = 'MEDICO_SALUD' | 'ARTISTA_VISUAL' | 'VIDEO_CREATOR' | 'MARCA_ESTABLECIDA' | 'REAL_ESTATE' | 'FOUNDER' | 'OTHER';
+export type AssetSubtype = 'MEDICO_SALUD' | 'ARTISTA_VISUAL' | 'VIDEO_CREATOR' | 'MARCA_ESTABLECIDA' | 'REAL_ESTATE' | 'FOUNDER' | 'ECOMMERCE_DTC' | 'OTHER';
 export type AssetStage = 'LOW' | 'MID' | 'HIGH';
 
 export interface RawInputData {
@@ -27,6 +27,8 @@ export interface AssetClassification {
     type: AssetType;
     subtype: AssetSubtype;
     confidence: number;
+    rationale: string;
+    decision: 'BLOCK' | 'DOWNGRADE' | 'ALLOW' | 'NO_INTERVENIR';
 }
 
 export interface DimensionScores {

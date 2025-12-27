@@ -148,8 +148,9 @@ export function detectVertical(subtype: string, intentNature: string): VerticalD
 
 export type SubverticalID =
     | 'MEDICAL_AESTHETICS' | 'MEDICAL_CLINIC' | 'LONGEVITY_SPECIALIST' | 'SURGEON_PRIVATE'
-    | 'REAL_ESTATE_LUXURY' | 'REAL_ESTATE_DEVELOPER' | 'REAL_ESTATE_AGENT_GENERAL'
-    | 'TRADING_EDUCATOR' | 'TRADING_FUND' | 'CRYPTO_PUBLIC_FIGURE'
+    | 'REAL_ESTATE_BROKER' | 'REAL_ESTATE_DEVELOPER' | 'REAL_ESTATE_INVESTOR'
+    | 'TRADING_FX' | 'TRADING_CRYPTO' | 'INVESTMENT_MENTOR'
+    | 'ECOMMERCE_DTC'
     | 'GENERIC_SUBVERTICAL';
 
 export interface SubverticalDefinition {
