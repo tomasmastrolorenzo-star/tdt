@@ -88,11 +88,11 @@ const COPY = {
     }
 };
 
-interface EntryProtocolProps {
+interface SovereignEntryProps {
     onExecute: (handle: string) => void;
 }
 
-export default function EntryProtocol({ onExecute }: EntryProtocolProps) {
+export default function SovereignEntry({ onExecute }: SovereignEntryProps) {
     const [step, setStep] = useState<SequenceState>('BOOT');
     const [lang, setLang] = useState<Language>('ES');
     const [inputValue, setInputValue] = useState("");

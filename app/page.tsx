@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import EntryProtocol from "@/components/entry-protocol";
+import SovereignEntry from "@/components/sovereign-entry";
 import SmartGrowthConsultant from "@/components/trend-up/smart-growth-consultant";
 
 export default function Home() {
@@ -12,7 +12,7 @@ export default function Home() {
 
       {/* PHASE 60: STATE MANAGER */}
       {!activeHandle ? (
-        <EntryProtocol onExecute={setActiveHandle} />
+        <SovereignEntry onExecute={setActiveHandle} />
       ) : (
         <SmartGrowthConsultant initialHandle={activeHandle} />
       )}
