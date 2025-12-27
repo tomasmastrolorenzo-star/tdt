@@ -435,42 +435,65 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
     }
 
     if (state === OperationalState.SENTENCE && backendUX && diagnosis) {
+        const closure = (backendUX as any)?.closure || {
+            status_label: backendUX.title,
+            determinant: "ANALYSIS COMPLETED",
+            consequence: backendUX.message,
+            action_label: backendUX.cta
+        };
+
         return (
-            <div className="min-h-screen bg-[#0B0E11] flex flex-col">
-                <Header status={txt.sentence_header} />
-                <div className="flex-1 flex flex-col items-center justify-center p-4">
-                    <div className="w-full max-w-xl border border-white/10 bg-[#111418] p-8 space-y-8 animate-in slide-in-from-bottom-4 bg-grid-white/[0.02]">
+            <div className="h-screen w-full bg-[#050505] flex flex-col items-center justify-center p-6 relative overflow-hidden">
+                <div className="w-full max-w-2xl space-y-12 animate-in fade-in duration-1000">
 
-                        {/* Classification Tags */}
-                        <div className="flex gap-4 border-b border-white/5 pb-4">
-                            <div className="text-[10px] font-mono bg-white/5 text-[#9AA0A6] px-2 py-1 uppercase">{diagnosis.asset_classification.subtype}</div>
-                            <div className="text-[10px] font-mono bg-[#1877F2]/10 text-[#1877F2] px-2 py-1 uppercase">{txt.risk}: {diagnosis.intervention_risk}</div>
-                        </div>
+                    {/* BLOCK 1: FINAL ASSET STATUS */}
+                    <div className="space-y-4 border-l-2 border-[#d4af37] pl-6">
+                        <span className="block text-[10px] text-gray-500 tracking-[0.3em] uppercase">FINAL ASSET STATUS</span>
+                        <h1 className="text-2xl md:text-4xl text-white font-mono font-bold tracking-tight uppercase leading-tight">
+                            {closure.status_label}
+                        </h1>
+                    </div>
 
-                        {/* Main Sentence */}
-                        <div className="space-y-4">
-                            <h1 className="text-xl md:text-2xl text-[#E6E8EB] font-mono font-bold tracking-tight uppercase leading-snug">
-                                {backendUX.title}
-                            </h1>
-                            <div className="space-y-2">
-                                <span className="text-[10px] text-[#1877F2] font-mono uppercase tracking-widest">{txt.detail}</span>
-                                <p className="text-sm text-[#9AA0A6] font-mono leading-relaxed whitespace-pre-line">
-                                    {backendUX.message}
-                                </p>
-                            </div>
-                        </div>
+                    {/* BLOCK 2: PRIMARY DETERMINANT */}
+                    <div className="space-y-2 pl-6 border-l border-white/10">
+                        <span className="block text-[10px] text-[#1877F2] tracking-[0.3em] uppercase">PRIMARY DETERMINANT</span>
+                        <p className="text-sm md:text-base text-gray-300 font-mono uppercase tracking-wide">
+                            {closure.determinant}
+                        </p>
+                    </div>
 
-                        <div className="space-y-3 pt-4">
-                            <button className="w-full bg-[#E6E8EB] hover:bg-white text-black py-4 font-mono text-xs font-bold tracking-[0.2em] uppercase transition-all" onClick={() => { }}>
-                                [ {backendUX.cta} ]
-                            </button>
-                            <button onClick={() => setShowAudit(true)} className="w-full text-[#5f6368] hover:text-[#9AA0A6] py-2 font-mono text-[10px] uppercase tracking-widest transition-colors flex items-center justify-center gap-2">
-                                <Terminal className="w-3 h-3" /> [ VIEW AUDIT TRACE ]
+                    {/* BLOCK 3: OPERATIONAL CONSEQUENCE */}
+                    <div className="space-y-2 pl-6 border-l border-white/10">
+                        <span className="block text-[10px] text-red-500 tracking-[0.3em] uppercase">OPERATIONAL CONSEQUENCE</span>
+                        <p className="text-sm md:text-base text-gray-400 font-mono italic">
+                            "{closure.consequence}"
+                        </p>
+                    </div>
+
+                    {/* BLOCK 4: AVAILABLE ACTION */}
+                    <div className="pt-8 space-y-6">
+                        <button className="w-full bg-white hover:bg-gray-200 text-black py-5 font-mono text-xs font-bold tracking-[0.25em] uppercase transition-all" onClick={() => { }}>
+                            [ {closure.action_label} ]
+                        </button>
+
+                        {/* BLOCK 5: AUDIT ACCESS */}
+                        <div className="flex justify-center">
+                            <button onClick={() => setShowAudit(true)} className="text-[#5f6368] hover:text-white transition-colors text-[10px] uppercase tracking-[0.2em] flex items-center gap-2">
+                                <Terminal className="w-3 h-3" />
+                                VIEW AUDIT TRACE
                             </button>
                         </div>
                     </div>
+
+                    {/* BLOCK 5: FINALITY SEAL */}
+                    <div className="text-center pt-8 opacity-40">
+                        <p className="text-[9px] text-gray-600 uppercase tracking-[0.2em]">
+                            THIS DIAGNOSIS IS FINAL FOR THE CURRENT SESSION.<br />
+                            RE-EVALUATION LOCKED FOR 24 HOURS.
+                        </p>
+                    </div>
+
                 </div>
-                <Footer msg="SESSION ENDED" />
             </div>
         )
     }

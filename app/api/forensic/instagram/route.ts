@@ -231,50 +231,31 @@ export async function POST(request: Request) {
         } else if (pricing.tier === 'LOW_TICKET') {
             routingTarget = 'CHECKOUT';
             accessLevel = 0; // Self-serve
-        } else {
-            routingTarget = 'BLOCK';
-            accessLevel = 0;
+            closure.status_label = "VIABLE FOR GUIDED CORRECTION";
+            closure.determinant = "STRUCTURAL COHERENCE BELOW MINIMUM VIABLE LEVEL";
+            closure.consequence = "FURTHER EXECUTION WITHOUT STRUCTURE WILL DEGRADE POSITIONING";
+            closure.action_label = "ACCESS GUIDED OPTIMIZATION LAYER";
+        } else if (pricing.tier === 'MID_TICKET') {
+            closure.status_label = "VIABLE FOR TECHNICAL REALIGNMENT";
+            closure.determinant = "ACCELERATION VECTOR TRAPPED BY ASYMMETRY";
+            closure.consequence = "INERTIA DETECTED IN GROWTH MECHANISM";
+            closure.action_label = "INITIATE TECHNICAL REALIGNMENT";
+        } else if (pricing.tier === 'HIGH_TICKET') {
+            closure.status_label = "VIABLE FOR STRUCTURAL INTERVENTION";
+            closure.determinant = "HIGH AUTHORITY WITH SCALABILITY POTENTIAL";
+            closure.consequence = "AUTO-SCALING ENABLED BY STRUCTURAL INTEGRITY";
+            closure.action_label = "REQUEST STRUCTURAL INTERVENTION PROTOCOL";
         }
 
-        // 6. UX / MESSAGE GENERATION (Phase 40 + 52 + 53)
-        // ----------------------------------------------------
-        let uxTitle = "ESTADO DEL ACTIVO: NO DETERMINADO";
-        let uxMessage = "Análisis finalizado.";
-        let uxCTA = "FINALIZAR SESIÓN";
-        let uxStatus = "DONE";
-
-        if (classification.decision === 'BLOCK' || classification.decision === 'NO_INTERVENIR') {
-            uxTitle = "ESTADO DEL ACTIVO: NO APTO PARA INTERVENCION";
-            uxMessage = classification.rationale.toUpperCase();
-            uxCTA = "PROTOCOLO DE SEGURIDAD";
-            uxStatus = "BLOCKED";
-        } else {
-            // Use Pricing Logic to drive UX - BRUTAL MINIMALISM (A4)
-            uxTitle = `ESTADO DEL ACTIVO: ${pricing.label.replace(/_/g, " ")}`;
-
-            // Single Sentence Judgment
-            // If locked, the reason is the punishmnent.
-            uxMessage = pricing.reason.toUpperCase();
-
-            // Override message for specific Phase 61 punishments
-            if (pricing.tier === 'LOW_TICKET' && intent?.ambition === 'EXPANSION') {
-                uxMessage = "CONFIGURACION DECLARADA EXCEDE CAPACIDAD OPERATIVA DETECTADA";
-            }
-
-            uxCTA = pricing.tier === 'HIGH_TICKET' ? "SOLICITAR INTERVENCION" : "INICIAR OPTIMIZACION";
-            if (pricing.tier === 'MID_TICKET') uxCTA = "INICIAR AJUSTE TECNICO";
-            if (pricing.tier === 'LOW_TICKET') uxCTA = "ACCEDER A GUIA TECNICA";
-
-            uxStatus = "ALLOW";
-        }
-
+        // UX Object (Legacy + Closure)
         const uxContent = {
-            title: uxTitle,
-            message: uxMessage,
-            cta: uxCTA,
-            status: uxStatus,
+            title: closure.status_label,
+            message: closure.determinant,
+            cta: closure.action_label,
+            status: (pricing.tier === 'NONE' || classification.decision === 'BLOCK') ? "BLOCKED" : "ALLOW",
             roadmap: { phase1: "Diagnóstico", phase2: "Intervención", phase3: "Escala" },
-            disclaimer: "Reporte generado por TDT Playbook Engine v1.0"
+            disclaimer: "THIS DIAGNOSIS IS FINAL FOR THE CURRENT SESSION. RE-EVALUATION LOCKED FOR 24 HOURS.",
+            closure: closure // New Payload
         };
 
         const responsePayload = {
