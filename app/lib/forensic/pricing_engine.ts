@@ -80,6 +80,10 @@ export function calculateImpliedPricing(
         }
     }
 
+    const stage = diagnosis.asset_stage.stage;
+    const subvertical = (classification.subvertical_detected || 'GENERIC_SUBVERTICAL') as SubverticalID;
+    const nextStep = playbook.next_step;
+
     // 2. STAGE GATES
     // LOW_STAGE + Any Vertical -> Never HIGH_TICKET
     if (stage === 'LOW') {
@@ -139,7 +143,6 @@ export function calculateImpliedPricing(
     // 4. HIGH TICKET GATES
     const isMidOrHigh = stage === 'MID' || stage === 'HIGH';
     const riskNotHigh = diagnosis.asset_stage.dimension_scores.riesgo < 0.7; // 0.8 is block usually
-    const infrastructureParams = diagnosis.asset_stage.dimension_scores.infraestructura || 0; // Assuming minimal presence
 
     if (isMidOrHigh && riskNotHigh) {
         // ELIGIBLE FOR HIGH TICKET
