@@ -90,7 +90,9 @@ enum OperationalState {
     SENTENCE = 6         // Final Phase 40 Output
 }
 
-export default function SmartGrowthConsultant({ initialHandle }: { initialHandle?: string }) {
+import { IntentDeclaration } from "@/components/ProtocolCalibration";
+
+export default function SmartGrowthConsultant({ initialHandle, initialIntent }: { initialHandle?: string, initialIntent?: IntentDeclaration }) {
     const [state, setState] = useState<OperationalState>(OperationalState.IDLE)
     const [handle, setHandle] = useState(initialHandle || "")
     const [lang, setLang] = useState<'EN' | 'ES' | 'PT'>('EN')
@@ -109,7 +111,7 @@ export default function SmartGrowthConsultant({ initialHandle }: { initialHandle
     // Timers & Logic
     const [revelationStep, setRevelationStep] = useState(0) // 0: Asymmetry, 1: Inertia
     const [calibrationStep, setCalibrationStep] = useState(0)
-    const [intent, setIntent] = useState<IntentData>({})
+    const [intent, setIntent] = useState<any>(initialIntent || {})
 
     const txt = LANG_TEXT[lang]
 
@@ -148,10 +150,6 @@ export default function SmartGrowthConsultant({ initialHandle }: { initialHandle
         }
     }
 
-    const confirmValidation = () => {
-        setState(OperationalState.CALIBRATION)
-    }
-
     const runDeepAnalysis = async () => {
         setState(OperationalState.DEEP_ANALYSIS)
 
@@ -172,6 +170,14 @@ export default function SmartGrowthConsultant({ initialHandle }: { initialHandle
                 }, 10000)
             }
         })
+    }
+
+    const confirmValidation = () => {
+        if (initialIntent) {
+            runDeepAnalysis()
+        } else {
+            setState(OperationalState.CALIBRATION)
+        }
     }
 
     const handleCalibration = (key: string, val: string) => {
