@@ -41,6 +41,7 @@ export default function AuditTrace({ data, intent, onClose }: AuditTraceProps) {
                         <div className="text-right">
                             <span className="block text-[10px] uppercase text-gray-600 mb-1">TIMESTAMP (UTC)</span>
                             <span className="text-white tracking-wider">{timestamp}</span>
+                            <span className="block text-[8px] uppercase text-gray-700 mt-1">ENGINE V1.2.4 (FORENSIC)</span>
                         </div>
                     </div>
 
@@ -78,19 +79,27 @@ export default function AuditTrace({ data, intent, onClose }: AuditTraceProps) {
                             <Activity className="w-3 h-3" />
                             DETECTED SIGNALS
                         </h3>
-                        <div className="grid grid-cols-3 gap-4 p-4 border border-white/5 bg-white/[0.02]">
+                        <div className="grid grid-cols-2 gap-4 p-4 border border-white/5 bg-white/[0.02]">
                             <div>
-                                <span className="block text-[10px] text-gray-600 uppercase">CLASSIFICATION</span>
-                                <span className="text-white uppercase">{data.asset_classification?.type}</span>
+                                <span className="block text-[10px] text-gray-600 uppercase">ASSET VERTICAL</span>
+                                <span className="text-white uppercase">
+                                    {data.asset_classification?.type} / {data.asset_classification?.subtype}
+                                </span>
+                            </div>
+                            <div>
+                                <span className="block text-[10px] text-gray-600 uppercase">RISK MULTIPLIER</span>
+                                <span className={`uppercase font-bold ${data.asset_stage?.dimension_scores?.riesgo > 0.7 ? 'text-red-500' : 'text-[#d4af37]'}`}>
+                                    {data.asset_stage?.dimension_scores?.riesgo?.toFixed(2) || '1.0'}x
+                                </span>
                             </div>
                             <div>
                                 <span className="block text-[10px] text-gray-600 uppercase">DETECTED STAGE</span>
                                 <span className="text-white uppercase">{data.asset_stage?.stage}</span>
                             </div>
                             <div>
-                                <span className="block text-[10px] text-gray-600 uppercase">RISK FACTOR</span>
-                                <span className={`uppercase font-bold ${data.asset_stage?.dimension_scores?.riesgo > 0.7 ? 'text-red-500' : 'text-green-500'}`}>
-                                    {(data.asset_stage?.dimension_scores?.riesgo * 100).toFixed(1)}%
+                                <span className="block text-[10px] text-gray-600 uppercase">COHERENCE SCORE</span>
+                                <span className="text-white uppercase">
+                                    {(data.asset_stage?.composite_score * 100).toFixed(0)}/100
                                 </span>
                             </div>
                         </div>

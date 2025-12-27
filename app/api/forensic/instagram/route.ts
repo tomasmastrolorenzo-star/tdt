@@ -244,23 +244,26 @@ export async function POST(request: Request) {
         let uxStatus = "DONE";
 
         if (classification.decision === 'BLOCK' || classification.decision === 'NO_INTERVENIR') {
-            uxTitle = "ESTADO DEL ACTIVO: INTERVENCIÓN BLOQUEADA";
+            uxTitle = "ESTADO DEL ACTIVO: NO APTO PARA INTERVENCION";
             uxMessage = classification.rationale.toUpperCase();
             uxCTA = "PROTOCOLO DE SEGURIDAD";
             uxStatus = "BLOCKED";
         } else {
-            // Use Pricing Logic to drive UX
-            uxTitle = "ESTADO DEL ACTIVO: VIABLE PARA INTERVENCIÓN ESTRUCTURAL";
-            uxMessage = "PROTOCOLO DE ACTIVACIÓN: " + pricing.reason; // Use Pricing Reason which is derived from Playbook+Logic
+            // Use Pricing Logic to drive UX - BRUTAL MINIMALISM (A4)
+            uxTitle = `ESTADO DEL ACTIVO: ${pricing.label.replace(/_/g, " ")}`;
 
-            // Override message with Playbook Next Step detail if locked
-            if (pricing.is_locked && playbookResult.next_step) {
-                uxMessage = `PROTOCOLO ACTIVO (${pricing.label}): ${playbookResult.reason.toUpperCase()}\n\nFASE OBLIGATORIA DETECTADA: ${playbookResult.next_step}`;
+            // Single Sentence Judgment
+            // If locked, the reason is the punishmnent.
+            uxMessage = pricing.reason.toUpperCase();
+
+            // Override message for specific Phase 61 punishments
+            if (pricing.tier === 'LOW_TICKET' && intent?.ambition === 'EXPANSION') {
+                uxMessage = "CONFIGURACION DECLARADA EXCEDE CAPACIDAD OPERATIVA DETECTADA";
             }
 
-            uxCTA = pricing.tier === 'HIGH_TICKET' ? "SOLICITAR INTERVENCIÓN" : "INICIAR OPTIMIZACIÓN";
-            if (pricing.tier === 'MID_TICKET') uxCTA = "INICIAR AJUSTE TÉCNICO";
-            if (pricing.tier === 'LOW_TICKET') uxCTA = "ACCEDER A GUÍA TÉCNICA";
+            uxCTA = pricing.tier === 'HIGH_TICKET' ? "SOLICITAR INTERVENCION" : "INICIAR OPTIMIZACION";
+            if (pricing.tier === 'MID_TICKET') uxCTA = "INICIAR AJUSTE TECNICO";
+            if (pricing.tier === 'LOW_TICKET') uxCTA = "ACCEDER A GUIA TECNICA";
 
             uxStatus = "ALLOW";
         }

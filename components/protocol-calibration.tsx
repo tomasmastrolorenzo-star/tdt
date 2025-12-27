@@ -75,23 +75,39 @@ export default function ProtocolCalibration({ onComplete }: ProtocolCalibrationP
     const [data, setData] = useState<IntentDeclaration>({ nature: '', market: '', objective: '', commitment: '' });
     const [isLocking, setIsLocking] = useState(false); // Visual transition for "LOCKED"
 
+    const [showFriction, setShowFriction] = useState(false); // New friction state
+
     const handleSelect = (key: keyof IntentDeclaration, value: string) => {
+        // FRICTION FOR FULL COMMITMENT (User Request A1)
+        if (key === 'commitment' && value === 'FULL') {
+            setShowFriction(true);
+            setTimeout(() => {
+                setShowFriction(false);
+                finalizeSelection(key, value);
+            }, 3000); // 3s Psychological Pain
+            return;
+        }
+
         setIsLocking(true);
         setTimeout(() => {
-            const newData = { ...data, [key]: value };
-            setData(newData);
+            finalizeSelection(key, value);
+        }, 800);
+    };
 
-            // Advance Step
-            if (step === 'NATURE') setStep('MARKET');
-            else if (step === 'MARKET') setStep('OBJECTIVE');
-            else if (step === 'OBJECTIVE') setStep('COMMITMENT');
-            else if (step === 'COMMITMENT') {
-                setStep('LOCKED');
-                setTimeout(() => onComplete(newData), 2000); // Final lock delay
-            }
+    const finalizeSelection = (key: keyof IntentDeclaration, value: string) => {
+        const newData = { ...data, [key]: value };
+        setData(newData);
 
-            setIsLocking(false);
-        }, 800); // "Parameter Locked" delay
+        // Advance Step
+        if (step === 'NATURE') setStep('MARKET');
+        else if (step === 'MARKET') setStep('OBJECTIVE');
+        else if (step === 'OBJECTIVE') setStep('COMMITMENT');
+        else if (step === 'COMMITMENT') {
+            setStep('LOCKED');
+            setTimeout(() => onComplete(newData), 2000);
+        }
+
+        setIsLocking(false);
     };
 
     return (
@@ -112,7 +128,26 @@ export default function ProtocolCalibration({ onComplete }: ProtocolCalibrationP
             </div>
 
             <AnimatePresence mode='wait'>
-                {step !== 'LOCKED' && !isLocking ? (
+                {showFriction ? (
+                    <motion.div
+                        key="friction"
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 1.1 }}
+                        className="z-30 flex flex-col items-center justify-center text-center space-y-8 bg-red-900/10 p-12 border border-red-500/20 backdrop-blur-md"
+                    >
+                        <AlertTriangle className="w-16 h-16 text-red-500 animate-pulse" />
+                        <div className="space-y-4">
+                            <h2 className="text-3xl text-red-500 font-black tracking-widest uppercase glitch-effect">
+                                HIGH COMMITMENT MODE
+                            </h2>
+                            <div className="text-xs text-red-400 font-mono space-y-1 tracking-[0.2em] uppercase">
+                                <p>STRUCTURAL SCRUTINY ENABLED</p>
+                                <p>IRREVERSIBLE DECLARATION</p>
+                            </div>
+                        </div>
+                    </motion.div>
+                ) : step !== 'LOCKED' && !isLocking ? (
                     <motion.div
                         key={step}
                         initial={{ opacity: 0, x: 20 }}
