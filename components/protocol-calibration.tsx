@@ -19,8 +19,8 @@ type Step = 'NATURE' | 'MARKET' | 'OBJECTIVE' | 'COMMITMENT' | 'LOCKED';
 
 const LAYERS = {
     NATURE: {
-        title: "ASSET NATURE CONFIGURATION",
-        subtitle: "SELECT PRIMARY CLASSIFICATION",
+        title: "ASSET CLASS IDENTIFICATION",
+        subtitle: "DECLARE PRIMARY NATURE",
         options: [
             { id: 'PROFESSIONAL', label: 'PROFESSIONAL ENTITY', sub: 'Doctor · Surgeon · Consultant · Expert' },
             { id: 'CREATOR', label: 'CREATOR / PUBLIC FIGURE', sub: 'Influencer · Artist · Educator' },
@@ -30,8 +30,8 @@ const LAYERS = {
         ]
     },
     MARKET: {
-        title: "TARGET MARKET SPECIFICATION",
-        subtitle: "DEFINE OPERATING REGION",
+        title: "OPERATIONAL TERRITORY",
+        subtitle: "DEFINE REGIONAL JURISDICTION",
         options: [
             { id: 'NA', label: 'NORTH AMERICA', sub: 'USA · Canada' },
             { id: 'EU', label: 'EUROPE', sub: 'EU Zone · UK' },
@@ -56,8 +56,8 @@ const LAYERS = {
         ]
     },
     COMMITMENT: {
-        title: "DECLARED COMMITMENT LEVEL",
-        subtitle: "SELECT OPERATIONAL DEPTH",
+        title: "OPERATIONAL INTENSITY",
+        subtitle: "DECLARE RESOURCE ALLOCATION",
         options: [
             { id: 'TACTICAL', label: 'TACTICAL IMPROVEMENTS', sub: 'Low involvement' },
             { id: 'STRUCTURAL', label: 'STRUCTURAL OPTIMIZATION', sub: 'Medium involvement' },
@@ -92,7 +92,7 @@ export default function ProtocolCalibration({ onComplete, lang = 'EN' }: Protoco
         setIsLocking(true);
         setTimeout(() => {
             finalizeSelection(key, value);
-        }, 800);
+        }, 500);
     };
 
     const finalizeSelection = (key: keyof IntentDeclaration, value: string) => {
@@ -172,7 +172,7 @@ export default function ProtocolCalibration({ onComplete, lang = 'EN' }: Protoco
                                 <button
                                     key={opt.id}
                                     onClick={() => handleSelect(step.toLowerCase() as keyof IntentDeclaration, opt.id)}
-                                    className="group text-left p-6 border border-gray-800 hover:border-white hover:bg-white/5 transition-all duration-300 flex justify-between items-center"
+                                    className="group text-left p-6 border border-gray-900 bg-black hover:border-white transition-all duration-100 flex justify-between items-center"
                                 >
                                     <div>
                                         <div className="text-white text-lg tracking-wide group-hover:text-[#d4af37] transition-colors uppercase">

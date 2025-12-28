@@ -1,3 +1,4 @@
 {
-  "/api/forensic/instagram/route": "app/api/forensic/instagram/route.js"
+  "/api/test/medical-verification/route": "app/api/test/medical-verification/route.js",
+  "/page": "app/page.js"
 }

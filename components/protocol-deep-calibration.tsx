@@ -41,27 +41,27 @@ export default function ProtocolDeepCalibration({ onComplete }: ProtocolDeepCali
 
         setTimeout(() => {
             onComplete({ ...finalData, context_hash: mockHash });
-        }, 1500);
+        }, 2000);
     };
 
     const renderOption = (label: string, value: string, currentStepKey: keyof OperatorContext, description?: string) => (
         <button
             onClick={() => handleSelection(currentStepKey, value)}
             disabled={isThinking}
-            className="w-full text-left p-4 border border-white/10 hover:border-[#d4af37] hover:bg-white/5 transition-all group relative overflow-hidden"
+            className="w-full text-left p-4 border border-white/10 bg-[#0A0A0A] hover:border-white hover:bg-black transition-all duration-100 group relative overflow-hidden"
         >
             <div className="flex justify-between items-center relative z-10">
                 <div>
                     <span className="block text-xs font-mono text-gray-400 group-hover:text-white transition-colors tracking-widest uppercase">
-                        {label}
+                        [{label}]
                     </span>
                     {description && (
-                        <span className="block text-[10px] text-gray-600 mt-1 font-mono tracking-tight">
+                        <span className="block text-[10px] text-gray-600 group-hover:text-gray-400 mt-1 font-mono tracking-tight uppercase">
                             {description}
                         </span>
                     )}
                 </div>
-                <div className="w-2 h-2 bg-white/10 group-hover:bg-[#d4af37] rotate-45 transition-all" />
+                <div className="w-2 h-2 bg-white/10 group-hover:bg-[#d4af37] rotate-0 transition-all" />
             </div>
         </button>
     );
@@ -96,7 +96,7 @@ export default function ProtocolDeepCalibration({ onComplete }: ProtocolDeepCali
                                 initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}
                                 className="space-y-4"
                             >
-                                <p className="text-xs text-gray-400 font-mono mb-6">Declare measurable results commitment window:</p>
+                                <p className="text-xs text-gray-400 font-mono mb-6 uppercase tracking-widest">DECLARE MEASURABLE RESULTS COMMITMENT WINDOW</p>
                                 {renderOption("IMMEDIATE_RESULTS", "IMMEDIATE_RESULTS", "operative_horizon", "0–3 months")}
                                 {renderOption("STRATEGIC_BUILD", "STRATEGIC_BUILD", "operative_horizon", "4–9 months")}
                                 {renderOption("TRANSFORMATIONAL", "TRANSFORMATIONAL", "operative_horizon", "10–18 months")}
@@ -111,7 +111,7 @@ export default function ProtocolDeepCalibration({ onComplete }: ProtocolDeepCali
                                 initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}
                                 className="space-y-4"
                             >
-                                <p className="text-xs text-gray-400 font-mono mb-6">Select the primary resource you are willing to sacrifice:</p>
+                                <p className="text-xs text-gray-400 font-mono mb-6 uppercase tracking-widest">DECLARE PRIMARY RESOURCE ALLOCATION</p>
                                 {renderOption("OPERATOR_ACTIVE", "OPERATOR_ACTIVE", "sacrifice_model", "≥20h/week personal involvement")}
                                 {renderOption("CAPITAL_COMMITTED", "CAPITAL_COMMITTED", "sacrifice_model", "Liquid capital allocation")}
                                 {renderOption("CONTROL_CEDED", "CONTROL_CEDED", "sacrifice_model", "Delegation of control")}
@@ -126,7 +126,7 @@ export default function ProtocolDeepCalibration({ onComplete }: ProtocolDeepCali
                                 initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}
                                 className="space-y-4"
                             >
-                                <p className="text-xs text-gray-400 font-mono mb-6">Define non-viability condition:</p>
+                                <p className="text-xs text-gray-400 font-mono mb-6 uppercase tracking-widest">ESTABLISH NON-VIABILITY CONDITION</p>
                                 {renderOption("ROI_SENSITIVE", "ROI_SENSITIVE", "failure_threshold", "ROI < 1.5x")}
                                 {renderOption("GROWTH_DRIVEN", "GROWTH_DRIVEN", "failure_threshold", "<20% YoY growth")}
                                 {renderOption("MARKET_SHARE_FOCUS", "MARKET_SHARE_FOCUS", "failure_threshold", "Competitive position loss")}
@@ -141,7 +141,7 @@ export default function ProtocolDeepCalibration({ onComplete }: ProtocolDeepCali
                                 initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}
                                 className="space-y-4"
                             >
-                                <p className="text-xs text-gray-400 font-mono mb-6">Select the single condition that forces immediate exit:</p>
+                                <p className="text-xs text-gray-400 font-mono mb-6 uppercase tracking-widest">DECLARE IMMEDIATE EXIT CONDITION</p>
                                 {renderOption("COMPLIANCE_ABSOLUTE", "COMPLIANCE_ABSOLUTE", "operational_veto", "Illegal / regulatory risk")}
                                 {renderOption("CONTROL_REQUIRED", "CONTROL_REQUIRED", "operational_veto", "External dependency")}
                                 {renderOption("SCALABILITY_CONSCIOUS", "SCALABILITY_CONSCIOUS", "operational_veto", "Capacity exceeded")}

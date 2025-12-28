@@ -170,7 +170,7 @@ export default function SovereignEntry({ onExecute, lang, setLang }: SovereignEn
 
                         <button
                             onClick={() => setStep('HERO')}
-                            className="px-8 py-3 bg-[#111] border border-[#333] hover:border-white hover:bg-white hover:text-black transition-all duration-500 text-xs tracking-[0.2em] text-gray-400"
+                            className="px-8 py-3 bg-black border border-[#333] hover:border-[#1877F2] hover:text-[#1877F2] transition-colors duration-200 text-xs tracking-[0.2em] text-gray-500 font-bold uppercase"
                         >
                             {txt.acknowledge}
                         </button>

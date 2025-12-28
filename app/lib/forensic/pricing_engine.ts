@@ -1,206 +1,69 @@
-import { DiagnosisObject } from './intelligence';
-import { ClassifierResult } from './value_classifier';
-import { PlaybookResult } from './playbook_engine';
-import { SubverticalID } from './knowledge_base';
+import { GapAnalysis } from "./gap_engine";
+import { PlaybookSelection } from "./playbook_matrix";
+import { RiskAssessment } from "./risk_engine";
 
-export type PricingTier = 'LOW_TICKET' | 'MID_TICKET' | 'HIGH_TICKET' | 'NONE';
-
-export interface PricingResult {
-    tier: PricingTier;
-    label: string;
-    allowed_steps: string[];
-    reason: string;
-    is_locked: boolean;
-    progressive_path: PricingTier[];
+export interface FinalPricing {
+    base_price: number;
+    modifier: number;
+    final_price: number;
+    currency: string;
+    tier_label: string;
 }
 
-export function calculateImpliedPricing(
-    diagnosis: DiagnosisObject,
-    classification: ClassifierResult,
-    playbook: PlaybookResult
-): PricingResult {
+export function determinePricing(
+    playbook: PlaybookSelection,
+    gap: GapAnalysis,
+    subvertical: string,
+    risk: RiskAssessment
+): FinalPricing {
 
-    // 1. HARD BLOCKS (Safety First)
-    if (classification.decision === 'BLOCK' || classification.decision === 'NO_INTERVENIR') {
-        return {
-            tier: 'NONE',
-            label: 'BLOQUEADO',
-            allowed_steps: [],
-            reason: classification.rationale,
-            is_locked: true,
-            progressive_path: []
-        };
-    }
+    // 1. BASE PRICE BY SUBVERTICAL (Mocked Bases)
+    let base = 1000;
+    if (subvertical === 'SALUD_ESTETICA') base = 2500;
+    if (subvertical === 'FINANZAS_CRYPTO') base = 3000;
+    if (subvertical === 'NUTRICION') base = 1500;
 
-    const intent = diagnosis.declared_intent;
-    const ctx = diagnosis.operator_context;
+    // 2. GAP MODIFIER (Downgrade logic)
+    // Gap Score 0.0 -> Perfect match -> Mod 1.0
+    // Gap Score 1.0 -> Huge Gap -> Mod 0.3 (Massive Downgrade)
+    // Formula: 1.0 - (Gap Score * 0.7)
 
-    // --- PHASE 65: OPERATOR CONSISTENCY CHECKS (Silent Veto) ---
-    if (ctx) {
-        // BLOCK 1: IMMEDIATE FAILURES
-        if (ctx.operative_horizon === 'IMMEDIATE_RESULTS' && ctx.sacrifice_model === 'CAPITAL_COMMITTED') {
-            return {
-                tier: 'NONE',
-                label: 'BLOQUEO_POR_COHERENCIA',
-                allowed_steps: [],
-                reason: "Capital cannot curb structural latency. Immediate results expectation with capital lever is a failure pattern.",
-                is_locked: true,
-                progressive_path: []
-            };
-        }
-        if (ctx.operational_veto === 'COMPLIANCE_ABSOLUTE' && ctx.failure_threshold === 'GROWTH_DRIVEN') {
-            return {
-                tier: 'NONE',
-                label: 'BLOQUEO_NORMATIVO',
-                allowed_steps: [],
-                reason: "Growth-driven failure threshold is incompatible with absolute compliance veto.",
-                is_locked: true,
-                progressive_path: []
-            };
-        }
+    let mod = 1.0 - (gap.score * 0.7);
+    mod = Math.max(0.3, parseFloat(mod.toFixed(2))); // Floor at 0.3
 
-        // BLOCK 2: FORCED DOWNGRADES
-        if (ctx.sacrifice_model === 'CONTROL_CEDED' && ctx.operative_horizon === 'TRANSFORMATIONAL') {
-            return {
-                tier: 'LOW_TICKET',
-                label: 'ALINEACION_OPERATIVA',
-                allowed_steps: ['INFRASTRUCTURE_SETUP'],
-                reason: "Ceding control during transformational phase requires architectural oversight first.",
-                is_locked: true,
-                progressive_path: ['LOW_TICKET', 'MID_TICKET']
-            };
-        }
-    }
-
-    // --- PHASE 61: INTENT-BASED GATES ---
-
-    if (intent) {
-        // CASE C: MEDICAL RISK (Medical + Stage Low + Aggressive Ambition)
-        if (diagnosis.asset_classification.subtype === 'MEDICO_SALUD') {
-            if (diagnosis.asset_stage.stage === 'LOW' && (intent.ambition === 'EXPANSION' || intent.ambition === 'LIDERAZGO')) {
-                return {
-                    tier: 'NONE',
-                    label: 'PROTOCOLO DE SEGURIDAD',
-                    allowed_steps: [],
-                    reason: "Medical Entity with insufficient digital footprint for aggressive scaling. Risk of malpractice signaling.",
-                    is_locked: true,
-                    progressive_path: []
-                };
-            }
-        }
-
-        // CASE B: ASPIRATIONAL MISMATCH (Scale Ambition + Low Stage)
-        if (intent.ambition === 'EXPANSION' && diagnosis.asset_stage.stage === 'LOW') {
-            return {
-                tier: 'LOW_TICKET',
-                label: 'OPTIMIZACION_BASICA',
-                allowed_steps: ['INFRASTRUCTURE_SETUP', 'CONVERSION_OPTIMIZATION'],
-                reason: "Ambition (Scale) exceeds current structural capacity. Foundation required.",
-                is_locked: true,
-                progressive_path: ['LOW_TICKET', 'MID_TICKET']
-            };
-        }
-
-        // COMMITMENT FILTER (Not Full -> Mid Cap)
-        if (intent.commitment !== 'FULL') {
-            // Cannot access High Ticket
-            if (diagnosis.asset_stage.stage === 'HIGH') {
-                // Downgrade High to Mid if no commitment
-                return {
-                    tier: 'MID_TICKET',
-                    label: 'AJUSTE_TECNICO',
-                    allowed_steps: playbook.modules.slice(0, 3), // Partial access
-                    reason: "High Ticket requires FULL commitment. Scope limited to Technical Adjustments.",
-                    is_locked: false,
-                    progressive_path: ['MID_TICKET', 'HIGH_TICKET']
-                };
+    // 3. COMPLIANCE PATH (Medical Hardening)
+    // If High Risk (but not Blocked) + Low Gap (Competent) -> Upsell Compliance
+    let isCompliance = false;
+    if (subvertical === 'SALUD_ESTETICA' || subvertical === 'MEDICO_SALUD') {
+        if (risk.score >= 0.7 && risk.score < 0.9) {
+            if (gap.score <= 0.3) {
+                // COMPLIANCE PATH TRIGGERED
+                // Premium Doctor needing legal structuring
+                mod = 1.5; // +50% Markup
+                isCompliance = true;
             }
         }
     }
 
-    const stage = diagnosis.asset_stage.stage;
-    const subvertical = (classification.subvertical_detected || 'GENERIC_SUBVERTICAL') as SubverticalID;
-    const nextStep = playbook.next_step;
+    // 4. FINAL CALC
+    const final = Math.floor(base * mod);
 
-    // 2. STAGE GATES
-    // LOW_STAGE + Any Vertical -> Never HIGH_TICKET
-    if (stage === 'LOW') {
-        // Exception: If they have huge followers but low engagement? No, Stage LOW usually means <1k or bad metrics.
-        // Force Low Ticket
-        return {
-            tier: 'LOW_TICKET',
-            label: 'OPTIMIZACION_GUIADA',
-            allowed_steps: ['INFRASTRUCTURE_SETUP', 'CONVERSION_OPTIMIZATION'],
-            reason: "Stage LOW requires basic optimization before structural intervention.",
-            is_locked: true,
-            progressive_path: ['LOW_TICKET', 'MID_TICKET']
-        };
+    // 5. TIER LABELING
+    let label = 'STANDARD_ENTRY'; // Covers Type A (Conservative / Operational Foundation)
+
+    if (isCompliance) {
+        label = 'COMPLIANCE_PATH'; // Covers Type C (Premium Verified)
+    } else if (mod < 0.6) {
+        label = 'RESTRICTED_ACCESS'; // Covers Type B (Aspirational/Delusional)
+    } else if (mod >= 0.95) {
+        label = 'PRIORITY_ACCESS'; // Only for Perfect Matches (top 5%)
     }
 
-    // 3. AUTOMATIC DOWNGRADES
-
-    // ECOMMERCE without CHECKOUT -> LOW_TICKET
-    if (subvertical === 'ECOMMERCE_DTC' && nextStep === 'INFRASTRUCTURE_SETUP') {
-        return {
-            tier: 'LOW_TICKET',
-            label: 'OPTIMIZACION_GUIADA',
-            allowed_steps: ['INFRASTRUCTURE_SETUP'],
-            reason: "Ecommerce requires valid Checkout infrastructure before High Ticket intervention.",
-            is_locked: true,
-            progressive_path: ['LOW_TICKET', 'HIGH_TICKET']
-        };
-    }
-
-    // VISUAL_COMPLIANCE blocking -> MID_TICKET (Correction Phase)
-    if (nextStep === 'VISUAL_COMPLIANCE') {
-        return {
-            tier: 'MID_TICKET',
-            label: 'AJUSTE_TECNICO',
-            allowed_steps: ['VISUAL_COMPLIANCE'],
-            reason: "Critical Visual Compliance check required. High Ticket suspended until resolved.",
-            is_locked: true,
-            progressive_path: ['MID_TICKET', 'HIGH_TICKET']
-        };
-    }
-
-    // AUTHORITY_POSITIONING blocking -> MID_TICKET or HIGH_TICKET depends on Risk
-    if (nextStep === 'AUTHORITY_POSITIONING') {
-        // If Risk is Medium/High, start with MID
-        if (diagnosis.asset_stage.dimension_scores.riesgo > 0.4) {
-            return {
-                tier: 'MID_TICKET',
-                label: 'AJUSTE_TECNICO',
-                allowed_steps: ['AUTHORITY_POSITIONING'],
-                reason: "Risk profile suggests establishing Authority before Structural scale.",
-                is_locked: true,
-                progressive_path: ['MID_TICKET', 'HIGH_TICKET']
-            };
-        }
-    }
-
-    // 4. HIGH TICKET GATES
-    const isMidOrHigh = stage === 'MID' || stage === 'HIGH';
-    const riskNotHigh = diagnosis.asset_stage.dimension_scores.riesgo < 0.7; // 0.8 is block usually
-
-    if (isMidOrHigh && riskNotHigh) {
-        // ELIGIBLE FOR HIGH TICKET
-        return {
-            tier: 'HIGH_TICKET',
-            label: 'INTERVENCION_ESTRUCTURAL',
-            allowed_steps: playbook.modules, // Full access
-            reason: "Asset qualifies for Structural Intervention.",
-            is_locked: false,
-            progressive_path: ['HIGH_TICKET']
-        };
-    }
-
-    // Default Fallback -> MID (Safe middle ground)
     return {
-        tier: 'MID_TICKET',
-        label: 'AJUSTE_TECNICO',
-        allowed_steps: [nextStep],
-        reason: "Standard intervention protocol.",
-        is_locked: false,
-        progressive_path: ['MID_TICKET', 'HIGH_TICKET']
+        base_price: base,
+        modifier: mod,
+        final_price: final,
+        currency: 'USD',
+        tier_label: label
     };
 }
