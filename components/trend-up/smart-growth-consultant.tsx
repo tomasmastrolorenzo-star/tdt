@@ -36,6 +36,45 @@ enum OperationalState {
 
 const LANG_TEXT = {
     EN: {
+        // LANDING HERO
+        l_hero_title: "DIGITAL VIABILITY\nFORENSIC DIAGNOSIS",
+        l_hero_sub: "Technical evaluation of coherence, risk, and structural capacity of the professional asset.",
+
+        // CONTEXT
+        l_ctx: "In professional assets with high real authority, defective digital infrastructure generates systematic loss of trust, patients, and positioning.\n\nWithout technical diagnosis, any action on the asset is speculation.",
+
+        // WHAT IS
+        l_what_title: "WHAT IS TDT ANALYZER?",
+        l_what_desc: "TDT Analyzer is a forensic analysis system that determines if a professional asset is viable, restricted, or incompatible for structural intervention.\n\nThe system does not recommend. ",
+        l_what_strong: "It rules.",
+
+        // PROCESS
+        l_process_title: "PROCESS SCOPE",
+        l_process_1: "Validating public asset signal",
+        l_process_2: "Risk, coherence, and operational capacity analysis",
+        l_process_3: "Irreversible technical verdict issuance",
+
+        // VERDICTS
+        l_verdict_title: "POSSIBLE OUTCOMES",
+        l_v_auth: "INTERVENTION AUTHORIZED",
+        l_v_rest: "INTERVENTION RESTRICTED",
+        l_v_denied: "INTERVENTION DENIED",
+        l_v_inc: "INCONCLUSIVE ANALYSIS",
+        l_v_note: "The system may close the process without diagnosis if it detects risk or incompatibility.",
+
+        // ANALYZER
+        l_analyzer_title: "INITIATE FORENSIC DIAGNOSIS",
+        l_input_handle: "ASSET ID (INSTAGRAM HANDLE)",
+        l_input_email: "CORPORATE EMAIL",
+        l_consent: "I confirm I am requesting a forensic technical diagnosis of my digital asset.",
+        l_hold_btn: "INITIATE PROTOCOL",
+        l_holding: "HOLDING...",
+
+        // FOOTER
+        l_foot_1: "TDT Analyzer operates under irreversible closure protocols.",
+        l_foot_2: "Not all assets are suitable for intervention.",
+
+        // LEGACY / APP
         ingest: "INGESTING SIGNALS",
         session_locked: "SESSION LOCKED · ACQUIRING PUBLIC SIGNALS",
         bio_fragment: "BIO FRAGMENT DETECTED",
@@ -55,6 +94,45 @@ const LANG_TEXT = {
 
     },
     ES: {
+        // LANDING HERO
+        l_hero_title: "DIAGNÓSTICO FORENSE\nDE VIABILIDAD DIGITAL",
+        l_hero_sub: "Evaluación técnica de coherencia, riesgo y capacidad estructural del activo profesional.",
+
+        // CONTEXT
+        l_ctx: "En activos profesionales con alta autoridad real, una infraestructura digital defectuosa genera pérdida sistemática de confianza, pacientes y posicionamiento.\n\nSin diagnóstico técnico, cualquier acción sobre el activo es especulación.",
+
+        // WHAT IS
+        l_what_title: "¿QUÉ ES EL TDT ANALYZER?",
+        l_what_desc: "TDT Analyzer es un sistema de análisis forense que determina si un activo profesional es viable, restringido o incompatible para intervención estructural.\n\nEl sistema no recomienda. ",
+        l_what_strong: "Dictamina.",
+
+        // PROCESS
+        l_process_title: "ALCANCE DEL PROCESO",
+        l_process_1: "Validación de señal pública del activo",
+        l_process_2: "Análisis de riesgo, coherencia y capacidad operativa",
+        l_process_3: "Emisión de dictamen técnico irreversible",
+
+        // VERDICTS
+        l_verdict_title: "RESULTADOS POSIBLES",
+        l_v_auth: "INTERVENCIÓN AUTORIZADA",
+        l_v_rest: "INTERVENCIÓN RESTRINGIDA",
+        l_v_denied: "INTERVENCIÓN DENEGADA",
+        l_v_inc: "ANÁLISIS INCONCLUSIVO",
+        l_v_note: "El sistema puede cerrar el proceso sin entregar diagnóstico si detecta riesgo o incompatibilidad.",
+
+        // ANALYZER
+        l_analyzer_title: "INICIAR DIAGNÓSTICO FORENSE",
+        l_input_handle: "ASSET ID (INSTAGRAM HANDLE)",
+        l_input_email: "EMAIL CORPORATIVO",
+        l_consent: "Confirmo que solicito un diagnóstico técnico forense de mi activo digital.",
+        l_hold_btn: "INICIAR PROTOCOLO",
+        l_holding: "INICIANDO...",
+
+        // FOOTER
+        l_foot_1: "TDT Analyzer opera bajo protocolos de cierre irreversible.",
+        l_foot_2: "No todos los activos son aptos para intervención.",
+
+        // LEGACY / APP
         ingest: "INGESTA DE SEÑALES",
         session_locked: "SESIÓN BLOQUEADA · ADQUIRIENDO SEÑALES PÚBLICAS",
         bio_fragment: "FRAGMENTO BIO DETECTADO",
@@ -73,6 +151,45 @@ const LANG_TEXT = {
         detail: "DETALLE TÉCNICO"
     },
     PT: {
+        // LANDING HERO
+        l_hero_title: "DIAGNÓSTICO FORENSE\nDE VIABILIDADE DIGITAL",
+        l_hero_sub: "Avaliação técnica de coerência, risco e capacidade estrutural do ativo profissional.",
+
+        // CONTEXT
+        l_ctx: "Em ativos profissionais com alta autoridade real, uma infraestrutura digital defeituosa gera perda sistemática de confiança, pacientes e posicionamento.\n\nSem diagnóstico técnico, qualquer ação sobre o ativo é especulação.",
+
+        // WHAT IS
+        l_what_title: "O QUE É O TDT ANALYZER?",
+        l_what_desc: "TDT Analyzer é um sistema de análise forense que determina se um ativo profissional é viável, restrito ou incompatível para intervenção estrutural.\n\nO sistema não recomenda. ",
+        l_what_strong: "Determina.",
+
+        // PROCESS
+        l_process_title: "ESCOPO DO PROCESSO",
+        l_process_1: "Validação de sinal público do ativo",
+        l_process_2: "Análise de risco, coerência e capacidade operacional",
+        l_process_3: "Emissão de parecer técnico irreversível",
+
+        // VERDICTS
+        l_verdict_title: "RESULTADOS POSSÍVEIS",
+        l_v_auth: "INTERVENÇÃO AUTORIZADA",
+        l_v_rest: "INTERVENÇÃO RESTRITA",
+        l_v_denied: "INTERVENÇÃO NEGADA",
+        l_v_inc: "ANÁLISE INCONCLUSIVA",
+        l_v_note: "O sistema pode encerrar o processo sem entregar diagnóstico se detectar risco ou incompatibilidade.",
+
+        // ANALYZER
+        l_analyzer_title: "INICIAR DIAGNÓSTICO FORENSE",
+        l_input_handle: "ASSET ID (INSTAGRAM HANDLE)",
+        l_input_email: "EMAIL CORPORATIVO",
+        l_consent: "Confirmo que solicito um diagnóstico técnico forense do meu ativo digital.",
+        l_hold_btn: "INICIAR PROTOCOLO",
+        l_holding: "INICIANDO...",
+
+        // FOOTER
+        l_foot_1: "TDT Analyzer opera sob protocolos de encerramento irreversível.",
+        l_foot_2: "Nem todos os ativos são aptos para intervenção.",
+
+        // LEGACY / APP
         ingest: "INGESTÃO DE SINAIS",
         session_locked: "SESSÃO BLOQUEADA · ADQUIRINDO SINAIS PÚBLICOS",
         bio_fragment: "FRAGMENTO DE BIO DETECTADO",
@@ -90,6 +207,55 @@ const LANG_TEXT = {
         risk: "RISCO DE INTERVENÇÃO",
         detail: "DETALHE TÉCNICO"
     }
+}
+
+// --- HOLD BUTTON COMPONENT (Extracted) ---
+const HoldButton = ({ onExecute, disabled, label, labelHolding }: { onExecute: () => void, disabled: boolean, label: string, labelHolding: string }) => {
+    const [progress, setProgress] = useState(0);
+    const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+    const startHold = () => {
+        if (disabled) return;
+        let p = 0;
+        intervalRef.current = setInterval(() => {
+            p += (100 / (2000 / 16));
+            if (p >= 100) {
+                p = 100;
+                clearInterval(intervalRef.current!);
+                onExecute();
+            }
+            setProgress(p);
+        }, 16);
+    };
+
+    const endHold = () => {
+        if (intervalRef.current) {
+            clearInterval(intervalRef.current);
+            intervalRef.current = null;
+        }
+        setProgress(0);
+    };
+
+    return (
+        <button
+            type="button"
+            onMouseDown={startHold}
+            onMouseUp={endHold}
+            onMouseLeave={endHold}
+            onTouchStart={startHold}
+            onTouchEnd={endHold}
+            disabled={disabled}
+            className="w-full bg-white hover:bg-[#CCCCCC] text-black py-4 text-xs font-mono font-bold tracking-[0.2em] uppercase disabled:opacity-30 disabled:cursor-not-allowed transition-none rounded-none border border-transparent relative overflow-hidden group select-none"
+        >
+            <div className="relative z-10 flex items-center justify-center gap-2">
+                {progress > 0 && progress < 100 ? labelHolding : label}
+            </div>
+            <div
+                className="absolute bottom-0 left-0 h-[2px] bg-black/50 transition-none"
+                style={{ width: `${progress}%` }}
+            />
+        </button>
+    )
 }
 
 // --- STATES ---
@@ -343,70 +509,28 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
         )
     }
 
-    // --- HOLD BUTTON COMPONENT ---
-    const HoldButton = ({ onExecute, disabled }: { onExecute: () => void, disabled: boolean }) => {
-        const [progress, setProgress] = useState(0);
-        const intervalRef = useRef<NodeJS.Timeout | null>(null);
-
-        const startHold = () => {
-            if (disabled) return;
-            // 2.0s duration, update every 16ms (~60fps) -> 125 steps
-            let p = 0;
-            intervalRef.current = setInterval(() => {
-                p += (100 / (2000 / 16));
-                if (p >= 100) {
-                    p = 100;
-                    clearInterval(intervalRef.current!);
-                    onExecute();
-                }
-                setProgress(p);
-            }, 16);
-        };
-
-        const endHold = () => {
-            if (intervalRef.current) {
-                clearInterval(intervalRef.current);
-                intervalRef.current = null;
-            }
-            setProgress(0);
-        };
-
-        return (
-            <button
-                type="button"
-                onMouseDown={startHold}
-                onMouseUp={endHold}
-                onMouseLeave={endHold}
-                onTouchStart={startHold}
-                onTouchEnd={endHold}
-                disabled={disabled}
-                className="w-full bg-white hover:bg-[#CCCCCC] text-black py-4 text-xs font-mono font-bold tracking-[0.2em] uppercase disabled:opacity-30 disabled:cursor-not-allowed transition-none rounded-none border border-transparent relative overflow-hidden group select-none"
-            >
-                <div className="relative z-10 flex items-center justify-center gap-2">
-                    {progress > 0 && progress < 100 ? "HOLDING..." : "INICIAR PROTOCOLO"}
-                </div>
-                {/* PROGRESS BAR */}
-                <div
-                    className="absolute bottom-0 left-0 h-[2px] bg-black/50 transition-none"
-                    style={{ width: `${progress}%` }}
-                />
-            </button>
-        )
-    }
-
-
     if (state === OperationalState.IDLE) {
         return (
-            <div className="min-h-screen bg-[#000000] text-[#FFFFFF] font-mono selection:bg-white selection:text-black">
+            <div className="min-h-screen bg-[#000000] text-[#FFFFFF] font-mono selection:bg-white selection:text-black relative">
+
+                {/* LANG SWITCHER (ABSOLUTE TOP RIGHT) */}
+                <div className="absolute top-6 right-6 z-50">
+                    <button
+                        onClick={() => setLang(l => l === 'EN' ? 'ES' : l === 'ES' ? 'PT' : 'EN')}
+                        className="text-[10px] text-[#4A4A4A] hover:text-white uppercase tracking-widest border border-[#333] px-3 py-1 hover:border-white transition-colors"
+                    >
+                        [{lang}]
+                    </button>
+                </div>
 
                 {/* BLOCK 1: HERO (SENTENCIA) */}
                 <section className="min-h-[60vh] flex flex-col justify-end px-6 pb-24 border-b border-[#FFFFFF]/10">
                     <div className="max-w-4xl">
-                        <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold tracking-tighter leading-[1.1] mb-8 text-[#FFFFFF] uppercase">
-                            DIAGNÓSTICO FORENSE<br />DE VIABILIDAD DIGITAL
+                        <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold tracking-tighter leading-[1.1] mb-8 text-[#FFFFFF] uppercase whitespace-pre-line">
+                            {txt.l_hero_title}
                         </h1>
                         <p className="text-sm md:text-base text-[#4A4A4A] uppercase tracking-widest max-w-2xl leading-relaxed">
-                            Evaluación técnica de coherencia, riesgo y capacidad estructural del activo profesional.
+                            {txt.l_hero_sub}
                         </p>
                     </div>
                 </section>
@@ -414,9 +538,8 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
                 {/* BLOCK 2: CONTEXTO CLÍNICO */}
                 <section className="px-6 py-24 border-b border-[#FFFFFF]/10">
                     <div className="max-w-3xl">
-                        <p className="text-xs md:text-sm text-[#FFFFFF] uppercase tracking-wide leading-loose">
-                            En activos profesionales con alta autoridad real, una infraestructura digital defectuosa genera pérdida sistemática de confianza, pacientes y posicionamiento.<br /><br />
-                            Sin diagnóstico técnico, cualquier acción sobre el activo es especulación.
+                        <p className="text-xs md:text-sm text-[#FFFFFF] uppercase tracking-wide leading-loose whitespace-pre-line">
+                            {txt.l_ctx}
                         </p>
                     </div>
                 </section>
@@ -424,12 +547,11 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
                 {/* BLOCK 3: QUÉ ES */}
                 <section className="px-6 py-24 border-b border-[#FFFFFF]/10 grid md:grid-cols-2 gap-12">
                     <div>
-                        <h2 className="text-xs text-[#4A4A4A] tracking-[0.2em] uppercase mb-4">¿QUÉ ES EL TDT ANALYZER?</h2>
+                        <h2 className="text-xs text-[#4A4A4A] tracking-[0.2em] uppercase mb-4">{txt.l_what_title}</h2>
                     </div>
                     <div>
-                        <p className="text-sm text-[#FFFFFF] uppercase tracking-wide leading-loose">
-                            TDT Analyzer es un sistema de análisis forense que determina si un activo profesional es viable, restringido o incompatible para intervención estructural.<br /><br />
-                            El sistema no recomienda. <span className="font-bold underline decoration-1 underline-offset-4 decoration-[#FFFFFF]/50">Dictamina.</span>
+                        <p className="text-sm text-[#FFFFFF] uppercase tracking-wide leading-loose whitespace-pre-line">
+                            {txt.l_what_desc} <span className="font-bold underline decoration-1 underline-offset-4 decoration-[#FFFFFF]/50">{txt.l_what_strong}</span>
                         </p>
                     </div>
                 </section>
@@ -437,18 +559,18 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
                 {/* BLOCK 4: QUÉ HACE */}
                 <section className="px-6 py-24 border-b border-[#FFFFFF]/10 grid md:grid-cols-2 gap-12">
                     <div>
-                        <h2 className="text-xs text-[#4A4A4A] tracking-[0.2em] uppercase mb-4">ALCANCE DEL PROCESO</h2>
+                        <h2 className="text-xs text-[#4A4A4A] tracking-[0.2em] uppercase mb-4">{txt.l_process_title}</h2>
                     </div>
                     <div>
                         <ul className="space-y-4 text-sm text-[#FFFFFF] uppercase tracking-wide">
                             <li className="flex gap-4">
-                                <span className="text-[#4A4A4A]">//</span> Validación de señal pública del activo
+                                <span className="text-[#4A4A4A]">//</span> {txt.l_process_1}
                             </li>
                             <li className="flex gap-4">
-                                <span className="text-[#4A4A4A]">//</span> Análisis de riesgo, coherencia y capacidad operativa
+                                <span className="text-[#4A4A4A]">//</span> {txt.l_process_2}
                             </li>
                             <li className="flex gap-4">
-                                <span className="text-[#4A4A4A]">//</span> Emisión de dictamen técnico irreversible
+                                <span className="text-[#4A4A4A]">//</span> {txt.l_process_3}
                             </li>
                         </ul>
                     </div>
@@ -458,15 +580,15 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
                 <section className="px-6 py-24 border-b border-[#FFFFFF]/10">
                     <div className="grid md:grid-cols-2 gap-12">
                         <div>
-                            <h2 className="text-xs text-[#4A4A4A] tracking-[0.2em] uppercase mb-4">RESULTADOS POSIBLES</h2>
+                            <h2 className="text-xs text-[#4A4A4A] tracking-[0.2em] uppercase mb-4">{txt.l_verdict_title}</h2>
                         </div>
                         <div className="space-y-2">
-                            <div className="text-sm text-[#FFFFFF] uppercase tracking-widest py-2 border-b border-[#FFFFFF]/10">INTERVENCIÓN AUTORIZADA</div>
-                            <div className="text-sm text-[#FFFFFF] uppercase tracking-widest py-2 border-b border-[#FFFFFF]/10">INTERVENCIÓN RESTRINGIDA</div>
-                            <div className="text-sm text-[#4A4A4A] uppercase tracking-widest py-2 border-b border-[#FFFFFF]/10">INTERVENCIÓN DENEGADA</div>
-                            <div className="text-sm text-[#4A4A4A] uppercase tracking-widest py-2 border-b border-[#FFFFFF]/10">ANÁLISIS INCONCLUSIVO</div>
+                            <div className="text-sm text-[#FFFFFF] uppercase tracking-widest py-2 border-b border-[#FFFFFF]/10">{txt.l_v_auth}</div>
+                            <div className="text-sm text-[#FFFFFF] uppercase tracking-widest py-2 border-b border-[#FFFFFF]/10">{txt.l_v_rest}</div>
+                            <div className="text-sm text-[#4A4A4A] uppercase tracking-widest py-2 border-b border-[#FFFFFF]/10">{txt.l_v_denied}</div>
+                            <div className="text-sm text-[#4A4A4A] uppercase tracking-widest py-2 border-b border-[#FFFFFF]/10">{txt.l_v_inc}</div>
                             <p className="text-[10px] text-[#4A4A4A] mt-8 uppercase tracking-widest">
-                                El sistema puede cerrar el proceso sin entregar diagnóstico si detecta riesgo o incompatibilidad.
+                                {txt.l_v_note}
                             </p>
                         </div>
                     </div>
@@ -477,7 +599,7 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
                     <div className="w-full max-w-lg space-y-12">
                         <div className="text-center space-y-4">
                             <Terminal className="w-6 h-6 text-[#FFFFFF] mx-auto" />
-                            <h2 className="text-lg text-[#FFFFFF] tracking-[0.2em] uppercase font-bold">INICIAR DIAGNÓSTICO FORENSE</h2>
+                            <h2 className="text-lg text-[#FFFFFF] tracking-[0.2em] uppercase font-bold">{txt.l_analyzer_title}</h2>
                         </div>
 
                         <div className="space-y-6">
@@ -485,13 +607,13 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
                                 <input
                                     value={handle}
                                     onChange={e => setHandle(e.target.value)}
-                                    placeholder="ASSET ID (INSTAGRAM HANDLE)"
+                                    placeholder={txt.l_input_handle}
                                     className="w-full bg-black border-b border-[#FFFFFF]/30 text-center py-4 text-sm font-mono tracking-widest focus:border-[#FFFFFF] outline-none text-[#FFFFFF] placeholder-[#4A4A4A] uppercase rounded-none transition-none"
                                 />
                                 <input
                                     value={email}
                                     onChange={e => setEmail(e.target.value)}
-                                    placeholder="EMAIL CORPORATIVO"
+                                    placeholder={txt.l_input_email}
                                     className="w-full bg-black border-b border-[#FFFFFF]/30 text-center py-4 text-sm font-mono tracking-widest focus:border-[#FFFFFF] outline-none text-[#FFFFFF] placeholder-[#4A4A4A] uppercase rounded-none transition-none"
                                 />
                             </div>
@@ -500,7 +622,7 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
                                 <div className={`mt-0.5 w-3 h-3 border border-[#FFFFFF]/50 flex items-center justify-center transition-none rounded-none ${consent ? 'bg-[#FFFFFF]' : 'bg-transparent'}`}>
                                 </div>
                                 <span className="text-[10px] text-[#9AA0A6] group-hover:text-[#FFFFFF] font-mono tracking-wider uppercase select-none transition-none text-left leading-relaxed">
-                                    Confirmo que solicito un diagnóstico técnico forense de mi activo digital.
+                                    {txt.l_consent}
                                 </span>
                             </div>
 
@@ -508,6 +630,8 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
                                 <HoldButton
                                     onExecute={initiateSequence}
                                     disabled={!handle || !email || !consent}
+                                    label={txt.l_hold_btn}
+                                    labelHolding={txt.l_holding}
                                 />
                             </div>
                         </div>
@@ -516,8 +640,8 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
 
                 {/* BLOCK 7: FOOTER */}
                 <footer className="px-6 py-12 border-t border-[#FFFFFF]/10 flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] text-[#4A4A4A] uppercase tracking-widest">
-                    <span>TDT Analyzer opera bajo protocolos de cierre irreversible.</span>
-                    <span>No todos los activos son aptos para intervención.</span>
+                    <span>{txt.l_foot_1}</span>
+                    <span>{txt.l_foot_2}</span>
                 </footer>
             </div>
         )
