@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import { Globe, ShieldCheck, Lock, Terminal, ShieldAlert } from "lucide-react"
-import AuditTrace from "./audit-trace"
+
 
 // --- TYPES ---
 
@@ -285,9 +285,9 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
 
     // Timers & Logic
     const [revelationStep, setRevelationStep] = useState(0) // 0: Asymmetry, 1: Inertia
-    const [calibrationStep, setCalibrationStep] = useState(0)
-    const [intent, setIntent] = useState<any>(initialIntent || {})
-    const [operatorContext, setOperatorContext] = useState<OperatorContext | undefined>(initialContext)
+    const [calibrationStep] = useState(0)
+    const [intent] = useState<any>(initialIntent || {})
+    const [operatorContext] = useState<OperatorContext | undefined>(initialContext)
 
     const txt = LANG_TEXT[lang]
 
