@@ -43,9 +43,9 @@ function generateEmergencyClosure(sessionId: string, code: string = "CRITICAL_CL
         closed_at: now,
         closure_signature: generateSignature(sessionId, "SYSTEM_ERROR", now),
         ux_controls: {
-            status_label: "Proceso finalizado.",
-            title: "Proceso finalizado.",
-            message: "",
+            status_label: "SISTEMA EN REVISIÓN",
+            title: "CONEXION INTERRUMPIDA",
+            message: "Protocolo detenido por seguridad.",
             cta: ""
         }
     };
@@ -128,9 +128,9 @@ export async function POST(request: Request) {
                 closed_at: now,
                 closure_signature: generateSignature(session_id, "INCONCLUSIVE", now),
                 ux_controls: {
-                    status_label: "Perfil no accesible públicamente.",
-                    title: "Perfil no accesible públicamente.",
-                    message: "",
+                    status_label: "ANÁLISIS INCONCLUSIVO",
+                    title: "VECTORES PÚBLICOS INACCESIBLES",
+                    message: "El activo no presenta señales legibles para validación forense.",
                     cta: ""
                 }
             };
@@ -261,9 +261,9 @@ export async function POST(request: Request) {
             system_verdict = "BLOCKED";
             verdict_code = gap?.classification === 'DELUSIONAL' ? "CRITICAL_DISSONANCE" : "MEDICAL_SAFETY_PROTOCOL";
             ux_controls = {
-                status_label: "Proceso finalizado.",
-                title: "Proceso finalizado.",
-                message: "",
+                status_label: "INTERVENCIÓN DENEGADA",
+                title: "CRITERIO DE RIESGO",
+                message: "Disonancia estructural detectada. Protocolo abortado.",
                 cta: ""
             };
         } else if (pricing?.tier_label === 'PRIORITY_ACCESS' || pricing?.tier_label === 'STANDARD_ENTRY') {
@@ -273,20 +273,20 @@ export async function POST(request: Request) {
             system_verdict = "APPROVED";
             verdict_code = pricing.tier_label === 'PRIORITY_ACCESS' ? "PRIORITY_SCALABILITY" : "STANDARD_REALIGNMENT";
             ux_controls = {
-                status_label: "STATUS: STRUCTURAL INTERVENTION REQUIRED",
-                title: "CRITICAL ASYMMETRY DETECTED IN OUTPUT INFRASTRUCTURE",
-                message: "The asset demonstrates a high authority-to-infrastructure occlusion. Current architectural gaps prevent the stabilization of attention-driven capital. Immediate systemic realignment is prescribed to enable high-complexity scale.",
-                cta: "ACCESS RESTRUCTURING SPECIFICATIONS"
+                status_label: "INTERVENCIÓN AUTORIZADA",
+                title: "ASYMMETRY DETECTED",
+                message: "Structural intervention required for high-complexity scale.",
+                cta: "ACCEDER A ESPECIFICACIONES"
             };
         } else {
             // DOWNGRADED: Foundation / Low-Mid Ticket
             system_verdict = "DOWNGRADED";
             verdict_code = "STRUCTURAL_DEFICIENCY";
             ux_controls = {
-                status_label: "PROTOCOL: AUTONOMOUS TECHNICAL ADJUSTMENT INDICATED",
-                title: "ASSET DENSITY INSUFFICIENT FOR HIGH-COMPLEXITY SCALE",
-                message: "Structural metrics do not meet the threshold for senior intervention. The asset requires a primary foundation phase to establish consistent narrative signal and baseline capture infrastructure. High-ticket intervention is deferred until systemic maturity is achieved.",
-                cta: "DOWNLOAD OPERATIONAL GUIDELINES"
+                status_label: "INTERVENCIÓN RESTRINGIDA",
+                title: "DENSITY INSUFFICIENT",
+                message: "Asset requires foundational consolidation phase.",
+                cta: "DESCARGAR PROTOCOLO"
             };
         }
 
@@ -314,9 +314,9 @@ export async function POST(request: Request) {
                 closed_at: timestamp,
                 closure_signature: generateSignature(session_id, "SYSTEM_ERROR", timestamp),
                 ux_controls: {
-                    status_label: "Proceso finalizado.",
-                    title: "Proceso finalizado.",
-                    message: "",
+                    status_label: "SISTEMA EN REVISIÓN",
+                    title: "ERROR DE PROTOCOLO",
+                    message: "Cierre incompleto.",
                     cta: ""
                 }
             };

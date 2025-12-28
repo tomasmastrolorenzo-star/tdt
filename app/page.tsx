@@ -39,33 +39,8 @@ export default function Home() {
 
   // RENDER LOGIC
   return (
-    <main className="h-screen w-full bg-black text-slate-300 font-mono flex flex-col relative overflow-hidden selection:bg-[#d4af37] selection:text-black">
-
-      {phase === 'ENTRY' && (
-        <SovereignEntry onExecute={handleEntryComplete} lang={lang} setLang={setLang} />
-      )}
-
-      {phase === 'CALIBRATION' && (
-        <ProtocolCalibration onComplete={handleCalibrationComplete} lang={lang} />
-      )}
-
-      {phase === 'DEEP_CALIBRATION' && (
-        <ProtocolDeepCalibration onComplete={handleDeepComplete} />
-      )}
-
-      {phase === 'ASSET_ID' && (
-        <AssetIdentification onComplete={handleAssetComplete} lang={lang} />
-      )}
-
-      {phase === 'ANALYSIS' && activeHandle && intent && operatorContext && (
-        <SmartGrowthConsultant
-          initialHandle={activeHandle}
-          initialIntent={intent}
-          initialLang={lang}
-          initialContext={operatorContext}
-        />
-      )}
-
+    <main className="min-h-screen w-full bg-black text-white font-mono selection:bg-white selection:text-black">
+      <SmartGrowthConsultant initialLang="ES" />
     </main>
   );
 }

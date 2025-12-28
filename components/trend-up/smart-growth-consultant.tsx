@@ -101,6 +101,8 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
     // If we have an initial handle, we skip IDLE and go straight to INGEST
     const [state, setState] = useState<OperationalState>(initialHandle ? OperationalState.INGEST : OperationalState.IDLE)
     const [handle, setHandle] = useState(initialHandle || "")
+    const [email, setEmail] = useState("")
+    const [consent, setConsent] = useState(false)
     const [lang, setLang] = useState<'EN' | 'ES' | 'PT'>(initialLang || 'EN')
     const [showAudit, setShowAudit] = useState(false)
 
@@ -140,6 +142,7 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
     const initiateSequence = async (overrideHandle?: string) => {
         const target = overrideHandle || handle;
         if (!target) return
+        if (!overrideHandle && (!email || !consent)) return; // Entry Ritual Check
 
         // Ensure we are in INGEST visual state
         if (state !== OperationalState.INGEST) setState(OperationalState.INGEST);
@@ -184,6 +187,18 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
                 // If backend violates contract -> Terminate to Emergency Fallback
                 console.error("VIOLATION: NO CLOSURE PAYLOAD");
                 setState(OperationalState.TERMINATED);
+            }
+
+            // MASTER PROMPT V1: INTEGRITY SHIELD
+            if (!data.closure.closure_signature) {
+                console.error("SECURITY: MISSING SIGNATURE");
+                setBackendUX({
+                    system_verdict: "SYSTEM_ERROR",
+                    verdict_code: "FAILED_INTEGRITY",
+                    ux_controls: { status_label: "SISTEMA EN REVISIÓN", title: "INTEGRITY FAILURE", message: "Signature validation failed.", cta: "" }
+                });
+                setState(OperationalState.SENTENCE);
+                return;
             }
         } catch (e) {
             console.error(e);
@@ -328,51 +343,182 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
         )
     }
 
+    // --- HOLD BUTTON COMPONENT ---
+    const HoldButton = ({ onExecute, disabled }: { onExecute: () => void, disabled: boolean }) => {
+        const [progress, setProgress] = useState(0);
+        const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+        const startHold = () => {
+            if (disabled) return;
+            // 2.0s duration, update every 16ms (~60fps) -> 125 steps
+            let p = 0;
+            intervalRef.current = setInterval(() => {
+                p += (100 / (2000 / 16));
+                if (p >= 100) {
+                    p = 100;
+                    clearInterval(intervalRef.current!);
+                    onExecute();
+                }
+                setProgress(p);
+            }, 16);
+        };
+
+        const endHold = () => {
+            if (intervalRef.current) {
+                clearInterval(intervalRef.current);
+                intervalRef.current = null;
+            }
+            setProgress(0);
+        };
+
+        return (
+            <button
+                type="button"
+                onMouseDown={startHold}
+                onMouseUp={endHold}
+                onMouseLeave={endHold}
+                onTouchStart={startHold}
+                onTouchEnd={endHold}
+                disabled={disabled}
+                className="w-full bg-white hover:bg-[#CCCCCC] text-black py-4 text-xs font-mono font-bold tracking-[0.2em] uppercase disabled:opacity-30 disabled:cursor-not-allowed transition-none rounded-none border border-transparent relative overflow-hidden group select-none"
+            >
+                <div className="relative z-10 flex items-center justify-center gap-2">
+                    {progress > 0 && progress < 100 ? "HOLDING..." : "INICIAR PROTOCOLO"}
+                </div>
+                {/* PROGRESS BAR */}
+                <div
+                    className="absolute bottom-0 left-0 h-[2px] bg-black/50 transition-none"
+                    style={{ width: `${progress}%` }}
+                />
+            </button>
+        )
+    }
+
+
     if (state === OperationalState.IDLE) {
         return (
-            <div className="min-h-screen bg-[#0B0E11] text-[#E6E8EB] font-sans flex flex-col items-center justify-center p-4">
-                <div className="w-full max-w-lg space-y-12">
-                    <div className="space-y-2 text-center">
-                        <div className="w-12 h-12 bg-[#1877F2]/10 rounded-none mx-auto flex items-center justify-center border border-[#1877F2]/30 mb-6">
-                            <Terminal className="w-6 h-6 text-[#1877F2]" />
-                        </div>
-                        <h1 className="text-xl tracking-[0.2em] font-mono font-bold">TDT ANALYZER</h1>
-                        <p className="text-[10px] text-[#9AA0A6] font-mono uppercase tracking-widest">INDUSTRIAL AUDIT PROTOCOL v3.0</p>
-                    </div>
+            <div className="min-h-screen bg-[#000000] text-[#FFFFFF] font-mono selection:bg-white selection:text-black">
 
-                    <div className="space-y-4">
-                        <input
-                            value={handle}
-                            onChange={e => setHandle(e.target.value)}
-                            placeholder={txt.input_placeholder}
-                            className="w-full bg-[#111418] border border-white/10 text-center py-4 text-sm font-mono tracking-widest focus:border-[#1877F2] focus:ring-0 outline-none text-[#E6E8EB] placeholder-[#9AA0A6]/30 uppercase"
-                        />
-                        <button
-                            type="button"
-                            onClick={(e) => {
-                                e.preventDefault();
-                                console.log("Manual Start Clicked with handle:", handle);
-                                initiateSequence();
-                            }}
-                            disabled={!handle}
-                            className="w-full bg-[#E6E8EB] hover:bg-white text-black py-4 text-xs font-mono font-bold tracking-[0.2em] uppercase disabled:opacity-50 transition-all active:scale-95"
-                        >
-                            {txt.cta_start}
-                        </button>
+                {/* BLOCK 1: HERO (SENTENCIA) */}
+                <section className="min-h-[60vh] flex flex-col justify-end px-6 pb-24 border-b border-[#FFFFFF]/10">
+                    <div className="max-w-4xl">
+                        <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold tracking-tighter leading-[1.1] mb-8 text-[#FFFFFF] uppercase">
+                            DIAGNÓSTICO FORENSE<br />DE VIABILIDAD DIGITAL
+                        </h1>
+                        <p className="text-sm md:text-base text-[#4A4A4A] uppercase tracking-widest max-w-2xl leading-relaxed">
+                            Evaluación técnica de coherencia, riesgo y capacidad estructural del activo profesional.
+                        </p>
                     </div>
+                </section>
 
-                    <div className="border-t border-white/5 pt-8">
-                        <p className="text-[10px] text-[#9AA0A6] font-mono uppercase tracking-widest mb-4">{txt.compliance}</p>
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="flex items-center gap-2 text-[10px] text-[#5f6368] font-mono">
-                                <div className="w-3 h-3 border border-[#5f6368] rounded-sm" /> {txt.public_data}
+                {/* BLOCK 2: CONTEXTO CLÍNICO */}
+                <section className="px-6 py-24 border-b border-[#FFFFFF]/10">
+                    <div className="max-w-3xl">
+                        <p className="text-xs md:text-sm text-[#FFFFFF] uppercase tracking-wide leading-loose">
+                            En activos profesionales con alta autoridad real, una infraestructura digital defectuosa genera pérdida sistemática de confianza, pacientes y posicionamiento.<br /><br />
+                            Sin diagnóstico técnico, cualquier acción sobre el activo es especulación.
+                        </p>
+                    </div>
+                </section>
+
+                {/* BLOCK 3: QUÉ ES */}
+                <section className="px-6 py-24 border-b border-[#FFFFFF]/10 grid md:grid-cols-2 gap-12">
+                    <div>
+                        <h2 className="text-xs text-[#4A4A4A] tracking-[0.2em] uppercase mb-4">¿QUÉ ES EL TDT ANALYZER?</h2>
+                    </div>
+                    <div>
+                        <p className="text-sm text-[#FFFFFF] uppercase tracking-wide leading-loose">
+                            TDT Analyzer es un sistema de análisis forense que determina si un activo profesional es viable, restringido o incompatible para intervención estructural.<br /><br />
+                            El sistema no recomienda. <span className="font-bold underline decoration-1 underline-offset-4 decoration-[#FFFFFF]/50">Dictamina.</span>
+                        </p>
+                    </div>
+                </section>
+
+                {/* BLOCK 4: QUÉ HACE */}
+                <section className="px-6 py-24 border-b border-[#FFFFFF]/10 grid md:grid-cols-2 gap-12">
+                    <div>
+                        <h2 className="text-xs text-[#4A4A4A] tracking-[0.2em] uppercase mb-4">ALCANCE DEL PROCESO</h2>
+                    </div>
+                    <div>
+                        <ul className="space-y-4 text-sm text-[#FFFFFF] uppercase tracking-wide">
+                            <li className="flex gap-4">
+                                <span className="text-[#4A4A4A]">//</span> Validación de señal pública del activo
+                            </li>
+                            <li className="flex gap-4">
+                                <span className="text-[#4A4A4A]">//</span> Análisis de riesgo, coherencia y capacidad operativa
+                            </li>
+                            <li className="flex gap-4">
+                                <span className="text-[#4A4A4A]">//</span> Emisión de dictamen técnico irreversible
+                            </li>
+                        </ul>
+                    </div>
+                </section>
+
+                {/* BLOCK 5: VEREDICTOS */}
+                <section className="px-6 py-24 border-b border-[#FFFFFF]/10">
+                    <div className="grid md:grid-cols-2 gap-12">
+                        <div>
+                            <h2 className="text-xs text-[#4A4A4A] tracking-[0.2em] uppercase mb-4">RESULTADOS POSIBLES</h2>
+                        </div>
+                        <div className="space-y-2">
+                            <div className="text-sm text-[#FFFFFF] uppercase tracking-widest py-2 border-b border-[#FFFFFF]/10">INTERVENCIÓN AUTORIZADA</div>
+                            <div className="text-sm text-[#FFFFFF] uppercase tracking-widest py-2 border-b border-[#FFFFFF]/10">INTERVENCIÓN RESTRINGIDA</div>
+                            <div className="text-sm text-[#4A4A4A] uppercase tracking-widest py-2 border-b border-[#FFFFFF]/10">INTERVENCIÓN DENEGADA</div>
+                            <div className="text-sm text-[#4A4A4A] uppercase tracking-widest py-2 border-b border-[#FFFFFF]/10">ANÁLISIS INCONCLUSIVO</div>
+                            <p className="text-[10px] text-[#4A4A4A] mt-8 uppercase tracking-widest">
+                                El sistema puede cerrar el proceso sin entregar diagnóstico si detecta riesgo o incompatibilidad.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                {/* BLOCK 6: THE ANALYZER (EMBUDO CENTRAL) */}
+                <section className="px-6 py-32 flex flex-col items-center justify-center">
+                    <div className="w-full max-w-lg space-y-12">
+                        <div className="text-center space-y-4">
+                            <Terminal className="w-6 h-6 text-[#FFFFFF] mx-auto" />
+                            <h2 className="text-lg text-[#FFFFFF] tracking-[0.2em] uppercase font-bold">INICIAR DIAGNÓSTICO FORENSE</h2>
+                        </div>
+
+                        <div className="space-y-6">
+                            <div className="space-y-4">
+                                <input
+                                    value={handle}
+                                    onChange={e => setHandle(e.target.value)}
+                                    placeholder="ASSET ID (INSTAGRAM HANDLE)"
+                                    className="w-full bg-black border-b border-[#FFFFFF]/30 text-center py-4 text-sm font-mono tracking-widest focus:border-[#FFFFFF] outline-none text-[#FFFFFF] placeholder-[#4A4A4A] uppercase rounded-none transition-none"
+                                />
+                                <input
+                                    value={email}
+                                    onChange={e => setEmail(e.target.value)}
+                                    placeholder="EMAIL CORPORATIVO"
+                                    className="w-full bg-black border-b border-[#FFFFFF]/30 text-center py-4 text-sm font-mono tracking-widest focus:border-[#FFFFFF] outline-none text-[#FFFFFF] placeholder-[#4A4A4A] uppercase rounded-none transition-none"
+                                />
                             </div>
-                            <div className="flex items-center gap-2 text-[10px] text-[#5f6368] font-mono">
-                                <div className="w-3 h-3 border border-[#5f6368] rounded-full" /> {txt.meta_compliance}
+
+                            <div className="flex items-start justify-center gap-3 py-4 cursor-pointer group" onClick={() => setConsent(!consent)}>
+                                <div className={`mt-0.5 w-3 h-3 border border-[#FFFFFF]/50 flex items-center justify-center transition-none rounded-none ${consent ? 'bg-[#FFFFFF]' : 'bg-transparent'}`}>
+                                </div>
+                                <span className="text-[10px] text-[#9AA0A6] group-hover:text-[#FFFFFF] font-mono tracking-wider uppercase select-none transition-none text-left leading-relaxed">
+                                    Confirmo que solicito un diagnóstico técnico forense de mi activo digital.
+                                </span>
+                            </div>
+
+                            <div className="pt-8">
+                                <HoldButton
+                                    onExecute={initiateSequence}
+                                    disabled={!handle || !email || !consent}
+                                />
                             </div>
                         </div>
                     </div>
-                </div>
+                </section>
+
+                {/* BLOCK 7: FOOTER */}
+                <footer className="px-6 py-12 border-t border-[#FFFFFF]/10 flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] text-[#4A4A4A] uppercase tracking-widest">
+                    <span>TDT Analyzer opera bajo protocolos de cierre irreversible.</span>
+                    <span>No todos los activos son aptos para intervención.</span>
+                </footer>
             </div>
         )
     }
