@@ -408,7 +408,7 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
 
     if (state === OperationalState.BLACK_HOLE) {
         return (
-            <div className="min-h-screen bg-black flex flex-col cursor-none overflow-hidden select-none">
+            <div className="fixed inset-0 z-[100] min-h-screen bg-black flex flex-col cursor-none overflow-hidden select-none">
                 <div className="flex-1 w-full h-full bg-black flex flex-col items-center justify-center space-y-4">
                     <div className="w-24 h-24 rounded-full border-4 border-[#007AFF] border-t-white animate-spin shadow-[0_0_50px_#007AFF]" />
                     <p className="text-[#007AFF] font-mono tracking-[0.3em] text-sm animate-pulse">SYSTEM CORRELATION ACTIVE</p>

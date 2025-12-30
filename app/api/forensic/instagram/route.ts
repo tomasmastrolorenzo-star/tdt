@@ -407,11 +407,15 @@ export async function POST(request: Request) {
 
         return NextResponse.json(responseData);
 
-    } catch (e) {
+    } catch (e: any) {
         console.error("[UNDEFINED_SYSTEM_FAILURE]", e);
+        // CRITICAL DEBUG: Expose the actual error message safely
+        const errorMsg = e instanceof Error ? e.message : String(e);
+        const safeMsg = errorMsg.replace(/[^a-zA-Z0-9_]/g, '_').toUpperCase().substring(0, 50);
+
         return NextResponse.json({
             status: 'error',
-            closure: generateEmergencyClosure(session_id, "UNHANDLED_EXCEPTION")
+            closure: generateEmergencyClosure(session_id, `EXCEPTION_${safeMsg}`)
         });
     }
 }
