@@ -45,7 +45,7 @@ function generateEmergencyClosure(sessionId: string, code: string = "CRITICAL_CL
         ux_controls: {
             status_label: "SISTEMA EN REVISIÓN",
             title: "CONEXION INTERRUMPIDA",
-            message: "Protocolo detenido por seguridad.",
+            message: `Protocolo detenido por seguridad. (CÓDIGO: ${code})`, // EXPOSED CODE FOR DEBUGGING
             cta: ""
         }
     };
@@ -77,18 +77,24 @@ export async function POST(request: Request) {
 
         // DEBUG: ENV CHECK
         if (normalizedHandle === 'debug_env') {
-            // ... debug logic ...
-            return NextResponse.json({ status: 'restricted', message: 'DEBUG' });
+            return NextResponse.json({
+                status: 'restricted',
+                message: 'DEBUG',
+                env_check: !!process.env.APIFY_TOKEN
+            });
         }
 
         console.log(`[FORENSIC_SCAN_INIT] ${normalizedHandle}`);
 
         // 2. DATA INGESTION (Apify)
-        let apifyToken = process.env.APIFY_TOKEN || process.env.apify_api_;
-        if (!process.env.APIFY_TOKEN && !process.env.apify_api_) {
-            // Try to find any var starting with apify_api_
-            const foundKey = Object.keys(process.env).find(key => process.env[key]?.startsWith('apify_api_'));
-            if (foundKey) apifyToken = process.env[foundKey];
+        // Robust Token Config Search
+        let apifyToken = process.env.APIFY_TOKEN;
+        if (!apifyToken) {
+            // Fallback search
+            const potentialKeys = Object.keys(process.env).filter(k => k.toLowerCase().includes('apify'));
+            if (potentialKeys.length > 0) {
+                apifyToken = process.env[potentialKeys[0]];
+            }
         }
 
         if (!apifyToken) {
@@ -109,9 +115,11 @@ export async function POST(request: Request) {
         });
 
         if (!runResponse.ok) {
+            // Include status text if available for clarity
+            const errorText = runResponse.statusText || "UNKNOWN";
             return NextResponse.json({
                 status: 'error',
-                closure: generateEmergencyClosure(session_id, `APIFY_ERROR_${runResponse.status}`)
+                closure: generateEmergencyClosure(session_id, `APIFY_ERROR_${runResponse.status}_${errorText}`)
             });
         }
 
