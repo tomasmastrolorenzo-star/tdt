@@ -87,10 +87,16 @@ export async function POST(request: Request) {
         console.log(`[FORENSIC_SCAN_INIT] ${normalizedHandle}`);
 
         // 2. DATA INGESTION (Apify)
-        // Robust Token Config Search
+        // Robust Token Config Search (Restored Legacy Support)
         let apifyToken = process.env.APIFY_TOKEN;
+
+        // Legacy fallback (User reported this worked before)
+        if (!apifyToken && process.env.apify_api_) {
+            apifyToken = process.env.apify_api_;
+        }
+
         if (!apifyToken) {
-            // Fallback search
+            // Deep search for any key containing 'apify' (case insensitive)
             const potentialKeys = Object.keys(process.env).filter(k => k.toLowerCase().includes('apify'));
             if (potentialKeys.length > 0) {
                 apifyToken = process.env[potentialKeys[0]];
