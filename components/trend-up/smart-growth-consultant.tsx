@@ -463,226 +463,224 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
                     </div>
                 </div>
 
-        </div>
+                {/* Arrow in Flow: Prevents Overlap */}
+                <div className="mt-12 animate-bounce text-[#007AFF] opacity-80">
+                    <ArrowRight className="w-8 h-8 rotate-90" />
+                </div>
+            </section>
 
-                {/* Arrow in Flow: Prevents Overlap */ }
-    <div className="mt-12 animate-bounce text-[#007AFF] opacity-80">
-        <ArrowRight className="w-8 h-8 rotate-90" />
-    </div>
-            </section >
+            {/* BLOCK 2: ANALYZER (Glassmorphism Cockpit) */}
+            <section className="px-6 py-32 relative z-20" id="analyzer-block">
+                <div className="max-w-3xl mx-auto">
+                    {/* TRUE GLASSMORPHISM CONTAINER */}
+                    <div className={`bg-white/[0.03] backdrop-blur-[15px] border border-white/10 rounded-[2.5rem] p-10 md:p-16 shadow-2xl transition-all duration-700 ${state === OperationalState.INGEST ? 'border-[#007AFF]/50 shadow-[0_0_50px_rgba(0,122,255,0.2)]' : 'hover:border-white/20'}`}>
 
-        {/* BLOCK 2: ANALYZER (Glassmorphism Cockpit) */ }
-        < section className = "px-6 py-32 relative z-20" id = "analyzer-block" >
-            <div className="max-w-3xl mx-auto">
-                {/* TRUE GLASSMORPHISM CONTAINER */}
-                <div className={`bg-white/[0.03] backdrop-blur-[15px] border border-white/10 rounded-[2.5rem] p-10 md:p-16 shadow-2xl transition-all duration-700 ${state === OperationalState.INGEST ? 'border-[#007AFF]/50 shadow-[0_0_50px_rgba(0,122,255,0.2)]' : 'hover:border-white/20'}`}>
-
-                    {/* HEADER */}
-                    <div className="text-center mb-12">
-                        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#007AFF]/10 mb-8 border border-[#007AFF]/20 shadow-[0_0_20px_rgba(0,122,255,0.15)]">
-                            <Scan className="w-8 h-8 text-[#007AFF] drop-shadow-[0_0_5px_#007AFF]" />
-                        </div>
-                        <h2 className="text-2xl font-bold text-white tracking-[0.2em] uppercase">{txt.l_analyzer_title}</h2>
-                    </div>
-
-                    {/* --- STATE: IDLE --- */}
-                    {state === OperationalState.IDLE && (
-                        <div className="space-y-8 animate-in fade-in zoom-in-95 duration-500">
-                            <div className="space-y-4">
-                                <label className="text-xs text-[#007AFF] font-bold tracking-[0.25em] uppercase ml-2 block">
-                                    {txt.l_input_label}
-                                </label>
-                                <div className="relative group">
-                                    <input
-                                        value={handle}
-                                        onChange={e => setHandle(e.target.value)}
-                                        placeholder={txt.l_input_placeholder}
-                                        onKeyDown={(e) => e.key === 'Enter' && !!handle && runScreener()}
-                                        className="w-full bg-[#050505] border border-white/10 rounded-2xl px-8 py-6 text-xl md:text-2xl text-white placeholder-[#333] focus:border-[#007AFF] focus:ring-1 focus:ring-[#007AFF] focus:shadow-[0_0_30px_rgba(0,122,255,0.2)] outline-none transition-all text-center font-mono tracking-wider"
-                                    />
-                                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-[#007AFF] to-[#00FFFF] opacity-0 group-hover:opacity-10 pointer-events-none transition-opacity blur-md filter" />
-                                </div>
+                        {/* HEADER */}
+                        <div className="text-center mb-12">
+                            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#007AFF]/10 mb-8 border border-[#007AFF]/20 shadow-[0_0_20px_rgba(0,122,255,0.15)]">
+                                <Scan className="w-8 h-8 text-[#007AFF] drop-shadow-[0_0_5px_#007AFF]" />
                             </div>
-                            <button
-                                onClick={runScreener}
-                                disabled={!handle}
-                                className="w-full h-20 bg-white text-black hover:bg-[#E6E8EB] text-lg font-extrabold tracking-[0.15em] uppercase rounded-2xl shadow-[0_0_30px_rgba(255,255,255,0.1)] hover:shadow-[0_0_50px_rgba(255,255,255,0.3)] hover:-translate-y-1 active:translate-y-0 transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:shadow-none disabled:transform-none"
-                            >
-                                {txt.l_screener_btn}
-                            </button>
+                            <h2 className="text-2xl font-bold text-white tracking-[0.2em] uppercase">{txt.l_analyzer_title}</h2>
                         </div>
-                    )}
 
-                    {/* --- STATE: PREVIEW --- */}
-                    {state === OperationalState.PREVIEW && profile && (
-                        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                            {/* Profile Summary - Glass Card */}
-                            <div className="flex items-center gap-6 mb-10 bg-white/5 p-6 rounded-3xl border border-white/10">
-                                <div className="w-20 h-20 rounded-full border-2 border-[#007AFF] p-1 overflow-hidden shadow-[0_0_20px_rgba(0,122,255,0.3)]">
-                                    <img src={`https://wsrv.nl/?url=${encodeURIComponent(profile.profilePicUrl)}`} className="w-full h-full rounded-full object-cover grayscale hover:grayscale-0 transition-all duration-500" />
-                                </div>
-                                <div>
-                                    <h3 className="text-white font-bold text-2xl tracking-tight">{profile.username}</h3>
-                                    <div className="flex gap-4 text-sm text-[#9CA3AF] mt-2 font-mono">
-                                        <span className="px-3 py-1 bg-white/5 rounded-full border border-white/5"><span className="text-white font-bold">{profile.followersCount}</span> Followers</span>
-                                        <span className="px-3 py-1 bg-white/5 rounded-full border border-white/5"><span className="text-white font-bold">{profile.postsCount}</span> Posts</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Confirmation Fields */}
-                            <div className="space-y-8">
-                                <div className="space-y-3">
+                        {/* --- STATE: IDLE --- */}
+                        {state === OperationalState.IDLE && (
+                            <div className="space-y-8 animate-in fade-in zoom-in-95 duration-500">
+                                <div className="space-y-4">
                                     <label className="text-xs text-[#007AFF] font-bold tracking-[0.25em] uppercase ml-2 block">
-                                        {txt.l_input_email}
+                                        {txt.l_input_label}
                                     </label>
-                                    <input
-                                        value={email}
-                                        onChange={e => setEmail(e.target.value)}
-                                        placeholder="name@example.com"
-                                        className="w-full bg-[#050505] border border-white/10 rounded-2xl px-8 py-5 text-white placeholder-[#333] focus:border-[#007AFF] focus:shadow-[0_0_20px_rgba(0,122,255,0.2)] outline-none transition-all text-center font-mono"
-                                    />
-                                </div>
-
-                                <div className="flex items-start gap-4 p-5 bg-white/5 rounded-2xl border border-white/5 cursor-pointer hover:border-[#007AFF]/50 transition-colors group" onClick={() => setConsent(!consent)}>
-                                    <div className={`mt-0.5 w-6 h-6 rounded flex items-center justify-center transition-all border ${consent ? 'bg-[#007AFF] border-[#007AFF] shadow-[0_0_10px_#007AFF]' : 'border-white/30 bg-transparent'}`}>
-                                        {consent && <CheckCircle2 className="w-4 h-4 text-white" />}
+                                    <div className="relative group">
+                                        <input
+                                            value={handle}
+                                            onChange={e => setHandle(e.target.value)}
+                                            placeholder={txt.l_input_placeholder}
+                                            onKeyDown={(e) => e.key === 'Enter' && !!handle && runScreener()}
+                                            className="w-full bg-[#050505] border border-white/10 rounded-2xl px-8 py-6 text-xl md:text-2xl text-white placeholder-[#333] focus:border-[#007AFF] focus:ring-1 focus:ring-[#007AFF] focus:shadow-[0_0_30px_rgba(0,122,255,0.2)] outline-none transition-all text-center font-mono tracking-wider"
+                                        />
+                                        <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-[#007AFF] to-[#00FFFF] opacity-0 group-hover:opacity-10 pointer-events-none transition-opacity blur-md filter" />
                                     </div>
-                                    <span className="text-sm text-[#9CA3AF] leading-relaxed select-none group-hover:text-white transition-colors">
-                                        {txt.l_consent}
-                                    </span>
                                 </div>
-
-                                <HoldButton
-                                    onExecute={initiateSequence}
-                                    disabled={!email || !consent}
-                                    label={txt.l_hold_btn}
-                                    labelHolding={txt.l_holding}
-                                />
-
-                                <button onClick={() => setState(OperationalState.IDLE)} className="w-full text-xs text-[#9CA3AF] hover:text-white uppercase tracking-widest mt-6 hover:underline decoration-[#007AFF] underline-offset-4">
-                                    Cancel Protocol
+                                <button
+                                    onClick={runScreener}
+                                    disabled={!handle}
+                                    className="w-full h-20 bg-white text-black hover:bg-[#E6E8EB] text-lg font-extrabold tracking-[0.15em] uppercase rounded-2xl shadow-[0_0_30px_rgba(255,255,255,0.1)] hover:shadow-[0_0_50px_rgba(255,255,255,0.3)] hover:-translate-y-1 active:translate-y-0 transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:shadow-none disabled:transform-none"
+                                >
+                                    {txt.l_screener_btn}
                                 </button>
                             </div>
-                        </div>
-                    )}
+                        )}
 
-                    {/* --- STATE: INGEST / REVELATION (Execution) --- */}
-                    {(state === OperationalState.INGEST || state === OperationalState.REVELATION) && (
-                        <div className="text-center py-12 space-y-10 animate-in fade-in duration-500">
-                            <div className="relative w-32 h-32 mx-auto">
-                                <div className="absolute inset-0 rounded-full border-2 border-[#007AFF]/10" />
-                                <div className="absolute inset-0 rounded-full border-4 border-[#007AFF] border-t-transparent animate-spin" />
-                                <div className="absolute inset-0 flex items-center justify-center">
-                                    <Terminal className="w-12 h-12 text-[#007AFF] animate-pulse drop-shadow-[0_0_10px_#007AFF]" />
+                        {/* --- STATE: PREVIEW --- */}
+                        {state === OperationalState.PREVIEW && profile && (
+                            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                {/* Profile Summary - Glass Card */}
+                                <div className="flex items-center gap-6 mb-10 bg-white/5 p-6 rounded-3xl border border-white/10">
+                                    <div className="w-20 h-20 rounded-full border-2 border-[#007AFF] p-1 overflow-hidden shadow-[0_0_20px_rgba(0,122,255,0.3)]">
+                                        <img src={`https://wsrv.nl/?url=${encodeURIComponent(profile.profilePicUrl)}`} className="w-full h-full rounded-full object-cover grayscale hover:grayscale-0 transition-all duration-500" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-white font-bold text-2xl tracking-tight">{profile.username}</h3>
+                                        <div className="flex gap-4 text-sm text-[#9CA3AF] mt-2 font-mono">
+                                            <span className="px-3 py-1 bg-white/5 rounded-full border border-white/5"><span className="text-white font-bold">{profile.followersCount}</span> Followers</span>
+                                            <span className="px-3 py-1 bg-white/5 rounded-full border border-white/5"><span className="text-white font-bold">{profile.postsCount}</span> Posts</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Confirmation Fields */}
+                                <div className="space-y-8">
+                                    <div className="space-y-3">
+                                        <label className="text-xs text-[#007AFF] font-bold tracking-[0.25em] uppercase ml-2 block">
+                                            {txt.l_input_email}
+                                        </label>
+                                        <input
+                                            value={email}
+                                            onChange={e => setEmail(e.target.value)}
+                                            placeholder="name@example.com"
+                                            className="w-full bg-[#050505] border border-white/10 rounded-2xl px-8 py-5 text-white placeholder-[#333] focus:border-[#007AFF] focus:shadow-[0_0_20px_rgba(0,122,255,0.2)] outline-none transition-all text-center font-mono"
+                                        />
+                                    </div>
+
+                                    <div className="flex items-start gap-4 p-5 bg-white/5 rounded-2xl border border-white/5 cursor-pointer hover:border-[#007AFF]/50 transition-colors group" onClick={() => setConsent(!consent)}>
+                                        <div className={`mt-0.5 w-6 h-6 rounded flex items-center justify-center transition-all border ${consent ? 'bg-[#007AFF] border-[#007AFF] shadow-[0_0_10px_#007AFF]' : 'border-white/30 bg-transparent'}`}>
+                                            {consent && <CheckCircle2 className="w-4 h-4 text-white" />}
+                                        </div>
+                                        <span className="text-sm text-[#9CA3AF] leading-relaxed select-none group-hover:text-white transition-colors">
+                                            {txt.l_consent}
+                                        </span>
+                                    </div>
+
+                                    <HoldButton
+                                        onExecute={initiateSequence}
+                                        disabled={!email || !consent}
+                                        label={txt.l_hold_btn}
+                                        labelHolding={txt.l_holding}
+                                    />
+
+                                    <button onClick={() => setState(OperationalState.IDLE)} className="w-full text-xs text-[#9CA3AF] hover:text-white uppercase tracking-widest mt-6 hover:underline decoration-[#007AFF] underline-offset-4">
+                                        Cancel Protocol
+                                    </button>
                                 </div>
                             </div>
-                            <div className="space-y-4">
-                                <h3 className="text-white font-bold tracking-widest animate-pulse text-lg">
-                                    {state === OperationalState.INGEST ? txt.ingest : "ANALYZING STRUCTURE"}
-                                </h3>
-                                <p className="text-[#007AFF] text-xs font-mono tracking-[0.3em]">
-                                    PROCESSING_MATRIX_NODE_AF7
+                        )}
+
+                        {/* --- STATE: INGEST / REVELATION (Execution) --- */}
+                        {(state === OperationalState.INGEST || state === OperationalState.REVELATION) && (
+                            <div className="text-center py-12 space-y-10 animate-in fade-in duration-500">
+                                <div className="relative w-32 h-32 mx-auto">
+                                    <div className="absolute inset-0 rounded-full border-2 border-[#007AFF]/10" />
+                                    <div className="absolute inset-0 rounded-full border-4 border-[#007AFF] border-t-transparent animate-spin" />
+                                    <div className="absolute inset-0 flex items-center justify-center">
+                                        <Terminal className="w-12 h-12 text-[#007AFF] animate-pulse drop-shadow-[0_0_10px_#007AFF]" />
+                                    </div>
+                                </div>
+                                <div className="space-y-4">
+                                    <h3 className="text-white font-bold tracking-widest animate-pulse text-lg">
+                                        {state === OperationalState.INGEST ? txt.ingest : "ANALYZING STRUCTURE"}
+                                    </h3>
+                                    <p className="text-[#007AFF] text-xs font-mono tracking-[0.3em]">
+                                        PROCESSING_MATRIX_NODE_AF7
+                                    </p>
+                                </div>
+                                <div className="h-1 bg-white/10 rounded-full overflow-hidden w-full max-w-sm mx-auto relative">
+                                    <div className="absolute inset-0 bg-blue-500/20 blur-sm" />
+                                    <div className="h-full bg-[#007AFF] animate-progress-indeterminate shadow-[0_0_10px_#007AFF]" />
+                                </div>
+                            </div>
+                        )}
+
+                        {/* --- STATE: SENTENCE (Verdict) --- */}
+                        {state === OperationalState.SENTENCE && (activeUX => (
+                            (!['BLOCKED', 'INCONCLUSIVE', 'SYSTEM_ERROR', 'TERMINATED'].includes(activeUX?.system_verdict)) &&
+                            <div className="text-center animate-in fade-in zoom-in-95 duration-700">
+                                <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-[#007AFF]/10 mb-8 border border-[#007AFF]/30 shadow-[0_0_30px_rgba(0,122,255,0.2)]">
+                                    <ShieldCheck className="w-12 h-12 text-[#007AFF] drop-shadow-[0_0_10px_#007AFF]" />
+                                </div>
+                                <span className="block text-[#007AFF] font-bold tracking-[0.3em] text-xs mb-4 uppercase">{activeUX?.verdict_code}</span>
+                                <h3 className="text-4xl text-white font-extrabold mb-8 drop-shadow-lg">{activeUX?.ux_controls?.status_label}</h3>
+                                <p className="text-[#9CA3AF] text-lg leading-relaxed mb-10 border-t border-white/10 pt-8 font-light">
+                                    {activeUX?.ux_controls?.message}
+                                </p>
+                                {activeUX?.ux_controls?.cta && (
+                                    <button className="w-full bg-white text-black hover:bg-[#E6E8EB] py-5 rounded-2xl font-bold tracking-widest uppercase transition-all shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:shadow-[0_0_40px_rgba(255,255,255,0.4)] hover:-translate-y-1">
+                                        {activeUX.ux_controls.cta}
+                                    </button>
+                                )}
+                            </div>
+                        ))(backendUX)}
+
+                    </div>
+                </div>
+            </section >
+
+            {/* BLOCK 3: WHY NOW (Value Prop) */}
+            < section className="px-6 py-32 border-t border-white/5 bg-black/50 relative z-10" >
+                <div className="max-w-5xl mx-auto">
+                    {/* Glass Card for Value Prop */}
+                    <div className="bg-white/[0.02] backdrop-blur-[10px] border border-white/10 p-12 md:p-20 rounded-[2rem] relative overflow-hidden group hover:border-[#007AFF]/30 transition-all duration-700">
+                        <div className="absolute top-0 right-0 w-96 h-96 bg-[#007AFF]/10 rounded-full blur-[100px] group-hover:bg-[#007AFF]/15 transition-all" />
+
+                        <div className="relative z-10 flex flex-col md:flex-row gap-16 items-center">
+                            <div className="flex-1 space-y-8">
+                                <h3 className="text-3xl font-extrabold text-white uppercase tracking-wide">{txt.l_why_title}</h3>
+                                <p className="text-[#B0B3B8] leading-relaxed text-xl font-light">
+                                    {txt.l_why_copy}
                                 </p>
                             </div>
-                            <div className="h-1 bg-white/10 rounded-full overflow-hidden w-full max-w-sm mx-auto relative">
-                                <div className="absolute inset-0 bg-blue-500/20 blur-sm" />
-                                <div className="h-full bg-[#007AFF] animate-progress-indeterminate shadow-[0_0_10px_#007AFF]" />
+                            <div className="w-full md:w-1/3 flex justify-center">
+                                {/* Vibrant Warning Icon */}
+                                <AlertTriangle className="w-32 h-32 text-amber-500 drop-shadow-[0_0_25px_rgba(245,158,11,0.4)] animate-pulse" style={{ animationDuration: '4s' }} />
                             </div>
                         </div>
-                    )}
+                    </div>
+                </div>
+            </section >
 
-                    {/* --- STATE: SENTENCE (Verdict) --- */}
-                    {state === OperationalState.SENTENCE && (activeUX => (
-                        (!['BLOCKED', 'INCONCLUSIVE', 'SYSTEM_ERROR', 'TERMINATED'].includes(activeUX?.system_verdict)) &&
-                        <div className="text-center animate-in fade-in zoom-in-95 duration-700">
-                            <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-[#007AFF]/10 mb-8 border border-[#007AFF]/30 shadow-[0_0_30px_rgba(0,122,255,0.2)]">
-                                <ShieldCheck className="w-12 h-12 text-[#007AFF] drop-shadow-[0_0_10px_#007AFF]" />
+            {/* BLOCK 4: STEPS */}
+            < section className="px-6 py-32 border-t border-white/5 relative z-10" >
+                <div className="max-w-7xl mx-auto">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+                        {[
+                            { icon: Scan, title: txt.l_step_1, delay: 0 },
+                            { icon: Search, title: txt.l_step_2, delay: 100 },
+                            { icon: FileCheck, title: txt.l_step_3, delay: 200 }
+                        ].map((step, i) => (
+                            <div key={i} className="flex flex-col items-center text-center space-y-6 p-8 rounded-3xl hover:bg-white/[0.03] transition-colors group">
+                                <div className="w-24 h-24 rounded-3xl bg-[#007AFF]/5 flex items-center justify-center text-[#007AFF] mb-4 border border-[#007AFF]/20 group-hover:border-[#007AFF]/50 group-hover:shadow-[0_0_30px_rgba(0,122,255,0.2)] transition-all duration-500">
+                                    <step.icon className="w-10 h-10 drop-shadow-[0_0_8px_#007AFF]" />
+                                </div>
+                                <h4 className="text-white font-bold uppercase tracking-widest text-lg">{step.title}</h4>
+                                <div className="h-1 w-16 bg-[#007AFF]/30 rounded-full group-hover:w-32 group-hover:bg-[#007AFF] transition-all duration-500" />
                             </div>
-                            <span className="block text-[#007AFF] font-bold tracking-[0.3em] text-xs mb-4 uppercase">{activeUX?.verdict_code}</span>
-                            <h3 className="text-4xl text-white font-extrabold mb-8 drop-shadow-lg">{activeUX?.ux_controls?.status_label}</h3>
-                            <p className="text-[#9CA3AF] text-lg leading-relaxed mb-10 border-t border-white/10 pt-8 font-light">
-                                {activeUX?.ux_controls?.message}
-                            </p>
-                            {activeUX?.ux_controls?.cta && (
-                                <button className="w-full bg-white text-black hover:bg-[#E6E8EB] py-5 rounded-2xl font-bold tracking-widest uppercase transition-all shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:shadow-[0_0_40px_rgba(255,255,255,0.4)] hover:-translate-y-1">
-                                    {activeUX.ux_controls.cta}
-                                </button>
-                            )}
-                        </div>
-                    ))(backendUX)}
-
+                        ))}
+                    </div>
                 </div>
-            </div>
             </section >
 
-        {/* BLOCK 3: WHY NOW (Value Prop) */ }
-        < section className = "px-6 py-32 border-t border-white/5 bg-black/50 relative z-10" >
-            <div className="max-w-5xl mx-auto">
-                {/* Glass Card for Value Prop */}
-                <div className="bg-white/[0.02] backdrop-blur-[10px] border border-white/10 p-12 md:p-20 rounded-[2rem] relative overflow-hidden group hover:border-[#007AFF]/30 transition-all duration-700">
-                    <div className="absolute top-0 right-0 w-96 h-96 bg-[#007AFF]/10 rounded-full blur-[100px] group-hover:bg-[#007AFF]/15 transition-all" />
-
-                    <div className="relative z-10 flex flex-col md:flex-row gap-16 items-center">
-                        <div className="flex-1 space-y-8">
-                            <h3 className="text-3xl font-extrabold text-white uppercase tracking-wide">{txt.l_why_title}</h3>
-                            <p className="text-[#B0B3B8] leading-relaxed text-xl font-light">
-                                {txt.l_why_copy}
-                            </p>
+            {/* BLOCK 5: RESULTS VISUAL */}
+            < section className="px-6 py-32 border-t border-white/5 bg-black/80 relative z-10" >
+                <div className="max-w-5xl mx-auto text-center">
+                    <h3 className="text-xl text-[#6B7280] mb-16 uppercase tracking-[0.3em] font-medium">{txt.l_res_title}</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div className="py-12 px-8 rounded-3xl border border-emerald-500/10 bg-emerald-500/[0.02] backdrop-blur-sm grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-500 cursor-default">
+                            <CheckCircle2 className="w-12 h-12 text-emerald-500 mx-auto mb-6 drop-shadow-[0_0_15px_rgba(16,185,129,0.5)]" />
+                            <span className="text-emerald-500 font-extrabold tracking-[0.2em] uppercase text-lg">{txt.l_res_1}</span>
                         </div>
-                        <div className="w-full md:w-1/3 flex justify-center">
-                            {/* Vibrant Warning Icon */}
-                            <AlertTriangle className="w-32 h-32 text-amber-500 drop-shadow-[0_0_25px_rgba(245,158,11,0.4)] animate-pulse" style={{ animationDuration: '4s' }} />
+                        <div className="py-12 px-8 rounded-3xl border border-amber-500/10 bg-amber-500/[0.02] backdrop-blur-sm grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-500 cursor-default">
+                            <AlertTriangle className="w-12 h-12 text-amber-500 mx-auto mb-6 drop-shadow-[0_0_15px_rgba(245,158,11,0.5)]" />
+                            <span className="text-amber-500 font-extrabold tracking-[0.2em] uppercase text-lg">{txt.l_res_2}</span>
+                        </div>
+                        <div className="py-12 px-8 rounded-3xl border border-red-500/10 bg-red-500/[0.02] backdrop-blur-sm grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-500 cursor-default">
+                            <XCircle className="w-12 h-12 text-red-500 mx-auto mb-6 drop-shadow-[0_0_15px_rgba(239,68,68,0.5)]" />
+                            <span className="text-red-500 font-extrabold tracking-[0.2em] uppercase text-lg">{txt.l_res_3}</span>
                         </div>
                     </div>
                 </div>
-            </div>
             </section >
 
-        {/* BLOCK 4: STEPS */ }
-        < section className = "px-6 py-32 border-t border-white/5 relative z-10" >
-            <div className="max-w-7xl mx-auto">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-                    {[
-                        { icon: Scan, title: txt.l_step_1, delay: 0 },
-                        { icon: Search, title: txt.l_step_2, delay: 100 },
-                        { icon: FileCheck, title: txt.l_step_3, delay: 200 }
-                    ].map((step, i) => (
-                        <div key={i} className="flex flex-col items-center text-center space-y-6 p-8 rounded-3xl hover:bg-white/[0.03] transition-colors group">
-                            <div className="w-24 h-24 rounded-3xl bg-[#007AFF]/5 flex items-center justify-center text-[#007AFF] mb-4 border border-[#007AFF]/20 group-hover:border-[#007AFF]/50 group-hover:shadow-[0_0_30px_rgba(0,122,255,0.2)] transition-all duration-500">
-                                <step.icon className="w-10 h-10 drop-shadow-[0_0_8px_#007AFF]" />
-                            </div>
-                            <h4 className="text-white font-bold uppercase tracking-widest text-lg">{step.title}</h4>
-                            <div className="h-1 w-16 bg-[#007AFF]/30 rounded-full group-hover:w-32 group-hover:bg-[#007AFF] transition-all duration-500" />
-                        </div>
-                    ))}
-                </div>
-            </div>
-            </section >
-
-        {/* BLOCK 5: RESULTS VISUAL */ }
-        < section className = "px-6 py-32 border-t border-white/5 bg-black/80 relative z-10" >
-            <div className="max-w-5xl mx-auto text-center">
-                <h3 className="text-xl text-[#6B7280] mb-16 uppercase tracking-[0.3em] font-medium">{txt.l_res_title}</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div className="py-12 px-8 rounded-3xl border border-emerald-500/10 bg-emerald-500/[0.02] backdrop-blur-sm grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-500 cursor-default">
-                        <CheckCircle2 className="w-12 h-12 text-emerald-500 mx-auto mb-6 drop-shadow-[0_0_15px_rgba(16,185,129,0.5)]" />
-                        <span className="text-emerald-500 font-extrabold tracking-[0.2em] uppercase text-lg">{txt.l_res_1}</span>
-                    </div>
-                    <div className="py-12 px-8 rounded-3xl border border-amber-500/10 bg-amber-500/[0.02] backdrop-blur-sm grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-500 cursor-default">
-                        <AlertTriangle className="w-12 h-12 text-amber-500 mx-auto mb-6 drop-shadow-[0_0_15px_rgba(245,158,11,0.5)]" />
-                        <span className="text-amber-500 font-extrabold tracking-[0.2em] uppercase text-lg">{txt.l_res_2}</span>
-                    </div>
-                    <div className="py-12 px-8 rounded-3xl border border-red-500/10 bg-red-500/[0.02] backdrop-blur-sm grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-500 cursor-default">
-                        <XCircle className="w-12 h-12 text-red-500 mx-auto mb-6 drop-shadow-[0_0_15px_rgba(239,68,68,0.5)]" />
-                        <span className="text-red-500 font-extrabold tracking-[0.2em] uppercase text-lg">{txt.l_res_3}</span>
-                    </div>
-                </div>
-            </div>
-            </section >
-
-        {/* FOOTER */ }
-        < footer className = "py-16 text-center border-t border-white/5 relative z-10" >
+            {/* FOOTER */}
+            < footer className="py-16 text-center border-t border-white/5 relative z-10" >
                 <div className="flex justify-center items-center gap-2 text-[#4B5563] mb-4">
                     <Lock className="w-3 h-3" />
                     <span className="text-[10px] uppercase tracking-[0.25em]">SECURE FORENSIC PROTOCOL</span>
