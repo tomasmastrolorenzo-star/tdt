@@ -1,7 +1,21 @@
 ﻿"use client"
 
 import React, { useState, useEffect, useRef } from "react"
-import { Globe, ShieldCheck, Lock, Terminal, ShieldAlert } from "lucide-react"
+import {
+    Globe,
+    ShieldCheck,
+    Lock,
+    Terminal,
+    ShieldAlert,
+    BarChart2,
+    Scan,
+    Search,
+    FileCheck,
+    CheckCircle2,
+    AlertTriangle,
+    XCircle,
+    ArrowRight
+} from "lucide-react"
 
 // --- TYPES ---
 
@@ -32,186 +46,132 @@ enum OperationalState {
 }
 
 // --- CONSTANTS ---
+// (Keeping existing logic constants)
 
 const LANG_TEXT = {
     EN: {
         // LANDING HERO
-        l_hero_title: "DIGITAL VIABILITY\nFORENSIC DIAGNOSIS",
-        l_hero_sub: "Technical evaluation of coherence, risk, and structural capacity of the professional asset.",
-
-        // CONTEXT
-        l_ctx: "In professional assets with high real authority, defective digital infrastructure generates systematic loss of trust, patients, and positioning.\n\nWithout technical diagnosis, any action on the asset is speculation.",
-
-        // WHAT IS
-        l_what_title: "WHAT IS TDT ANALYZER?",
-        l_what_desc: "TDT Analyzer is a forensic analysis system that determines if a professional asset is viable, restricted, or incompatible for structural intervention.\n\nThe system does not recommend. ",
-        l_what_strong: "It rules.",
-
-        // PROCESS
-        l_process_title: "PROCESS SCOPE",
-        l_process_1: "Validating public asset signal",
-        l_process_2: "Risk, coherence, and operational capacity analysis",
-        l_process_3: "Irreversible technical verdict issuance",
-
-        // VERDICTS
-        l_verdict_title: "POSSIBLE OUTCOMES",
-        l_v_auth: "INTERVENTION AUTHORIZED",
-        l_v_rest: "INTERVENTION RESTRICTED",
-        l_v_denied: "INTERVENTION DENIED",
-        l_v_inc: "INCONCLUSIVE ANALYSIS",
-        l_v_note: "The system may close the process without diagnosis if it detects risk or incompatibility.",
+        l_hero_title: "DOES YOUR PRESTIGE\nTRANSLATE TO RESULTS?",
+        l_hero_sub: "Analyze your profile's capacity to convert professional authority into a full agenda.",
+        l_hero_cta: "SCROLL TO ANALYZE",
 
         // ANALYZER
-        l_analyzer_title: "INITIATE FORENSIC DIAGNOSIS",
-        l_input_handle: "ASSET ID (INSTAGRAM HANDLE)",
-        l_input_email: "EMAIL",
-        l_consent: "I confirm I am requesting a forensic technical diagnosis of my digital asset.",
+        l_analyzer_title: "INITIATE AUTHORITY ANALYSIS",
+        l_input_label: "ENTER INSTAGRAM HANDLE TO START",
+        l_input_placeholder: "@username",
+        l_screener_btn: "VERIFY ASSET",
         l_hold_btn: "INITIATE PROTOCOL",
         l_holding: "HOLDING...",
-        l_screener_btn: "VERIFY ASSET",
+
+        // WHY NOW
+        l_why_title: "WHY NOW?",
+        l_why_copy: "In a high-demand market, digital coherence is your best asset. If your profile doesn't reflect your level of excellence, you are losing patients daily to competitors with less capacity but better infrastructure.",
+
+        // STEPS
+        l_step_1: "Authority Signal Scanning",
+        l_step_2: "Patient Leak Identification",
+        l_step_3: "Technical Verdict Issuance",
+
+        // RESULTS
+        l_res_title: "POSSIBLE OUTCOMES",
+        l_res_1: "AUTHORIZED",
+        l_res_2: "RESTRICTED",
+        l_res_3: "DENIED",
 
         // FOOTER
-        l_foot_1: "TDT Analyzer operates under irreversible closure protocols.",
-        l_foot_2: "Not all assets are suitable for intervention.",
+        l_foot: "TDT Analyzer operations are final.",
 
-        // LEGACY / APP
+        // LEGACY STATES
         ingest: "INGESTING SIGNALS",
         session_locked: "SESSION LOCKED · ACQUIRING PUBLIC SIGNALS",
-        bio_fragment: "BIO FRAGMENT DETECTED",
-        signal_confirmed: "SIGNAL CONFIRMED · DATA LOCKED",
-        deep_analysis: "DEEP ANALYSIS",
-        cross_layer: "CROSS-LAYER CORRELATION IN PROGRESS",
         asymmetry: "STRUCTURAL ASYMMETRY DETECTED",
         inertia: "INERTIA CALCULATED",
-        sentence_header: "TECHNICAL SENTENCE",
-        compliance: "DATA SOURCE CERTIFICATION",
-        public_data: "Public Signal Analysis Only",
-        meta_compliance: "Meta Platform Compliance",
-        cta_start: "INITIATE SEQUENCE",
-        input_placeholder: "ENTER ASSET ID",
-        risk: "INTERVENTION RISK",
-        detail: "TECHNICAL DETAIL"
-
+        l_input_email: "EMAIL ADDRESS",
+        l_consent: "I confirm I am requesting a forensic technical diagnosis."
     },
     ES: {
         // LANDING HERO
-        l_hero_title: "DIAGNÓSTICO FORENSE\nDE VIABILIDAD DIGITAL",
-        l_hero_sub: "Evaluación técnica de coherencia, riesgo y capacidad estructural del activo profesional.",
-
-        // CONTEXT
-        l_ctx: "En activos profesionales con alta autoridad real, una infraestructura digital defectuosa genera pérdida sistemática de confianza, pacientes y posicionamiento.\n\nSin diagnóstico técnico, cualquier acción sobre el activo es especulación.",
-
-        // WHAT IS
-        l_what_title: "¿QUÉ ES EL TDT ANALYZER?",
-        l_what_desc: "TDT Analyzer es un sistema de análisis forense que determina si un activo profesional es viable, restringido o incompatible para intervención estructural.\n\nEl sistema no recomienda. ",
-        l_what_strong: "Dictamina.",
-
-        // PROCESS
-        l_process_title: "ALCANCE DEL PROCESO",
-        l_process_1: "Validación de señal pública del activo",
-        l_process_2: "Análisis de riesgo, coherencia y capacidad operativa",
-        l_process_3: "Emisión de dictamen técnico irreversible",
-
-        // VERDICTS
-        l_verdict_title: "RESULTADOS POSIBLES",
-        l_v_auth: "INTERVENCIÓN AUTORIZADA",
-        l_v_rest: "INTERVENCIÓN RESTRINGIDA",
-        l_v_denied: "INTERVENCIÓN DENEGADA",
-        l_v_inc: "ANÁLISIS INCONCLUSIVO",
-        l_v_note: "El sistema puede cerrar el proceso sin entregar diagnóstico si detecta riesgo o incompatibilidad.",
+        l_hero_title: "¿TU PRESTIGIO SE\nTRADUCE EN RESULTADOS?",
+        l_hero_sub: "Analiza la capacidad de tu perfil para convertir tu autoridad profesional en una agenda llena.",
+        l_hero_cta: "DESLIZA PARA ANALIZAR",
 
         // ANALYZER
-        l_analyzer_title: "INICIAR DIAGNÓSTICO FORENSE",
-        l_input_handle: "ASSET ID (INSTAGRAM HANDLE)",
-        l_input_email: "EMAIL",
-        l_consent: "Confirmo que solicito un diagnóstico técnico forense del meu activo digital.",
+        l_analyzer_title: "INICIAR ANÁLISIS DE AUTORIDAD",
+        l_input_label: "INGRESA TU USUARIO DE INSTAGRAM",
+        l_input_placeholder: "@usuario",
+        l_screener_btn: "VERIFICAR ACTIVO", // Requested as "INICIAR ANÁLISIS" but logically it's verify first
         l_hold_btn: "INICIAR PROTOCOLO",
         l_holding: "INICIANDO...",
-        l_screener_btn: "VERIFICAR ACTIVO",
+
+        // WHY NOW
+        l_why_title: "¿POR QUÉ AHORA?",
+        l_why_copy: "En un mercado de alta exigencia, la coherencia digital es tu mejor activo. Si tu perfil no refleja tu nivel de excelencia, estás perdiendo pacientes cada día ante competidores con menor capacidad pero mejor infraestructura.",
+
+        // STEPS
+        l_step_1: "Escaneo de señales de autoridad",
+        l_step_2: "Identificación de fugas de pacientes",
+        l_step_3: "Emisión de dictamen técnico",
+
+        // RESULTS
+        l_res_title: "RESULTADOS POSIBLES",
+        l_res_1: "AUTORIZADO",
+        l_res_2: "RESTRINGIDO",
+        l_res_3: "DENEGADO",
 
         // FOOTER
-        l_foot_1: "TDT Analyzer opera bajo protocolos de cierre irreversible.",
-        l_foot_2: "No todos los activos son aptos para intervención.",
+        l_foot: "Las operaciones de TDT Analyzer son finales.",
 
-        // LEGACY / APP
+        // LEGACY STATES
         ingest: "INGESTA DE SEÑALES",
         session_locked: "SESIÓN BLOQUEADA · ADQUIRIENDO SEÑALES PÚBLICAS",
-        bio_fragment: "FRAGMENTO BIO DETECTADO",
-        signal_confirmed: "SEÑAL CONFIRMADA · DATOS ASEGURADOS",
-        deep_analysis: "ANÁLISIS PROFUNDO",
-        cross_layer: "CORRELACIÓN ENTRE CAPAS EN PROGRESO",
         asymmetry: "ASIMETRÍA ESTRUCTURAL DETECTADA",
         inertia: "INERCIA CALCULADA",
-        sentence_header: "SENTENCIA TÉCNICA",
-        compliance: "CERTIFICACIÓN DE ORIGEM",
-        public_data: "Análisis de Señales Públicas",
-        meta_compliance: "Cumplimiento Plataforma Meta",
-        cta_start: "INICIAR SECUENCIA",
-        input_placeholder: "INGRESAR ID ACTIVO",
-        risk: "RIESGO DE INTERVENCIÓN",
-        detail: "DETALLE TÉCNICO"
+        l_input_email: "CORREO ELECTRÓNICO",
+        l_consent: "Confirmo que solicito un diagnóstico técnico forense."
     },
     PT: {
         // LANDING HERO
-        l_hero_title: "DIAGNÓSTICO FORENSE\nDE VIABILIDADE DIGITAL",
-        l_hero_sub: "Avaliação técnica de coerência, risco e capacidade estrutural do ativo profissional.",
-
-        // CONTEXT
-        l_ctx: "Em ativos profissionais com alta autoridade real, uma infraestrutura digital defeituosa gera perda sistemática de confiança, pacientes e posicionamento.\n\nSem diagnóstico técnico, qualquer ação sobre o ativo é especulação.",
-
-        // WHAT IS
-        l_what_title: "O QUE É O TDT ANALYZER?",
-        l_what_desc: "TDT Analyzer é um sistema de análise forense que determina se um ativo profissional é viável, restrito ou incompatível para intervenção estrutural.\n\nO sistema não recomenda. ",
-        l_what_strong: "Determina.",
-
-        // PROCESS
-        l_process_title: "ESCOPO DO PROCESSO",
-        l_process_1: "Validação de sinal público do ativo",
-        l_process_2: "Análise de risco, coerência e capacidade operacional",
-        l_process_3: "Emissão de parecer técnico irreversível",
-
-        // VERDICTS
-        l_verdict_title: "RESULTADOS POSSÍVEIS",
-        l_v_auth: "INTERVENÇÃO AUTORIZADA",
-        l_v_rest: "INTERVENÇÃO RESTRITA",
-        l_v_denied: "INTERVENÇÃO NEGADA",
-        l_v_inc: "ANÁLISE INCONCLUSIVA",
-        l_v_note: "O sistema pode encerrar o processo sem entregar diagnóstico se detectar risco ou incompatibilidade.",
+        l_hero_title: "SEU PRESTÍGIO SE\nTRADUZ EM RESULTADOS?",
+        l_hero_sub: "Analise a capacidade do seu perfil de converter autoridade profissional em uma agenda cheia.",
+        l_hero_cta: "ROLE PARA ANALISAR",
 
         // ANALYZER
-        l_analyzer_title: "INICIAR DIAGNÓSTICO FORENSE",
-        l_input_handle: "ASSET ID (INSTAGRAM HANDLE)",
-        l_input_email: "EMAIL",
-        l_consent: "Confirmo que solicito um diagnóstico técnico forense do meu ativo digital.",
+        l_analyzer_title: "INICIAR ANÁLISE DE AUTORIDADE",
+        l_input_label: "INSIRA SEU USUÁRIO DO INSTAGRAM",
+        l_input_placeholder: "@usuario",
+        l_screener_btn: "VERIFICAR ATIVO",
         l_hold_btn: "INICIAR PROTOCOLO",
         l_holding: "INICIANDO...",
-        l_screener_btn: "VERIFICAR ATIVO",
+
+        // WHY NOW
+        l_why_title: "POR QUE AGORA?",
+        l_why_copy: "Num mercado de alta exigência, a coerência digital é o seu melhor ativo. Se o seu perfil não reflete o seu nível de excelência, você está perdendo pacientes todos os dias para concorrentes com menos capacidade, mas melhor infraestrutura.",
+
+        // STEPS
+        l_step_1: "Escaneamento de sinais de autoridade",
+        l_step_2: "Identificação de fugas de pacientes",
+        l_step_3: "Emissão de laudo técnico",
+
+        // RESULTS
+        l_res_title: "RESULTADOS POSSÍVEIS",
+        l_res_1: "AUTORIZADO",
+        l_res_2: "RESTRITO",
+        l_res_3: "NEGADO",
 
         // FOOTER
-        l_foot_1: "TDT Analyzer opera sob protocolos de encerramento irreversível.",
-        l_foot_2: "Nem todos os ativos são aptos para intervenção.",
+        l_foot: "As operações do TDT Analyzer são finais.",
 
-        // LEGACY / APP
+        // LEGACY STATES
         ingest: "INGESTÃO DE SINAIS",
         session_locked: "SESSÃO BLOQUEADA · ADQUIRINDO SINAIS PÚBLICOS",
-        bio_fragment: "FRAGMENTO DE BIO DETECTADO",
-        signal_confirmed: "SINAL CONFIRMADO · DADOS ASSEGURADOS",
-        deep_analysis: "ANÁLISIS PROFUNDA",
-        cross_layer: "CORRELAÇÃO ENTRE CAMADAS EM PROGRESSO",
         asymmetry: "ASSIMETRIA ESTRUTURAL DETECTADA",
-        inertia: "INERCIA CALCULADA",
-        sentence_header: "SENTENÇA TÉCNICA",
-        compliance: "CERTIFICAÇÃO DE ORIGEM",
-        public_data: "Análise de Sinais Públicos",
-        meta_compliance: "Conformidade Plataforma Meta",
-        cta_start: "INICIAR SEQUÊNCIA",
-        input_placeholder: "INSERIR ID ATIVO",
-        risk: "RISCO DE INTERVENÇÃO",
-        detail: "DETALHE TÉCNICO"
+        inertia: "INÉRCIA CALCULADA",
+        l_input_email: "E-MAIL",
+        l_consent: "Confirmo que solicito um diagnóstico técnico forense."
     }
 }
 
-// --- HOLD BUTTON COMPONENT (Extracted) ---
+// --- HOLD BUTTON COMPONENT ---
 const HoldButton = ({ onExecute, disabled, label, labelHolding }: { onExecute: () => void, disabled: boolean, label: string, labelHolding: string }) => {
     const [progress, setProgress] = useState(0);
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -247,13 +207,13 @@ const HoldButton = ({ onExecute, disabled, label, labelHolding }: { onExecute: (
             onTouchStart={startHold}
             onTouchEnd={endHold}
             disabled={disabled}
-            className="w-full bg-white hover:bg-[#CCCCCC] text-black py-4 text-xs font-mono font-bold tracking-[0.2em] uppercase disabled:opacity-30 disabled:cursor-not-allowed transition-none rounded-none border border-transparent relative overflow-hidden group select-none"
+            className="w-full h-16 bg-[#007AFF] hover:bg-[#007AFF]/90 text-white text-sm md:text-base font-bold tracking-[0.15em] uppercase disabled:opacity-30 disabled:cursor-not-allowed transition-all rounded-lg relative overflow-hidden group select-none shadow-[0_0_20px_rgba(0,122,255,0.3)] border border-[#007AFF]/50"
         >
             <div className="relative z-10 flex items-center justify-center gap-2">
                 {progress > 0 && progress < 100 ? labelHolding : label}
             </div>
             <div
-                className="absolute bottom-0 left-0 h-[1px] bg-black/80 transition-none"
+                className="absolute bottom-0 left-0 h-full bg-white/20 transition-none"
                 style={{ width: `${progress}%` }}
             />
         </button>
@@ -264,7 +224,7 @@ const HoldButton = ({ onExecute, disabled, label, labelHolding }: { onExecute: (
 const FinalBlackScreen = ({ text, subtext }: { text: string | null | undefined, subtext?: string }) => {
     return (
         <div className="min-h-screen bg-black flex flex-col items-center justify-center cursor-none select-none p-8 text-center text-white">
-            <span className="font-mono text-base font-medium tracking-[0.2em] mb-4">
+            <span className="font-mono text-base font-medium tracking-[0.2em] mb-4 text-red-500">
                 {text || "PROCESO FINALIZADO"}
             </span>
             {subtext && (
@@ -418,35 +378,15 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
         }
     }, [state]);
 
-    // --- RENDERERS ---
+    // --- VISUAL BLOCKS ---
 
-    const Header = ({ status }: { status: string }) => (
-        <div className="w-full border-b border-white/10 p-4 flex justify-between items-center bg-[#0B0E11] sticky top-0 z-50">
-            <div className="flex flex-col">
-                <span className="text-[10px] text-[#6B6B6B] font-mono tracking-widest">TDT ANALYZER</span>
-                <span className="text-[10px] text-[#1877F2] font-mono tracking-widest uppercase animate-pulse">STATUS: {status}</span>
+    // BLOCK 5: VERDICT BADGE
+    const VerdictBadge = ({ type, label, icon: Icon, color }: any) => (
+        <div className={`flex flex-col items-center justify-center p-6 border border-white/5 rounded-xl bg-white/5 backdrop-blur-sm`}>
+            <div className={`p-3 rounded-full bg-${color}-500/10 mb-4`}>
+                <Icon className={`w-8 h-8 text-${color}-500`} />
             </div>
-            <div className="flex items-center gap-4">
-                <button
-                    type="button"
-                    onClick={(e) => { e.preventDefault(); setLang(l => l === 'EN' ? 'ES' : l === 'ES' ? 'PT' : 'EN'); }}
-                    className="flex items-center gap-2 text-[#6B6B6B] hover:text-white transition-colors"
-                >
-                    <Globe className="w-3 h-3" />
-                    <span className="text-[10px] font-mono">{lang}</span>
-                </button>
-            </div>
-        </div>
-    )
-
-    const Footer = ({ msg }: { msg: string }) => (
-        <div className="w-full border-t border-white/10 p-4 bg-[#0B0E11] fixed bottom-0 left-0 flex justify-between items-center z-50">
-            <span className="text-[10px] text-[#6B6B6B] font-mono tracking-widest uppercase flex items-center gap-2">
-                <Lock className="w-3 h-3" /> {msg}
-            </span>
-            <div className="flex items-center gap-4 text-[10px] text-[#6B6B6B]">
-                <div className="flex items-center gap-1"><ShieldCheck className="w-3 h-3" /> Instagram Public Graph</div>
-            </div>
+            <span className={`text-[10px] tracking-[0.2em] font-bold uppercase text-${color}-500`}>{label}</span>
         </div>
     )
 
@@ -457,7 +397,6 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
     if (state === OperationalState.SENTENCE || state === OperationalState.TERMINATED) {
         const activeUX = backendUX || { system_verdict: "SYSTEM_ERROR" };
         if (['BLOCKED', 'INCONCLUSIVE', 'SYSTEM_ERROR', 'TERMINATED'].includes(activeUX.system_verdict)) {
-            // ERROR = Overlay (Hide Hero)
             const verdictText = activeUX.ux_controls?.status_label || activeUX.system_verdict;
             const subtext = activeUX.ux_controls?.message;
             return <FinalBlackScreen text={verdictText} subtext={subtext} />
@@ -467,226 +406,280 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
     if (state === OperationalState.BLACK_HOLE) {
         return (
             <div className="min-h-screen bg-black flex flex-col cursor-none overflow-hidden select-none">
-                <div className="flex-1 w-full h-full bg-black" />
+                <div className="flex-1 w-full h-full bg-black/90 flex flex-col items-center justify-center space-y-4">
+                    <div className="w-16 h-16 rounded-full border-2 border-[#007AFF] border-t-transparent animate-spin" />
+                </div>
             </div>
         )
     }
 
-    // --- STANDARD LANDING LAYOUT (ALL OTHER STATES) ---
+    // --- CLEAN TECH BLUE LANDING LAYOUT ---
     return (
-        <div className="min-h-screen bg-[#000000] text-[#FFFFFF] font-mono selection:bg-white selection:text-black relative">
+        <div className="min-h-screen bg-[#0A0F1E] text-[#E6E8EB] font-sans selection:bg-[#007AFF] selection:text-white relative overflow-x-hidden">
+
             {/* LANG SWITCHER */}
             <div className="absolute top-6 right-6 z-50">
                 <button
                     onClick={() => setLang(l => l === 'EN' ? 'ES' : l === 'ES' ? 'PT' : 'EN')}
-                    className="text-[10px] text-[#6B6B6B] hover:text-white uppercase tracking-widest border border-[#333] px-3 py-1 hover:border-white transition-colors"
+                    className="text-[10px] text-[#007AFF] hover:text-white uppercase tracking-widest border border-[#007AFF]/30 px-3 py-1 hover:border-[#007AFF] transition-colors rounded-full backdrop-blur-md"
                 >
-                    [{lang}]
+                    {lang}
                 </button>
             </div>
 
             {/* BLOCK 1: HERO */}
-            <section className="min-h-[60vh] flex flex-col justify-end px-6 pb-24 border-b border-[#FFFFFF]/10">
-                <div className="max-w-4xl">
-                    <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold tracking-tighter leading-[1.1] mb-8 text-[#FFFFFF] uppercase whitespace-pre-line">
-                        {txt.l_hero_title}
+            <section className="min-h-[80vh] flex flex-col justify-center items-center px-6 relative overflow-hidden">
+                {/* Background Gradients */}
+                <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
+                    <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-[#007AFF]/10 blur-[100px] rounded-full" />
+                    <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#007AFF]/5 blur-[120px] rounded-full" />
+                </div>
+
+                <div className="max-w-4xl text-center z-10 space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-1000">
+                    <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.1]">
+                        {lang === 'ES' ? (
+                            <>
+                                ¿TU <span className="text-[#007AFF]">PRESTIGIO</span> SE<br />
+                                TRADUCE EN <span className="text-[#007AFF]">RESULTADOS</span>?
+                            </>
+                        ) : txt.l_hero_title}
                     </h1>
-                    <p className="text-sm md:text-base text-[#6B6B6B] uppercase tracking-widest max-w-2xl leading-relaxed">
+                    <p className="text-lg md:text-xl text-[#9CA3AF] max-w-2xl mx-auto leading-relaxed">
                         {txt.l_hero_sub}
                     </p>
+
+                    {/* Visual Bar Chart */}
+                    <div className="flex items-end justify-center gap-2 h-16 mt-8 opacity-80">
+                        <div className="w-2 bg-[#007AFF]/20 h-full rounded-t animate-pulse" style={{ height: '30%' }} />
+                        <div className="w-2 bg-[#007AFF]/40 h-full rounded-t animate-pulse" style={{ height: '50%', animationDelay: '0.1s' }} />
+                        <div className="w-2 bg-[#007AFF]/60 h-full rounded-t animate-pulse" style={{ height: '75%', animationDelay: '0.2s' }} />
+                        <div className="w-2 bg-[#007AFF] h-full rounded-t animate-pulse" style={{ height: '100%', animationDelay: '0.3s' }} />
+                    </div>
+                </div>
+
+                <div className="absolute bottom-10 animate-bounce text-[#007AFF]/50">
+                    <ArrowRight className="w-6 h-6 rotate-90" />
                 </div>
             </section>
 
-            {/* BLOCK 6: THE ANALYZER (CONTAINED) */}
-            <section className="px-6 py-32 flex flex-col items-center justify-center border-t border-[#FFFFFF]/10 bg-black/50 min-h-[500px]">
-                <div className="w-full max-w-lg space-y-12">
+            {/* BLOCK 2: ANALYZER (Glassmorphism Card) */}
+            <section className="px-6 py-24 relative z-20" id="analyzer-block">
+                <div className="max-w-xl mx-auto">
+                    <div className={`bg-[#0F1629]/80 backdrop-blur-xl border border-white/10 rounded-3xl p-8 md:p-12 shadow-2xl shadow-[#007AFF]/10 transition-all duration-500 ${state === OperationalState.INGEST || state === OperationalState.REVELATION ? 'border-[#007AFF]/50' : ''}`}>
 
-                    {/* HEADER FOR BLOCK 6 - Only show if NOT in Verdict/Revelation to avoid clutter? Or keep it? keeping it for consistency except verdict */}
-                    {(state !== OperationalState.SENTENCE && state !== OperationalState.REVELATION) && (
-                        <div className="text-center space-y-4">
-                            <Terminal className="w-6 h-6 text-[#FFFFFF] mx-auto" />
-                            <h2 className="text-lg text-[#FFFFFF] tracking-[0.2em] uppercase font-bold">{txt.l_analyzer_title}</h2>
+                        {/* HEADER */}
+                        <div className="text-center mb-10">
+                            <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#007AFF]/10 mb-6">
+                                <Scan className="w-6 h-6 text-[#007AFF]" />
+                            </div>
+                            <h2 className="text-xl font-bold text-white tracking-wider uppercase">{txt.l_analyzer_title}</h2>
                         </div>
-                    )}
 
-                    {/* --- INLINE CONTENT --- */}
+                        {/* --- STATE: IDLE --- */}
+                        {state === OperationalState.IDLE && (
+                            <div className="space-y-6 animate-in fade-in zoom-in-95 duration-500">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] text-[#9CA3AF] font-bold tracking-[0.2em] uppercase ml-1">
+                                        {txt.l_input_label}
+                                    </label>
+                                    <div className="relative">
+                                        <input
+                                            value={handle}
+                                            onChange={e => setHandle(e.target.value)}
+                                            placeholder={txt.l_input_placeholder}
+                                            onKeyDown={(e) => e.key === 'Enter' && !!handle && runScreener()}
+                                            className="w-full bg-[#0A0F1E] border border-white/10 rounded-xl px-6 py-5 text-lg text-white placeholder-[#4B5563] focus:border-[#007AFF] focus:ring-1 focus:ring-[#007AFF] outline-none transition-all text-center font-medium"
+                                        />
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={runScreener}
+                                    disabled={!handle}
+                                    className="w-full h-16 bg-[#007AFF] hover:bg-[#007AFF]/90 text-white text-base font-bold tracking-[0.15em] uppercase rounded-xl shadow-[0_4px_20px_rgba(0,122,255,0.4)] hover:shadow-[0_4px_30px_rgba(0,122,255,0.6)] hover:-translate-y-0.5 active:translate-y-0 transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:shadow-none"
+                                >
+                                    {txt.l_screener_btn}
+                                </button>
+                            </div>
+                        )}
 
-                    {/* STATE: IDLE */}
-                    {state === OperationalState.IDLE && (
-                        <div className="space-y-6 animate-in fade-in duration-500">
-                            <input
-                                value={handle}
-                                onChange={e => setHandle(e.target.value)}
-                                placeholder={txt.l_input_handle}
-                                onKeyDown={(e) => e.key === 'Enter' && !!handle && runScreener()}
-                                className="w-full bg-black border-b border-[#FFFFFF]/30 text-center py-4 text-sm font-mono tracking-widest focus:border-[#FFFFFF] outline-none text-[#FFFFFF] placeholder-[#6B6B6B] uppercase rounded-none transition-none"
-                            />
-                            <button
-                                onClick={runScreener}
-                                disabled={!handle}
-                                className="w-full bg-white hover:bg-[#CCCCCC] text-black py-4 text-xs font-mono font-bold tracking-[0.2em] uppercase disabled:opacity-30 disabled:cursor-not-allowed transition-none rounded-none"
-                            >
-                                {txt.l_screener_btn}
-                            </button>
-                        </div>
-                    )}
-
-                    {state === OperationalState.PREVIEW && profile && (
-                        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 w-full">
-                            {/* PREVIEW CARD */}
-                            <div className="border border-white/10 bg-white/5 p-6 shadow-2xl shadow-black">
-                                <div className="flex items-center gap-6 mb-6">
-                                    <div className="w-16 h-16 rounded-full border border-white/20 p-1">
-                                        <img src={`https://wsrv.nl/?url=${encodeURIComponent(profile.profilePicUrl)}`} className="w-full h-full rounded-full grayscale" />
+                        {/* --- STATE: PREVIEW --- */}
+                        {state === OperationalState.PREVIEW && profile && (
+                            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                {/* Profile Summary */}
+                                <div className="flex items-center gap-4 mb-8 bg-[#0A0F1E] p-4 rounded-2xl border border-white/5">
+                                    <div className="w-16 h-16 rounded-full border-2 border-[#007AFF] p-0.5 overflow-hidden">
+                                        <img src={`https://wsrv.nl/?url=${encodeURIComponent(profile.profilePicUrl)}`} className="w-full h-full rounded-full object-cover" />
                                     </div>
                                     <div>
-                                        <h3 className="text-white text-lg tracking-widest uppercase">{profile.username}</h3>
-                                        <div className="text-[#6B6B6B] text-[10px] tracking-wider uppercase mt-1 flex gap-4">
-                                            <span>{profile.followersCount} Followers</span>
-                                            <span>{profile.postsCount} Posts</span>
+                                        <h3 className="text-white font-bold text-lg">{profile.username}</h3>
+                                        <div className="flex gap-3 text-xs text-[#9CA3AF] mt-1">
+                                            <span><span className="text-white font-bold">{profile.followersCount}</span> Followers</span>
+                                            <span><span className="text-white font-bold">{profile.postsCount}</span> Posts</span>
                                         </div>
                                     </div>
                                 </div>
-                                {profile.biography && (
-                                    <p className="text-[#6B6B6B] text-xs italic border-l-2 border-white/20 pl-4 py-1 mb-6">
-                                        "{profile.biography.slice(0, 100)}..."
-                                    </p>
-                                )}
 
-                                {/* 6 POST GRID */}
-                                <div className="grid grid-cols-3 gap-2 opacity-50">
-                                    {previewPosts.map((post) => (
-                                        <div key={post.id} className="aspect-square bg-white/5 relative group">
-                                            <img src={`https://wsrv.nl/?url=${encodeURIComponent(post.url)}`} className="w-full h-full object-cover grayscale" />
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {/* EMAIL & CONSENT - ONLY VISIBLE NOW */}
-                            <div className="space-y-6">
-                                <input
-                                    value={email}
-                                    onChange={e => setEmail(e.target.value)}
-                                    placeholder={txt.l_input_email}
-                                    className="w-full bg-black border-b border-[#FFFFFF]/30 text-center py-4 text-sm font-mono tracking-widest focus:border-[#FFFFFF] outline-none text-[#FFFFFF] placeholder-[#6B6B6B] uppercase rounded-none transition-none"
-                                />
-
-                                <div className="flex items-start justify-center gap-3 py-2 cursor-pointer group" onClick={() => setConsent(!consent)}>
-                                    <div className={`mt-0.5 w-3 h-3 border border-[#FFFFFF]/50 flex items-center justify-center transition-none rounded-none ${consent ? 'bg-[#FFFFFF]' : 'bg-transparent'}`}>
+                                {/* Confirmation Fields */}
+                                <div className="space-y-6">
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] text-[#9CA3AF] font-bold tracking-[0.2em] uppercase ml-1">
+                                            {txt.l_input_email}
+                                        </label>
+                                        <input
+                                            value={email}
+                                            onChange={e => setEmail(e.target.value)}
+                                            placeholder="name@example.com"
+                                            className="w-full bg-[#0A0F1E] border border-white/10 rounded-xl px-6 py-4 text-white placeholder-[#4B5563] focus:border-[#007AFF] outline-none transition-all text-center"
+                                        />
                                     </div>
-                                    <span className="text-[10px] text-[#6B6B6B] group-hover:text-[#FFFFFF] font-mono tracking-wider uppercase select-none transition-none text-left leading-relaxed">
-                                        {txt.l_consent}
-                                    </span>
-                                </div>
 
-                                <div className="pt-4">
+                                    <div className="flex items-start gap-3 p-4 bg-[#0A0F1E]/50 rounded-xl border border-white/5 cursor-pointer hover:border-[#007AFF]/30 transition-colors" onClick={() => setConsent(!consent)}>
+                                        <div className={`mt-0.5 w-5 h-5 rounded border border-[#007AFF] flex items-center justify-center transition-all ${consent ? 'bg-[#007AFF]' : 'bg-transparent'}`}>
+                                            {consent && <CheckCircle2 className="w-3.5 h-3.5 text-white" />}
+                                        </div>
+                                        <span className="text-xs text-[#9CA3AF] leading-relaxed select-none">
+                                            {txt.l_consent}
+                                        </span>
+                                    </div>
+
                                     <HoldButton
                                         onExecute={initiateSequence}
                                         disabled={!email || !consent}
                                         label={txt.l_hold_btn}
                                         labelHolding={txt.l_holding}
                                     />
-                                </div>
-                            </div>
 
-                            <div className="text-center">
-                                <button onClick={() => setState(OperationalState.IDLE)} className="text-[10px] text-[#6B6B6B] uppercase underline hover:text-white">
-                                    CANCEL OPERATION
-                                </button>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* STATE: INGEST (Execution) */}
-                    {state === OperationalState.INGEST && (
-                        <div className="w-full border border-white/10 bg-white/5 p-8 text-center animate-pulse">
-                            <span className="text-[10px] text-[#1877F2] font-mono tracking-widest uppercase">
-                                {txt.ingest}
-                            </span>
-                            <div className="mt-4 h-[1px] w-full bg-[#1877F2]/30 overflow-hidden">
-                                <div className="h-full bg-[#1877F2] animate-progress-indeterminate w-1/3" />
-                            </div>
-                            <span className="text-[10px] text-[#6B6B6B] font-mono tracking-widest uppercase mt-4 block">
-                                {txt.session_locked}
-                            </span>
-                        </div>
-                    )}
-
-                    {/* STATE: REVELATION */}
-                    {state === OperationalState.REVELATION && (
-                        <div className="w-full border border-white/10 bg-white/5 p-8 text-center space-y-8">
-                            <span className="text-[10px] text-[#1877F2] font-mono tracking-widest uppercase animate-pulse">
-                                FORENSIC REVELATION
-                            </span>
-                            <div className="space-y-4 text-center">
-                                <div className="flex items-center justify-center gap-4">
-                                    <div className={`w-2 h-2 rounded-full ${revelationStep >= 0 ? 'bg-[#1877F2] animate-ping' : 'bg-white/10'}`} />
-                                    <span className={`text-xs tracking-[0.2em] uppercase ${revelationStep >= 0 ? 'text-white' : 'text-[#6B6B6B]'}`}>
-                                        {txt.asymmetry}
-                                    </span>
-                                </div>
-                                <div className="flex items-center justify-center gap-4">
-                                    <div className={`w-2 h-2 rounded-full ${revelationStep >= 1 ? 'bg-[#1877F2] animate-ping' : 'bg-white/10'}`} />
-                                    <span className={`text-xs tracking-[0.2em] uppercase ${revelationStep >= 1 ? 'text-white' : 'text-[#6B6B6B]'}`}>
-                                        {txt.inertia}
-                                    </span>
-                                </div>
-                            </div>
-                            <div className="h-1 w-32 bg-white/10 overflow-hidden rounded-full mx-auto">
-                                <div className="h-full bg-[#1877F2] animate-progress-indeterminate" />
-                            </div>
-                        </div>
-                    )}
-
-                    {/* STATE: SENTENCE (APPROVED/DOWNGRADED - Success Case) */}
-                    {(state === OperationalState.SENTENCE || state === OperationalState.TERMINATED) &&
-                        (!['BLOCKED', 'INCONCLUSIVE', 'SYSTEM_ERROR', 'TERMINATED'].includes(backendUX?.system_verdict)) && (
-                            <div className="w-full animate-in fade-in duration-1000">
-                                <div className="border border-white/10 bg-white/5 p-8 text-left relative overflow-hidden">
-                                    {/* DECORATION */}
-                                    <div className="absolute top-0 right-0 p-4 opacity-20">
-                                        <ShieldCheck className="w-12 h-12 text-[#1877F2]" />
-                                    </div>
-
-                                    <span className="text-[#1877F2] tracking-[0.2em] text-[10px] uppercase font-bold block mb-2">
-                                        {backendUX?.verdict_code}
-                                    </span>
-                                    <h3 className="text-2xl md:text-3xl font-medium tracking-tight leading-none text-white mb-6 uppercase">
-                                        {backendUX?.ux_controls?.status_label || backendUX?.system_verdict}
-                                    </h3>
-
-                                    <div className="w-full h-[1px] bg-white/10 mb-6" />
-
-                                    <h4 className="text-[#6B6B6B] text-[10px] tracking-[0.2em] uppercase mb-2">
-                                        {backendUX?.ux_controls?.title}
-                                    </h4>
-                                    <p className="text-[#E6E8EB] text-xs md:text-sm leading-relaxed font-light whitespace-pre-line tracking-wide mb-8">
-                                        {backendUX?.ux_controls?.message}
-                                    </p>
-
-                                    {backendUX?.ux_controls?.cta && (
-                                        <button className="w-full bg-white text-black py-4 text-xs font-bold tracking-[0.2em] uppercase hover:bg-[#CCCCCC] transition-colors rounded-none">
-                                            {backendUX.ux_controls.cta}
-                                        </button>
-                                    )}
-                                </div>
-                                <div className="mt-4 text-center">
-                                    <span className="text-[9px] text-[#6B6B6B] tracking-widest uppercase">
-                                        SESS: {sessionId} // SIG: {timestamp.split('T')[1].split('.')[0]}
-                                    </span>
+                                    <button onClick={() => setState(OperationalState.IDLE)} className="w-full text-xs text-[#9CA3AF] hover:text-white uppercase tracking-widest mt-4">
+                                        Cancel Protocol
+                                    </button>
                                 </div>
                             </div>
                         )}
 
+                        {/* --- STATE: INGEST / REVELATION (Execution) --- */}
+                        {(state === OperationalState.INGEST || state === OperationalState.REVELATION) && (
+                            <div className="text-center py-10 space-y-8 animate-in fade-in duration-500">
+                                <div className="relative w-24 h-24 mx-auto">
+                                    <div className="absolute inset-0 rounded-full border-4 border-[#007AFF]/20" />
+                                    <div className="absolute inset-0 rounded-full border-4 border-[#007AFF] border-t-transparent animate-spin" />
+                                    <div className="absolute inset-0 flex items-center justify-center">
+                                        <Terminal className="w-8 h-8 text-[#007AFF] animate-pulse" />
+                                    </div>
+                                </div>
+                                <div className="space-y-2">
+                                    <h3 className="text-white font-bold tracking-wider animate-pulse">
+                                        {state === OperationalState.INGEST ? txt.ingest : "ANALYZING STRUCTURE"}
+                                    </h3>
+                                    <p className="text-[#007AFF] text-xs font-mono tracking-widest">
+                                        {state === OperationalState.INGEST ? "LOCKED" : "CORRELATING"} // {timestamp.split('T')[1].split('.')[0]}
+                                    </p>
+                                </div>
+                                <div className="h-1 bg-[#0A0F1E] rounded-full overflow-hidden w-full max-w-xs mx-auto">
+                                    <div className="h-full bg-[#007AFF] animate-progress-indeterminate" />
+                                </div>
+                            </div>
+                        )}
+
+                        {/* --- STATE: SENTENCE (Verdict) --- */}
+                        {state === OperationalState.SENTENCE && (activeUX => (
+                            (!['BLOCKED', 'INCONCLUSIVE', 'SYSTEM_ERROR', 'TERMINATED'].includes(activeUX?.system_verdict)) &&
+                            <div className="text-center animate-in fade-in zoom-in-95 duration-700">
+                                <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-[#007AFF]/10 mb-6">
+                                    <ShieldCheck className="w-10 h-10 text-[#007AFF]" />
+                                </div>
+                                <span className="block text-[#007AFF] font-bold tracking-[0.2em] text-sm mb-2">{activeUX?.verdict_code}</span>
+                                <h3 className="text-3xl text-white font-bold mb-6">{activeUX?.ux_controls?.status_label}</h3>
+                                <p className="text-[#9CA3AF] text-sm leading-relaxed mb-8 border-t border-white/5 pt-6">
+                                    {activeUX?.ux_controls?.message}
+                                </p>
+                                {activeUX?.ux_controls?.cta && (
+                                    <button className="w-full bg-white text-[#0A0F1E] hover:bg-[#E6E8EB] py-4 rounded-xl font-bold tracking-wider uppercase transition-colors">
+                                        {activeUX.ux_controls.cta}
+                                    </button>
+                                )}
+                            </div>
+                        ))(backendUX)}
+
+                    </div>
+                </div>
+            </section>
+
+            {/* BLOCK 3: WHY NOW (Value Prop) */}
+            <section className="px-6 py-24 border-t border-white/5 bg-[#0A0F1E]">
+                <div className="max-w-4xl mx-auto">
+                    <div className="bg-gradient-to-br from-[#0F1629] to-[#0A0F1E] border border-white/5 p-10 md:p-16 rounded-3xl relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-[#007AFF]/5 rounded-full blur-[80px]" />
+
+                        <div className="relative z-10 flex flex-col md:flex-row gap-12 items-center">
+                            <div className="flex-1 space-y-6">
+                                <h3 className="text-2xl font-bold text-white uppercase tracking-wide">{txt.l_why_title}</h3>
+                                <p className="text-[#9CA3AF] leading-relaxed text-lg">
+                                    {txt.l_why_copy}
+                                </p>
+                            </div>
+                            <div className="w-full md:w-1/3 flex justify-center">
+                                <AlertTriangle className="w-24 h-24 text-[#007AFF]/20" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* BLOCK 4: STEPS */}
+            <section className="px-6 py-24 border-t border-white/5">
+                <div className="max-w-6xl mx-auto">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div className="flex flex-col items-center text-center space-y-4 p-6">
+                            <div className="w-16 h-16 rounded-2xl bg-[#007AFF]/10 flex items-center justify-center text-[#007AFF] mb-4">
+                                <Scan className="w-8 h-8" />
+                            </div>
+                            <h4 className="text-white font-bold uppercase tracking-wider">{txt.l_step_1}</h4>
+                            <div className="h-1 w-12 bg-[#007AFF]/30 rounded-full" />
+                        </div>
+                        <div className="flex flex-col items-center text-center space-y-4 p-6">
+                            <div className="w-16 h-16 rounded-2xl bg-[#007AFF]/10 flex items-center justify-center text-[#007AFF] mb-4">
+                                <Search className="w-8 h-8" />
+                            </div>
+                            <h4 className="text-white font-bold uppercase tracking-wider">{txt.l_step_2}</h4>
+                            <div className="h-1 w-12 bg-[#007AFF]/30 rounded-full" />
+                        </div>
+                        <div className="flex flex-col items-center text-center space-y-4 p-6">
+                            <div className="w-16 h-16 rounded-2xl bg-[#007AFF]/10 flex items-center justify-center text-[#007AFF] mb-4">
+                                <FileCheck className="w-8 h-8" />
+                            </div>
+                            <h4 className="text-white font-bold uppercase tracking-wider">{txt.l_step_3}</h4>
+                            <div className="h-1 w-12 bg-[#007AFF]/30 rounded-full" />
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* BLOCK 5: RESULTS VISUAL */}
+            <section className="px-6 py-24 border-t border-white/5 bg-[#0F1629]/50">
+                <div className="max-w-4xl mx-auto text-center">
+                    <h3 className="text-xl text-[#9CA3AF] mb-12 uppercase tracking-[0.2em]">{txt.l_res_title}</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="p-8 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 backdrop-blur-sm">
+                            <CheckCircle2 className="w-10 h-10 text-emerald-500 mx-auto mb-4" />
+                            <span className="text-emerald-500 font-bold tracking-widest uppercase">{txt.l_res_1}</span>
+                        </div>
+                        <div className="p-8 rounded-2xl border border-amber-500/20 bg-amber-500/5 backdrop-blur-sm">
+                            <AlertTriangle className="w-10 h-10 text-amber-500 mx-auto mb-4" />
+                            <span className="text-amber-500 font-bold tracking-widest uppercase">{txt.l_res_2}</span>
+                        </div>
+                        <div className="p-8 rounded-2xl border border-red-500/20 bg-red-500/5 backdrop-blur-sm">
+                            <XCircle className="w-10 h-10 text-red-500 mx-auto mb-4" />
+                            <span className="text-red-500 font-bold tracking-widest uppercase">{txt.l_res_3}</span>
+                        </div>
+                    </div>
                 </div>
             </section>
 
             {/* FOOTER */}
-            <footer className="px-6 py-12 border-t border-[#FFFFFF]/10 flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] text-[#6B6B6B] uppercase tracking-widest">
-                <span>{txt.l_foot_1}</span>
-                <span>{txt.l_foot_2}</span>
+            <footer className="py-12 text-center border-t border-white/5">
+                <p className="text-[#4B5563] text-xs uppercase tracking-[0.2em]">{txt.l_foot}</p>
             </footer>
+
         </div>
     )
 }
