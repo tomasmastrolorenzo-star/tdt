@@ -687,4 +687,3 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
         </div>
     )
 }
-```
