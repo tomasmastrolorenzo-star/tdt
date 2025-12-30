@@ -92,6 +92,10 @@ export async function POST(req: Request) {
             }
         }
 
+        if (apifyToken) {
+            apifyToken = apifyToken.trim();
+        }
+
         if (!apifyToken) {
             console.error("CRITICAL: APIFY_TOKEN missing");
             return NextResponse.json({
