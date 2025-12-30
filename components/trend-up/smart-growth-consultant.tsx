@@ -14,7 +14,9 @@ import {
     CheckCircle2,
     AlertTriangle,
     XCircle,
-    ArrowRight
+    ArrowRight,
+    Activity,
+    Zap
 } from "lucide-react"
 
 // --- TYPES ---
@@ -56,12 +58,12 @@ const LANG_TEXT = {
         l_hero_cta: "SCROLL TO ANALYZE",
 
         // ANALYZER
-        l_analyzer_title: "INITIATE AUTHORITY ANALYSIS",
-        l_input_label: "ENTER INSTAGRAM HANDLE TO START",
+        l_analyzer_title: "SIGNAL DIAGNOSIS COCKPIT",
+        l_input_label: "ENTER TARGET ASSET HANDLE",
         l_input_placeholder: "@username",
-        l_screener_btn: "VERIFY ASSET",
-        l_hold_btn: "INITIATE PROTOCOL",
-        l_holding: "HOLDING...",
+        l_screener_btn: "VERIFY SIGNAL INTEGRITY",
+        l_hold_btn: "INITIATE DIAGNOSIS",
+        l_holding: "ACQUIRING...",
 
         // WHY NOW
         l_why_title: "WHY NOW?",
@@ -96,12 +98,12 @@ const LANG_TEXT = {
         l_hero_cta: "DESLIZA PARA ANALIZAR",
 
         // ANALYZER
-        l_analyzer_title: "INICIAR ANÁLISIS DE AUTORIDAD",
-        l_input_label: "INGRESA TU USUARIO DE INSTAGRAM",
+        l_analyzer_title: "COCKPIT DE DIAGNÓSTICO",
+        l_input_label: "INGRESA EL ACTIVO OBJETIVO",
         l_input_placeholder: "@usuario",
-        l_screener_btn: "VERIFICAR ACTIVO", // Requested as "INICIAR ANÁLISIS" but logically it's verify first
-        l_hold_btn: "INICIAR PROTOCOLO",
-        l_holding: "INICIANDO...",
+        l_screener_btn: "VERIFICAR INTEGRIDAD DE SEÑAL",
+        l_hold_btn: "INICIAR DIAGNÓSTICO DE SEÑAL",
+        l_holding: "ADQUIRIENDO...",
 
         // WHY NOW
         l_why_title: "¿POR QUÉ AHORA?",
@@ -136,12 +138,12 @@ const LANG_TEXT = {
         l_hero_cta: "ROLE PARA ANALISAR",
 
         // ANALYZER
-        l_analyzer_title: "INICIAR ANÁLISE DE AUTORIDADE",
-        l_input_label: "INSIRA SEU USUÁRIO DO INSTAGRAM",
+        l_analyzer_title: "COCKPIT DE DIAGNÓSTICO",
+        l_input_label: "INSIRA O ATIVO ALVO",
         l_input_placeholder: "@usuario",
-        l_screener_btn: "VERIFICAR ATIVO",
-        l_hold_btn: "INICIAR PROTOCOLO",
-        l_holding: "INICIANDO...",
+        l_screener_btn: "VERIFICAR INTEGRIDADE DO SINAL",
+        l_hold_btn: "INICIAR DIAGNÓSTICO DE SINAL",
+        l_holding: "ADQUIRINDO...",
 
         // WHY NOW
         l_why_title: "POR QUE AGORA?",
@@ -171,7 +173,7 @@ const LANG_TEXT = {
     }
 }
 
-// --- HOLD BUTTON COMPONENT ---
+// --- HOLD BUTTON COMPONENT (Enhanced for Laser Sweep) ---
 const HoldButton = ({ onExecute, disabled, label, labelHolding }: { onExecute: () => void, disabled: boolean, label: string, labelHolding: string }) => {
     const [progress, setProgress] = useState(0);
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -179,6 +181,7 @@ const HoldButton = ({ onExecute, disabled, label, labelHolding }: { onExecute: (
     const startHold = () => {
         if (disabled) return;
         let p = 0;
+        // 2.0s Hold Time (2000ms)
         intervalRef.current = setInterval(() => {
             p += (100 / (2000 / 16));
             if (p >= 100) {
@@ -207,15 +210,38 @@ const HoldButton = ({ onExecute, disabled, label, labelHolding }: { onExecute: (
             onTouchStart={startHold}
             onTouchEnd={endHold}
             disabled={disabled}
-            className="w-full h-16 bg-[#007AFF] hover:bg-[#007AFF]/90 text-white text-sm md:text-base font-bold tracking-[0.15em] uppercase disabled:opacity-30 disabled:cursor-not-allowed transition-all rounded-lg relative overflow-hidden group select-none shadow-[0_0_20px_rgba(0,122,255,0.3)] border border-[#007AFF]/50"
+            className="w-full h-20 bg-black/50 text-white text-base md:text-lg font-bold tracking-[0.15em] uppercase disabled:opacity-30 disabled:cursor-not-allowed transition-all rounded-lg relative overflow-hidden group select-none border border-white/10 hover:border-[#007AFF] shadow-[0_0_30px_rgba(0,122,255,0.1)] active:scale-[0.98]"
         >
-            <div className="relative z-10 flex items-center justify-center gap-2">
-                {progress > 0 && progress < 100 ? labelHolding : label}
+            {/* LASER SWEEP EFFECT CONTAINER */}
+            <div className="absolute inset-0 z-0">
+                {/* Background Fill based on Progress */}
+                <div
+                    className="h-full bg-[#007AFF] transition-none absolute left-0 top-0 opacity-20"
+                    style={{ width: `${progress}%` }}
+                />
+
+                {/* Laser Line */}
+                {progress > 0 && (
+                    <div
+                        className="absolute top-0 w-2 h-full bg-[#00FFFF] shadow-[0_0_15px_#00FFFF] blur-[1px] z-10 transition-none"
+                        style={{ left: `${progress}%` }}
+                    />
+                )}
             </div>
-            <div
-                className="absolute bottom-0 left-0 h-full bg-white/20 transition-none"
-                style={{ width: `${progress}%` }}
-            />
+
+            <div className="relative z-20 flex items-center justify-center gap-3">
+                {progress > 0 ? (
+                    <>
+                        <Activity className="w-5 h-5 text-[#00FFFF] animate-pulse" />
+                        <span className="text-[#00FFFF] drop-shadow-[0_0_8px_rgba(0,255,255,0.8)]">{labelHolding}</span>
+                    </>
+                ) : (
+                    <>
+                        <Zap className="w-5 h-5 text-[#007AFF] group-hover:text-white transition-colors" />
+                        <span className="group-hover:text-[#007AFF] transition-colors">{label}</span>
+                    </>
+                )}
+            </div>
         </button>
     )
 }
@@ -223,12 +249,15 @@ const HoldButton = ({ onExecute, disabled, label, labelHolding }: { onExecute: (
 // --- PHASE 67 RELIABILITY COMPONENT ---
 const FinalBlackScreen = ({ text, subtext }: { text: string | null | undefined, subtext?: string }) => {
     return (
-        <div className="min-h-screen bg-black flex flex-col items-center justify-center cursor-none select-none p-8 text-center text-white">
-            <span className="font-mono text-base font-medium tracking-[0.2em] mb-4 text-red-500">
+        <div className="min-h-screen bg-black flex flex-col items-center justify-center cursor-none select-none p-8 text-center text-white relative overflow-hidden">
+            {/* Subtle Red Pulse Background */}
+            <div className="absolute inset-0 bg-red-900/5 animate-pulse" />
+
+            <span className="font-mono text-base font-medium tracking-[0.2em] mb-4 text-red-500 relative z-10 drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]">
                 {text || "PROCESO FINALIZADO"}
             </span>
             {subtext && (
-                <span className="text-[#6B6B6B] font-mono text-xs tracking-[0.1em] uppercase max-w-lg mt-2">
+                <span className="text-[#6B6B6B] font-mono text-xs tracking-[0.1em] uppercase max-w-lg mt-2 relative z-10">
                     {subtext}
                 </span>
             )}
@@ -254,7 +283,6 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
 
     // Audit Helpers
     const sessionId = useRef(`SESS-${Math.random().toString(36).substr(2, 9).toUpperCase()}`).current;
-    const timestamp = new Date().toISOString();
 
     // Timers & Logic
     const [revelationStep, setRevelationStep] = useState(0)
@@ -304,7 +332,6 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
 
         } catch (e) {
             console.error(e);
-            // IMMEDIATE FAILURE
             setBackendUX({
                 system_verdict: "SYSTEM_ERROR",
                 ux_controls: { status_label: "ERROR DE CONEXIÓN" }
@@ -317,7 +344,6 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
     const initiateSequence = async () => {
         if (!handle || !email || !consent) return;
 
-        // Ensure we are in INGEST visual state
         setState(OperationalState.INGEST);
 
         try {
@@ -325,34 +351,28 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    handle: handle.trim(), // Use handle from state
+                    handle: handle.trim(),
                     intent: intent
                 })
             })
             const data = await res.json()
 
-            // PHASE 67: STRICT CLOSURE HANDLING
-            // We trust the backend's ClosurePayload implicitly.
             if (data.closure) {
                 setBackendUX(data.closure);
-
-                // PHASE 67: BLACK HOLE PROTOCOL
-                setState(OperationalState.BLACK_HOLE);
-                const delay = Math.floor(Math.random() * (12000 - 8000 + 1) + 8000); // 8-12s
+                setState(OperationalState.BLACK_HOLE); // Use Black Hole transition
+                const delay = Math.floor(Math.random() * (12000 - 8000 + 1) + 8000);
 
                 setTimeout(() => {
                     setState(OperationalState.REVELATION)
                 }, delay);
 
             } else {
-                // If backend violates contract -> Terminate to Emergency Fallback
                 console.error("VIOLATION: NO CLOSURE PAYLOAD");
                 setState(OperationalState.TERMINATED);
             }
 
         } catch (e) {
             console.error(e);
-            // EMERGENCY CLOSURE INJECTION
             const emergencyClosure = {
                 system_verdict: "SYSTEM_ERROR",
                 ux_controls: {
@@ -367,33 +387,16 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
         }
     }
 
-
-
     // --- REVELATION SEQUENCE LOGIC ---
     useEffect(() => {
         if (state === OperationalState.REVELATION) {
             const t1 = setTimeout(() => setRevelationStep(1), 4000);
-            const t2 = setTimeout(() => setState(OperationalState.SENTENCE), 8000); // DIRECT SKIP CAPTURE
+            const t2 = setTimeout(() => setState(OperationalState.SENTENCE), 8000);
             return () => { clearTimeout(t1); clearTimeout(t2); };
         }
     }, [state]);
 
-    // --- VISUAL BLOCKS ---
-
-    // BLOCK 5: VERDICT BADGE
-    const VerdictBadge = ({ type, label, icon: Icon, color }: any) => (
-        <div className={`flex flex-col items-center justify-center p-6 border border-white/5 rounded-xl bg-white/5 backdrop-blur-sm`}>
-            <div className={`p-3 rounded-full bg-${color}-500/10 mb-4`}>
-                <Icon className={`w-8 h-8 text-${color}-500`} />
-            </div>
-            <span className={`text-[10px] tracking-[0.2em] font-bold uppercase text-${color}-500`}>{label}</span>
-        </div>
-    )
-
     // --- TERMINAL STATES (Phase 67) ---
-    // Error states are allowed to be full screen (Black Screen).
-
-    // Check for Error Verdicts to render as Black Screen Overlay
     if (state === OperationalState.SENTENCE || state === OperationalState.TERMINATED) {
         const activeUX = backendUX || { system_verdict: "SYSTEM_ERROR" };
         if (['BLOCKED', 'INCONCLUSIVE', 'SYSTEM_ERROR', 'TERMINATED'].includes(activeUX.system_verdict)) {
@@ -406,96 +409,100 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
     if (state === OperationalState.BLACK_HOLE) {
         return (
             <div className="min-h-screen bg-black flex flex-col cursor-none overflow-hidden select-none">
-                <div className="flex-1 w-full h-full bg-black/90 flex flex-col items-center justify-center space-y-4">
-                    <div className="w-16 h-16 rounded-full border-2 border-[#007AFF] border-t-transparent animate-spin" />
+                <div className="flex-1 w-full h-full bg-black flex flex-col items-center justify-center space-y-4">
+                    <div className="w-24 h-24 rounded-full border-4 border-[#007AFF] border-t-white animate-spin shadow-[0_0_50px_#007AFF]" />
+                    <p className="text-[#007AFF] font-mono tracking-[0.3em] text-sm animate-pulse">SYSTEM CORRELATION ACTIVE</p>
                 </div>
             </div>
         )
     }
 
-    // --- CLEAN TECH BLUE LANDING LAYOUT ---
+    // --- MODERN CLINICAL PRESTIGE LAYOUT ---
     return (
-        <div className="min-h-screen bg-[#0A0F1E] text-[#E6E8EB] font-sans selection:bg-[#007AFF] selection:text-white relative overflow-x-hidden">
+        <div className="min-h-screen bg-[#000000] text-[#E6E8EB] font-sans selection:bg-[#007AFF] selection:text-white relative overflow-x-hidden">
+
+            {/* 1. LIGHT & DEPTH (The Soul) */}
+            <div className="fixed inset-0 z-0 pointer-events-none">
+                {/* Hero Glow */}
+                <div className="absolute top-[-10%] left-[20%] w-[60%] h-[60%] bg-[#007AFF] rounded-full blur-[150px] opacity-[0.15]" />
+                {/* Analyzer Glow */}
+                <div className="absolute bottom-[-10%] right-[10%] w-[50%] h-[50%] bg-[#007AFF] rounded-full blur-[180px] opacity-[0.10]" />
+            </div>
 
             {/* LANG SWITCHER */}
-            <div className="absolute top-6 right-6 z-50">
+            <div className="absolute top-8 right-8 z-50">
                 <button
                     onClick={() => setLang(l => l === 'EN' ? 'ES' : l === 'ES' ? 'PT' : 'EN')}
-                    className="text-[10px] text-[#007AFF] hover:text-white uppercase tracking-widest border border-[#007AFF]/30 px-3 py-1 hover:border-[#007AFF] transition-colors rounded-full backdrop-blur-md"
+                    className="text-[10px] text-[#007AFF] hover:text-white uppercase tracking-widest border border-[#007AFF]/30 px-4 py-2 hover:border-[#007AFF] transition-all rounded-full backdrop-blur-md hover:shadow-[0_0_15px_rgba(0,122,255,0.4)]"
                 >
                     {lang}
                 </button>
             </div>
 
             {/* BLOCK 1: HERO */}
-            <section className="min-h-[80vh] flex flex-col justify-center items-center px-6 relative overflow-hidden">
-                {/* Background Gradients */}
-                <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
-                    <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-[#007AFF]/10 blur-[100px] rounded-full" />
-                    <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#007AFF]/5 blur-[120px] rounded-full" />
-                </div>
-
-                <div className="max-w-4xl text-center z-10 space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-1000">
-                    <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.1]">
+            <section className="min-h-[85vh] flex flex-col justify-center items-center px-6 relative z-10">
+                <div className="max-w-5xl text-center space-y-12 animate-in fade-in slide-in-from-bottom-8 duration-1000">
+                    <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tight text-white leading-[1.05]">
                         {lang === 'ES' ? (
                             <>
-                                ¿TU <span className="text-[#007AFF]">PRESTIGIO</span> SE<br />
-                                TRADUCE EN <span className="text-[#007AFF]">RESULTADOS</span>?
+                                ¿TU <span className="text-[#007AFF] drop-shadow-[0_0_25px_rgba(0,122,255,0.6)]">PRESTIGIO</span> SE<br />
+                                TRADUCE EN <span className="text-[#007AFF] drop-shadow-[0_0_25px_rgba(0,122,255,0.6)]">RESULTADOS</span>?
                             </>
                         ) : txt.l_hero_title}
                     </h1>
-                    <p className="text-lg md:text-xl text-[#9CA3AF] max-w-2xl mx-auto leading-relaxed">
+                    <p className="text-xl md:text-2xl text-[#9CA3AF] max-w-3xl mx-auto leading-relaxed font-medium">
                         {txt.l_hero_sub}
                     </p>
 
-                    {/* Visual Bar Chart */}
-                    <div className="flex items-end justify-center gap-2 h-16 mt-8 opacity-80">
-                        <div className="w-2 bg-[#007AFF]/20 h-full rounded-t animate-pulse" style={{ height: '30%' }} />
-                        <div className="w-2 bg-[#007AFF]/40 h-full rounded-t animate-pulse" style={{ height: '50%', animationDelay: '0.1s' }} />
-                        <div className="w-2 bg-[#007AFF]/60 h-full rounded-t animate-pulse" style={{ height: '75%', animationDelay: '0.2s' }} />
-                        <div className="w-2 bg-[#007AFF] h-full rounded-t animate-pulse" style={{ height: '100%', animationDelay: '0.3s' }} />
+                    {/* PULSE SCANNER VISUAL */}
+                    <div className="relative h-24 w-full max-w-md mx-auto mt-12 flex items-center justify-center overflow-hidden">
+                        <div className="absolute w-full h-0.5 bg-white/10" />
+                        <div className="absolute w-32 h-32 bg-[#007AFF]/20 rounded-full blur-xl animate-pulse" />
+                        <Activity className="w-16 h-16 text-[#007AFF] drop-shadow-[0_0_10px_#007AFF] animate-bounce" style={{ animationDuration: '3s' }} />
                     </div>
                 </div>
 
-                <div className="absolute bottom-10 animate-bounce text-[#007AFF]/50">
-                    <ArrowRight className="w-6 h-6 rotate-90" />
+                <div className="absolute bottom-12 animate-bounce text-[#007AFF] opacity-80">
+                    <ArrowRight className="w-8 h-8 rotate-90" />
                 </div>
             </section>
 
-            {/* BLOCK 2: ANALYZER (Glassmorphism Card) */}
-            <section className="px-6 py-24 relative z-20" id="analyzer-block">
-                <div className="max-w-xl mx-auto">
-                    <div className={`bg-[#0F1629]/80 backdrop-blur-xl border border-white/10 rounded-3xl p-8 md:p-12 shadow-2xl shadow-[#007AFF]/10 transition-all duration-500 ${state === OperationalState.INGEST || state === OperationalState.REVELATION ? 'border-[#007AFF]/50' : ''}`}>
+            {/* BLOCK 2: ANALYZER (Glassmorphism Cockpit) */}
+            <section className="px-6 py-32 relative z-20" id="analyzer-block">
+                <div className="max-w-3xl mx-auto">
+                    {/* TRUE GLASSMORPHISM CONTAINER */}
+                    <div className={`bg-white/[0.03] backdrop-blur-[15px] border border-white/10 rounded-[2.5rem] p-10 md:p-16 shadow-2xl transition-all duration-700 ${state === OperationalState.INGEST ? 'border-[#007AFF]/50 shadow-[0_0_50px_rgba(0,122,255,0.2)]' : 'hover:border-white/20'}`}>
 
                         {/* HEADER */}
-                        <div className="text-center mb-10">
-                            <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#007AFF]/10 mb-6">
-                                <Scan className="w-6 h-6 text-[#007AFF]" />
+                        <div className="text-center mb-12">
+                            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#007AFF]/10 mb-8 border border-[#007AFF]/20 shadow-[0_0_20px_rgba(0,122,255,0.15)]">
+                                <Scan className="w-8 h-8 text-[#007AFF] drop-shadow-[0_0_5px_#007AFF]" />
                             </div>
-                            <h2 className="text-xl font-bold text-white tracking-wider uppercase">{txt.l_analyzer_title}</h2>
+                            <h2 className="text-2xl font-bold text-white tracking-[0.2em] uppercase">{txt.l_analyzer_title}</h2>
                         </div>
 
                         {/* --- STATE: IDLE --- */}
                         {state === OperationalState.IDLE && (
-                            <div className="space-y-6 animate-in fade-in zoom-in-95 duration-500">
-                                <div className="space-y-2">
-                                    <label className="text-[10px] text-[#9CA3AF] font-bold tracking-[0.2em] uppercase ml-1">
+                            <div className="space-y-8 animate-in fade-in zoom-in-95 duration-500">
+                                <div className="space-y-4">
+                                    <label className="text-xs text-[#007AFF] font-bold tracking-[0.25em] uppercase ml-2 block">
                                         {txt.l_input_label}
                                     </label>
-                                    <div className="relative">
+                                    <div className="relative group">
                                         <input
                                             value={handle}
                                             onChange={e => setHandle(e.target.value)}
                                             placeholder={txt.l_input_placeholder}
                                             onKeyDown={(e) => e.key === 'Enter' && !!handle && runScreener()}
-                                            className="w-full bg-[#0A0F1E] border border-white/10 rounded-xl px-6 py-5 text-lg text-white placeholder-[#4B5563] focus:border-[#007AFF] focus:ring-1 focus:ring-[#007AFF] outline-none transition-all text-center font-medium"
+                                            className="w-full bg-[#050505] border border-white/10 rounded-2xl px-8 py-6 text-xl md:text-2xl text-white placeholder-[#333] focus:border-[#007AFF] focus:ring-1 focus:ring-[#007AFF] focus:shadow-[0_0_30px_rgba(0,122,255,0.2)] outline-none transition-all text-center font-mono tracking-wider"
                                         />
+                                        <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-[#007AFF] to-[#00FFFF] opacity-0 group-hover:opacity-10 pointer-events-none transition-opacity blur-md filter" />
                                     </div>
                                 </div>
                                 <button
                                     onClick={runScreener}
                                     disabled={!handle}
-                                    className="w-full h-16 bg-[#007AFF] hover:bg-[#007AFF]/90 text-white text-base font-bold tracking-[0.15em] uppercase rounded-xl shadow-[0_4px_20px_rgba(0,122,255,0.4)] hover:shadow-[0_4px_30px_rgba(0,122,255,0.6)] hover:-translate-y-0.5 active:translate-y-0 transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:shadow-none"
+                                    className="w-full h-20 bg-white text-black hover:bg-[#E6E8EB] text-lg font-extrabold tracking-[0.15em] uppercase rounded-2xl shadow-[0_0_30px_rgba(255,255,255,0.1)] hover:shadow-[0_0_50px_rgba(255,255,255,0.3)] hover:-translate-y-1 active:translate-y-0 transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:shadow-none disabled:transform-none"
                                 >
                                     {txt.l_screener_btn}
                                 </button>
@@ -505,39 +512,39 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
                         {/* --- STATE: PREVIEW --- */}
                         {state === OperationalState.PREVIEW && profile && (
                             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                                {/* Profile Summary */}
-                                <div className="flex items-center gap-4 mb-8 bg-[#0A0F1E] p-4 rounded-2xl border border-white/5">
-                                    <div className="w-16 h-16 rounded-full border-2 border-[#007AFF] p-0.5 overflow-hidden">
-                                        <img src={`https://wsrv.nl/?url=${encodeURIComponent(profile.profilePicUrl)}`} className="w-full h-full rounded-full object-cover" />
+                                {/* Profile Summary - Glass Card */}
+                                <div className="flex items-center gap-6 mb-10 bg-white/5 p-6 rounded-3xl border border-white/10">
+                                    <div className="w-20 h-20 rounded-full border-2 border-[#007AFF] p-1 overflow-hidden shadow-[0_0_20px_rgba(0,122,255,0.3)]">
+                                        <img src={`https://wsrv.nl/?url=${encodeURIComponent(profile.profilePicUrl)}`} className="w-full h-full rounded-full object-cover grayscale hover:grayscale-0 transition-all duration-500" />
                                     </div>
                                     <div>
-                                        <h3 className="text-white font-bold text-lg">{profile.username}</h3>
-                                        <div className="flex gap-3 text-xs text-[#9CA3AF] mt-1">
-                                            <span><span className="text-white font-bold">{profile.followersCount}</span> Followers</span>
-                                            <span><span className="text-white font-bold">{profile.postsCount}</span> Posts</span>
+                                        <h3 className="text-white font-bold text-2xl tracking-tight">{profile.username}</h3>
+                                        <div className="flex gap-4 text-sm text-[#9CA3AF] mt-2 font-mono">
+                                            <span className="px-3 py-1 bg-white/5 rounded-full border border-white/5"><span className="text-white font-bold">{profile.followersCount}</span> Followers</span>
+                                            <span className="px-3 py-1 bg-white/5 rounded-full border border-white/5"><span className="text-white font-bold">{profile.postsCount}</span> Posts</span>
                                         </div>
                                     </div>
                                 </div>
 
                                 {/* Confirmation Fields */}
-                                <div className="space-y-6">
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] text-[#9CA3AF] font-bold tracking-[0.2em] uppercase ml-1">
+                                <div className="space-y-8">
+                                    <div className="space-y-3">
+                                        <label className="text-xs text-[#007AFF] font-bold tracking-[0.25em] uppercase ml-2 block">
                                             {txt.l_input_email}
                                         </label>
                                         <input
                                             value={email}
                                             onChange={e => setEmail(e.target.value)}
                                             placeholder="name@example.com"
-                                            className="w-full bg-[#0A0F1E] border border-white/10 rounded-xl px-6 py-4 text-white placeholder-[#4B5563] focus:border-[#007AFF] outline-none transition-all text-center"
+                                            className="w-full bg-[#050505] border border-white/10 rounded-2xl px-8 py-5 text-white placeholder-[#333] focus:border-[#007AFF] focus:shadow-[0_0_20px_rgba(0,122,255,0.2)] outline-none transition-all text-center font-mono"
                                         />
                                     </div>
 
-                                    <div className="flex items-start gap-3 p-4 bg-[#0A0F1E]/50 rounded-xl border border-white/5 cursor-pointer hover:border-[#007AFF]/30 transition-colors" onClick={() => setConsent(!consent)}>
-                                        <div className={`mt-0.5 w-5 h-5 rounded border border-[#007AFF] flex items-center justify-center transition-all ${consent ? 'bg-[#007AFF]' : 'bg-transparent'}`}>
-                                            {consent && <CheckCircle2 className="w-3.5 h-3.5 text-white" />}
+                                    <div className="flex items-start gap-4 p-5 bg-white/5 rounded-2xl border border-white/5 cursor-pointer hover:border-[#007AFF]/50 transition-colors group" onClick={() => setConsent(!consent)}>
+                                        <div className={`mt-0.5 w-6 h-6 rounded flex items-center justify-center transition-all border ${consent ? 'bg-[#007AFF] border-[#007AFF] shadow-[0_0_10px_#007AFF]' : 'border-white/30 bg-transparent'}`}>
+                                            {consent && <CheckCircle2 className="w-4 h-4 text-white" />}
                                         </div>
-                                        <span className="text-xs text-[#9CA3AF] leading-relaxed select-none">
+                                        <span className="text-sm text-[#9CA3AF] leading-relaxed select-none group-hover:text-white transition-colors">
                                             {txt.l_consent}
                                         </span>
                                     </div>
@@ -549,7 +556,7 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
                                         labelHolding={txt.l_holding}
                                     />
 
-                                    <button onClick={() => setState(OperationalState.IDLE)} className="w-full text-xs text-[#9CA3AF] hover:text-white uppercase tracking-widest mt-4">
+                                    <button onClick={() => setState(OperationalState.IDLE)} className="w-full text-xs text-[#9CA3AF] hover:text-white uppercase tracking-widest mt-6 hover:underline decoration-[#007AFF] underline-offset-4">
                                         Cancel Protocol
                                     </button>
                                 </div>
@@ -558,24 +565,25 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
 
                         {/* --- STATE: INGEST / REVELATION (Execution) --- */}
                         {(state === OperationalState.INGEST || state === OperationalState.REVELATION) && (
-                            <div className="text-center py-10 space-y-8 animate-in fade-in duration-500">
-                                <div className="relative w-24 h-24 mx-auto">
-                                    <div className="absolute inset-0 rounded-full border-4 border-[#007AFF]/20" />
+                            <div className="text-center py-12 space-y-10 animate-in fade-in duration-500">
+                                <div className="relative w-32 h-32 mx-auto">
+                                    <div className="absolute inset-0 rounded-full border-2 border-[#007AFF]/10" />
                                     <div className="absolute inset-0 rounded-full border-4 border-[#007AFF] border-t-transparent animate-spin" />
                                     <div className="absolute inset-0 flex items-center justify-center">
-                                        <Terminal className="w-8 h-8 text-[#007AFF] animate-pulse" />
+                                        <Terminal className="w-12 h-12 text-[#007AFF] animate-pulse drop-shadow-[0_0_10px_#007AFF]" />
                                     </div>
                                 </div>
-                                <div className="space-y-2">
-                                    <h3 className="text-white font-bold tracking-wider animate-pulse">
+                                <div className="space-y-4">
+                                    <h3 className="text-white font-bold tracking-widest animate-pulse text-lg">
                                         {state === OperationalState.INGEST ? txt.ingest : "ANALYZING STRUCTURE"}
                                     </h3>
-                                    <p className="text-[#007AFF] text-xs font-mono tracking-widest">
-                                        {state === OperationalState.INGEST ? "LOCKED" : "CORRELATING"} // {timestamp.split('T')[1].split('.')[0]}
+                                    <p className="text-[#007AFF] text-xs font-mono tracking-[0.3em]">
+                                        PROCESSING_MATRIX_NODE_AF7
                                     </p>
                                 </div>
-                                <div className="h-1 bg-[#0A0F1E] rounded-full overflow-hidden w-full max-w-xs mx-auto">
-                                    <div className="h-full bg-[#007AFF] animate-progress-indeterminate" />
+                                <div className="h-1 bg-white/10 rounded-full overflow-hidden w-full max-w-sm mx-auto relative">
+                                    <div className="absolute inset-0 bg-blue-500/20 blur-sm" />
+                                    <div className="h-full bg-[#007AFF] animate-progress-indeterminate shadow-[0_0_10px_#007AFF]" />
                                 </div>
                             </div>
                         )}
@@ -584,16 +592,16 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
                         {state === OperationalState.SENTENCE && (activeUX => (
                             (!['BLOCKED', 'INCONCLUSIVE', 'SYSTEM_ERROR', 'TERMINATED'].includes(activeUX?.system_verdict)) &&
                             <div className="text-center animate-in fade-in zoom-in-95 duration-700">
-                                <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-[#007AFF]/10 mb-6">
-                                    <ShieldCheck className="w-10 h-10 text-[#007AFF]" />
+                                <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-[#007AFF]/10 mb-8 border border-[#007AFF]/30 shadow-[0_0_30px_rgba(0,122,255,0.2)]">
+                                    <ShieldCheck className="w-12 h-12 text-[#007AFF] drop-shadow-[0_0_10px_#007AFF]" />
                                 </div>
-                                <span className="block text-[#007AFF] font-bold tracking-[0.2em] text-sm mb-2">{activeUX?.verdict_code}</span>
-                                <h3 className="text-3xl text-white font-bold mb-6">{activeUX?.ux_controls?.status_label}</h3>
-                                <p className="text-[#9CA3AF] text-sm leading-relaxed mb-8 border-t border-white/5 pt-6">
+                                <span className="block text-[#007AFF] font-bold tracking-[0.3em] text-xs mb-4 uppercase">{activeUX?.verdict_code}</span>
+                                <h3 className="text-4xl text-white font-extrabold mb-8 drop-shadow-lg">{activeUX?.ux_controls?.status_label}</h3>
+                                <p className="text-[#9CA3AF] text-lg leading-relaxed mb-10 border-t border-white/10 pt-8 font-light">
                                     {activeUX?.ux_controls?.message}
                                 </p>
                                 {activeUX?.ux_controls?.cta && (
-                                    <button className="w-full bg-white text-[#0A0F1E] hover:bg-[#E6E8EB] py-4 rounded-xl font-bold tracking-wider uppercase transition-colors">
+                                    <button className="w-full bg-white text-black hover:bg-[#E6E8EB] py-5 rounded-2xl font-bold tracking-widest uppercase transition-all shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:shadow-[0_0_40px_rgba(255,255,255,0.4)] hover:-translate-y-1">
                                         {activeUX.ux_controls.cta}
                                     </button>
                                 )}
@@ -605,20 +613,22 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
             </section>
 
             {/* BLOCK 3: WHY NOW (Value Prop) */}
-            <section className="px-6 py-24 border-t border-white/5 bg-[#0A0F1E]">
-                <div className="max-w-4xl mx-auto">
-                    <div className="bg-gradient-to-br from-[#0F1629] to-[#0A0F1E] border border-white/5 p-10 md:p-16 rounded-3xl relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-[#007AFF]/5 rounded-full blur-[80px]" />
+            <section className="px-6 py-32 border-t border-white/5 bg-black/50 relative z-10">
+                <div className="max-w-5xl mx-auto">
+                    {/* Glass Card for Value Prop */}
+                    <div className="bg-white/[0.02] backdrop-blur-[10px] border border-white/10 p-12 md:p-20 rounded-[2rem] relative overflow-hidden group hover:border-[#007AFF]/30 transition-all duration-700">
+                        <div className="absolute top-0 right-0 w-96 h-96 bg-[#007AFF]/10 rounded-full blur-[100px] group-hover:bg-[#007AFF]/15 transition-all" />
 
-                        <div className="relative z-10 flex flex-col md:flex-row gap-12 items-center">
-                            <div className="flex-1 space-y-6">
-                                <h3 className="text-2xl font-bold text-white uppercase tracking-wide">{txt.l_why_title}</h3>
-                                <p className="text-[#9CA3AF] leading-relaxed text-lg">
+                        <div className="relative z-10 flex flex-col md:flex-row gap-16 items-center">
+                            <div className="flex-1 space-y-8">
+                                <h3 className="text-3xl font-extrabold text-white uppercase tracking-wide">{txt.l_why_title}</h3>
+                                <p className="text-[#B0B3B8] leading-relaxed text-xl font-light">
                                     {txt.l_why_copy}
                                 </p>
                             </div>
                             <div className="w-full md:w-1/3 flex justify-center">
-                                <AlertTriangle className="w-24 h-24 text-[#007AFF]/20" />
+                                {/* Vibrant Warning Icon */}
+                                <AlertTriangle className="w-32 h-32 text-amber-500 drop-shadow-[0_0_25px_rgba(245,158,11,0.4)] animate-pulse" style={{ animationDuration: '4s' }} />
                             </div>
                         </div>
                     </div>
@@ -626,58 +636,54 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
             </section>
 
             {/* BLOCK 4: STEPS */}
-            <section className="px-6 py-24 border-t border-white/5">
-                <div className="max-w-6xl mx-auto">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <div className="flex flex-col items-center text-center space-y-4 p-6">
-                            <div className="w-16 h-16 rounded-2xl bg-[#007AFF]/10 flex items-center justify-center text-[#007AFF] mb-4">
-                                <Scan className="w-8 h-8" />
+            <section className="px-6 py-32 border-t border-white/5 relative z-10">
+                <div className="max-w-7xl mx-auto">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+                        {[
+                            { icon: Scan, title: txt.l_step_1, delay: 0 },
+                            { icon: Search, title: txt.l_step_2, delay: 100 },
+                            { icon: FileCheck, title: txt.l_step_3, delay: 200 }
+                        ].map((step, i) => (
+                            <div key={i} className="flex flex-col items-center text-center space-y-6 p-8 rounded-3xl hover:bg-white/[0.03] transition-colors group">
+                                <div className="w-24 h-24 rounded-3xl bg-[#007AFF]/5 flex items-center justify-center text-[#007AFF] mb-4 border border-[#007AFF]/20 group-hover:border-[#007AFF]/50 group-hover:shadow-[0_0_30px_rgba(0,122,255,0.2)] transition-all duration-500">
+                                    <step.icon className="w-10 h-10 drop-shadow-[0_0_8px_#007AFF]" />
+                                </div>
+                                <h4 className="text-white font-bold uppercase tracking-widest text-lg">{step.title}</h4>
+                                <div className="h-1 w-16 bg-[#007AFF]/30 rounded-full group-hover:w-32 group-hover:bg-[#007AFF] transition-all duration-500" />
                             </div>
-                            <h4 className="text-white font-bold uppercase tracking-wider">{txt.l_step_1}</h4>
-                            <div className="h-1 w-12 bg-[#007AFF]/30 rounded-full" />
-                        </div>
-                        <div className="flex flex-col items-center text-center space-y-4 p-6">
-                            <div className="w-16 h-16 rounded-2xl bg-[#007AFF]/10 flex items-center justify-center text-[#007AFF] mb-4">
-                                <Search className="w-8 h-8" />
-                            </div>
-                            <h4 className="text-white font-bold uppercase tracking-wider">{txt.l_step_2}</h4>
-                            <div className="h-1 w-12 bg-[#007AFF]/30 rounded-full" />
-                        </div>
-                        <div className="flex flex-col items-center text-center space-y-4 p-6">
-                            <div className="w-16 h-16 rounded-2xl bg-[#007AFF]/10 flex items-center justify-center text-[#007AFF] mb-4">
-                                <FileCheck className="w-8 h-8" />
-                            </div>
-                            <h4 className="text-white font-bold uppercase tracking-wider">{txt.l_step_3}</h4>
-                            <div className="h-1 w-12 bg-[#007AFF]/30 rounded-full" />
-                        </div>
+                        ))}
                     </div>
                 </div>
             </section>
 
             {/* BLOCK 5: RESULTS VISUAL */}
-            <section className="px-6 py-24 border-t border-white/5 bg-[#0F1629]/50">
-                <div className="max-w-4xl mx-auto text-center">
-                    <h3 className="text-xl text-[#9CA3AF] mb-12 uppercase tracking-[0.2em]">{txt.l_res_title}</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div className="p-8 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 backdrop-blur-sm">
-                            <CheckCircle2 className="w-10 h-10 text-emerald-500 mx-auto mb-4" />
-                            <span className="text-emerald-500 font-bold tracking-widest uppercase">{txt.l_res_1}</span>
+            <section className="px-6 py-32 border-t border-white/5 bg-black/80 relative z-10">
+                <div className="max-w-5xl mx-auto text-center">
+                    <h3 className="text-xl text-[#6B7280] mb-16 uppercase tracking-[0.3em] font-medium">{txt.l_res_title}</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div className="py-12 px-8 rounded-3xl border border-emerald-500/10 bg-emerald-500/[0.02] backdrop-blur-sm grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-500 cursor-default">
+                            <CheckCircle2 className="w-12 h-12 text-emerald-500 mx-auto mb-6 drop-shadow-[0_0_15px_rgba(16,185,129,0.5)]" />
+                            <span className="text-emerald-500 font-extrabold tracking-[0.2em] uppercase text-lg">{txt.l_res_1}</span>
                         </div>
-                        <div className="p-8 rounded-2xl border border-amber-500/20 bg-amber-500/5 backdrop-blur-sm">
-                            <AlertTriangle className="w-10 h-10 text-amber-500 mx-auto mb-4" />
-                            <span className="text-amber-500 font-bold tracking-widest uppercase">{txt.l_res_2}</span>
+                        <div className="py-12 px-8 rounded-3xl border border-amber-500/10 bg-amber-500/[0.02] backdrop-blur-sm grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-500 cursor-default">
+                            <AlertTriangle className="w-12 h-12 text-amber-500 mx-auto mb-6 drop-shadow-[0_0_15px_rgba(245,158,11,0.5)]" />
+                            <span className="text-amber-500 font-extrabold tracking-[0.2em] uppercase text-lg">{txt.l_res_2}</span>
                         </div>
-                        <div className="p-8 rounded-2xl border border-red-500/20 bg-red-500/5 backdrop-blur-sm">
-                            <XCircle className="w-10 h-10 text-red-500 mx-auto mb-4" />
-                            <span className="text-red-500 font-bold tracking-widest uppercase">{txt.l_res_3}</span>
+                        <div className="py-12 px-8 rounded-3xl border border-red-500/10 bg-red-500/[0.02] backdrop-blur-sm grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-500 cursor-default">
+                            <XCircle className="w-12 h-12 text-red-500 mx-auto mb-6 drop-shadow-[0_0_15px_rgba(239,68,68,0.5)]" />
+                            <span className="text-red-500 font-extrabold tracking-[0.2em] uppercase text-lg">{txt.l_res_3}</span>
                         </div>
                     </div>
                 </div>
             </section>
 
             {/* FOOTER */}
-            <footer className="py-12 text-center border-t border-white/5">
-                <p className="text-[#4B5563] text-xs uppercase tracking-[0.2em]">{txt.l_foot}</p>
+            <footer className="py-16 text-center border-t border-white/5 relative z-10">
+                <div className="flex justify-center items-center gap-2 text-[#4B5563] mb-4">
+                    <Lock className="w-3 h-3" />
+                    <span className="text-[10px] uppercase tracking-[0.25em]">SECURE FORENSIC PROTOCOL</span>
+                </div>
+                <p className="text-[#333] text-[10px] uppercase tracking-[0.2em]">{txt.l_foot}</p>
             </footer>
 
         </div>
