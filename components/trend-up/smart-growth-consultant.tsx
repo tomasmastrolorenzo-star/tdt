@@ -1,6 +1,6 @@
 ﻿"use client"
 
-import { useState, useEffect, useRef } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import { Globe, ShieldCheck, Lock, Terminal, ShieldAlert } from "lucide-react"
 
 // --- TYPES ---
@@ -199,7 +199,7 @@ const LANG_TEXT = {
         deep_analysis: "ANÁLISIS PROFUNDA",
         cross_layer: "CORRELAÇÃO ENTRE CAMADAS EM PROGRESSO",
         asymmetry: "ASSIMETRIA ESTRUTURAL DETECTADA",
-        inertia: "INÉRCIA CALCULADA",
+        inertia: "INERCIA CALCULADA",
         sentence_header: "SENTENÇA TÉCNICA",
         compliance: "CERTIFICAÇÃO DE ORIGEM",
         public_data: "Análise de Sinais Públicos",
@@ -531,7 +531,6 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
                         </div>
                     )}
 
-                    {/* STATE: PREVIEW */}
                     {state === OperationalState.PREVIEW && profile && (
                         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 w-full">
                             {/* PREVIEW CARD */}
@@ -553,6 +552,8 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
                                         "{profile.biography.slice(0, 100)}..."
                                     </p>
                                 )}
+
+                                {/* 6 POST GRID */}
                                 <div className="grid grid-cols-3 gap-2 opacity-50">
                                     {previewPosts.map((post) => (
                                         <div key={post.id} className="aspect-square bg-white/5 relative group">
@@ -562,6 +563,7 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
                                 </div>
                             </div>
 
+                            {/* EMAIL & CONSENT - ONLY VISIBLE NOW */}
                             <div className="space-y-6">
                                 <input
                                     value={email}
@@ -587,6 +589,7 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
                                     />
                                 </div>
                             </div>
+
                             <div className="text-center">
                                 <button onClick={() => setState(OperationalState.IDLE)} className="text-[10px] text-[#6B6B6B] uppercase underline hover:text-white">
                                     CANCEL OPERATION
