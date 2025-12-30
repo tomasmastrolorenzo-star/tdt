@@ -5,7 +5,7 @@ import { Globe, ShieldCheck, Lock, Terminal, ShieldAlert } from "lucide-react"
 
 // --- TYPES ---
 
-interface IntentData {
+interface IntentDeclaration {
     nature?: string;
     market?: string;
     audience?: string;
