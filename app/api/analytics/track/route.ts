@@ -3,11 +3,10 @@ import { createClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
 import { triggerGoogleWebhook } from '@/lib/webhooks'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
-const supabase = createClient(supabaseUrl, supabaseServiceKey)
-
 export async function POST(req: Request) {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
+    const supabase = createClient(supabaseUrl, supabaseServiceKey)
     try {
         const body = await req.json()
         const { event, metadata, timestamp } = body

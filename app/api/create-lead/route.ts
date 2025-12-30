@@ -4,11 +4,10 @@ import { triggerGoogleWebhook } from '@/lib/webhooks'
 import { verifyLeadToken } from '@/lib/security/jwt'
 
 // Initialize Supabase Admin Client
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
-const supabase = createClient(supabaseUrl, supabaseServiceKey)
-
 export async function POST(req: Request) {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
+    const supabase = createClient(supabaseUrl, supabaseServiceKey)
     try {
         // --- JWT PROTECTION (The Shield) ---
         const authHeader = req.headers.get('authorization')
