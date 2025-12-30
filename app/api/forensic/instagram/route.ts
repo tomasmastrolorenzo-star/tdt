@@ -139,9 +139,11 @@ export async function POST(req: Request) {
                 });
             }
 
+            // EXPOSE REAL ERROR FOR DEBUGGING (As requested ("saca trabas"))
+            const safeText = errorText.replace(/[^a-zA-Z0-9_]/g, '_').toUpperCase().substring(0, 30);
             return NextResponse.json({
                 status: 'error',
-                closure: generateEmergencyClosure(session_id, `VENDOR_ERROR_${apifyRes.status}`)
+                closure: generateEmergencyClosure(session_id, `VENDOR_${apifyRes.status}_${safeText}`)
             });
         }
 
