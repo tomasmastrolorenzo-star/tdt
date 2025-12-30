@@ -124,7 +124,7 @@ const LANG_TEXT = {
         l_analyzer_title: "INICIAR DIAGNÓSTICO FORENSE",
         l_input_handle: "ASSET ID (INSTAGRAM HANDLE)",
         l_input_email: "EMAIL",
-        l_consent: "Confirmo que solicito un diagnóstico técnico forense de mi activo digital.",
+        l_consent: "Confirmo que solicito un diagnóstico técnico forense del meu activo digital.",
         l_hold_btn: "INICIAR PROTOCOLO",
         l_holding: "INICIANDO...",
         l_screener_btn: "VERIFICAR ACTIVO",
@@ -196,7 +196,7 @@ const LANG_TEXT = {
         session_locked: "SESSÃO BLOQUEADA · ADQUIRINDO SINAIS PÚBLICOS",
         bio_fragment: "FRAGMENTO DE BIO DETECTADO",
         signal_confirmed: "SINAL CONFIRMADO · DADOS ASSEGURADOS",
-        deep_analysis: "ANÁLISE PROFUNDA",
+        deep_analysis: "ANÁLISIS PROFUNDA",
         cross_layer: "CORRELAÇÃO ENTRE CAMADAS EM PROGRESSO",
         asymmetry: "ASSIMETRIA ESTRUTURAL DETECTADA",
         inertia: "INÉRCIA CALCULADA",
@@ -268,7 +268,7 @@ const FinalBlackScreen = ({ text, subtext }: { text: string | null | undefined, 
                 {text || "PROCESO FINALIZADO"}
             </span>
             {subtext && (
-                <span className="text-[#4A4A4A] font-mono text-xs tracking-[0.1em] uppercase max-w-lg mt-2">
+                <span className="text-[#6B6B6B] font-mono text-xs tracking-[0.1em] uppercase max-w-lg mt-2">
                     {subtext}
                 </span>
             )}
@@ -423,14 +423,14 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
     const Header = ({ status }: { status: string }) => (
         <div className="w-full border-b border-white/10 p-4 flex justify-between items-center bg-[#0B0E11] sticky top-0 z-50">
             <div className="flex flex-col">
-                <span className="text-[10px] text-[#9AA0A6] font-mono tracking-widest">TDT ANALYZER</span>
+                <span className="text-[10px] text-[#6B6B6B] font-mono tracking-widest">TDT ANALYZER</span>
                 <span className="text-[10px] text-[#1877F2] font-mono tracking-widest uppercase animate-pulse">STATUS: {status}</span>
             </div>
             <div className="flex items-center gap-4">
                 <button
                     type="button"
                     onClick={(e) => { e.preventDefault(); setLang(l => l === 'EN' ? 'ES' : l === 'ES' ? 'PT' : 'EN'); }}
-                    className="flex items-center gap-2 text-[#9AA0A6] hover:text-white transition-colors"
+                    className="flex items-center gap-2 text-[#6B6B6B] hover:text-white transition-colors"
                 >
                     <Globe className="w-3 h-3" />
                     <span className="text-[10px] font-mono">{lang}</span>
@@ -441,154 +441,18 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
 
     const Footer = ({ msg }: { msg: string }) => (
         <div className="w-full border-t border-white/10 p-4 bg-[#0B0E11] fixed bottom-0 left-0 flex justify-between items-center z-50">
-            <span className="text-[10px] text-[#9AA0A6] font-mono tracking-widest uppercase flex items-center gap-2">
+            <span className="text-[10px] text-[#6B6B6B] font-mono tracking-widest uppercase flex items-center gap-2">
                 <Lock className="w-3 h-3" /> {msg}
             </span>
-            <div className="flex items-center gap-4 text-[10px] text-[#9AA0A6]">
+            <div className="flex items-center gap-4 text-[10px] text-[#6B6B6B]">
                 <div className="flex items-center gap-1"><ShieldCheck className="w-3 h-3" /> Instagram Public Graph</div>
             </div>
         </div>
     )
 
-    // --- VIEWS ---
+    // --- TERMINAL STATES (Phase 67) ---
+    // These states effectively close the standard interaction loop.
 
-    // 1. IDLE STATE (LANDING PAGE + SCREENER)
-    if (state === OperationalState.IDLE) {
-        return (
-            <div className="min-h-screen bg-[#000000] text-[#FFFFFF] font-mono selection:bg-white selection:text-black relative">
-                {/* LANG SWITCHER */}
-                <div className="absolute top-6 right-6 z-50">
-                    <button
-                        onClick={() => setLang(l => l === 'EN' ? 'ES' : l === 'ES' ? 'PT' : 'EN')}
-                        className="text-[10px] text-[#4A4A4A] hover:text-white uppercase tracking-widest border border-[#333] px-3 py-1 hover:border-white transition-colors"
-                    >
-                        [{lang}]
-                    </button>
-                </div>
-
-                {/* HERO, CONTEXT, ETC BLOCKS REMAIN (Assuming reuse of Landing Blocks) - SIMPLIFIED FOR FOCUS ON ANALYZER */}
-                {/* BLOCK 1: HERO */}
-                <section className="min-h-[60vh] flex flex-col justify-end px-6 pb-24 border-b border-[#FFFFFF]/10">
-                    <div className="max-w-4xl">
-                        <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold tracking-tighter leading-[1.1] mb-8 text-[#FFFFFF] uppercase whitespace-pre-line">
-                            {txt.l_hero_title}
-                        </h1>
-                        <p className="text-sm md:text-base text-[#4A4A4A] uppercase tracking-widest max-w-2xl leading-relaxed">
-                            {txt.l_hero_sub}
-                        </p>
-                    </div>
-                </section>
-
-                {/* BLOCK 6: THE ANALYZER (SCREENER STAGE) */}
-                <section className="px-6 py-32 flex flex-col items-center justify-center border-t border-[#FFFFFF]/10">
-                    <div className="w-full max-w-lg space-y-12">
-                        <div className="text-center space-y-4">
-                            <Terminal className="w-6 h-6 text-[#FFFFFF] mx-auto" />
-                            <h2 className="text-lg text-[#FFFFFF] tracking-[0.2em] uppercase font-bold">{txt.l_analyzer_title}</h2>
-                        </div>
-                        <div className="space-y-6">
-                            <input
-                                value={handle}
-                                onChange={e => setHandle(e.target.value)}
-                                placeholder={txt.l_input_handle}
-                                onKeyDown={(e) => e.key === 'Enter' && runScreener()}
-                                className="w-full bg-black border-b border-[#FFFFFF]/30 text-center py-4 text-sm font-mono tracking-widest focus:border-[#FFFFFF] outline-none text-[#FFFFFF] placeholder-[#4A4A4A] uppercase rounded-none transition-none"
-                            />
-                            <button
-                                onClick={runScreener}
-                                disabled={!handle}
-                                className="w-full bg-white hover:bg-[#CCCCCC] text-black py-4 text-xs font-mono font-bold tracking-[0.2em] uppercase disabled:opacity-30 disabled:cursor-not-allowed transition-none rounded-none"
-                            >
-                                {txt.l_screener_btn}
-                            </button>
-                        </div>
-                    </div>
-                </section>
-
-                {/* FOOTER */}
-                <footer className="px-6 py-12 border-t border-[#FFFFFF]/10 flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] text-[#4A4A4A] uppercase tracking-widest">
-                    <span>{txt.l_foot_1}</span>
-                    <span>{txt.l_foot_2}</span>
-                </footer>
-            </div>
-        )
-    }
-
-    // 2. CONFIRMATION (PREVIEW STATE)
-    if (state === OperationalState.PREVIEW && profile) {
-        return (
-            <div className="min-h-screen bg-[#0B0E11] flex flex-col items-center justify-center p-4 py-12 font-mono">
-                <div className="max-w-xl w-full space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-
-                    {/* PREVIEW CARD */}
-                    <div className="border border-white/10 bg-white/5 p-6">
-                        <div className="flex items-center gap-6 mb-6">
-                            <div className="w-16 h-16 rounded-full border border-white/20 p-1">
-                                <img src={`https://wsrv.nl/?url=${encodeURIComponent(profile.profilePicUrl)}`} className="w-full h-full rounded-full grayscale" />
-                            </div>
-                            <div>
-                                <h3 className="text-white text-lg tracking-widest uppercase">{profile.username}</h3>
-                                <div className="text-[#9AA0A6] text-[10px] tracking-wider uppercase mt-1 flex gap-4">
-                                    <span>{profile.followersCount} Followers</span>
-                                    <span>{profile.postsCount} Posts</span>
-                                </div>
-                            </div>
-                        </div>
-                        {profile.biography && (
-                            <p className="text-[#9AA0A6] text-xs italic border-l-2 border-white/20 pl-4 py-1 mb-6">
-                                "{profile.biography.slice(0, 100)}..."
-                            </p>
-                        )}
-
-                        {/* 6 POST GRID */}
-                        <div className="grid grid-cols-3 gap-2 opacity-50">
-                            {previewPosts.map((post) => (
-                                <div key={post.id} className="aspect-square bg-white/5 relative group">
-                                    <img src={`https://wsrv.nl/?url=${encodeURIComponent(post.url)}`} className="w-full h-full object-cover grayscale" />
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* CONFIRMATION FORM */}
-                    <div className="space-y-6">
-                        <input
-                            value={email}
-                            onChange={e => setEmail(e.target.value)}
-                            placeholder={txt.l_input_email}
-                            className="w-full bg-black border-b border-[#FFFFFF]/30 text-center py-4 text-sm font-mono tracking-widest focus:border-[#FFFFFF] outline-none text-[#FFFFFF] placeholder-[#4A4A4A] uppercase rounded-none transition-none"
-                        />
-
-                        <div className="flex items-start justify-center gap-3 py-2 cursor-pointer group" onClick={() => setConsent(!consent)}>
-                            <div className={`mt-0.5 w-3 h-3 border border-[#FFFFFF]/50 flex items-center justify-center transition-none rounded-none ${consent ? 'bg-[#FFFFFF]' : 'bg-transparent'}`}>
-                            </div>
-                            <span className="text-[10px] text-[#9AA0A6] group-hover:text-[#FFFFFF] font-mono tracking-wider uppercase select-none transition-none text-left leading-relaxed">
-                                {txt.l_consent}
-                            </span>
-                        </div>
-
-                        <div className="pt-4">
-                            <HoldButton
-                                onExecute={initiateSequence}
-                                disabled={!email || !consent}
-                                label={txt.l_hold_btn}
-                                labelHolding={txt.l_holding}
-                            />
-                        </div>
-                    </div>
-
-                    <div className="text-center">
-                        <button onClick={() => setState(OperationalState.IDLE)} className="text-[10px] text-[#4A4A4A] uppercase underline hover:text-white">
-                            CANCEL OPERATION
-                        </button>
-                    </div>
-
-                </div>
-            </div>
-        )
-    }
-
-    // 3. INGEST / BLACKHOLE / REVELATION (Execution States)
     if (state === OperationalState.INGEST) {
         return (
             <div className="min-h-screen bg-[#0B0E11] flex flex-col">
@@ -635,8 +499,7 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
         )
     }
 
-    // 4. SENTENCE (Verdict State - Phase 67 Final)
-    if (state === OperationalState.SENTENCE) {
+    if (state === OperationalState.SENTENCE || state === OperationalState.TERMINATED) {
         // SAFETY FALLBACK: Always ensure a payload exists
         const activeUX = backendUX || {
             system_verdict: "SYSTEM_ERROR",
@@ -651,11 +514,11 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
         const subtext = activeUX.ux_controls?.message;
 
         // BLACK SCREEN STATES: BLOCKED, INCONCLUSIVE, SYSTEM_ERROR, DOWNGRADED (Strict Minimal)
-        if (['BLOCKED', 'INCONCLUSIVE', 'SYSTEM_ERROR'].includes(activeUX.system_verdict)) {
+        if (['BLOCKED', 'INCONCLUSIVE', 'SYSTEM_ERROR', 'TERMINATED'].includes(activeUX.system_verdict)) {
             return <FinalBlackScreen text={verdictText} subtext={subtext} />
         }
 
-        // APPROVED / OTHER (Full UI)
+        // APPROVED / OTHER (Full UI) - This is the ONLY case where Phase 67 renders a rich UI.
         return (
             <div className="min-h-screen bg-[#0B0E11] flex flex-col font-mono text-white p-6 md:p-12 animate-in fade-in duration-1000">
 
@@ -673,7 +536,7 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
                     {/* LEVEL B: TECHNICAL CONTEXT */}
                     <div className="space-y-8 max-w-2xl">
                         <div>
-                            <h3 className="text-[#4A4A4A] text-xs tracking-[0.2em] uppercase mb-4 border-b border-[#4A4A4A]/20 pb-2 inline-block">
+                            <h3 className="text-[#6B6B6B] text-xs tracking-[0.2em] uppercase mb-4 border-b border-[#6B6B6B]/20 pb-2 inline-block">
                                 {activeUX.ux_controls?.title || "DIAGNOSIS"}
                             </h3>
                             <p className="text-[#E6E8EB] text-sm md:text-base leading-relaxed font-light whitespace-pre-line tracking-wide">
@@ -707,5 +570,138 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
         )
     }
 
-    return <FinalBlackScreen text="SYSTEM UNREACHABLE" />
+    // --- STANDARD LANDING LAYOUT (IDLE & PREVIEW) ---
+    // "El Landing V1 debe renderizarse COMPLETO siempre".
+    // "El Analyzer vive dentro de un bloque específico".
+
+    return (
+        <div className="min-h-screen bg-[#000000] text-[#FFFFFF] font-mono selection:bg-white selection:text-black relative">
+            {/* LANG SWITCHER */}
+            <div className="absolute top-6 right-6 z-50">
+                <button
+                    onClick={() => setLang(l => l === 'EN' ? 'ES' : l === 'ES' ? 'PT' : 'EN')}
+                    className="text-[10px] text-[#6B6B6B] hover:text-white uppercase tracking-widest border border-[#333] px-3 py-1 hover:border-white transition-colors"
+                >
+                    [{lang}]
+                </button>
+            </div>
+
+            {/* BLOCK 1: HERO */}
+            <section className="min-h-[60vh] flex flex-col justify-end px-6 pb-24 border-b border-[#FFFFFF]/10">
+                <div className="max-w-4xl">
+                    <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold tracking-tighter leading-[1.1] mb-8 text-[#FFFFFF] uppercase whitespace-pre-line">
+                        {txt.l_hero_title}
+                    </h1>
+                    <p className="text-sm md:text-base text-[#6B6B6B] uppercase tracking-widest max-w-2xl leading-relaxed">
+                        {txt.l_hero_sub}
+                    </p>
+                </div>
+            </section>
+
+            {/* BLOCK 6: THE ANALYZER (CONTAINED) */}
+            <section className="px-6 py-32 flex flex-col items-center justify-center border-t border-[#FFFFFF]/10 bg-black/50">
+                <div className="w-full max-w-lg space-y-12">
+                    <div className="text-center space-y-4">
+                        <Terminal className="w-6 h-6 text-[#FFFFFF] mx-auto" />
+                        <h2 className="text-lg text-[#FFFFFF] tracking-[0.2em] uppercase font-bold">{txt.l_analyzer_title}</h2>
+                    </div>
+
+                    {/* --- CONDITIONAL CONTENT INSIDE BLOCK 6 --- */}
+
+                    {state === OperationalState.IDLE && (
+                        <div className="space-y-6 animate-in fade-in duration-500">
+                            <input
+                                value={handle}
+                                onChange={e => setHandle(e.target.value)}
+                                placeholder={txt.l_input_handle}
+                                onKeyDown={(e) => e.key === 'Enter' && !!handle && runScreener()}
+                                className="w-full bg-black border-b border-[#FFFFFF]/30 text-center py-4 text-sm font-mono tracking-widest focus:border-[#FFFFFF] outline-none text-[#FFFFFF] placeholder-[#6B6B6B] uppercase rounded-none transition-none"
+                            />
+                            <button
+                                onClick={runScreener}
+                                disabled={!handle}
+                                className="w-full bg-white hover:bg-[#CCCCCC] text-black py-4 text-xs font-mono font-bold tracking-[0.2em] uppercase disabled:opacity-30 disabled:cursor-not-allowed transition-none rounded-none"
+                            >
+                                {txt.l_screener_btn}
+                            </button>
+                        </div>
+                    )}
+
+                    {state === OperationalState.PREVIEW && profile && (
+                        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 w-full">
+                            {/* PREVIEW CARD */}
+                            <div className="border border-white/10 bg-white/5 p-6 shadow-2xl shadow-black">
+                                <div className="flex items-center gap-6 mb-6">
+                                    <div className="w-16 h-16 rounded-full border border-white/20 p-1">
+                                        <img src={`https://wsrv.nl/?url=${encodeURIComponent(profile.profilePicUrl)}`} className="w-full h-full rounded-full grayscale" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-white text-lg tracking-widest uppercase">{profile.username}</h3>
+                                        <div className="text-[#6B6B6B] text-[10px] tracking-wider uppercase mt-1 flex gap-4">
+                                            <span>{profile.followersCount} Followers</span>
+                                            <span>{profile.postsCount} Posts</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                {profile.biography && (
+                                    <p className="text-[#6B6B6B] text-xs italic border-l-2 border-white/20 pl-4 py-1 mb-6">
+                                        "{profile.biography.slice(0, 100)}..."
+                                    </p>
+                                )}
+
+                                {/* 6 POST GRID */}
+                                <div className="grid grid-cols-3 gap-2 opacity-50">
+                                    {previewPosts.map((post) => (
+                                        <div key={post.id} className="aspect-square bg-white/5 relative group">
+                                            <img src={`https://wsrv.nl/?url=${encodeURIComponent(post.url)}`} className="w-full h-full object-cover grayscale" />
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* EMAIL & CONSENT - ONLY VISIBLE NOW */}
+                            <div className="space-y-6">
+                                <input
+                                    value={email}
+                                    onChange={e => setEmail(e.target.value)}
+                                    placeholder={txt.l_input_email}
+                                    className="w-full bg-black border-b border-[#FFFFFF]/30 text-center py-4 text-sm font-mono tracking-widest focus:border-[#FFFFFF] outline-none text-[#FFFFFF] placeholder-[#6B6B6B] uppercase rounded-none transition-none"
+                                />
+
+                                <div className="flex items-start justify-center gap-3 py-2 cursor-pointer group" onClick={() => setConsent(!consent)}>
+                                    <div className={`mt-0.5 w-3 h-3 border border-[#FFFFFF]/50 flex items-center justify-center transition-none rounded-none ${consent ? 'bg-[#FFFFFF]' : 'bg-transparent'}`}>
+                                    </div>
+                                    <span className="text-[10px] text-[#6B6B6B] group-hover:text-[#FFFFFF] font-mono tracking-wider uppercase select-none transition-none text-left leading-relaxed">
+                                        {txt.l_consent}
+                                    </span>
+                                </div>
+
+                                <div className="pt-4">
+                                    <HoldButton
+                                        onExecute={initiateSequence}
+                                        disabled={!email || !consent}
+                                        label={txt.l_hold_btn}
+                                        labelHolding={txt.l_holding}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="text-center">
+                                <button onClick={() => setState(OperationalState.IDLE)} className="text-[10px] text-[#6B6B6B] uppercase underline hover:text-white">
+                                    CANCEL OPERATION
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                </div>
+            </section>
+
+            {/* FOOTER */}
+            <footer className="px-6 py-12 border-t border-[#FFFFFF]/10 flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] text-[#6B6B6B] uppercase tracking-widest">
+                <span>{txt.l_foot_1}</span>
+                <span>{txt.l_foot_2}</span>
+            </footer>
+        </div>
+    )
 }
