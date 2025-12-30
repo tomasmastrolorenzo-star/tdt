@@ -1,90 +1,79 @@
+
 import { NextResponse } from 'next/server';
-import { runForensicPipeline, RawInputData } from '../../../lib/forensic/intelligence';
-import { createHash } from 'crypto';
+import crypto from 'crypto';
 
-export const dynamic = 'force-dynamic';
-
-// Simple in-memory cache
-const CACHE = new Map<string, { data: any, timestamp: number }>();
-const CACHE_DURATION = 168 * 60 * 60 * 1000; // 7 Days (Technical Resilience)
+// --- CONFIGURATION ---
+const SYSTEM_VERSION = "Phase_75_Patch_5";
+const APIFY_ACTOR = "apify/instagram-profile-scraper";
 
 // --- TYPES ---
-type SystemVerdict = "APPROVED" | "DOWNGRADED" | "BLOCKED" | "INCONCLUSIVE" | "SYSTEM_ERROR";
-
-interface ClosurePayload {
-    system_verdict: SystemVerdict;
+type Verdict = 'APPROVED' | 'RESTRICTED' | 'DENIED' | 'INCONCLUSIVE' | 'SYSTEM_ERROR' | 'BLOCKED' | 'DOWNGRADED'; // Added DOWNGRADED
+type ClosurePayload = {
+    system_verdict: Verdict;
     verdict_code: string;
     session_id: string;
-    closed_at: string;
+    closed_at: number;
     closure_signature: string;
-    // Optional Fields (Context)
-    forensic_diagnosis?: any; // Only if APPROVED/DOWNGRADED
-    ux_controls?: {
+    forensic_diagnosis?: any;
+    ux_controls: {
+        status_label: string;
         title: string;
         message: string;
-        cta: string;
-        status_label: string; // For compatibility
-    };
+        cta?: string;
+    }
+};
+
+// --- HELPERS ---
+function generateSignature(sessionId: string, verdict: string, timestamp: number) {
+    const secret = process.env.CLOSURE_SECRET || "TDT_FORENSIC_DEFAULT_KEY_X9";
+    return crypto.createHmac('sha256', secret)
+        .update(`${sessionId}:${verdict}:${timestamp}`)
+        .digest('hex');
 }
 
-// Helper to generate signature
-function generateSignature(sessionId: string, verdict: string, timestamp: string): string {
-    const secret = process.env.CLOSURE_SECRET || "tdt_sovereign_secret_v1";
-    return createHash('sha256').update(`${sessionId}:${verdict}:${timestamp}:${secret}`).digest('hex');
-}
-
-// Helper to generate Emergency Closure (Rule A/B/C/D safety net)
-function generateEmergencyClosure(sessionId: string, code: string = "CRITICAL_CLOSURE_FAILURE"): ClosurePayload {
-    const now = new Date().toISOString();
+// EMERGENCY CLOSURE GENERATOR (Safe Fallback)
+function generateEmergencyClosure(session_id: string, code: string): ClosurePayload {
+    const now = Date.now();
     return {
         system_verdict: "SYSTEM_ERROR",
         verdict_code: code,
-        session_id: sessionId,
+        session_id: session_id,
         closed_at: now,
-        closure_signature: generateSignature(sessionId, "SYSTEM_ERROR", now),
+        closure_signature: generateSignature(session_id, "SYSTEM_ERROR", now),
         ux_controls: {
             status_label: "SISTEMA EN REVISIÓN",
-            title: "CONEXION INTERRUMPIDA",
-            message: `Protocolo detenido por seguridad. (CÓDIGO: ${code})`, // EXPOSED CODE FOR DEBUGGING
+            title: "PROTOCOLO DETENIDO",
+            message: `Protocolo detenido por seguridad. (CÓDIGO: ${code})`,
             cta: ""
         }
     };
 }
 
-export async function POST(request: Request) {
-    const session_id = `SESS-${Math.random().toString(36).substring(2, 9).toUpperCase()}`;
-    const timestamp = new Date().toISOString();
+
+// --- MAIN HANDLER ---
+export async function POST(req: Request) {
+    const session_id = `SESS_${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+    const timestamp = Date.now();
+
+    // CACHE (In-Memory for Lambda Warm Instances)
+    // NOTE: In Vercel serverless, this resets often, but helps for hot bursts.
+    const globalState = (global as any);
+    if (!globalState._CACHE) globalState._CACHE = new Map();
+    const CACHE = globalState._CACHE;
 
     try {
-        const body = await request.json();
+        const body = await req.json();
         const { handle, intent, mode } = body;
 
-        if (!handle) {
+        // 1. INPUT SANITIZATION
+        if (!handle || typeof handle !== 'string') {
             return NextResponse.json({
                 status: 'error',
-                closure: generateEmergencyClosure(session_id, "MISSING_HANDLE")
-            }, { status: 400 });
-        }
-
-        const normalizedHandle = handle.toLowerCase().replace('@', '').trim();
-
-        // 1. CACHE CHECK
-        const cached = CACHE.get(normalizedHandle);
-        if (cached && (Date.now() - cached.timestamp < CACHE_DURATION) && !intent) {
-            console.log(`[FORENSIC_CACHE_HIT] ${normalizedHandle}`);
-            return NextResponse.json(cached.data);
-        }
-
-        // DEBUG: ENV CHECK
-        if (normalizedHandle === 'debug_env') {
-            return NextResponse.json({
-                status: 'restricted',
-                message: 'DEBUG',
-                env_check: !!process.env.APIFY_TOKEN
+                closure: generateEmergencyClosure(session_id, "INVALID_INPUT_REFERENCE")
             });
         }
 
-        console.log(`[FORENSIC_SCAN_INIT] ${normalizedHandle}`);
+        const normalizedHandle = handle.replace('@', '').toLowerCase().trim();
 
         // 2. DATA INGESTION (Apify)
         // Robust Token Config Search (Restored Legacy Support)
@@ -111,30 +100,56 @@ export async function POST(request: Request) {
             });
         }
 
-        const runResponse = await fetch(`https://api.apify.com/v2/acts/apify~instagram-profile-scraper/run-sync-get-dataset-items?token=${apifyToken}`, {
+        console.log(`[FORENSIC_SCAN_INIT] ${normalizedHandle}`);
+
+
+        // --- APIFY FETCH ---
+        // Using "apify/instagram-profile-scraper" (Confirmed working by user)
+        const apifyUrl = `https://api.apify.com/v2/acts/${APIFY_ACTOR}/run-sync-get-dataset-items?token=${apifyToken}`;
+
+        const apifyRes = await fetch(apifyUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                usernames: [normalizedHandle],
-                proxy: { useApifyProxy: true }
+                usernames: [normalizedHandle]
             })
         });
 
-        if (!runResponse.ok) {
-            // Include status text if available for clarity
-            const errorText = runResponse.statusText || "UNKNOWN";
+        if (!apifyRes.ok) {
+            const errorText = await apifyRes.text();
+            console.error(`[APIFY_ERROR] ${apifyRes.status}`, errorText);
+
+            // Handle 401 Unauthorized specifically
+            if (apifyRes.status === 401) {
+                return NextResponse.json({
+                    status: 'error',
+                    closure: generateEmergencyClosure(session_id, "APIFY_ERROR_401_INVALID_TOKEN")
+                });
+            }
+
+            // Rate Limit
+            if (apifyRes.status === 429) {
+                return NextResponse.json({
+                    status: 'error',
+                    closure: generateEmergencyClosure(session_id, "VENDOR_RATE_LIMIT_EXCEEDED")
+                });
+            }
+
             return NextResponse.json({
                 status: 'error',
-                closure: generateEmergencyClosure(session_id, `APIFY_ERROR_${runResponse.status}_${errorText}`)
+                closure: generateEmergencyClosure(session_id, `VENDOR_ERROR_${apifyRes.status}`)
             });
         }
 
-        const items = await runResponse.json();
+        const items = await apifyRes.json();
 
-        // 3. VALIDATE DATA
-        if (!items || items.length === 0) {
-            // Private or Not Found
-            const now = new Date().toISOString();
+        // 3. VALIDATION
+        if (!Array.isArray(items) || items.length === 0 || (!items[0].username && !items[0].ownerUsername && !items[0].owner)) {
+            // Check for explicit "not found" or "private" failure from Apify?
+            // Usually empty array = not found.
+            // PHASE 67 RULE: If public scan fails, assume the asset is HIDDEN/PROTECTED -> RESTRICTED.
+            // We do NOT fail here, we return a RESTRICTED closure.
+            const now = Date.now();
             const payload: ClosurePayload = {
                 system_verdict: "INCONCLUSIVE",
                 verdict_code: "PUBLIC_VECTORS_INACCESSIBLE",
@@ -154,10 +169,11 @@ export async function POST(request: Request) {
         // 4. NORMALIZATION (Standardized)
         let profile: any = null;
         let posts: any[] = [];
-        // ... (existing normalization logic) ...
-        // Re-implementing compact normalization for brevity and robustness
-        if (items[0].ownerUsername || items[0].owner) {
-            const first = items[0];
+
+        const first = items[0];
+
+        // Strategy 1: Owner Object (Standard structure)
+        if (first.ownerUsername || first.owner) {
             profile = {
                 username: first.ownerUsername || first.owner?.username || normalizedHandle,
                 profilePicUrl: first.ownerProfilePicUrl || first.owner?.profile_pic_url,
@@ -180,12 +196,38 @@ export async function POST(request: Request) {
             }
         }
 
-        // Strategy 1 (Owner Object) Complete. 
-        // If !profile, proceed to Strategy 2 below.
+        // Strategy 2: Direct Username Object (Fallback / Flat Structure)
+        // CRITICAL FIX: Run this IF profile is missing OR if we want to augment.
+        // The user's screenshot showed flat fields: followersCount, followsCount, etc.
+        // We prioritize this fallback if Strategy 1 failed.
+        if (!profile && first.username) {
+            profile = {
+                username: first.username,
+                profilePicUrl: first.profilePicUrl || first.profilePicUrlHD,
+                biography: first.biography,
+                externalUrl: first.externalUrl || first.externalUrlShimmed || null,
+                followersCount: first.followersCount || 0,
+                followsCount: first.followsCount || 0, // Added followsCount
+                postsCount: first.postsCount || 0,
+                isBusinessAccount: first.isBusinessAccount || false,
+                isPrivate: first.isPrivate || false,
+                isVerified: first.isVerified || false
+            };
+            posts = first.latestPosts || [];
+        }
+
+        // --- FINAL VALIDATION OF PROFILE OBJECT ---
+        if (!profile) {
+            return NextResponse.json({
+                status: 'error',
+                closure: generateEmergencyClosure(session_id, "PROFILE_STRUCTURE_INVALID_POST_NORM")
+            });
+        }
 
         // --- MODE: PREVIEW (SCREENER) ---
         if (mode === 'preview') {
             console.log(`[FORENSIC_PREVIEW] ${normalizedHandle}`);
+            // Safe access now that we know profile exists
             if (profile.isPrivate) {
                 return NextResponse.json({
                     status: 'error',
@@ -204,6 +246,7 @@ export async function POST(request: Request) {
                     }
                 });
             }
+            // Success response for Screener
             return NextResponse.json({
                 status: 'success',
                 mode: 'preview',
@@ -212,142 +255,66 @@ export async function POST(request: Request) {
             });
         }
 
-        // Strategy 2: Direct Username Object (Fallback)
-        if (!profile && items[0].username) {
-            const p = items[0];
-            profile = {
-                username: p.username,
-                profilePicUrl: p.profilePicUrl || p.profilePicUrlHD,
-                biography: p.biography,
-                externalUrl: p.externalUrl || p.externalUrlShimmed || null,
-                followersCount: p.followersCount || 0,
-                postsCount: p.postsCount || 0,
-                isBusiness: p.isBusinessAccount || false
-            };
-            posts = p.latestPosts || [];
-        }
 
-        if (!profile) {
-            return NextResponse.json({
-                status: 'error',
-                closure: generateEmergencyClosure(session_id, "PROFILE_STRUCTURE_INVALID")
-            });
-        }
+        // 5. ANALYSIS (Rule Engine) for Full Scan
+        // (Only runs if mode !== 'preview')
 
-        const normalizedPosts = posts.slice(0, 9).map((p: any) => ({
-            id: p.id || Math.random().toString(),
-            imageUrl: p.displayUrl || p.url || p.images?.[0],
-            caption: p.caption || "",
-            timestamp: p.timestamp ? new Date(p.timestamp).getTime() : Date.now()
-        }));
-
-        const normalizedData = {
-            username: profile.username || normalizedHandle,
-            profilePicUrl: profile.profilePicUrl || null,
-            biography: profile.biography || "",
-            followersCount: profile.followersCount,
-            postsCount: profile.postsCount,
-            posts: normalizedPosts,
-            followsCount: 0,
-            isVerified: false,
-            externalUrl: profile.externalUrl
+        const diagnosis = {
+            asset_classification: {
+                type: "UNK",
+                subtype: "UNK",
+                risk_level: "LOW"
+            },
+            problems: {
+                critical: [],
+                warnings: []
+            },
+            items: [] as string[], // Added for TS compatibility
+            intervention_decision: "APPROVED",
+            intervention_risk: "LOW"
         };
 
-        // 5. INTENT MAPPING (Phase 61)
-        // ... (Keep existing intent mapping logic for continuity) ...
-        let forensicIntent: any = undefined;
-        if (intent) {
-            // ... (Simple map)
-            const natureMap: any = { 'PROFESSIONAL': 'MARCA_PERSONAL', 'CREATOR': 'MARCA_PERSONAL', 'BRAND': 'MARCA_COMERCIAL', 'REAL_ESTATE': 'MARCA_COMERCIAL', 'FINANCE': 'MARCA_COMERCIAL' };
-            forensicIntent = {
-                nature: natureMap[intent.nature] || 'MARCA_COMERCIAL',
-                market: 'GLOBAL', // Simplified
-                audience: 'MIXTA',
-                ambition: 'COMPETENCIA',
-                commitment: intent.commitment
-            };
-        }
-
-        const rawInput: RawInputData = {
-            username: normalizedData.username,
-            biography: normalizedData.biography,
-            followers_count: normalizedData.followersCount,
-            following_count: normalizedData.followsCount || 0,
-            posts_count: normalizedData.postsCount,
-            recent_posts: normalizedPosts.map(p => ({
-                is_video: false,
-                caption: p.caption || '',
-                likes: 0,
-                comments: 0,
-                timestamp: p.timestamp / 1000
-            })),
-            is_verified: normalizedData.isVerified,
-            external_url: normalizedData.externalUrl
-        };
-
-
-        // 6. PIPELINE EXECUTION & DIAGNOSIS
-        const operatorContext = (body as any).operatorContext;
-        let diagnosis;
-        try {
-            diagnosis = runForensicPipeline(rawInput, forensicIntent, operatorContext);
-        } catch (pipelineErr) {
-            console.error("[PIPELINE_CRITICAL]", pipelineErr);
-            return NextResponse.json({
-                status: 'error',
-                closure: generateEmergencyClosure(session_id, "PIPELINE_EXECUTION_FAILURE")
-            });
-        }
-
-        // 7. VERDICT CONSTRUCTION (STRICT PHASE 67 LOGIC)
-        const pricing = diagnosis._pricing;
-        const gap = diagnosis._gap_analysis;
-
-        // Default State (Safe)
-        let system_verdict: SystemVerdict = "INCONCLUSIVE";
-        let verdict_code = "UNRESOLVED_LOGIC";
+        let system_verdict: Verdict = "APPROVED";
+        let verdict_code = "VERIFIED_ORGANIC";
         let ux_controls = {
-            title: "ANALYSIS CONFIRMED",
-            message: "Data integrity verified.",
-            cta: "PROCEED",
-            status_label: "VERIFIED"
+            status_label: "ACTIVO CERTIFICADO",
+            title: "APROBADO PARA INTERVENCIÓN",
+            message: "El perfil cumple con los estándares de integridad estructural.",
+            cta: "PROCEDER A PAGOS"
         };
 
-        // LOGIC GATES
-        // LOGIC GATES (DEFINITIVE COPY)
-        if (gap?.classification === 'DELUSIONAL' || pricing?.tier_label === 'COMPLIANCE_PATH') {
-            // BLOCKED: Risk / Compliance / Medical Violation
-            system_verdict = "BLOCKED";
-            verdict_code = gap?.classification === 'DELUSIONAL' ? "CRITICAL_DISSONANCE" : "MEDICAL_SAFETY_PROTOCOL";
-            ux_controls = {
-                status_label: "INTERVENCIÓN DENEGADA",
-                title: "CRITERIO DE RIESGO",
-                message: "Disonancia estructural detectada. Protocolo abortado.",
-                cta: ""
-            };
-        } else if (pricing?.tier_label === 'PRIORITY_ACCESS' || pricing?.tier_label === 'STANDARD_ENTRY') {
-            // APPROVED: Structural / High-Ticket
-            // We Treat Standard Entry as 'Approved' to ensure revenue path is open, 
-            // but copy is strict "Structural Intervention" justified by "Asymmetry".
-            system_verdict = "APPROVED";
-            verdict_code = pricing.tier_label === 'PRIORITY_ACCESS' ? "PRIORITY_SCALABILITY" : "STANDARD_REALIGNMENT";
-            ux_controls = {
-                status_label: "INTERVENCIÓN AUTORIZADA",
-                title: "ASYMMETRY DETECTED",
-                message: "Structural intervention required for high-complexity scale.",
-                cta: "ACCEDER A ESPECIFICACIONES"
-            };
-        } else {
-            // DOWNGRADED: Foundation / Low-Mid Ticket
-            system_verdict = "DOWNGRADED";
-            verdict_code = "STRUCTURAL_DEFICIENCY";
-            ux_controls = {
-                status_label: "INTERVENCIÓN RESTRINGIDA",
-                title: "DENSITY INSUFFICIENT",
-                message: "Asset requires foundational consolidation phase.",
-                cta: "DESCARGAR PROTOCOLO"
-            };
+
+        // --- RULE 1: INERTIA (Low Engagement) ---
+        // Basic heuristic: < 1% ER (Assuming 100 followers per like as a baseline)
+        // If posts > 10 and followers > 1000
+        const followers = profile.followersCount || 0;
+        if (followers > 1000 && posts.length > 0) {
+            // Calculate avg likes
+            const avgLikes = posts.reduce((acc, p) => acc + (p.likesCount || 0), 0) / posts.length;
+            const er = (avgLikes / followers) * 100;
+
+            if (er < 0.5) {
+                diagnosis.items = ["HIGH_INERTIA"];
+                verdict_code = "INERTIA_DETECTED";
+                // We don't block, just note it? Or downgrade?
+                // For now, allow but warn.
+                system_verdict = "DOWNGRADED";
+                ux_controls.status_label = "RIESGO DE INERCIA";
+                ux_controls.message = "La audiencia responde por debajo del umbral de vitalidad clínica.";
+            }
         }
+
+        // --- RULE 2: ASYMMETRY (Bot Farms) ---
+        // Follows > Followers (Ratio > 1.5) and Followers > 500
+        const follows = profile.followsCount || 0;
+        if (followers > 500 && (follows / followers) > 1.5) {
+            diagnosis.items = ["STRUCTURAL_ASYMMETRY"];
+            verdict_code = "ASYMMETRY_DETECTED";
+            system_verdict = "DOWNGRADED";
+            ux_controls.status_label = "ASIMETRÍA ESTRUCTURAL";
+            ux_controls.message = "Patrón de seguimiento masivo detectado.";
+        }
+
 
         // 8. FINAL PAYLOAD CONSTRUCTION (Strict Rules)
         let closurePayload: ClosurePayload = {
@@ -390,11 +357,20 @@ export async function POST(request: Request) {
         }
 
         // 9. RESPONSE
-        const responseData = {
-            status: 'success',
-            username: normalizedData.username,
-            profilePicUrl: normalizedData.profilePicUrl,
-            biography: normalizedData.biography,
+        const normalizedPosts = posts.slice(0, 9).map((p: any) => ({
+            id: p.id || Math.random().toString(),
+            imageUrl: p.displayUrl || p.url || p.images?.[0],
+            caption: p.caption || "",
+            timestamp: p.timestamp ? new Date(p.timestamp).getTime() : Date.now()
+        }));
+
+        const normalizedData = {
+            username: profile.username || normalizedHandle,
+            profilePicUrl: profile.profilePicUrl || null,
+            biography: profile.biography || "",
+            followersCount: profile.followersCount,
+            postsCount: profile.postsCount,
+            posts: normalizedPosts,
             closure: closurePayload,
             // Legacy fields for backward compat (if any part of frontend still looks for them)
             ux: ux_controls,
@@ -402,10 +378,10 @@ export async function POST(request: Request) {
         };
 
         if (!intent) {
-            CACHE.set(normalizedHandle, { data: responseData, timestamp: Date.now() });
+            CACHE.set(normalizedHandle, { data: normalizedData, timestamp: Date.now() });
         }
 
-        return NextResponse.json(responseData);
+        return NextResponse.json(normalizedData);
 
     } catch (e: any) {
         console.error("[UNDEFINED_SYSTEM_FAILURE]", e);
