@@ -180,12 +180,8 @@ export async function POST(request: Request) {
             }
         }
 
-        if (!profile) {
-            return NextResponse.json({
-                status: 'error',
-                closure: generateEmergencyClosure(session_id, "PROFILE_NORMALIZATION_FAILED")
-            });
-        }
+        // Strategy 1 (Owner Object) Complete. 
+        // If !profile, proceed to Strategy 2 below.
 
         // --- MODE: PREVIEW (SCREENER) ---
         if (mode === 'preview') {
