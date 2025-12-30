@@ -451,16 +451,17 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
     )
 
     // --- TERMINAL STATES (Phase 67) ---
-    // These states effectively close the standard interaction loop.
+    // Error states are allowed to be full screen (Black Screen).
 
-    if (state === OperationalState.INGEST) {
-        return (
-            <div className="min-h-screen bg-[#0B0E11] flex flex-col">
-                <Header status={txt.ingest} />
-                <div className="flex-1" />
-                <Footer msg={txt.session_locked} />
-            </div>
-        )
+    // Check for Error Verdicts to render as Black Screen Overlay
+    if (state === OperationalState.SENTENCE || state === OperationalState.TERMINATED) {
+        const activeUX = backendUX || { system_verdict: "SYSTEM_ERROR" };
+        if (['BLOCKED', 'INCONCLUSIVE', 'SYSTEM_ERROR', 'TERMINATED'].includes(activeUX.system_verdict)) {
+            // ERROR = Overlay (Hide Hero)
+            const verdictText = activeUX.ux_controls?.status_label || activeUX.system_verdict;
+            const subtext = activeUX.ux_controls?.message;
+            return <FinalBlackScreen text={verdictText} subtext={subtext} />
+        }
     }
 
     if (state === OperationalState.BLACK_HOLE) {
@@ -471,109 +472,7 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
         )
     }
 
-    if (state === OperationalState.REVELATION) {
-        return (
-            <div className="min-h-screen bg-[#0B0E11] flex flex-col items-center justify-center p-8 font-mono">
-                <Header status="FORENSIC REVELATION" />
-                <div className="flex-1 flex flex-col items-center justify-center space-y-12">
-                    <div className="space-y-4 text-center">
-                        <div className="flex items-center justify-center gap-4">
-                            <div className={`w-2 h-2 rounded-full ${revelationStep >= 0 ? 'bg-[#1877F2] animate-ping' : 'bg-white/10'}`} />
-                            <span className={`text-xs tracking-[0.2em] uppercase ${revelationStep >= 0 ? 'text-white' : 'text-[#5f6368]'}`}>
-                                {txt.asymmetry}
-                            </span>
-                        </div>
-                        <div className="flex items-center justify-center gap-4">
-                            <div className={`w-2 h-2 rounded-full ${revelationStep >= 1 ? 'bg-[#1877F2] animate-ping' : 'bg-white/10'}`} />
-                            <span className={`text-xs tracking-[0.2em] uppercase ${revelationStep >= 1 ? 'text-white' : 'text-[#5f6368]'}`}>
-                                {txt.inertia}
-                            </span>
-                        </div>
-                    </div>
-                    <div className="h-1 w-32 bg-white/10 overflow-hidden rounded-full">
-                        <div className="h-full bg-[#1877F2] animate-progress-indeterminate" />
-                    </div>
-                </div>
-                <Footer msg={txt.cross_layer} />
-            </div>
-        )
-    }
-
-    if (state === OperationalState.SENTENCE || state === OperationalState.TERMINATED) {
-        // SAFETY FALLBACK: Always ensure a payload exists
-        const activeUX = backendUX || {
-            system_verdict: "SYSTEM_ERROR",
-            ux_controls: {
-                status_label: "SISTEMA EN REVISIÓN",
-                title: "CRITICAL FAILURE",
-                message: "No closure payload received."
-            }
-        };
-
-        const verdictText = activeUX.ux_controls?.status_label || activeUX.system_verdict;
-        const subtext = activeUX.ux_controls?.message;
-
-        // BLACK SCREEN STATES: BLOCKED, INCONCLUSIVE, SYSTEM_ERROR, DOWNGRADED (Strict Minimal)
-        if (['BLOCKED', 'INCONCLUSIVE', 'SYSTEM_ERROR', 'TERMINATED'].includes(activeUX.system_verdict)) {
-            return <FinalBlackScreen text={verdictText} subtext={subtext} />
-        }
-
-        // APPROVED / OTHER (Full UI) - This is the ONLY case where Phase 67 renders a rich UI.
-        return (
-            <div className="min-h-screen bg-[#0B0E11] flex flex-col font-mono text-white p-6 md:p-12 animate-in fade-in duration-1000">
-
-                {/* LEVEL A: SENTENCE */}
-                <div className="flex-1 flex flex-col justify-center max-w-4xl mx-auto w-full">
-                    <div className="border-l-4 border-[#FFFFFF] pl-8 py-4 mb-12">
-                        <h1 className="text-3xl md:text-5xl lg:text-6xl font-medium tracking-tight leading-[1.1] mb-2 text-[#FFFFFF]">
-                            {verdictText}
-                        </h1>
-                        <span className="text-[#1877F2] tracking-[0.2em] text-xs uppercase font-bold">
-                            {activeUX.verdict_code}
-                        </span>
-                    </div>
-
-                    {/* LEVEL B: TECHNICAL CONTEXT */}
-                    <div className="space-y-8 max-w-2xl">
-                        <div>
-                            <h3 className="text-[#6B6B6B] text-xs tracking-[0.2em] uppercase mb-4 border-b border-[#6B6B6B]/20 pb-2 inline-block">
-                                {activeUX.ux_controls?.title || "DIAGNOSIS"}
-                            </h3>
-                            <p className="text-[#E6E8EB] text-sm md:text-base leading-relaxed font-light whitespace-pre-line tracking-wide">
-                                {activeUX.ux_controls?.message}
-                            </p>
-                        </div>
-                    </div>
-
-                    {/* CTA */}
-                    {activeUX.ux_controls?.cta && (
-                        <div className="mt-16">
-                            <button className="bg-white text-black px-8 py-4 text-xs font-bold tracking-[0.2em] uppercase hover:bg-[#CCCCCC] transition-colors">
-                                {activeUX.ux_controls.cta}
-                            </button>
-                        </div>
-                    )}
-                </div>
-
-                {/* LEVEL C: METADATA */}
-                <div className="pt-12 border-t border-white/10 flex justify-between items-end text-[10px] text-[#2E2E2E] uppercase tracking-widest">
-                    <div>
-                        SESSION: {sessionId}<br />
-                        TIMESTAMP: {timestamp}
-                    </div>
-                    <div className="text-right">
-                        DATA SOURCES: INSTAGRAM / META PUBLIC SIGNALS
-                    </div>
-                </div>
-
-            </div>
-        )
-    }
-
-    // --- STANDARD LANDING LAYOUT (IDLE & PREVIEW) ---
-    // "El Landing V1 debe renderizarse COMPLETO siempre".
-    // "El Analyzer vive dentro de un bloque específico".
-
+    // --- STANDARD LANDING LAYOUT (ALL OTHER STATES) ---
     return (
         <div className="min-h-screen bg-[#000000] text-[#FFFFFF] font-mono selection:bg-white selection:text-black relative">
             {/* LANG SWITCHER */}
@@ -599,15 +498,20 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
             </section>
 
             {/* BLOCK 6: THE ANALYZER (CONTAINED) */}
-            <section className="px-6 py-32 flex flex-col items-center justify-center border-t border-[#FFFFFF]/10 bg-black/50">
+            <section className="px-6 py-32 flex flex-col items-center justify-center border-t border-[#FFFFFF]/10 bg-black/50 min-h-[500px]">
                 <div className="w-full max-w-lg space-y-12">
-                    <div className="text-center space-y-4">
-                        <Terminal className="w-6 h-6 text-[#FFFFFF] mx-auto" />
-                        <h2 className="text-lg text-[#FFFFFF] tracking-[0.2em] uppercase font-bold">{txt.l_analyzer_title}</h2>
-                    </div>
 
-                    {/* --- CONDITIONAL CONTENT INSIDE BLOCK 6 --- */}
+                    {/* HEADER FOR BLOCK 6 - Only show if NOT in Verdict/Revelation to avoid clutter? Or keep it? keeping it for consistency except verdict */}
+                    {(state !== OperationalState.SENTENCE && state !== OperationalState.REVELATION) && (
+                        <div className="text-center space-y-4">
+                            <Terminal className="w-6 h-6 text-[#FFFFFF] mx-auto" />
+                            <h2 className="text-lg text-[#FFFFFF] tracking-[0.2em] uppercase font-bold">{txt.l_analyzer_title}</h2>
+                        </div>
+                    )}
 
+                    {/* --- INLINE CONTENT --- */}
+
+                    {/* STATE: IDLE */}
                     {state === OperationalState.IDLE && (
                         <div className="space-y-6 animate-in fade-in duration-500">
                             <input
@@ -627,6 +531,7 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
                         </div>
                     )}
 
+                    {/* STATE: PREVIEW */}
                     {state === OperationalState.PREVIEW && profile && (
                         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 w-full">
                             {/* PREVIEW CARD */}
@@ -648,8 +553,6 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
                                         "{profile.biography.slice(0, 100)}..."
                                     </p>
                                 )}
-
-                                {/* 6 POST GRID */}
                                 <div className="grid grid-cols-3 gap-2 opacity-50">
                                     {previewPosts.map((post) => (
                                         <div key={post.id} className="aspect-square bg-white/5 relative group">
@@ -659,7 +562,6 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
                                 </div>
                             </div>
 
-                            {/* EMAIL & CONSENT - ONLY VISIBLE NOW */}
                             <div className="space-y-6">
                                 <input
                                     value={email}
@@ -685,7 +587,6 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
                                     />
                                 </div>
                             </div>
-
                             <div className="text-center">
                                 <button onClick={() => setState(OperationalState.IDLE)} className="text-[10px] text-[#6B6B6B] uppercase underline hover:text-white">
                                     CANCEL OPERATION
@@ -693,6 +594,87 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
                             </div>
                         </div>
                     )}
+
+                    {/* STATE: INGEST (Execution) */}
+                    {state === OperationalState.INGEST && (
+                        <div className="w-full border border-white/10 bg-white/5 p-8 text-center animate-pulse">
+                            <span className="text-[10px] text-[#1877F2] font-mono tracking-widest uppercase">
+                                {txt.ingest}
+                            </span>
+                            <div className="mt-4 h-[1px] w-full bg-[#1877F2]/30 overflow-hidden">
+                                <div className="h-full bg-[#1877F2] animate-progress-indeterminate w-1/3" />
+                            </div>
+                            <span className="text-[10px] text-[#6B6B6B] font-mono tracking-widest uppercase mt-4 block">
+                                {txt.session_locked}
+                            </span>
+                        </div>
+                    )}
+
+                    {/* STATE: REVELATION */}
+                    {state === OperationalState.REVELATION && (
+                        <div className="w-full border border-white/10 bg-white/5 p-8 text-center space-y-8">
+                            <span className="text-[10px] text-[#1877F2] font-mono tracking-widest uppercase animate-pulse">
+                                FORENSIC REVELATION
+                            </span>
+                            <div className="space-y-4 text-center">
+                                <div className="flex items-center justify-center gap-4">
+                                    <div className={`w-2 h-2 rounded-full ${revelationStep >= 0 ? 'bg-[#1877F2] animate-ping' : 'bg-white/10'}`} />
+                                    <span className={`text-xs tracking-[0.2em] uppercase ${revelationStep >= 0 ? 'text-white' : 'text-[#6B6B6B]'}`}>
+                                        {txt.asymmetry}
+                                    </span>
+                                </div>
+                                <div className="flex items-center justify-center gap-4">
+                                    <div className={`w-2 h-2 rounded-full ${revelationStep >= 1 ? 'bg-[#1877F2] animate-ping' : 'bg-white/10'}`} />
+                                    <span className={`text-xs tracking-[0.2em] uppercase ${revelationStep >= 1 ? 'text-white' : 'text-[#6B6B6B]'}`}>
+                                        {txt.inertia}
+                                    </span>
+                                </div>
+                            </div>
+                            <div className="h-1 w-32 bg-white/10 overflow-hidden rounded-full mx-auto">
+                                <div className="h-full bg-[#1877F2] animate-progress-indeterminate" />
+                            </div>
+                        </div>
+                    )}
+
+                    {/* STATE: SENTENCE (APPROVED/DOWNGRADED - Success Case) */}
+                    {(state === OperationalState.SENTENCE || state === OperationalState.TERMINATED) &&
+                        (!['BLOCKED', 'INCONCLUSIVE', 'SYSTEM_ERROR', 'TERMINATED'].includes(backendUX?.system_verdict)) && (
+                            <div className="w-full animate-in fade-in duration-1000">
+                                <div className="border border-white/10 bg-white/5 p-8 text-left relative overflow-hidden">
+                                    {/* DECORATION */}
+                                    <div className="absolute top-0 right-0 p-4 opacity-20">
+                                        <ShieldCheck className="w-12 h-12 text-[#1877F2]" />
+                                    </div>
+
+                                    <span className="text-[#1877F2] tracking-[0.2em] text-[10px] uppercase font-bold block mb-2">
+                                        {backendUX?.verdict_code}
+                                    </span>
+                                    <h3 className="text-2xl md:text-3xl font-medium tracking-tight leading-none text-white mb-6 uppercase">
+                                        {backendUX?.ux_controls?.status_label || backendUX?.system_verdict}
+                                    </h3>
+
+                                    <div className="w-full h-[1px] bg-white/10 mb-6" />
+
+                                    <h4 className="text-[#6B6B6B] text-[10px] tracking-[0.2em] uppercase mb-2">
+                                        {backendUX?.ux_controls?.title}
+                                    </h4>
+                                    <p className="text-[#E6E8EB] text-xs md:text-sm leading-relaxed font-light whitespace-pre-line tracking-wide mb-8">
+                                        {backendUX?.ux_controls?.message}
+                                    </p>
+
+                                    {backendUX?.ux_controls?.cta && (
+                                        <button className="w-full bg-white text-black py-4 text-xs font-bold tracking-[0.2em] uppercase hover:bg-[#CCCCCC] transition-colors rounded-none">
+                                            {backendUX.ux_controls.cta}
+                                        </button>
+                                    )}
+                                </div>
+                                <div className="mt-4 text-center">
+                                    <span className="text-[9px] text-[#6B6B6B] tracking-widest uppercase">
+                                        SESS: {sessionId} // SIG: {timestamp.split('T')[1].split('.')[0]}
+                                    </span>
+                                </div>
+                            </div>
+                        )}
 
                 </div>
             </section>
@@ -705,3 +687,4 @@ export default function SmartGrowthConsultant({ initialHandle, initialIntent, in
         </div>
     )
 }
+```
