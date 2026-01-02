@@ -171,6 +171,7 @@ export default function Narrative() {
                     </div>
 
                 </div>
+            </div>
         </section>
     );
 }
