@@ -109,10 +109,12 @@ export async function POST(req: Request) {
 
 
         // --- APIFY FETCH ---
-        // Using "apify/instagram-profile-scraper" (Confirmed working by user)
-        const apifyUrl = `https://api.apify.com/v2/acts/${APIFY_ACTOR}/run-sync-get-dataset-items?token=${apifyToken}`;
+        // CRITICAL FIX: Named actors must use '~' separator in V2 API URLs, not '/'
+        // e.g. "apify/instagram-profile-scraper" -> "apify~instagram-profile-scraper"
+        const actorId = APIFY_ACTOR.replace('/', '~');
+        const apifyUrl = `https://api.apify.com/v2/acts/${actorId}/run-sync-get-dataset-items?token=${apifyToken}`;
 
-        console.log(`[FORENSIC_DEBUG] Actor: ${APIFY_ACTOR}`);
+        console.log(`[FORENSIC_DEBUG] Actor ID: ${actorId}`);
         console.log(`[FORENSIC_DEBUG] Token Start: ${apifyToken ? apifyToken.substring(0, 4) : 'NULL'}...`);
         console.log(`[FORENSIC_DEBUG] URL: ${apifyUrl.replace(apifyToken || '', '***')}`);
 
