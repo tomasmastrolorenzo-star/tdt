@@ -1,4 +1,3 @@
-```
 "use client";
 
 import { ArrowRight } from "lucide-react";
@@ -26,7 +25,7 @@ export default function Hero() {
             <div className="relative z-10 max-w-6xl mx-auto text-center space-y-12 flex flex-col items-center">
 
                 {/* Badge: Official Verification Partner */}
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8 }}
@@ -41,7 +40,7 @@ export default function Hero() {
                 {/* Headline: Tech (Sans) vs Subhead: Elegance (Serif) */}
                 <div className="space-y-8">
                     <h1 className="text-5xl md:text-7xl lg:text-8xl font-sans font-bold tracking-[-0.05em] leading-[1.0] max-w-5xl mx-auto">
-                        <motion.span 
+                        <motion.span
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ duration: 1, delay: 0.2 }}
@@ -49,7 +48,7 @@ export default function Hero() {
                         >
                             La Nueva Era del Crecimiento.
                         </motion.span>
-                        <motion.span 
+                        <motion.span
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 1, delay: 0.4 }}
@@ -59,7 +58,7 @@ export default function Hero() {
                         </motion.span>
                     </h1>
 
-                    <motion.p 
+                    <motion.p
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ duration: 1, delay: 0.6 }}
@@ -70,7 +69,7 @@ export default function Hero() {
                 </div>
 
                 {/* Primary Button with Micro-Shine */}
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 1, delay: 0.8 }}
@@ -81,12 +80,12 @@ export default function Hero() {
                         className="group relative px-10 py-5 bg-white text-black text-xs md:text-sm font-bold tracking-[0.2em] uppercase overflow-hidden hover:bg-[#E6E8EB] transition-all shadow-[0_0_40px_rgba(255,255,255,0.1)] hover:shadow-[0_0_60px_rgba(255,255,255,0.2)]"
                     >
                         {/* Shine Effect */}
-                        <motion.div 
+                        <motion.div
                             animate={{ x: ["-100%", "200%"] }}
                             transition={{ repeat: Infinity, duration: 5, ease: "linear", delay: 1 }}
                             className="absolute top-0 left-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/80 to-transparent skew-x-[-20deg] z-20 pointer-events-none"
                         />
-                        
+
                         <span className="relative z-10 flex items-center gap-3">
                             INICIAR análisis gratis
                             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -95,11 +94,10 @@ export default function Hero() {
                 </motion.div>
 
             </div>
-            
+
             {/* Bottom Fade */}
             <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-black to-transparent z-20" />
 
         </section>
     );
 }
-```
