@@ -5,7 +5,7 @@ export const maxDuration = 60; // Attempt to extend timeout for Pro plans
 
 // --- CONFIGURATION ---
 const SYSTEM_VERSION = "Phase_75_Patch_5";
-const APIFY_ACTOR = "apify/instagram-profile-scraper";
+const APIFY_ACTOR = "apify/instagram-scraper";
 
 // --- TYPES ---
 type Verdict = 'APPROVED' | 'RESTRICTED' | 'DENIED' | 'INCONCLUSIVE' | 'SYSTEM_ERROR' | 'BLOCKED' | 'DOWNGRADED'; // Added DOWNGRADED
