@@ -1,50 +1,46 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { CheckCircle2, Instagram, Linkedin, Twitter } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function Trust() {
-    const [count, setCount] = useState(520); // Updated starting count
-
-    // Counter effect
-    useEffect(() => {
-        const interval = setInterval(() => {
-            // Randomly increment every few seconds to simulate live activity
-            if (Math.random() > 0.8) {
-                setCount(prev => prev + 1);
-            }
-        }, 8000); // Slower, more "boutique" pace
-        return () => clearInterval(interval);
-    }, []);
-
     return (
-        <section className="py-16 bg-black border-y border-white/5 relative z-20">
-            <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        <section className="py-20 bg-[#050505] border-t border-white/5">
+            <div className="max-w-7xl mx-auto px-6">
 
-                {/* Left: Verificator Counter */}
-                <div className="flex items-center gap-6 justify-center md:justify-start">
-                    <div className="relative">
-                        <div className="w-16 h-16 rounded-full bg-[#007AFF]/5 flex items-center justify-center border border-[#007AFF]/20">
-                            <CheckCircle2 className="w-6 h-6 text-[#007AFF]" />
+                {/* Header: Results Monitor */}
+                <div className="flex flex-col md:flex-row justify-between items-end mb-16 border-b border-white/10 pb-8">
+                    <div className="space-y-4">
+                        <div className="flex items-center gap-3">
+                            <div className="w-2 h-2 rounded-full bg-[#007AFF] animate-pulse" />
+                            <span className="text-xs font-mono uppercase tracking-[0.2em] text-[#007AFF]">
+                                Monitor de Resultados
+                            </span>
                         </div>
-                    </div>
-                    <div>
-                        <div className="text-3xl font-serif text-white flex items-center gap-3">
-                            {count}
-                            <span className="text-[10px] text-[#007AFF] border border-[#007AFF]/30 px-2 py-0.5 rounded-full uppercase tracking-widest">Live Portfolio</span>
-                        </div>
-                        <p className="text-xs text-white/40 uppercase tracking-[0.2em] mt-2 font-mono">
-                            Cartera de Autoridad: Casos Verificados en 2025
+                        <h2 className="text-3xl md:text-5xl font-serif text-white max-w-3xl leading-tight">
+                            538 Perfiles Posicionados con <br className="hidden md:block" />
+                            <span className="italic text-white/50">Éxito Algorítmico.</span>
+                            <motion.img
+                                src="/assets/heart-3d.png"
+                                alt="Heart"
+                                animate={{ y: [0, -10, 0] }}
+                                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                                className="w-12 h-12 inline-block ml-4 align-middle object-contain"
+                            />
+                        </h2>
+                        <p className="text-white/40 max-w-2xl text-sm leading-relaxed font-light">
+                            Casos verificados donde nuestra IA detectó el comportamiento del algoritmo y forzó el posicionamiento hacia el nivel más alto de engagement.
                         </p>
                     </div>
                 </div>
 
-                {/* Right: Platform Logos (Minimalist, Grayscale, Low Opacity) */}
-                <div className="flex justify-center md:justify-end gap-12 items-center opacity-60 grayscale hover:grayscale-0 transition-all duration-700">
-                    {/* Using text for Forbes/Bloomberg as requested style implies wordmarks */}
-                    <span className="font-serif text-2xl text-white/80 tracking-tight">Forbes</span>
-                    <span className="font-serif text-2xl text-white/80 tracking-tight">Bloomberg</span>
-                    <span className="font-serif text-2xl text-white/80 tracking-tight">Business Insider</span>
+                {/* Grid of Logos (Minimalist/Dark) */}
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-12 opacity-30 grayscale hover:grayscale-0 transition-all duration-500">
+                    {/* Logos would go here, keeping placeholders for now */}
+                    {['Forbes', 'Bloomberg', 'Reuters', 'Meta', 'TikTok', 'Google'].map((brand, i) => (
+                        <div key={i} className="flex items-center justify-center text-xl font-serif text-white/50 hover:text-white transition-colors cursor-default">
+                            {brand}
+                        </div>
+                    ))}
                 </div>
 
             </div>

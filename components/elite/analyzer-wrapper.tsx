@@ -235,7 +235,10 @@ export default function AnalyzerWrapper() {
     const renderInput = () => (
         <div className="space-y-8 animate-in fade-in duration-500">
             <div className="space-y-4">
-                <label className="text-xs font-serif text-[#007AFF] tracking-widest uppercase">Target Asset Handle</label>
+                <label className="text-xs font-serif text-[#007AFF] tracking-widest uppercase flex items-center gap-2">
+                    Target Asset Handle
+                    <img src="/assets/insta-3d.png" alt="IG" className="w-4 h-4 object-contain" />
+                </label>
                 <div className="flex items-center border-b border-white/20 focus-within:border-[#007AFF] transition-colors py-4">
                     <span className="text-2xl text-white/40 mr-2 font-serif">@</span>
                     <input
@@ -376,8 +379,14 @@ export default function AnalyzerWrapper() {
                 </div>
 
                 <div className="py-4 space-y-6 relative z-10">
-                    <div className={`inline-flex items-center justify-center w-24 h-24 rounded-full border-2 ${diagnosis.borderColor} bg-white/5 mb-2 shadow-[0_0_30px_rgba(0,0,0,0.5)]`}>
-                        <diagnosis.icon className={`w-10 h-10 ${diagnosis.color}`} />
+                    <div className="inline-block p-4 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm relative group">
+                        <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl" />
+                        <ShieldCheck className="w-12 h-12 text-[#007AFF] mx-auto mb-3" />
+                        <div className="text-xs font-mono font-bold text-white uppercase tracking-widest leading-relaxed max-w-sm mx-auto">
+                            AUDITORÍA COMPLETADA: <br />
+                            <span className="text-[#007AFF]">POTENCIAL DE POSICIONAMIENTO DETECTADO.</span> <br />
+                            EL SISTEMA ESTÁ LISTO PARA SU ESCALABILIDAD.
+                        </div>
                     </div>
 
                     <h3 className={`text-2xl md:text-3xl font-serif tracking-wide text-white uppercase`}>

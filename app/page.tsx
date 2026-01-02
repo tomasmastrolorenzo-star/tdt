@@ -15,7 +15,6 @@ export default function ElitePage() {
         <AnalyzerWrapper />
       </div>
       <Footer />
-      <StickyExitBar />
     </main>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { Component, Crown, Globe, Landmark, PenTool, Scale, ShieldCheck, UserCheck } from "lucide-react";
+import { Component, Crown, Globe, Landmark, PenTool, Scale, Search, ShieldCheck, UserCheck } from "lucide-react";
 import { motion } from "framer-motion";
 import { GhostProfile } from "./ghost-profile";
 
@@ -20,22 +20,23 @@ export default function Narrative() {
                         </span>
 
                         <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif leading-[1.1] font-medium">
-                            El Desfase de <br />
-                            <span className="text-white/40 italic">Percepción.</span>
+                            ¿Su éxito es real, <br />
+                            <span className="text-white/40 italic">pero su perfil es invisible?</span>
                         </h2>
 
                         <div className="space-y-6 text-white/70 font-light leading-relaxed text-lg">
-                            <p>
-                                Hemos detectado un patrón crítico en líderes de alto rendimiento: <span className="text-white">Cuando su éxito real supera su huella digital.</span>
+                            <p className="text-xl md:text-2xl text-white font-serif italic mb-6">
+                                "Detectamos la fricción técnica que oculta su autoridad ante el mercado actual."
                             </p>
                             <p>
-                                Esta asimetría provoca una <span className="text-white border-b border-white/20 pb-0.5">Dilución de Marca</span>. Mientras usted cierra tratos de alto nivel en privado, su infraestructura de autoridad pública permanece desactualizada, generando fricción innecesaria en nuevos mercados.
+                                Usted ha construido una trayectoria sólida en el mundo real, pero su Instagram parece ignorarlo. Sigue las viejas normas: contenido profesional, constancia y seriedad.
                             </p>
-                        </div>
-
-                        {/* Bloque de Invisibilidad Re-formateado (Horizontal Glass) */}
-                        <div className="w-full bg-white/5 backdrop-blur-md border border-white/10 p-8 text-center italic font-serif text-lg leading-relaxed rounded-lg">
-                            "La invisibilidad digital es el costo oculto más alto para el talento de élite."
+                            <p>
+                                El resultado: <span className="text-white border-b border-white/20">0 likes. 0 comentarios. 0 llegada.</span>
+                            </p>
+                            <p className="text-base text-white/50">
+                                No es falta de valor, es un <span className="text-red-400">bloqueo del algoritmo de 2026</span> que lo ha marcado como irrelevante. Mientras usted cierra tratos en privado, el sistema lo mantiene oculto, diluyendo su prestigio ante las nuevas oportunidades de mercado.
+                            </p>
                         </div>
                     </div>
 
@@ -75,68 +76,101 @@ export default function Narrative() {
 
                 {/* THE PROTOCOL: System v2.4 (Industrial Timeline) */}
                 <div>
-                    <div className="flex flex-col md:flex-row justify-between items-end mb-24 border-b border-white/10 pb-8">
-                        <div className="space-y-4 max-w-xl">
-                            <h3 className="text-3xl md:text-5xl font-serif">El Protocolo de Autoridad</h3>
-                            <p className="text-white/50 leading-relaxed">
-                                Ingeniería de estatus aplicada. Un proceso sistemático para alinear su proyección pública con su realidad profesional.
-                            </p>
-                        </div>
-                        <div className="font-mono text-xs text-[#007AFF] uppercase tracking-widest mt-8 md:mt-0 flex items-center gap-2">
-                            <div className="w-2 h-2 bg-[#007AFF] rounded-full animate-pulse" />
-                            System v2.4
-                        </div>
-                    </div>
-
-                    <div className="relative grid grid-cols-1 md:grid-cols-4 gap-8">
-                        {/* Connecting Line (Timeline) */}
-                        <div className="absolute top-8 left-0 w-full h-[1px] bg-white/10 hidden md:block" />
-
-                        {[
-                            {
-                                icon: PenTool,
-                                step: "01",
-                                title: "Arquitectura de Identidad",
-                                desc: "Reconstrucción narrativa. Definimos los pilares discursivos que lo posicionan como líder de categoría."
-                            },
-                            {
-                                icon: Landmark, // Validation
-                                step: "02",
-                                title: "Validación Institucional",
-                                desc: "Gestión de credenciales de plataforma (Check Azul) y vinculación con entidades de prestigio."
-                            },
-                            {
-                                icon: Globe,
-                                step: "03",
-                                title: "Expansión de Influencia",
-                                desc: "Amplificación estratégica del mensaje hacia audiencias cualificadas. Cero métricas vanidad."
-                            },
-                            {
-                                icon: Crown,
-                                step: "04",
-                                title: "Consolidación de Estatus",
-                                desc: "Blindaje de reputación y mantenimiento de activos digitales a largo plazo."
-                            }
-                        ].map((item, i) => (
-                            <div key={i} className="group relative bg-[#050505] p-6 border border-white/10 rounded-lg hover:border-[#007AFF] transition-all duration-500 hover:-translate-y-1">
-                                <div className="absolute top-0 left-6 -mt-3 bg-[#050505] px-2 text-[#007AFF] font-mono text-xs uppercase opacity-70 group-hover:opacity-100 transition-opacity">
-                                    PHASE {item.step}
-                                </div>
-                                <div className="mb-6 opacity-60 group-hover:opacity-100 group-hover:text-[#007AFF] transition-all duration-300">
-                                    <item.icon strokeWidth={1} className="w-8 h-8" />
-                                </div>
-                                <h4 className="text-xl font-serif mb-4 leading-tight group-hover:text-white transition-colors">
-                                    {item.title}
-                                </h4>
-                                <p className="text-sm text-white/40 leading-relaxed font-light font-sans group-hover:text-white/60 transition-colors">
-                                    {item.desc}
+                    <div>
+                        <div className="flex flex-col md:flex-row justify-between items-end mb-16 border-b border-white/10 pb-8">
+                            <div className="space-y-4 max-w-xl">
+                                <h3 className="text-3xl md:text-5xl font-serif">El Protocolo de Autoridad</h3>
+                                <p className="text-white/50 leading-relaxed">
+                                    Ingeniería de estatus aplicada. Un proceso sistemático para alinear su proyección pública con su realidad profesional.
                                 </p>
                             </div>
-                        ))}
-                    </div>
-                </div>
+                            <div className="font-mono text-xs text-[#007AFF] uppercase tracking-widest mt-8 md:mt-0 flex items-center gap-2">
+                                <div className="w-2 h-2 bg-[#007AFF] rounded-full animate-pulse" />
+                                System v2.5 Blueprint
+                            </div>
+                        </div>
 
-            </div>
+                        {/* Security Block (Industrial) */}
+                        <div className="mb-12 bg-[#0A0A0A] border border-[#007AFF]/20 p-4 md:p-6 rounded-sm flex items-start md:items-center gap-4 relative overflow-hidden group">
+                            <div className="absolute left-0 top-0 h-full w-1 bg-[#007AFF]" />
+                            <ShieldCheck className="w-6 h-6 text-[#007AFF] flex-shrink-0 mt-1 md:mt-0" />
+                            <div>
+                                <h4 className="font-mono text-xs md:text-sm text-[#007AFF] uppercase tracking-widest font-bold mb-1">
+                                    SEGURIDAD CORPORATIVA
+                                </h4>
+                                <p className="text-xs md:text-sm text-white/80 font-mono">
+                                    100% NO INVASIVO. SIN CONTRASEÑAS. ANÁLISIS PERIMETRAL EXTERNO.
+                                </p>
+                            </div>
+                            <div className="absolute right-4 top-4 hidden md:block">
+                                <div className="text-[10px] text-white/20 font-mono">SEC_PROTO_0X92</div>
+                            </div>
+                        </div>
+
+                        <div className="relative grid grid-cols-1 md:grid-cols-4 gap-8">
+                            {/* Connecting Line (Timeline) */}
+                            <div className="absolute top-8 left-0 w-full h-[1px] bg-white/10 hidden md:block" />
+
+                            {[
+                                {
+                                    icon: Search,
+                                    step: "01",
+                                    title: "Diagnóstico Forense",
+                                    desc: "Detección de fugas de autoridad. Nuestro escáner IA mapea las ineficiencias técnicas que el algoritmo castiga actualmente."
+                                },
+                                {
+                                    icon: Component, // Algo restructuring
+                                    step: "02",
+                                    title: "Reestructuración Algorítmica",
+                                    desc: "Corrección de penalizaciones. Si no es oficial, es invisible. Validamos su estatus ante la plataforma para recuperar alcance."
+                                },
+                                {
+                                    icon: Scale, // Scalability
+                                    step: "03",
+                                    title: "Escalabilidad de Élite",
+                                    desc: "Resultados de alto impacto. Desbloqueo de alcance orgánico y engagement cualificado para su nivel profesional."
+                                },
+                                {
+                                    icon: ShieldCheck, // Shield
+                                    step: "04",
+                                    title: "Blindaje de Activos",
+                                    desc: "Mantenimiento perpetuo. Protección contra cambios de algoritmo y preservación de estatus a largo plazo."
+                                }
+                            ].map((item, i) => (
+                                <div key={i} className="group relative bg-[#050505] p-6 border border-white/10 rounded-lg hover:border-[#007AFF] transition-all duration-500 hover:-translate-y-1">
+                                    <div className="absolute top-0 left-6 -mt-3 bg-[#050505] px-2 text-[#007AFF] font-mono text-xs uppercase opacity-70 group-hover:opacity-100 transition-opacity">
+                                        PHASE {item.step}
+                                    </div>
+                                    <div className="mb-6 opacity-60 group-hover:opacity-100 group-hover:text-[#007AFF] transition-all duration-300">
+                                        <item.icon strokeWidth={1} className="w-8 h-8" />
+                                    </div>
+                                    <h4 className="text-xl font-serif mb-4 leading-tight group-hover:text-white transition-colors">
+                                        {item.title}
+                                    </h4>
+                                    <p className="text-sm text-white/40 leading-relaxed font-light font-sans group-hover:text-white/60 transition-colors">
+                                        {item.desc}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Final CTA */}
+                        <div className="mt-16 text-center">
+                            <button
+                                onClick={() => document.getElementById('analyzer-section')?.scrollIntoView({ behavior: 'smooth' })}
+                                className="group relative px-8 py-4 bg-white text-black font-bold uppercase tracking-[0.2em] text-xs hover:bg-[#E6E8EB] transition-all shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(255,255,255,0.2)] overflow-hidden"
+                            >
+                                <motion.div
+                                    animate={{ x: ["-100%", "200%"] }}
+                                    transition={{ repeat: Infinity, duration: 4, ease: "linear", delay: 1 }}
+                                    className="absolute top-0 left-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/80 to-transparent skew-x-[-20deg] z-20 pointer-events-none"
+                                />
+                                Iniciar Auditoría Ahora
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
         </section>
     );
 }
