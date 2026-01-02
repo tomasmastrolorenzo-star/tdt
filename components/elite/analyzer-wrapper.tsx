@@ -98,14 +98,34 @@ export default function AnalyzerWrapper() {
                 })
             });
 
-            if (!res.ok) throw new Error("Connection Timeout");
+            // Handle HTTP Errors
+            if (!res.ok) {
+                if (res.status === 504) throw new Error("Tiempo de espera agotado (Vercel Timeout).");
+                throw new Error(`Error del servidor: ${res.status}`);
+            }
 
             setProgress(40);
-            const data = await res.json();
+
+            // Handle JSON Errors
+            let data;
+            try {
+                data = await res.json();
+            } catch (jsonErr) {
+                console.error("JSON Parse Error:", jsonErr);
+                throw new Error("Respuesta del servidor corrupta.");
+            }
+
+            console.log("API Payload:", data);
 
             if (data.status === 'error') {
                 // Even if 'private', we might get some data, but usually error
-                throw new Error(data.closure?.ux_controls?.message || "Asset Not Found");
+                throw new Error(data.closure?.ux_controls?.message || "Recurso no accesible o privado.");
+            }
+
+            // Handle Missing Profile Logic (Prevent Blank Screen)
+            if (!data.profile) {
+                console.error("Critical: Missing profile in success response", data);
+                throw new Error("Estructura de datos incompleta.");
             }
 
             // Success - Store Data
@@ -120,7 +140,7 @@ export default function AnalyzerWrapper() {
 
         } catch (e: any) {
             console.error(e);
-            addLog(`Error de conexión: ${e.message}`);
+            addLog(`Error Crítico: ${e.message}`);
             setState(OperationalState.ERROR);
         }
     }
