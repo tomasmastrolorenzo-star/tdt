@@ -1,3 +1,5 @@
+"use client";
+
 import { ArrowRight, CheckCircle2, ShieldCheck } from "lucide-react";
 
 export default function Hero() {
