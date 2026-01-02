@@ -1,46 +1,22 @@
-"use client";
-
-import { useState } from "react";
-import SovereignEntry from "@/components/sovereign-entry";
-import SmartGrowthConsultant from "@/components/trend-up/smart-growth-consultant";
-import ProtocolCalibration, { IntentDeclaration } from "@/components/protocol-calibration";
-import ProtocolDeepCalibration from "@/components/protocol-deep-calibration";
-import AssetIdentification from "@/components/asset-identification";
-import { OperatorContext } from "@/app/lib/forensic/intelligence";
-
-type AppPhase = 'ENTRY' | 'CALIBRATION' | 'DEEP_CALIBRATION' | 'ASSET_ID' | 'ANALYSIS';
+import Hero from "@/components/elite/hero";
+import Trust from "@/components/elite/trust";
+import Narrative from "@/components/elite/narrative";
+import AnalyzerWrapper from "@/components/elite/analyzer-wrapper";
 
 export default function Home() {
-  const [phase, setPhase] = useState<AppPhase>('ENTRY');
-
-  // Data State
-  const [lang, setLang] = useState<'EN' | 'ES' | 'PT'>('EN');
-  const [intent, setIntent] = useState<IntentDeclaration | null>(null);
-  const [operatorContext, setOperatorContext] = useState<OperatorContext | null>(null);
-  const [activeHandle, setActiveHandle] = useState<string | null>(null);
-
-  // HANDLERS
-  const handleEntryComplete = () => setPhase('CALIBRATION');
-
-  const handleCalibrationComplete = (data: IntentDeclaration) => {
-    setIntent(data);
-    setPhase('DEEP_CALIBRATION');
-  };
-
-  const handleDeepComplete = (data: OperatorContext) => {
-    setOperatorContext(data);
-    setPhase('ASSET_ID');
-  };
-
-  const handleAssetComplete = (handle: string) => {
-    setActiveHandle(handle);
-    setPhase('ANALYSIS');
-  };
-
-  // RENDER LOGIC
   return (
-    <main className="min-h-screen w-full bg-black text-white font-mono selection:bg-white selection:text-black">
-      <SmartGrowthConsultant initialLang="ES" />
+    <main className="min-h-screen bg-black text-white font-sans selection:bg-[#007AFF] selection:text-white">
+      <Hero />
+      <Trust />
+      <Narrative />
+      <AnalyzerWrapper />
+
+      {/* Simple Elite Footer */}
+      <footer className="py-12 border-t border-white/10 bg-[#050505] text-center">
+        <p className="text-xs text-white/30 uppercase tracking-[0.2em] font-mono">
+          &copy; {new Date().getFullYear()} TDT Elite Protocol. All Rights Reserved.
+        </p>
+      </footer>
     </main>
   );
 }
