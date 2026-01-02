@@ -5,7 +5,7 @@ export const maxDuration = 60; // Attempt to extend timeout for Pro plans
 
 // --- CONFIGURATION ---
 const SYSTEM_VERSION = "Phase_75_Patch_5";
-const APIFY_ACTOR = "apify/instagram-scraper";
+const APIFY_ACTOR = "apify/instagram-profile-scraper";
 
 // --- TYPES ---
 type Verdict = 'APPROVED' | 'RESTRICTED' | 'DENIED' | 'INCONCLUSIVE' | 'SYSTEM_ERROR' | 'BLOCKED' | 'DOWNGRADED'; // Added DOWNGRADED
@@ -111,6 +111,10 @@ export async function POST(req: Request) {
         // --- APIFY FETCH ---
         // Using "apify/instagram-profile-scraper" (Confirmed working by user)
         const apifyUrl = `https://api.apify.com/v2/acts/${APIFY_ACTOR}/run-sync-get-dataset-items?token=${apifyToken}`;
+
+        console.log(`[FORENSIC_DEBUG] Actor: ${APIFY_ACTOR}`);
+        console.log(`[FORENSIC_DEBUG] Token Start: ${apifyToken ? apifyToken.substring(0, 4) : 'NULL'}...`);
+        console.log(`[FORENSIC_DEBUG] URL: ${apifyUrl.replace(apifyToken || '', '***')}`);
 
         const apifyRes = await fetch(apifyUrl, {
             method: 'POST',
