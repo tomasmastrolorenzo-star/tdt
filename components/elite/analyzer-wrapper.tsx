@@ -26,7 +26,7 @@ enum OperationalState {
 }
 
 // --- CONFIGURATION ---
-const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbywUSmt3SjhqlEFAN0QpOoh9SLclIveyccD8D7UTxDxUkU8tw17OrC5depNKUV5z1nuiQ/exec";
+const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbwKHz55cnRkdUc4vLpig4kFWe-eScWwJ40ub9oVvO1jNjTC4S3y8itep4y-VxlFoN5d5Q/exec";
 
 // --- COPYWRITING (The Oracle) ---
 const DIAGNOSIS_COPY = {
@@ -325,8 +325,8 @@ export default function AnalyzerWrapper() {
             {/* THE TRAFFIC LIGHT FEEDBACK */}
             {healthStatus && (
                 <div className={`p-4 rounded border animate-in zoom-in-95 duration-300 ${healthStatus === 'CRITICAL' ? 'bg-red-500/10 border-red-500/30' :
-                        healthStatus === 'RISK' ? 'bg-yellow-500/10 border-yellow-500/30' :
-                            'bg-green-500/10 border-green-500/30'
+                    healthStatus === 'RISK' ? 'bg-yellow-500/10 border-yellow-500/30' :
+                        'bg-green-500/10 border-green-500/30'
                     }`}>
                     <div className="flex items-center gap-3 mb-2">
                         {healthStatus === 'CRITICAL' && <AlertTriangle className="w-5 h-5 text-red-500" />}
@@ -334,8 +334,8 @@ export default function AnalyzerWrapper() {
                         {healthStatus === 'OPTIMAL' && <Check className="w-5 h-5 text-green-500" />}
 
                         <span className={`font-bold text-xs uppercase tracking-widest ${healthStatus === 'CRITICAL' ? 'text-red-500' :
-                                healthStatus === 'RISK' ? 'text-yellow-500' :
-                                    'text-green-500'
+                            healthStatus === 'RISK' ? 'text-yellow-500' :
+                                'text-green-500'
                             }`}>
                             {healthStatus === 'CRITICAL' ? 'ALERTA: PERFIL INVISIBLE' : healthStatus === 'RISK' ? 'RIESGO: ESTANCAMIENTO' : 'ÓPTIMO: AUTORIDAD'}
                         </span>
