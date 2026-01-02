@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect, useRef } from "react"
-import { Activity, ArrowRight, BarChart2, Check, ChevronRight, FileCheck, Lock, Search, ShieldCheck, Terminal, XCircle, AlertTriangle, Zap, User, Loader2, Briefcase, Camera, Landmark, Building, Medal, TrendingUp, Info } from "lucide-react"
+import { Activity, ArrowRight, BarChart2, Check, ChevronRight, FileCheck, Lock, Search, ShieldCheck, Terminal, XCircle, AlertTriangle, Zap, User, Loader2, Briefcase, Camera, Landmark, Building, Medal, TrendingUp, Info, Stethoscope, Globe, MapPin, Users } from "lucide-react"
 
 // --- TYPES ---
 interface DiagnosisData {
@@ -20,6 +20,8 @@ enum OperationalState {
     INPUT_VERIFICATION = 'INPUT_VERIFICATION', // Step 1
     INPUT_NICHE = 'INPUT_NICHE',               // Step 2
     INPUT_METRICS = 'INPUT_METRICS',           // Step 3 (Traffic Light)
+    INPUT_AMBITION = 'INPUT_AMBITION',         // Step 4 (Growth Goal)
+    INPUT_SEGMENTATION = 'INPUT_SEGMENTATION', // Step 5 (Optional)
     PROCESSING = 'PROCESSING',  // "Crunching Numbers"
     COMPLETE = 'COMPLETE',      // "Verdict"
     ERROR = 'ERROR'
@@ -71,6 +73,12 @@ export default function AnalyzerWrapper() {
 
     const [errorDescr, setErrorDescr] = useState("");
     const [showMonthlyModal, setShowMonthlyModal] = useState(false); // Education Hook
+
+    // NEW SEGMENTATION DATA
+    const [growthGoal, setGrowthGoal] = useState("");
+    const [geo, setGeo] = useState("Global");
+    const [gender, setGender] = useState("Mixto");
+    const [age, setAge] = useState("25-45 (Prime Force)");
 
     // APP STATE
     const [state, setState] = useState<OperationalState>(OperationalState.IDLE);
@@ -209,7 +217,12 @@ export default function AnalyzerWrapper() {
             avg_likes: likesInput,
             engagement_rate: engagementRate?.toFixed(2),
             health_status: healthStatus,
-            final_score: score
+            final_score: score,
+            pain_point: diagnosis.title,
+            growth_goal: growthGoal,
+            geo_focus: geo,
+            target_gender: gender,
+            target_age: age
         };
         fetch(WEBHOOK_URL, {
             method: 'POST',
@@ -277,6 +290,7 @@ export default function AnalyzerWrapper() {
                     { id: 'real_estate', label: 'Real Estate', icon: Landmark },
                     { id: 'athlete', label: 'Pro Athlete', icon: Medal },
                     { id: 'trader', label: 'Fin/Trader', icon: TrendingUp },
+                    { id: 'medical', label: 'Medical Specialist', icon: Stethoscope },
                 ].map(item => (
                     <button
                         key={item.id}
@@ -349,11 +363,11 @@ export default function AnalyzerWrapper() {
             )}
 
             <button
-                onClick={runFinalAnalysis}
+                onClick={() => setState(OperationalState.INPUT_AMBITION)}
                 disabled={!healthStatus}
                 className="w-full bg-white text-black h-14 text-xs font-bold tracking-[0.2em] uppercase hover:bg-[#E6E8EB] disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg mt-8"
             >
-                Generar Diagnóstico Final
+                Continuar a Proyección
             </button>
         </div>
     )
@@ -361,6 +375,78 @@ export default function AnalyzerWrapper() {
     // ... (Keep renderInput, renderAssetFound, renderProcessing, renderResult from previous version without changes, just update main return switch) ...
     // Note for LLM: In "replace_file_content" I need to be careful to include these unmodified parts or just replace the whole file. 
     // Since I'm doing a full replacement to ensure structure integrity:
+
+    // 4. AMBITION STEP
+    const renderAmbitionStep = () => (
+        <div className="space-y-8 animate-in fade-in slide-in-from-right-8 duration-500">
+            <h3 className="text-xl text-white font-serif mb-6 text-center">Definición de Escala y Ambición</h3>
+            <div className="space-y-4">
+                <button onClick={() => { setGrowthGoal('Niche Authority'); setState(OperationalState.INPUT_SEGMENTATION); }} className="w-full text-left p-6 border border-white/10 bg-white/5 hover:bg-[#007AFF]/10 hover:border-[#007AFF]/30 transition-all group">
+                    <div className="flex items-center gap-4 mb-2">
+                        <ShieldCheck className="w-6 h-6 text-[#007AFF]" />
+                        <span className="text-sm font-bold text-white uppercase tracking-widest">Autoridad de Nicho</span>
+                    </div>
+                    <p className="text-xs text-white/50 font-light pl-10">
+                        Objetivo: 3k - 5k Audiencia de Alto Valor. <br />
+                        Enfoque: Conversión de tickets altos y reputación especializada.
+                    </p>
+                </button>
+
+                <button onClick={() => { setGrowthGoal('Global Dominance'); setState(OperationalState.INPUT_SEGMENTATION); }} className="w-full text-left p-6 border border-white/10 bg-white/5 hover:bg-amber-500/10 hover:border-amber-500/30 transition-all group">
+                    <div className="flex items-center gap-4 mb-2">
+                        <Globe className="w-6 h-6 text-amber-500" />
+                        <span className="text-sm font-bold text-white uppercase tracking-widest">Dominio Global</span>
+                    </div>
+                    <p className="text-xs text-white/50 font-light pl-10">
+                        Objetivo: 100k+ Audiencia Masiva. <br />
+                        Enfoque: Viralidad, conferencias internacionales y fama digital.
+                    </p>
+                </button>
+            </div>
+        </div>
+    )
+
+    // 5. SEGMENTATION STEP (Optional)
+    const renderSegmentationStep = () => (
+        <div className="space-y-8 animate-in fade-in slide-in-from-right-8 duration-500">
+            <h3 className="text-xl text-white font-serif mb-2 text-center">Segmentación de Audiencia</h3>
+            <p className="text-center text-xs text-white/40 mb-8 font-mono">Configuración de Demografía Objetivo</p>
+
+            <div className="space-y-6">
+                <div>
+                    <label className="text-[10px] text-[#007AFF] uppercase tracking-widest mb-2 block flex items-center gap-2">
+                        <MapPin className="w-3 h-3" /> Foco Geográfico
+                    </label>
+                    <select value={geo} onChange={e => setGeo(e.target.value)} className="w-full bg-[#050505] border border-white/20 text-white text-sm py-3 px-4 outline-none focus:border-[#007AFF]">
+                        {['Global (Sin Fronteras)', 'Miami / USA', 'Dubai / UAE', 'Madrid / Europa', 'Latam High-End', 'Local City'].map(o => <option key={o} value={o}>{o}</option>)}
+                    </select>
+                </div>
+                <div>
+                    <label className="text-[10px] text-[#007AFF] uppercase tracking-widest mb-2 block flex items-center gap-2">
+                        <Users className="w-3 h-3" /> Género Objetivo
+                    </label>
+                    <select value={gender} onChange={e => setGender(e.target.value)} className="w-full bg-[#050505] border border-white/20 text-white text-sm py-3 px-4 outline-none focus:border-[#007AFF]">
+                        {['Mixto (General)', 'Enfoque Masculino', 'Enfoque Femenino'].map(o => <option key={o} value={o}>{o}</option>)}
+                    </select>
+                </div>
+                <div>
+                    <label className="text-[10px] text-[#007AFF] uppercase tracking-widest mb-2 block flex items-center gap-2">
+                        <Activity className="w-3 h-3" /> Rango de Edad
+                    </label>
+                    <select value={age} onChange={e => setAge(e.target.value)} className="w-full bg-[#050505] border border-white/20 text-white text-sm py-3 px-4 outline-none focus:border-[#007AFF]">
+                        {['Prime Force (25-45 años)', 'Gen Z (18-24 años)', 'Senior Executive (45+)', 'All Ages'].map(o => <option key={o} value={o}>{o}</option>)}
+                    </select>
+                </div>
+            </div>
+
+            <button
+                onClick={runFinalAnalysis}
+                className="w-full bg-white text-black h-14 text-xs font-bold tracking-[0.2em] uppercase hover:bg-[#E6E8EB] transition-all shadow-lg mt-8"
+            >
+                Confirmar y Procesar
+            </button>
+        </div>
+    )
 
     const renderInput = () => (
         <div className="space-y-8 animate-in fade-in duration-500">
@@ -515,6 +601,8 @@ export default function AnalyzerWrapper() {
                         {state === OperationalState.INPUT_VERIFICATION && renderVerificationStep()}
                         {state === OperationalState.INPUT_NICHE && renderNicheStep()}
                         {state === OperationalState.INPUT_METRICS && renderMetricsStep()}
+                        {state === OperationalState.INPUT_AMBITION && renderAmbitionStep()}
+                        {state === OperationalState.INPUT_SEGMENTATION && renderSegmentationStep()}
 
                         {state === OperationalState.PROCESSING && renderProcessing()}
                         {state === OperationalState.COMPLETE && renderResult()}
