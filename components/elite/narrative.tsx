@@ -8,14 +8,14 @@ export default function Narrative() {
     return (
         <section className="py-32 bg-[#050505] text-white overflow-hidden relative">
             {/* Background Ambience */}
-            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-900/10 blur-[120px] rounded-full pointer-events-none" />
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-amber-900/10 blur-[120px] rounded-full pointer-events-none" />
 
             <div className="max-w-6xl mx-auto px-6 space-y-40 relative z-10">
 
                 {/* THE DIAGNOSIS: Boutique Consulting Tone */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
                     <div className="space-y-12">
-                        <span className="text-[#007AFF] font-mono tracking-[0.2em] uppercase text-[10px] border border-[#007AFF]/30 px-3 py-1 rounded-full">
+                        <span className="text-[#C5A059] font-mono tracking-[0.2em] uppercase text-[10px] border border-[#C5A059]/30 px-3 py-1 rounded-full">
                             Diagnóstico Corporativo
                         </span>
 
@@ -59,9 +59,9 @@ export default function Narrative() {
                             </div>
 
                             <div className="relative flex flex-col items-center">
-                                <div className="absolute -top-12 text-[#007AFF] font-mono text-[10px] animate-pulse bg-[#007AFF]/10 px-2 py-1 rounded">VALOR NO CAPTURADO</div>
-                                <div className="w-[1px] h-full bg-gradient-to-b from-[#007AFF] to-transparent absolute -left-6" />
-                                <div className="text-[10px] font-mono text-white mb-2 uppercase tracking-widest text-[#007AFF] drop-shadow-[0_0_5px_rgba(0,122,255,0.5)]">Real Value</div>
+                                <div className="absolute -top-12 text-[#C5A059] font-mono text-[10px] animate-pulse bg-[#C5A059]/10 px-2 py-1 rounded">VALOR NO CAPTURADO</div>
+                                <div className="w-[1px] h-full bg-gradient-to-b from-[#C5A059] to-transparent absolute -left-6" />
+                                <div className="text-[10px] font-mono text-white mb-2 uppercase tracking-widest text-[#C5A059] drop-shadow-[0_0_5px_rgba(197,160,89,0.5)]">Real Value</div>
                                 <motion.div
                                     animate={{ boxShadow: ["0 0 20px rgba(255,255,255,0.1)", "0 0 40px rgba(255,255,255,0.3)", "0 0 20px rgba(255,255,255,0.1)"] }}
                                     transition={{ duration: 3, repeat: Infinity }}
@@ -84,18 +84,18 @@ export default function Narrative() {
                                     Ingeniería de estatus aplicada. Un proceso sistemático para alinear su proyección pública con su realidad profesional.
                                 </p>
                             </div>
-                            <div className="font-mono text-xs text-[#007AFF] uppercase tracking-widest mt-8 md:mt-0 flex items-center gap-2">
-                                <div className="w-2 h-2 bg-[#007AFF] rounded-full animate-pulse" />
+                            <div className="font-mono text-xs text-[#C5A059] uppercase tracking-widest mt-8 md:mt-0 flex items-center gap-2">
+                                <div className="w-2 h-2 bg-[#C5A059] rounded-full animate-pulse" />
                                 System v2.5 Blueprint
                             </div>
                         </div>
 
                         {/* Security Block (Industrial) */}
-                        <div className="mb-12 bg-[#0A0A0A] border border-[#007AFF]/20 p-4 md:p-6 rounded-sm flex items-start md:items-center gap-4 relative overflow-hidden group">
-                            <div className="absolute left-0 top-0 h-full w-1 bg-[#007AFF]" />
-                            <ShieldCheck className="w-6 h-6 text-[#007AFF] flex-shrink-0 mt-1 md:mt-0" />
+                        <div className="mb-12 bg-[#0A0A0A] border border-[#C5A059]/20 p-4 md:p-6 rounded-sm flex items-start md:items-center gap-4 relative overflow-hidden group">
+                            <div className="absolute left-0 top-0 h-full w-1 bg-[#C5A059]" />
+                            <ShieldCheck className="w-6 h-6 text-[#C5A059] flex-shrink-0 mt-1 md:mt-0" />
                             <div>
-                                <h4 className="font-mono text-xs md:text-sm text-[#007AFF] uppercase tracking-widest font-bold mb-1">
+                                <h4 className="font-mono text-xs md:text-sm text-[#C5A059] uppercase tracking-widest font-bold mb-1">
                                     SEGURIDAD CORPORATIVA
                                 </h4>
                                 <p className="text-xs md:text-sm text-white/80 font-mono">
@@ -137,11 +137,11 @@ export default function Narrative() {
                                     desc: "Mantenimiento perpetuo. Protección contra cambios de algoritmo y preservación de estatus a largo plazo."
                                 }
                             ].map((item, i) => (
-                                <div key={i} className="group relative bg-[#050505] p-6 border border-white/10 rounded-lg hover:border-[#007AFF] transition-all duration-500 hover:-translate-y-1">
-                                    <div className="absolute top-0 left-6 -mt-3 bg-[#050505] px-2 text-[#007AFF] font-mono text-xs uppercase opacity-70 group-hover:opacity-100 transition-opacity">
+                                <div key={i} className="group relative bg-[#050505] p-6 border border-white/10 rounded-lg hover:border-[#C5A059] transition-all duration-500 hover:-translate-y-1">
+                                    <div className="absolute top-0 left-6 -mt-3 bg-[#050505] px-2 text-[#C5A059] font-mono text-xs uppercase opacity-70 group-hover:opacity-100 transition-opacity">
                                         PHASE {item.step}
                                     </div>
-                                    <div className="mb-6 opacity-60 group-hover:opacity-100 group-hover:text-[#007AFF] transition-all duration-300">
+                                    <div className="mb-6 opacity-60 group-hover:opacity-100 group-hover:text-[#C5A059] transition-all duration-300">
                                         <item.icon strokeWidth={1} className="w-8 h-8" />
                                     </div>
                                     <h4 className="text-xl font-serif mb-4 leading-tight group-hover:text-white transition-colors">

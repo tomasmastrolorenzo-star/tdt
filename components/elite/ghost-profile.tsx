@@ -39,9 +39,9 @@ export const GhostProfile = ({ isScanning = false }: GhostProfileProps) => {
     }, [isScanning]);
 
     return (
-        <div className="relative w-full max-w-md mx-auto aspect-square bg-black border border-white/10 rounded-2xl overflow-hidden shadow-2xl shadow-blue-900/10 group">
+        <div className="relative w-full max-w-md mx-auto aspect-square bg-black border border-white/10 rounded-2xl overflow-hidden shadow-2xl shadow-amber-900/10 group">
 
-            {/* Efecto de Escaneo (Blue Line) */}
+            {/* Efecto de Escaneo (Gold Line) */}
             <motion.div
                 initial={{ top: "-10%" }}
                 animate={{ top: "110%" }}
@@ -99,19 +99,19 @@ export const GhostProfile = ({ isScanning = false }: GhostProfileProps) => {
                         exit={{ opacity: 0 }}
                         className="absolute inset-0 flex flex-col items-center justify-center space-y-4"
                     >
-                        {/* Blue Pulse Icon Instead of Red Alert */}
+                        {/* Gold Pulse Icon Instead of Red Alert */}
                         <div className="relative">
-                            <div className="absolute inset-0 bg-[#007AFF] blur-[20px] opacity-20 animate-pulse" />
+                            <div className="absolute inset-0 bg-[#C5A059] blur-[20px] opacity-20 animate-pulse" />
                             <motion.div
                                 animate={{ scale: [1, 1.1, 1] }}
                                 transition={{ duration: 2, repeat: Infinity }}
-                                className="w-12 h-12 rounded-full border border-[#007AFF] flex items-center justify-center relative z-10 bg-black/50 backdrop-blur-md"
+                                className="w-12 h-12 rounded-full border border-[#C5A059] flex items-center justify-center relative z-10 bg-black/50 backdrop-blur-md"
                             >
-                                <div className="w-3 h-3 bg-[#007AFF] rounded-full shadow-[0_0_10px_#007AFF]" />
+                                <div className="w-3 h-3 bg-[#C5A059] rounded-full shadow-[0_0_10px_#C5A059]" />
                             </motion.div>
                         </div>
 
-                        <div className="font-mono text-[9px] text-[#007AFF]/60 uppercase tracking-[0.2em]">
+                        <div className="font-mono text-[9px] text-[#C5A059]/60 uppercase tracking-[0.2em]">
                             System Ready. Waiting for Input...
                         </div>
                     </motion.div>

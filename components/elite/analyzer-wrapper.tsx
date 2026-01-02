@@ -247,9 +247,9 @@ export default function AnalyzerWrapper() {
                 <div className="w-4 h-4 rounded-full border border-white/20 group-hover:border-white" />
             </button>
 
-            <button onClick={() => handleVerificationSelect('monthly')} className="w-full text-left px-6 py-5 border border-[#007AFF]/20 bg-[#007AFF]/5 hover:bg-[#007AFF]/10 transition-all font-serif text-sm text-[#007AFF] mb-3 flex items-center justify-between group relative overflow-hidden">
+            <button onClick={() => handleVerificationSelect('monthly')} className="w-full text-left px-6 py-5 border border-[#C5A059]/20 bg-[#C5A059]/5 hover:bg-[#C5A059]/10 transition-all font-serif text-sm text-[#C5A059] mb-3 flex items-center justify-between group relative overflow-hidden">
                 Suscripción Mensual (Meta Verified)
-                <div className="w-4 h-4 rounded-full border border-[#007AFF]/50" />
+                <div className="w-4 h-4 rounded-full border border-[#C5A059]/50" />
             </button>
 
             <button onClick={() => handleVerificationSelect('permanent')} className="w-full text-left px-6 py-5 border border-amber-500/20 bg-amber-500/5 hover:bg-amber-500/10 transition-all font-serif text-sm text-amber-500 mb-3 flex items-center justify-between group">
@@ -261,12 +261,12 @@ export default function AnalyzerWrapper() {
             {showMonthlyModal && (
                 <div className="absolute inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center p-6 text-center animate-in fade-in duration-300">
                     <div className="space-y-6 max-w-sm">
-                        <Info className="w-12 h-12 text-[#007AFF] mx-auto animate-bounce" />
+                        <Info className="w-12 h-12 text-[#C5A059] mx-auto animate-bounce" />
                         <h4 className="text-xl font-serif text-white">Sabías que...</h4>
                         <p className="text-sm text-white/70 leading-relaxed font-light">
                             La suscripción mensual es una etiqueta temporal que no otorga autoridad real. Podemos gestionar su <span className="text-white font-bold">Verificación Permanente</span> en 10 días, eliminando pagos recurrentes y blindando su estatus.
                         </p>
-                        <button onClick={confirmPermanentSwitch} className="w-full py-4 bg-[#007AFF] text-white font-bold text-xs uppercase tracking-widest hover:bg-[#0060C9]">
+                        <button onClick={confirmPermanentSwitch} className="w-full py-4 bg-[#C5A059] text-white font-bold text-xs uppercase tracking-widest hover:bg-[#B08D4B]">
                             Entendido, aplicar a Permanente
                         </button>
                         <button onClick={() => { setShowMonthlyModal(false); setVerificationStatus('monthly'); setState(OperationalState.INPUT_NICHE); }} className="text-[10px] text-white/30 uppercase underline tracking-widest mt-4">
@@ -295,9 +295,9 @@ export default function AnalyzerWrapper() {
                     <button
                         key={item.id}
                         onClick={() => { setNiche(item.id); setState(OperationalState.INPUT_METRICS); }}
-                        className="flex flex-col items-center justify-center p-6 border border-white/5 bg-white/[0.02] hover:bg-[#007AFF]/10 hover:border-[#007AFF]/30 transition-all group"
+                        className="flex flex-col items-center justify-center p-6 border border-white/5 bg-white/[0.02] hover:bg-[#C5A059]/10 hover:border-[#C5A059]/30 transition-all group"
                     >
-                        <item.icon strokeWidth={1} className="w-8 h-8 text-white/50 group-hover:text-[#007AFF] mb-3 transition-colors" />
+                        <item.icon strokeWidth={1} className="w-8 h-8 text-white/50 group-hover:text-[#C5A059] mb-3 transition-colors" />
                         <span className="text-xs font-serif text-white/70 group-hover:text-white uppercase tracking-widest">{item.label}</span>
                     </button>
                 ))}
@@ -315,23 +315,23 @@ export default function AnalyzerWrapper() {
 
             <div className="space-y-4">
                 <div>
-                    <label className="text-[10px] text-[#007AFF] uppercase tracking-widest mb-2 block">Seguidores Totales</label>
+                    <label className="text-[10px] text-[#C5A059] uppercase tracking-widest mb-2 block">Seguidores Totales</label>
                     <input
                         type="number"
                         value={followersInput}
                         onChange={e => setFollowersInput(e.target.value)}
                         placeholder="Ej: 15400"
-                        className="w-full bg-transparent border-b border-white/20 py-3 text-xl font-mono text-white focus:border-[#007AFF] outline-none transition-colors"
+                        className="w-full bg-transparent border-b border-white/20 py-3 text-xl font-mono text-white focus:border-[#C5A059] outline-none transition-colors"
                     />
                 </div>
                 <div>
-                    <label className="text-[10px] text-[#007AFF] uppercase tracking-widest mb-2 block">Promedio de Likes (últimos 3 posts)</label>
+                    <label className="text-[10px] text-[#C5A059] uppercase tracking-widest mb-2 block">Promedio de Likes (últimos 3 posts)</label>
                     <input
                         type="number"
                         value={likesInput}
                         onChange={e => setLikesInput(e.target.value)}
                         placeholder="Ej: 320"
-                        className="w-full bg-transparent border-b border-white/20 py-3 text-xl font-mono text-white focus:border-[#007AFF] outline-none transition-colors"
+                        className="w-full bg-transparent border-b border-white/20 py-3 text-xl font-mono text-white focus:border-[#C5A059] outline-none transition-colors"
                     />
                 </div>
             </div>
@@ -372,18 +372,14 @@ export default function AnalyzerWrapper() {
         </div>
     )
 
-    // ... (Keep renderInput, renderAssetFound, renderProcessing, renderResult from previous version without changes, just update main return switch) ...
-    // Note for LLM: In "replace_file_content" I need to be careful to include these unmodified parts or just replace the whole file. 
-    // Since I'm doing a full replacement to ensure structure integrity:
-
     // 4. AMBITION STEP
     const renderAmbitionStep = () => (
         <div className="space-y-8 animate-in fade-in slide-in-from-right-8 duration-500">
             <h3 className="text-xl text-white font-serif mb-6 text-center">Definición de Escala y Ambición</h3>
             <div className="space-y-4">
-                <button onClick={() => { setGrowthGoal('Niche Authority'); setState(OperationalState.INPUT_SEGMENTATION); }} className="w-full text-left p-6 border border-white/10 bg-white/5 hover:bg-[#007AFF]/10 hover:border-[#007AFF]/30 transition-all group">
+                <button onClick={() => { setGrowthGoal('Niche Authority'); setState(OperationalState.INPUT_SEGMENTATION); }} className="w-full text-left p-6 border border-white/10 bg-white/5 hover:bg-[#C5A059]/10 hover:border-[#C5A059]/30 transition-all group">
                     <div className="flex items-center gap-4 mb-2">
-                        <ShieldCheck className="w-6 h-6 text-[#007AFF]" />
+                        <ShieldCheck className="w-6 h-6 text-[#C5A059]" />
                         <span className="text-sm font-bold text-white uppercase tracking-widest">Autoridad de Nicho</span>
                     </div>
                     <p className="text-xs text-white/50 font-light pl-10">
@@ -414,26 +410,26 @@ export default function AnalyzerWrapper() {
 
             <div className="space-y-6">
                 <div>
-                    <label className="text-[10px] text-[#007AFF] uppercase tracking-widest mb-2 block flex items-center gap-2">
+                    <label className="text-[10px] text-[#C5A059] uppercase tracking-widest mb-2 block flex items-center gap-2">
                         <MapPin className="w-3 h-3" /> Foco Geográfico
                     </label>
-                    <select value={geo} onChange={e => setGeo(e.target.value)} className="w-full bg-[#050505] border border-white/20 text-white text-sm py-3 px-4 outline-none focus:border-[#007AFF]">
+                    <select value={geo} onChange={e => setGeo(e.target.value)} className="w-full bg-[#050505] border border-white/20 text-white text-sm py-3 px-4 outline-none focus:border-[#C5A059]">
                         {['Global (Sin Fronteras)', 'Miami / USA', 'Dubai / UAE', 'Madrid / Europa', 'Latam High-End', 'Local City'].map(o => <option key={o} value={o}>{o}</option>)}
                     </select>
                 </div>
                 <div>
-                    <label className="text-[10px] text-[#007AFF] uppercase tracking-widest mb-2 block flex items-center gap-2">
+                    <label className="text-[10px] text-[#C5A059] uppercase tracking-widest mb-2 block flex items-center gap-2">
                         <Users className="w-3 h-3" /> Género Objetivo
                     </label>
-                    <select value={gender} onChange={e => setGender(e.target.value)} className="w-full bg-[#050505] border border-white/20 text-white text-sm py-3 px-4 outline-none focus:border-[#007AFF]">
+                    <select value={gender} onChange={e => setGender(e.target.value)} className="w-full bg-[#050505] border border-white/20 text-white text-sm py-3 px-4 outline-none focus:border-[#C5A059]">
                         {['Mixto (General)', 'Enfoque Masculino', 'Enfoque Femenino'].map(o => <option key={o} value={o}>{o}</option>)}
                     </select>
                 </div>
                 <div>
-                    <label className="text-[10px] text-[#007AFF] uppercase tracking-widest mb-2 block flex items-center gap-2">
+                    <label className="text-[10px] text-[#C5A059] uppercase tracking-widest mb-2 block flex items-center gap-2">
                         <Activity className="w-3 h-3" /> Rango de Edad
                     </label>
-                    <select value={age} onChange={e => setAge(e.target.value)} className="w-full bg-[#050505] border border-white/20 text-white text-sm py-3 px-4 outline-none focus:border-[#007AFF]">
+                    <select value={age} onChange={e => setAge(e.target.value)} className="w-full bg-[#050505] border border-white/20 text-white text-sm py-3 px-4 outline-none focus:border-[#C5A059]">
                         {['Prime Force (25-45 años)', 'Gen Z (18-24 años)', 'Senior Executive (45+)', 'All Ages'].map(o => <option key={o} value={o}>{o}</option>)}
                     </select>
                 </div>
@@ -451,11 +447,11 @@ export default function AnalyzerWrapper() {
     const renderInput = () => (
         <div className="space-y-8 animate-in fade-in duration-500">
             <div className="space-y-4">
-                <label className="text-xs font-serif text-[#007AFF] tracking-widest uppercase flex items-center gap-2">
+                <label className="text-xs font-serif text-[#C5A059] tracking-widest uppercase flex items-center gap-2">
                     Target Asset Handle
                     <img src="/assets/insta-3d.png" alt="IG" className="w-4 h-4 object-contain" />
                 </label>
-                <div className="flex items-center border-b border-white/20 focus-within:border-[#007AFF] transition-colors py-4">
+                <div className="flex items-center border-b border-white/20 focus-within:border-[#C5A059] transition-colors py-4">
                     <span className="text-2xl text-white/40 mr-2 font-serif">@</span>
                     <input
                         value={handle}
@@ -470,7 +466,7 @@ export default function AnalyzerWrapper() {
             <button
                 onClick={startScreener}
                 disabled={!handle}
-                className="w-full bg-[#007AFF] text-white h-14 text-xs font-bold tracking-[0.2em] uppercase hover:bg-[#0060C9] disabled:opacity-50 transition-all shadow-lg"
+                className="w-full bg-[#C5A059] text-white h-14 text-xs font-bold tracking-[0.2em] uppercase hover:bg-[#B08D4B] disabled:opacity-50 transition-all shadow-lg"
             >
                 {state === OperationalState.SEARCHING ? "Localizando Activo..." : "Iniciar Evaluación"}
             </button>
@@ -483,10 +479,10 @@ export default function AnalyzerWrapper() {
                 <div className="relative">
                     <img
                         src={`https://wsrv.nl/?url=${encodeURIComponent(profileData.profilePicUrl)}`}
-                        className="w-32 h-32 rounded-full border-4 border-[#007AFF]/20 shadow-2xl"
+                        className="w-32 h-32 rounded-full border-4 border-[#C5A059]/20 shadow-2xl"
                     />
                     {profileData.isVerified && (
-                        <div className="absolute bottom-0 right-0 bg-[#007AFF] p-2 rounded-full border-4 border-black shadow-lg">
+                        <div className="absolute bottom-0 right-0 bg-[#C5A059] p-2 rounded-full border-4 border-black shadow-lg">
                             <Check className="w-4 h-4 text-white" />
                         </div>
                     )}
@@ -500,7 +496,7 @@ export default function AnalyzerWrapper() {
                     </div>
                 </div>
             </div>
-            <div className="bg-[#007AFF]/5 border border-[#007AFF]/10 p-4 rounded text-xs text-[#007AFF] tracking-widest uppercase mb-8">
+            <div className="bg-[#C5A059]/5 border border-[#C5A059]/10 p-4 rounded text-xs text-[#C5A059] tracking-widest uppercase mb-8">
                 Activo Identificado. Iniciando protocolo...
             </div>
             <button
@@ -515,10 +511,10 @@ export default function AnalyzerWrapper() {
     const renderProcessing = () => (
         <div className="space-y-8">
             <div className="w-full h-[1px] bg-white/10 overflow-hidden">
-                <div className="h-full bg-[#007AFF] transition-all duration-500 ease-out" style={{ width: `${progress}%` }} />
+                <div className="h-full bg-[#C5A059] transition-all duration-500 ease-out" style={{ width: `${progress}%` }} />
             </div>
             <div className="h-48 flex flex-col justify-center items-center space-y-4 text-center">
-                <Loader2 className="w-8 h-8 text-[#007AFF] animate-spin" />
+                <Loader2 className="w-8 h-8 text-[#C5A059] animate-spin" />
                 <div className="space-y-2">
                     {logs.slice(-1).map((log, i) => (
                         <p key={i} className="text-white/70 font-serif text-lg animate-pulse">{log}</p>
@@ -545,10 +541,10 @@ export default function AnalyzerWrapper() {
                 <div className="py-4 space-y-6 relative z-10">
                     <div className="inline-block p-4 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm relative group">
                         <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl" />
-                        <ShieldCheck className="w-12 h-12 text-[#007AFF] mx-auto mb-3" />
+                        <ShieldCheck className="w-12 h-12 text-[#C5A059] mx-auto mb-3" />
                         <div className="text-xs font-mono font-bold text-white uppercase tracking-widest leading-relaxed max-w-sm mx-auto">
                             AUDITORÍA COMPLETADA: <br />
-                            <span className="text-[#007AFF]">POTENCIAL DE POSICIONAMIENTO DETECTADO.</span> <br />
+                            <span className="text-[#C5A059]">POTENCIAL DE POSICIONAMIENTO DETECTADO.</span> <br />
                             EL SISTEMA ESTÁ LISTO PARA SU ESCALABILIDAD.
                         </div>
                     </div>
@@ -584,7 +580,7 @@ export default function AnalyzerWrapper() {
         <section id="analyzer-section" className="py-32 bg-black relative z-10 border-t border-white/10">
             <div className="max-w-3xl mx-auto px-6">
                 <div className="text-center mb-16 space-y-4">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 border border-[#007AFF]/30 rounded-full text-[#007AFF] text-[10px] font-mono uppercase tracking-widest mb-4">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 border border-[#C5A059]/30 rounded-full text-[#C5A059] text-[10px] font-mono uppercase tracking-widest mb-4">
                         <Activity className="w-3 h-3" />
                         Live Analysis
                     </div>
@@ -592,7 +588,7 @@ export default function AnalyzerWrapper() {
                     <p className="text-white/50 font-light">Análisis de viabilidad para el Programa de Verificación y Posicionamiento de Élite.</p>
                 </div>
 
-                <div className="bg-[#0AA0A] border border-white/10 rounded-xl shadow-2xl shadow-[#007AFF]/5 min-h-[500px] flex flex-col relative overflow-hidden bg-gradient-to-b from-[#0A0A0A] to-black">
+                <div className="bg-[#0AA0A] border border-white/10 rounded-xl shadow-2xl shadow-[#C5A059]/5 min-h-[500px] flex flex-col relative overflow-hidden bg-gradient-to-b from-[#0A0A0A] to-black">
                     <div className="flex-1 p-8 md:p-12 flex flex-col justify-center max-w-xl mx-auto w-full">
                         {state === OperationalState.IDLE && renderInput()}
                         {state === OperationalState.SEARCHING && renderProcessing()}
