@@ -65,6 +65,7 @@ export default function AnalyzerWrapper() {
     const [niche, setNiche] = useState("");
     const [goal, setGoal] = useState("");
     const [investment, setInvestment] = useState("");
+    const [errorDescr, setErrorDescr] = useState("");
 
     // APP STATE
     const [state, setState] = useState<OperationalState>(OperationalState.IDLE);
@@ -141,6 +142,7 @@ export default function AnalyzerWrapper() {
         } catch (e: any) {
             console.error(e);
             addLog(`Error Crítico: ${e.message}`);
+            setErrorDescr(e.message);
             setState(OperationalState.ERROR);
         }
     }
@@ -430,16 +432,19 @@ export default function AnalyzerWrapper() {
                         {state === OperationalState.PROCESSING && renderProcessing()}
                         {state === OperationalState.COMPLETE && renderResult()}
                         {state === OperationalState.ERROR && (
-                            <div className="text-center space-y-6">
-                                <AlertTriangle className="w-12 h-12 text-[#007AFF] mx-auto opacity-50" />
+                            <div className="text-center space-y-6 animate-in fade-in zoom-in-95 duration-300">
+                                <AlertTriangle className="w-12 h-12 text-red-500 mx-auto" />
                                 <div className="space-y-2">
-                                    <h3 className="text-xl text-white font-serif">Alta Demanda Detectada</h3>
-                                    <p className="text-white/50 text-sm max-w-xs mx-auto">
-                                        Temporalmente fuera de línea por alta demanda. Por favor, contacte directamente a un estratega.
+                                    <h3 className="text-xl text-white font-serif">Error de Análisis</h3>
+                                    <p className="text-red-400 text-xs md:text-sm max-w-md mx-auto font-mono bg-red-500/10 p-3 rounded border border-red-500/20">
+                                        {errorDescr || "Error desconocido del sistema."}
+                                    </p>
+                                    <p className="text-white/40 text-[10px] uppercase tracking-widest">
+                                        Soporte Técnico Notificado
                                     </p>
                                 </div>
-                                <button onClick={() => window.open('https://wa.me/your_number', '_blank')} className="px-6 py-3 bg-white text-black text-xs font-bold uppercase tracking-widest">
-                                    Contactar Soporte Estratégico
+                                <button onClick={() => window.location.reload()} className="px-6 py-3 bg-white text-black text-xs font-bold uppercase tracking-widest hover:bg-gray-200 transition-colors">
+                                    Reiniciar Sistema
                                 </button>
                             </div>
                         )}
