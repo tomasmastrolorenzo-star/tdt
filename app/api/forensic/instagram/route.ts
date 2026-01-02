@@ -1,6 +1,7 @@
-
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
+
+export const maxDuration = 60; // Attempt to extend timeout for Pro plans
 
 // --- CONFIGURATION ---
 const SYSTEM_VERSION = "Phase_75_Patch_5";
