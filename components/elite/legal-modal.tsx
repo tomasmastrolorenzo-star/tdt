@@ -19,13 +19,13 @@ export const LegalModal = ({ isOpen, onClose, title, content }: LegalModalProps)
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.95 }}
-                        className="bg-[#0A0A0A] border border-white/10 p-8 max-w-2xl w-full max-h-[80vh] overflow-y-auto rounded-xl shadow-2xl shadow-black/50"
+                        className="bg-black border border-[#C5A059] p-8 max-w-2xl w-full max-h-[80vh] overflow-y-auto rounded-sm shadow-[0_0_30px_rgba(197,160,89,0.1)]"
                     >
-                        <div className="flex justify-between items-center mb-6 border-b border-white/5 pb-4">
-                            <h3 className="text-xl font-serif text-white">{title}</h3>
-                            <button onClick={onClose} className="text-white/40 hover:text-white transition-colors">✕</button>
+                        <div className="flex justify-between items-center mb-8 pb-4 border-b border-white/10">
+                            <h3 className="text-xl font-serif text-white tracking-wide">{title}</h3>
+                            <button onClick={onClose} className="text-[#C5A059] hover:text-white transition-colors text-xl">✕</button>
                         </div>
-                        <div className="text-white/60 font-light leading-relaxed space-y-4 text-sm">
+                        <div className="text-white/70 font-light leading-relaxed space-y-6 text-sm font-sans">
                             {content}
                         </div>
                     </motion.div>

@@ -4,6 +4,7 @@ import Narrative from "@/components/elite/narrative";
 import AnalyzerWrapper from "@/components/elite/analyzer-wrapper";
 import { Footer } from "@/components/elite/footer";
 import { StickyExitBar } from "@/components/elite/sticky-exit-bar";
+import Testimonials from "@/components/elite/testimonials";
 
 export default function ElitePage() {
   return (
@@ -14,6 +15,7 @@ export default function ElitePage() {
       <div id="analyzer-section">
         <AnalyzerWrapper />
       </div>
+      <Testimonials />
       <Footer />
     </main>
   );

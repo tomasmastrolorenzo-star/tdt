@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Lock } from 'lucide-react';
 
 interface GhostProfileProps {
     isScanning?: boolean;
@@ -50,9 +51,9 @@ export const GhostProfile = ({ isScanning = false }: GhostProfileProps) => {
             />
 
             {/* Interfaz de Usuario Fantasma */}
-            <div className={`p-6 transition-all duration-1000 ${isScanning ? 'opacity-30 blur-[1px]' : 'opacity-40 grayscale blur-[0px]'}`}>
+            <div className={`p-6 transition-all duration-1000 ${isScanning ? 'opacity-30 blur-[1px]' : 'opacity-20 grayscale blur-[0px]'}`}>
                 <div className="flex items-center space-x-4 mb-8">
-                    <div className="w-16 h-16 rounded-full bg-white/10 animate-pulse" />
+                    <div className="w-16 h-16 rounded-full bg-white/10" />
                     <div className="space-y-2">
                         <div className="h-4 w-32 bg-white/10 rounded" />
                         <div className="h-3 w-20 bg-white/10 rounded" />
@@ -60,7 +61,9 @@ export const GhostProfile = ({ isScanning = false }: GhostProfileProps) => {
                 </div>
                 <div className="grid grid-cols-3 gap-2">
                     {[...Array(9)].map((_, i) => (
-                        <div key={i} className="aspect-square bg-white/5 rounded-sm" />
+                        <div key={i} className="aspect-square bg-white/5 rounded-sm flex items-center justify-center">
+                            {!isScanning && <Lock className="w-4 h-4 text-white/10" />}
+                        </div>
                     ))}
                 </div>
             </div>
@@ -97,22 +100,21 @@ export const GhostProfile = ({ isScanning = false }: GhostProfileProps) => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="absolute inset-0 flex flex-col items-center justify-center space-y-4"
+                        className="absolute inset-0 flex flex-col items-center justify-center space-y-4 bg-black/40 backdrop-blur-[2px]"
                     >
-                        {/* Gold Pulse Icon Instead of Red Alert */}
-                        <div className="relative">
-                            <div className="absolute inset-0 bg-[#C5A059] blur-[20px] opacity-20 animate-pulse" />
-                            <motion.div
-                                animate={{ scale: [1, 1.1, 1] }}
-                                transition={{ duration: 2, repeat: Infinity }}
-                                className="w-12 h-12 rounded-full border border-[#C5A059] flex items-center justify-center relative z-10 bg-black/50 backdrop-blur-md"
-                            >
-                                <div className="w-3 h-3 bg-[#C5A059] rounded-full shadow-[0_0_10px_#C5A059]" />
-                            </motion.div>
+                        {/* Block Detected State */}
+                        <div className="flex flex-col items-center justify-center p-6 border border-red-500/30 bg-red-950/20 rounded-lg backdrop-blur-md animate-pulse">
+                            <Lock className="w-8 h-8 text-red-500 mb-3" />
+                            <div className="font-mono text-xs font-bold text-red-500 uppercase tracking-[0.2em] mb-1">
+                                Block Detected
+                            </div>
+                            <div className="font-mono text-[9px] text-red-400/70 uppercase tracking-widest">
+                                Algorithmic Limit Reached
+                            </div>
                         </div>
 
-                        <div className="font-mono text-[9px] text-[#C5A059]/60 uppercase tracking-[0.2em]">
-                            System Ready. Waiting for Input...
+                        <div className="font-mono text-[9px] text-[#C5A059]/40 uppercase tracking-[0.2em] animate-pulse">
+                            Connecting to Mainframe... Failed.
                         </div>
                     </motion.div>
                 )}

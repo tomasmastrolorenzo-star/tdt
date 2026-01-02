@@ -445,20 +445,20 @@ export default function AnalyzerWrapper() {
     )
 
     const renderInput = () => (
-        <div className="space-y-8 animate-in fade-in duration-500">
-            <div className="space-y-4">
-                <label className="text-xs font-serif text-[#C5A059] tracking-widest uppercase flex items-center gap-2">
-                    Target Asset Handle
-                    <img src="/assets/insta-3d.png" alt="IG" className="w-4 h-4 object-contain" />
+        <div className="space-y-12 animate-in fade-in duration-500 max-w-lg mx-auto">
+            <div className="space-y-6">
+                <label className="text-[10px] font-mono text-[#C5A059] tracking-[0.3em] uppercase flex items-center justify-center gap-3 opacity-80">
+                    ID DE CUENTA PRIORITARIA
+                    <img src="/assets/insta-3d.png" alt="IG" className="w-4 h-4 object-contain opacity-40 grayscale" />
                 </label>
-                <div className="flex items-center border-b border-white/20 focus-within:border-[#C5A059] transition-colors py-4">
-                    <span className="text-2xl text-white/40 mr-2 font-serif">@</span>
+                <div className="flex items-center border-b border-white/20 focus-within:border-[#C5A059] focus-within:shadow-[0_0_20px_rgba(197,160,89,0.2)] transition-all duration-300 py-4 group">
+                    <span className="text-3xl text-white/20 mr-4 font-serif group-focus-within:text-[#C5A059] transition-colors">@</span>
                     <input
                         value={handle}
                         onChange={e => setHandle(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handle && startScreener()}
                         placeholder="username"
-                        className="bg-transparent border-none outline-none text-3xl md:text-4xl text-white font-serif placeholder:text-white/10 w-full"
+                        className="bg-transparent border-none outline-none text-4xl md:text-5xl text-white font-serif placeholder:text-white/5 w-full text-center tracking-wide"
                         autoFocus
                     />
                 </div>
@@ -466,9 +466,9 @@ export default function AnalyzerWrapper() {
             <button
                 onClick={startScreener}
                 disabled={!handle}
-                className="w-full bg-[#C5A059] text-white h-14 text-xs font-bold tracking-[0.2em] uppercase hover:bg-[#B08D4B] disabled:opacity-50 transition-all shadow-lg"
+                className="w-full bg-[#C5A059] text-white h-16 text-xs font-bold tracking-[0.25em] uppercase hover:bg-[#B08D4B] disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-[0_10px_30px_rgba(197,160,89,0.2)] hover:shadow-[0_10px_40px_rgba(197,160,89,0.4)]"
             >
-                {state === OperationalState.SEARCHING ? "Localizando Activo..." : "Iniciar Evaluación"}
+                {state === OperationalState.SEARCHING ? "Localizando Activo..." : "INICIAR ESCANEO DE ESTATUS"}
             </button>
         </div>
     )
@@ -578,18 +578,21 @@ export default function AnalyzerWrapper() {
 
     return (
         <section id="analyzer-section" className="py-32 bg-black relative z-10 border-t border-white/10">
-            <div className="max-w-3xl mx-auto px-6">
-                <div className="text-center mb-16 space-y-4">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 border border-[#C5A059]/30 rounded-full text-[#C5A059] text-[10px] font-mono uppercase tracking-widest mb-4">
-                        <Activity className="w-3 h-3" />
-                        Live Analysis
+            <div className="max-w-4xl mx-auto px-6">
+                <div className="text-center mb-20 space-y-6">
+                    <div className="inline-flex items-center gap-2 px-4 py-1.5 border border-[#C5A059]/40 bg-[#C5A059]/5 rounded-full text-[#C5A059] text-[9px] font-mono uppercase tracking-[0.2em] mb-4 backdrop-blur-sm">
+                        <Lock className="w-3 h-3" />
+                        ACCESO ENCRIPTADO
                     </div>
-                    <h2 className="text-3xl md:text-4xl font-serif text-white">Protocolo de Evaluación de Activos Digitales</h2>
-                    <p className="text-white/50 font-light">Análisis de viabilidad para el Programa de Verificación y Posicionamiento de Élite.</p>
+                    <h2 className="text-4xl md:text-6xl font-serif text-white tracking-tight">Identificación de Activo de Élite</h2>
+                    <p className="text-white/40 font-light text-lg max-w-2xl mx-auto leading-relaxed">
+                        Iniciando diagnóstico forense de autoridad y viabilidad algorítmica. <br />
+                        <span className="text-white/60">Ingrese el identificador para proceder.</span>
+                    </p>
                 </div>
 
-                <div className="bg-[#0AA0A] border border-white/10 rounded-xl shadow-2xl shadow-[#C5A059]/5 min-h-[500px] flex flex-col relative overflow-hidden bg-gradient-to-b from-[#0A0A0A] to-black">
-                    <div className="flex-1 p-8 md:p-12 flex flex-col justify-center max-w-xl mx-auto w-full">
+                <div className="bg-[#0A0A0A] border border-white/10 rounded-sm shadow-2xl shadow-[#C5A059]/5 min-h-[500px] flex flex-col relative overflow-hidden bg-gradient-to-b from-[#0A0A0A] to-black">
+                    <div className="flex-1 p-8 md:p-16 flex flex-col justify-center max-w-2xl mx-auto w-full">
                         {state === OperationalState.IDLE && renderInput()}
                         {state === OperationalState.SEARCHING && renderProcessing()}
                         {state === OperationalState.ASSET_FOUND && renderAssetFound()}
