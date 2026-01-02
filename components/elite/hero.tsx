@@ -1,8 +1,17 @@
 "use client";
 
-import { ArrowRight, Check, ShieldCheck } from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function Hero() {
+
+    const scrollToAnalyzer = () => {
+        const section = document.getElementById('analyzer-section');
+        if (section) {
+            section.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+
     return (
         <section className="relative min-h-[95vh] flex flex-col pt-32 md:pt-48 items-center bg-[#050505] text-white overflow-hidden px-6 border-b border-white/5">
 
@@ -15,38 +24,71 @@ export default function Hero() {
 
             <div className="relative z-10 max-w-5xl mx-auto text-center space-y-12 flex flex-col items-center">
 
-                {/* Badge: Official Verification Partner (with Meta-ish Logo) */}
-                <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-md animate-in fade-in slide-in-from-top-4 duration-1000">
-                    {/* Meta-style Icon (Simplified Infinite Loop) */}
+                {/* Badge: Official Verification Partner */}
+                <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8 }}
+                    className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-md"
+                >
                     <svg className="w-5 h-5 text-[#007AFF]" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" opacity="0" />
-                        {/* Actual Meta-ish shape logic is complex for SVG path, using a Blue Infinity/Loop representation */}
-                        <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12s4.48 10 10 10 10-4.48 10-10zm-10 8c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" className="opacity-0" />
                         <path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0 8c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z" />
                     </svg>
                     <span className="text-[10px] md:text-xs font-mono tracking-[0.2em] uppercase text-white/80">
                         Official Verification Partner
                     </span>
-                </div>
+                </motion.div>
 
                 {/* Headline: Vogue/Serif Style */}
-                <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif font-medium tracking-tight leading-[1.05] animate-in fade-in zoom-in-95 duration-1000 delay-100 max-w-4xl">
-                    La Autoridad no se pide,<br />
-                    <span className="italic font-light text-[#007AFF]">se construye.</span>
+                <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif font-medium tracking-tight leading-[1.05] max-w-4xl">
+                    <motion.span
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 1, delay: 0.2 }}
+                        className="block"
+                    >
+                        La Autoridad no se pide,
+                    </motion.span>
+                    <motion.span
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 1, delay: 0.5 }}
+                        className="italic font-light text-[#007AFF] block"
+                    >
+                        se construye.
+                    </motion.span>
                 </h1>
 
                 {/* Subheadline: Sans Clean */}
-                <p className="text-lg md:text-xl text-white/60 max-w-2xl mx-auto font-light leading-relaxed animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-200">
+                <motion.p
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 1, delay: 0.8 }}
+                    className="text-lg md:text-xl text-white/60 max-w-2xl mx-auto font-light leading-relaxed"
+                >
                     Transformamos su trayectoria profesional en un activo digital verificado.
                     Posicionamiento de élite y curaduría de imagen para líderes de industria en menos de 30 días.
-                </p>
+                </motion.p>
 
-                {/* Primary Button */}
-                <div className="flex flex-col md:flex-row items-center justify-center gap-6 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300">
+                {/* Primary Button with Micro-Shine */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 1, delay: 1 }}
+                    className="flex flex-col md:flex-row items-center justify-center gap-6"
+                >
                     <button
-                        onClick={() => document.getElementById('analyzer-section')?.scrollIntoView({ behavior: 'smooth' })}
+                        onClick={scrollToAnalyzer}
                         className="group relative px-10 py-5 bg-white text-black text-xs md:text-sm font-bold tracking-[0.2em] uppercase overflow-hidden hover:bg-[#E6E8EB] transition-all shadow-[0_0_40px_rgba(255,255,255,0.1)] hover:shadow-[0_0_60px_rgba(255,255,255,0.2)]"
                     >
+                        {/* Shine Effect */}
+                        <motion.div
+                            animate={{ x: ["-100%", "200%"] }}
+                            transition={{ repeat: Infinity, duration: 5, ease: "linear", delay: 1 }}
+                            className="absolute top-0 left-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/80 to-transparent skew-x-[-20deg] z-20 pointer-events-none"
+                        />
+
                         <span className="relative z-10 flex items-center gap-3">
                             Iniciar Auditoría Forense
                             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -55,12 +97,17 @@ export default function Hero() {
                     <span className="text-[10px] text-white/30 font-mono tracking-widest uppercase">
                         Solo 5 cupos mensuales
                     </span>
-                </div>
+                </motion.div>
 
             </div>
 
             {/* Visual: Abstract Phone with Glowing Blue Check */}
-            <div className="relative mt-24 w-full max-w-[300px] md:max-w-[400px] aspect-[9/16] bg-[#0A0A0A] border-[8px] border-[#1A1A1A] rounded-[3rem] shadow-2xl mx-auto overflow-hidden animate-in fade-in slide-in-from-bottom-24 duration-1000 delay-500 hover:scale-[1.02] transition-transform cursor-default select-none">
+            <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1.2, delay: 1.2 }}
+                className="relative mt-24 w-full max-w-[300px] md:max-w-[400px] aspect-[9/16] bg-[#0A0A0A] border-[8px] border-[#1A1A1A] rounded-[3rem] shadow-2xl mx-auto overflow-hidden hover:scale-[1.02] transition-transform cursor-default select-none"
+            >
                 {/* Screen Content */}
                 <div className="relative h-full w-full bg-[#000] flex flex-col p-6">
 
@@ -116,7 +163,7 @@ export default function Hero() {
                     {/* Reflection/Glare */}
                     <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-bl from-white/5 to-transparent pointer-events-none" />
                 </div>
-            </div>
+            </motion.div>
 
             {/* Bottom Fade */}
             <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-black to-transparent z-20" />

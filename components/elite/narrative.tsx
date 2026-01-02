@@ -1,13 +1,20 @@
-import { Component, Crown, Globe, Landmark, PenTool, SCALE, ShieldCheck, UserCheck } from "lucide-react";
+"use client";
+
+import { Component, Crown, Globe, Landmark, PenTool, Scale, ShieldCheck, UserCheck } from "lucide-react";
+import { motion } from "framer-motion";
+import { GhostProfile } from "./ghost-profile";
 
 export default function Narrative() {
     return (
-        <section className="py-32 bg-[#050505] text-white">
-            <div className="max-w-6xl mx-auto px-6 space-y-40">
+        <section className="py-32 bg-[#050505] text-white overflow-hidden relative">
+            {/* Background Ambience */}
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-900/10 blur-[120px] rounded-full pointer-events-none" />
+
+            <div className="max-w-6xl mx-auto px-6 space-y-40 relative z-10">
 
                 {/* THE DIAGNOSIS: Boutique Consulting Tone */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
-                    <div className="space-y-10">
+                    <div className="space-y-12">
                         <span className="text-[#007AFF] font-mono tracking-[0.2em] uppercase text-[10px] border border-[#007AFF]/30 px-3 py-1 rounded-full">
                             Diagnóstico Corporativo
                         </span>
@@ -26,43 +33,47 @@ export default function Narrative() {
                             </p>
                         </div>
 
-                        <div className="pl-6 border-l w-[1px] border-white/20 bg-gradient-to-b from-white/20 to-transparent">
-                            <p className="text-sm font-mono text-white/50 uppercase tracking-widest leading-loose">
-                                "La invisibilidad digital es el costo oculto <br /> más alto para el talento de élite."
-                            </p>
+                        {/* Bloque de Invisibilidad Re-formateado (Horizontal Glass) */}
+                        <div className="w-full bg-white/5 backdrop-blur-md border border-white/10 p-8 text-center italic font-serif text-lg leading-relaxed rounded-lg">
+                            "La invisibilidad digital es el costo oculto más alto para el talento de élite."
                         </div>
                     </div>
 
-                    {/* Visual: The Gap (Abstract/Clean) */}
-                    <div className="relative h-[500px] border border-white/5 bg-gradient-to-b from-white/[0.02] to-transparent p-12 flex flex-col justify-between">
-                        <div className="space-y-2">
-                            <div className="text-sm font-mono text-white/30 uppercase tracking-widest">Estado Actual</div>
-                            <div className="h-[1px] w-full bg-white/10" />
-                        </div>
+                    {/* Visual: Ghost Profile & Gap Chart */}
+                    <div className="space-y-12">
+                        {/* Ghost Profile Component */}
+                        <GhostProfile isScanning={false} />
 
-                        <div className="relative flex-1 flex items-center justify-center">
-                            {/* Graphic representation of Real vs Digital */}
-                            <div className="flex gap-8 items-end">
-                                <div className="flex flex-col items-center gap-4">
-                                    <div className="w-12 h-64 bg-white/10 rounded-t-sm relative overflow-hidden group">
-                                        <div className="absolute bottom-0 w-full h-[30%] bg-[#007AFF]/20 group-hover:h-[40%] transition-all duration-1000" />
-                                    </div>
-                                    <span className="text-[10px] font-mono text-white/30 uppercase tracking-widest rotate-180 [writing-mode:vertical-lr]">Digital</span>
-                                </div>
-                                <div className="flex flex-col items-center gap-4">
-                                    <div className="w-12 h-64 bg-white/90 rounded-t-sm shadow-[0_0_50px_rgba(255,255,255,0.1)]" />
-                                    <span className="text-[10px] font-mono text-white/80 uppercase tracking-widest rotate-180 [writing-mode:vertical-lr]">Real</span>
-                                </div>
+                        {/* Gráfico de Diferencial de Potencial */}
+                        <div className="flex items-end justify-center space-x-12 h-64 pt-8 border-t border-white/5">
+                            <div className="flex flex-col items-center group">
+                                <div className="text-[10px] font-mono text-white/40 mb-2 uppercase tracking-widest group-hover:text-red-400 transition-colors">Digital Value</div>
+                                <motion.div
+                                    animate={{ opacity: [0.2, 0.4, 0.2] }}
+                                    transition={{ duration: 1, repeat: Infinity }}
+                                    className="w-16 bg-white/5 border border-dashed border-white/30 h-24 relative overflow-hidden"
+                                >
+                                    <div className="absolute inset-0 bg-red-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                </motion.div>
                             </div>
-                        </div>
 
-                        <div className="text-right">
-                            <div className="text-4xl font-serif text-white/20">GAP</div>
+                            <div className="relative flex flex-col items-center">
+                                <div className="absolute -top-12 text-[#007AFF] font-mono text-[10px] animate-pulse bg-[#007AFF]/10 px-2 py-1 rounded">VALOR NO CAPTURADO</div>
+                                <div className="w-[1px] h-full bg-gradient-to-b from-[#007AFF] to-transparent absolute -left-6" />
+                                <div className="text-[10px] font-mono text-white mb-2 uppercase tracking-widest text-[#007AFF] drop-shadow-[0_0_5px_rgba(0,122,255,0.5)]">Real Value</div>
+                                <motion.div
+                                    animate={{ boxShadow: ["0 0 20px rgba(255,255,255,0.1)", "0 0 40px rgba(255,255,255,0.3)", "0 0 20px rgba(255,255,255,0.1)"] }}
+                                    transition={{ duration: 3, repeat: Infinity }}
+                                    className="w-16 bg-white h-56 relative"
+                                >
+                                    <div className="absolute inset-0 bg-gradient-to-t from-gray-200 to-white" />
+                                </motion.div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                {/* THE PROTOCOL: Architectural/Rigorous */}
+                {/* THE PROTOCOL: System v2.4 (Industrial Timeline) */}
                 <div>
                     <div className="flex flex-col md:flex-row justify-between items-end mb-24 border-b border-white/10 pb-8">
                         <div className="space-y-4 max-w-xl">
@@ -71,18 +82,22 @@ export default function Narrative() {
                                 Ingeniería de estatus aplicada. Un proceso sistemático para alinear su proyección pública con su realidad profesional.
                             </p>
                         </div>
-                        <div className="font-mono text-xs text-[#007AFF] uppercase tracking-widest mt-8 md:mt-0">
+                        <div className="font-mono text-xs text-[#007AFF] uppercase tracking-widest mt-8 md:mt-0 flex items-center gap-2">
+                            <div className="w-2 h-2 bg-[#007AFF] rounded-full animate-pulse" />
                             System v2.4
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                    <div className="relative grid grid-cols-1 md:grid-cols-4 gap-8">
+                        {/* Connecting Line (Timeline) */}
+                        <div className="absolute top-8 left-0 w-full h-[1px] bg-white/10 hidden md:block" />
+
                         {[
                             {
                                 icon: PenTool,
                                 step: "01",
                                 title: "Arquitectura de Identidad",
-                                desc: "Reconstrucción narrativa. Definimos los pilares discursivos que lo posicionan como líder de categoría, no como participante."
+                                desc: "Reconstrucción narrativa. Definimos los pilares discursivos que lo posicionan como líder de categoría."
                             },
                             {
                                 icon: Landmark, // Validation
@@ -103,17 +118,17 @@ export default function Narrative() {
                                 desc: "Blindaje de reputación y mantenimiento de activos digitales a largo plazo."
                             }
                         ].map((item, i) => (
-                            <div key={i} className="group border-t border-white/20 pt-8 hover:border-[#007AFF] transition-colors duration-700">
-                                <div className="text-[#007AFF] font-mono text-xs mb-6 opacity-50 group-hover:opacity-100 transition-opacity">
+                            <div key={i} className="group relative bg-[#050505] p-6 border border-white/10 rounded-lg hover:border-[#007AFF] transition-all duration-500 hover:-translate-y-1">
+                                <div className="absolute top-0 left-6 -mt-3 bg-[#050505] px-2 text-[#007AFF] font-mono text-xs uppercase opacity-70 group-hover:opacity-100 transition-opacity">
                                     PHASE {item.step}
                                 </div>
-                                <div className="mb-8 opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500 origin-left">
-                                    <item.icon strokeWidth={1} className="w-8 h-8 text-white" />
+                                <div className="mb-6 opacity-60 group-hover:opacity-100 group-hover:text-[#007AFF] transition-all duration-300">
+                                    <item.icon strokeWidth={1} className="w-8 h-8" />
                                 </div>
-                                <h4 className="text-xl font-serif mb-4 leading-tight">
+                                <h4 className="text-xl font-serif mb-4 leading-tight group-hover:text-white transition-colors">
                                     {item.title}
                                 </h4>
-                                <p className="text-sm text-white/50 leading-relaxed font-light font-sans pr-4">
+                                <p className="text-sm text-white/40 leading-relaxed font-light font-sans group-hover:text-white/60 transition-colors">
                                     {item.desc}
                                 </p>
                             </div>
