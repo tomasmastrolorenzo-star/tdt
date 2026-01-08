@@ -194,15 +194,15 @@ export default function AnalyzerWrapper() {
 
         // 2. The Theatre
         const steps = [
-            `Auditando nicho: ${niche.toUpperCase()}...`,
-            `Validando estatus: ${verificationStatus === 'permanent' ? 'VERIFICADO' : 'NO OFICIAL'}...`,
-            `Calculando tasa de retención (ER: ${engagementRate?.toFixed(2)}%)...`,
-            "Generando reporte de viabilidad..."
+            `[ANALYZING METADATA...]`,
+            `[ALGORITHMIC FRICTION DETECTED...]`,
+            `[CALCULATING STATUS...]`,
+            `[GENERATING VIABILITY REPORT...]`
         ];
 
         let p = 50;
         for (const step of steps) {
-            await new Promise(r => setTimeout(r, 1000));
+            await new Promise(r => setTimeout(r, 800));
             addLog(step);
             p += 12;
             setProgress(p);
