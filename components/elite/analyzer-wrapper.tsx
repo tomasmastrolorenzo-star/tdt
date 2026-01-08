@@ -459,7 +459,6 @@ export default function AnalyzerWrapper() {
                         onKeyDown={(e) => e.key === 'Enter' && handle && startScreener()}
                         placeholder="username"
                         className="bg-transparent border-none outline-none text-4xl md:text-5xl text-white font-serif placeholder:text-white/5 w-full text-center tracking-wide"
-                        autoFocus
                     />
                 </div>
             </div>
@@ -509,15 +508,49 @@ export default function AnalyzerWrapper() {
     )
 
     const renderProcessing = () => (
-        <div className="space-y-8">
-            <div className="w-full h-[1px] bg-white/10 overflow-hidden">
-                <div className="h-full bg-[#C5A059] transition-all duration-500 ease-out" style={{ width: `${progress}%` }} />
+        <div className="flex flex-col items-center justify-center space-y-12 py-12">
+
+            {/* Vórtice de Datos (Data Vortex Animation) */}
+            <div className="relative w-64 h-64 flex items-center justify-center">
+
+                {/* Rings */}
+                <div className="absolute inset-0 border border-[#C5A059]/20 rounded-full animate-[spin_10s_linear_infinite]" />
+                <div className="absolute inset-4 border border-[#C5A059]/40 rounded-full animate-[spin_8s_linear_infinite_reverse] border-t-transparent" />
+                <div className="absolute inset-8 border border-cyan-500/20 rounded-full animate-[spin_12s_linear_infinite]" />
+                <div className="absolute inset-0 rounded-full shadow-[0_0_50px_rgba(197,160,89,0.1)] animate-pulse" />
+
+                {/* Central Identity (Profile or 3D Icon) */}
+                <div className="relative w-32 h-32 rounded-full overflow-hidden border-2 border-[#C5A059] shadow-[0_0_30px_rgba(197,160,89,0.3)] z-10 bg-black">
+                    <img
+                        src={profileData?.profile_pic_url || "/assets/insta-3d-glossy.png"}
+                        alt="Target"
+                        className="w-full h-full object-cover opacity-80"
+                    />
+                    {/* Laser Scan Effect on Profile */}
+                    <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent via-[#C5A059]/50 to-transparent animate-[scan_2s_linear_infinite] opacity-50" />
+                </div>
             </div>
-            <div className="h-48 flex flex-col justify-center items-center space-y-4 text-center">
-                <Loader2 className="w-8 h-8 text-[#C5A059] animate-spin" />
+
+            {/* Terminal Logs & Typography */}
+            <div className="text-center space-y-6 max-w-2xl w-full">
+
                 <div className="space-y-2">
-                    {logs.slice(-1).map((log, i) => (
-                        <p key={i} className="text-white/70 font-serif text-lg animate-pulse">{log}</p>
+                    <h3 className="text-3xl md:text-4xl font-serif text-[#C5A059] tracking-wide">
+                        Analizando a @<span className="font-bold">{handle}</span>
+                    </h3>
+                    <p className="text-xs text-white/40 font-mono uppercase tracking-widest">
+                        ESTE PROCESO PUEDE TARDAR HASTA 45 SEGUNDOS
+                    </p>
+                </div>
+
+                {/* Real-time Terminal Line */}
+                <div className="bg-black/50 border border-white/10 rounded p-4 font-mono text-xs text-left h-24 flex flex-col justify-end overflow-hidden shadow-inner">
+                    {logs.slice(-3).map((log, i) => (
+                        <div key={i} className="text-green-400/80 truncate">
+                            <span className="mr-2 opacity-50">{`>>`}</span>
+                            {typeof log === 'string' ? log.toUpperCase() : log}
+                            <span className="animate-pulse ml-1">_</span>
+                        </div>
                     ))}
                 </div>
             </div>

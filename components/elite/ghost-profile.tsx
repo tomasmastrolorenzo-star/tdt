@@ -70,54 +70,49 @@ export const GhostProfile = ({ isScanning = false }: GhostProfileProps) => {
 
             {/* Overlays */}
             <AnimatePresence mode='wait'>
-                {isScanning ? (
-                    <motion.div
-                        key="scanning"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="absolute inset-0 flex flex-col items-start justify-end p-6 bg-black/60 font-mono text-[10px] md:text-xs"
-                    >
-                        {logs.map((log, i) => (
+                <motion.div
+                    key="scanning-overlay"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="absolute inset-0 flex flex-col justify-between p-6 bg-black/40 backdrop-blur-[1px]"
+                >
+                    {/* Top: Tech Header */}
+                    <div className="flex justify-between items-start">
+                        <div className="space-y-1">
+                            <div className="flex items-center gap-2">
+                                <div className="w-1.5 h-1.5 rounded-full bg-[#C5A059] animate-pulse" />
+                                <span className="text-[10px] font-mono text-[#C5A059] uppercase tracking-[0.2em]">
+                                    Audit Interface
+                                </span>
+                            </div>
+                            <div className="text-[9px] font-mono text-white/30 uppercase tracking-widest pl-3.5">
+                                Protocol v4.0 Active
+                            </div>
+                        </div>
+                        <Lock className="w-4 h-4 text-white/20" />
+                    </div>
+
+                    {/* Bottom: Logs */}
+                    <div className="space-y-1 font-mono text-[9px]">
+                        {logs.slice(-3).map((log, i) => (
                             <motion.div
-                                key={i}
+                                key={`${i}-${log}`}
                                 initial={{ opacity: 0, x: -10 }}
                                 animate={{ opacity: 1, x: 0 }}
-                                className="text-white/80 mb-1"
+                                className="text-white/60 flex items-center gap-2"
                             >
-                                {`> ${log}`}
+                                <span className="text-[#C5A059] text-[8px] opacity-70">➜</span>
+                                {log}
                             </motion.div>
                         ))}
                         <motion.div
                             animate={{ opacity: [0, 1, 0] }}
                             transition={{ repeat: Infinity, duration: 0.8 }}
-                            className="w-1.5 h-3 bg-white mt-1"
+                            className="w-1.5 h-3 bg-[#C5A059] mt-1"
                         />
-                    </motion.div>
-                ) : (
-                    <motion.div
-                        key="static"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="absolute inset-0 flex flex-col items-center justify-center space-y-4 bg-black/40 backdrop-blur-[2px]"
-                    >
-                        {/* Block Detected State */}
-                        <div className="flex flex-col items-center justify-center p-6 border border-red-500/30 bg-red-950/20 rounded-lg backdrop-blur-md animate-pulse">
-                            <Lock className="w-8 h-8 text-red-500 mb-3" />
-                            <div className="font-mono text-xs font-bold text-red-500 uppercase tracking-[0.2em] mb-1">
-                                Block Detected
-                            </div>
-                            <div className="font-mono text-[9px] text-red-400/70 uppercase tracking-widest">
-                                Algorithmic Limit Reached
-                            </div>
-                        </div>
-
-                        <div className="font-mono text-[9px] text-[#C5A059]/40 uppercase tracking-[0.2em] animate-pulse">
-                            Connecting to Mainframe... Failed.
-                        </div>
-                    </motion.div>
-                )}
+                    </div>
+                </motion.div>
             </AnimatePresence>
         </div>
     );
