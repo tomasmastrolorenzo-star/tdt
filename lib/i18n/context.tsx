@@ -40,7 +40,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
       setIsLoading(true)
       try {
         const activeT = await translations[language]()
-        setT(activeT)
+        setT(activeT as TranslationType)
       } catch (err) {
         console.error("Failed to load translations:", err)
       } finally {

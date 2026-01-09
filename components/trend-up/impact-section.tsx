@@ -22,9 +22,9 @@ export default function ImpactSection() {
                 </div>
 
                 <h2 className="text-3xl md:text-5xl font-black text-white mb-8 leading-tight max-w-4xl mx-auto">
-                    {t.impact?.title || "Dominate Your Niche"} <br className="hidden md:block" />
+                    {(t.impact as any)?.title || "Dominate Your Niche"} <br className="hidden md:block" />
                     <span className="bg-white/10 px-3 py-1 rounded-xl italic decoration-wavy decoration-white/30 text-white inline-block mt-2 backdrop-blur-sm">
-                        {t.impact?.titleMiddle || "with Data-Driven Precision"}
+                        {(t.impact as any)?.titleMiddle || "with Data-Driven Precision"}
                     </span>
                 </h2>
 
@@ -33,7 +33,7 @@ export default function ImpactSection() {
                         className="flex items-center justify-center font-bold text-lg px-8 py-6 rounded-full shadow-xl transition-all hover:scale-105 hover:shadow-slate-900/50 !bg-black"
                         style={{ backgroundColor: '#020617', color: 'white', border: '1px solid #1e293b' }}
                     >
-                        {t.impact?.cta} <ArrowRight className="w-5 h-5 ml-2" />
+                        {(t.impact as any)?.cta} <ArrowRight className="w-5 h-5 ml-2" />
                     </button>
                 </Link>
 

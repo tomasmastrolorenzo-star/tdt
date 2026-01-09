@@ -12,8 +12,7 @@ export default function FAQAccordion() {
     const [openIndex, setOpenIndex] = useState<number | null>(0)
 
     const faqs: FAQItem[] = [
-        {
-        },
+
         {
             question: "¿Ofrecen garantía de resultados?",
             answer: "Sí, ofrecemos una garantía de crecimiento. Si no ves un aumento medible en tus seguidores durante los primeros 30 días, te reembolsamos el 100% de tu inversión. Estamos tan seguros de nuestro servicio que asumimos todo el riesgo."

@@ -1,33 +1,99 @@
 export const pt = {
     // Hero
     hero: {
+        title: "Inteligência Artificial aplicada à análise e otimização de perfis digitais",
+        subtitle: "Analisamos seu perfil, métricas e objetivos para identificar o que está limitando seu alcance, visibilidade e crescimento, e definir uma otimização algorítmica alinhada.",
+        microCopy: "O crescimento efetivo começa com uma análise precisa.",
+        cta: "INICIAR ANÁLISE DE IA →",
+        ctaSub: "Auditoria automatizada · Análise não invasiva · Resultados personalizados",
+        visual: {
+            visibility: "Visibilidade",
+            reach: "Alcance",
+            performance: "Desempenho",
+            optimization: "Otimização",
+            systemStatus: "SISTEMA_PRONTO",
+            analyzing: "ANALISANDO_METADATA...",
+        },
+        statsGrid: {
+            monthlyGrowth: "Aumento mensal de seguidores",
+            hoursSaved: "Horas economizadas para os clientes",
+            rating: "Baseado em avaliações reais",
+            userBase: "Base atual de usuários da TDT",
+        },
         badgeChristmas: "🎄 O Natal chegou à TDT",
         badgeNewYear: "🎉 Oferta de Ano Novo",
-        badge: "🎄 O Natal chegou à TDT",
-        title: "Vença o Algoritmo e Conecte-se com",
-        titleHighlight: "Públicos Reais",
-        titleEnd: "usando IA",
-        subtitle:
-            "Sem bots, sem contas falsas. Apenas crescimento orgânico segmentado por gênero e localização em tempo recorde.",
-        problem: "Cansado do algoritmo esconder sua conta?",
-        solution: "TDT usa Inteligência Artificial para colocar seu conteúdo na frente de pessoas reais interessadas em conteúdo como o seu. Apenas selecione gênero, localização do público-alvo, e nossa IA cuida do resto.",
-        solutionHighlight: "Você começará a ver crescimento real em horas.",
-        trustBadge: "Não são bots ou contas falsas. São pessoas reais.",
-        trustLine: "Amado por mais de *80,000* fãs",
-        guarantee: "💯 Garantia de satisfação ou seu dinheiro de volta",
-        cta: "Impulsionar minha conta com IA →",
-        ctaSecondary: "Como Funciona",
         stats: {
             clients: "Clientes Satisfeitos",
             followers: "Seguidores Entregues",
             support: "Suporte Disponível",
         },
-        statsGrid: {
-            monthlyGrowth: "Aumento mensal de seguidores",
-            hoursSaved: "Horas ahorradas para los clientes",
-            rating: "Basado en opiniones reales",
-            userBase: "Base actual de usuarios",
+
+    },
+    // Stage 2: Authority Validation (Portuguese Fallback)
+    authority: {
+        title: "Operamos sob padrões usados por equipes digitais de alto nível",
+        subtext: "Nossos sistemas de análise e otimização seguem critérios técnicos aplicados em ambientes corporativos, agências e marcas de alta exposição.",
+        badges: {
+            dataDriven: "Data-driven",
+            aiAssisted: "AI-assisted",
+            algorithmSafe: "Algorithm-safe",
+            privacyFirst: "Privacy-first",
+            nonInvasive: "Non-invasive",
         },
+        finalPhrase: "A autoridade digital não se constrói com volume, mas com critério.",
+    },
+    // Stage 3: Capabilities (Portuguese)
+    capabilities: {
+        title: "Um sistema projetado para analisar, otimizar e escalar perfis digitais.",
+        subtext: "A Trend Digital Trade combina inteligência artificial, automação controlada e supervisão estratégica para melhorar o desempenho de perfis digitais.",
+        blocks: {
+            segmentation: {
+                title: "Segmentação Algorítmica",
+                desc: "O sistema identifica padrões geográficos e culturais relevantes para o seu perfil.",
+            },
+            coherence: {
+                title: "Coerência Linguística",
+                desc: "A interação está alinhada com o idioma e o contexto real do seu público-alvo.",
+            },
+            demographics: {
+                title: "Contexto Demográfico",
+                desc: "Os perfis são otimizados de acordo com idade, interesses e comportamento de consumo de conteúdo.",
+            },
+            affinity: {
+                title: "Afinidade por Nicho",
+                desc: "A autoridade é construída conectando-se com públicos alinhados ao seu tema.",
+            },
+            supervision: {
+                title: "Supervisão Estratégica",
+                desc: "Cada processo opera sob critérios de controle e validação estratégica.",
+            }
+        }
+    },
+    protocol: {
+        header: "O Protocolo de Autoridade",
+        phases: {
+            phase1: {
+                title: "Auditoria",
+                desc: "Análise técnica da estrutura atual do perfil e detecção de limitações.",
+            },
+            phase2: {
+                title: "Reestruturação",
+                desc: "Otimização da base de seguidores e eliminação de atrito algorítmico.",
+            },
+            phase3: {
+                title: "Escalonamento",
+                desc: "Ativação progressiva de interações para aumentar a relevância do perfil.",
+            },
+            phase4: {
+                title: "Blindagem",
+                desc: "Monitoramento contínuo para garantir a estabilidade e segurança da conta.",
+            }
+        },
+        privacy: {
+            title: "Garantia de Privacidade Absoluta",
+            desc: "Nosso protocolo opera externamente. Não exigimos senhas ou acesso à conta.",
+            cta: "Ver Certificado SSL"
+        }
     },
     // Platform selector
     platform: {

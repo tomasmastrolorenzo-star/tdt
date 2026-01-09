@@ -1,6 +1,6 @@
 "use client"
 
-import { Target, Zap, TrendingUp } from "lucide-react"
+import { Target, Zap, TrendingUp, Cpu } from "lucide-react"
 import { useI18n } from "@/lib/i18n/context"
 
 export default function HowItWorks() {
@@ -9,27 +9,27 @@ export default function HowItWorks() {
   const steps = [
     {
       icon: Target,
-      title: t.howItWorks?.steps_v2?.[0]?.title || "1. Set Your Goals",
-      description: t.howItWorks?.steps_v2?.[0]?.description,
+      title: (t.howItWorks as any)?.steps_v2?.[0]?.title || "1. Set Your Goals",
+      description: (t.howItWorks as any)?.steps_v2?.[0]?.description,
       color: "text-orange-500",
       bg: "bg-orange-500/10",
       border: "border-orange-500/20"
     },
     {
-      icon: Zap,
-      title: t.howItWorks?.steps_v2?.[1]?.title || "2. AI Execution",
-      description: t.howItWorks?.steps_v2?.[1]?.description || "TDT uses machine learning...",
-      color: "text-green-500",
-      bg: "bg-green-500/10",
-      border: "border-green-500/20"
+      icon: Cpu,
+      title: (t.howItWorks as any)?.steps_v2?.[1]?.title || "2. AI Execution",
+      description: (t.howItWorks as any)?.steps_v2?.[1]?.description,
+      color: "text-blue-500",
+      bg: "bg-blue-500/10",
+      border: "border-blue-500/20"
     },
     {
       icon: TrendingUp,
-      title: t.howItWorks?.steps_v2?.[2]?.title || "3. Targeted Growth",
-      description: t.howItWorks?.steps_v2?.[2]?.description || "...resulting in higher retention and genuine engagement.",
-      color: "text-purple-500",
-      bg: "bg-purple-500/10",
-      border: "border-purple-500/20"
+      title: (t.howItWorks as any)?.steps_v2?.[2]?.title || "3. Targeted Growth",
+      description: (t.howItWorks as any)?.steps_v2?.[2]?.description,
+      color: "text-green-500",
+      bg: "bg-green-500/10",
+      border: "border-green-500/20"
     }
   ]
 

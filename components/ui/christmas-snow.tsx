@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 
 export default function ChristmasSnow() {
-  const [snowflakes, setSnowflakes] = useState<Array<{ id: number; left: number; duration: number; delay: number }>>([])
+  const [snowflakes, setSnowflakes] = useState<Array<{ id: number; left: number; duration: number; delay: number; size: number; opacity: number }>>([])
 
   useEffect(() => {
     const flakes = Array.from({ length: 75 }).map((_, i) => ({

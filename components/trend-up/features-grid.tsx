@@ -1,15 +1,15 @@
 "use client"
 
-import { Heart, TrendingUp, ShieldCheck, CheckCircle2, Banknote, Sparkles } from "lucide-react"
+import { Heart, TrendingUp, ShieldCheck, CheckCircle2, Banknote, Sparkles, Lock } from "lucide-react"
 import { useI18n } from "@/lib/i18n/context"
 
 export default function FeaturesGrid() {
     const { t } = useI18n()
 
     // Defensive & Type check
-    if (!t?.features?.list) return null
+    if (!(t as any)?.features?.list) return null
 
-    const featureList = t.features.list as any[]
+    const featureList = (t as any).features.list as any[]
 
     const icons = [
         Heart,          // No Spam Tactics
@@ -37,14 +37,14 @@ export default function FeaturesGrid() {
                 {/* Header with Equation */}
                 <div className="text-center mb-20 max-w-4xl mx-auto">
                     <div className="inline-block bg-orange-100 text-orange-600 px-4 py-1.5 rounded-full text-sm font-bold mb-8 animate-fade-in">
-                        {t.features.badge}
+                        {(t as any).features.badge}
                     </div>
 
                     {/* Equation */}
                     <div className="flex flex-col md:flex-row items-center justify-center gap-3 text-2xl md:text-3xl lg:text-4xl text-slate-500 font-medium mb-8 flex-wrap">
-                        <span className="text-slate-400">{t.features.header?.main || "AI Tech + Marketing ="}</span>
+                        <span className="text-slate-400">{(t as any).features.header?.main || "AI Tech + Marketing ="}</span>
                         <span className="font-black text-slate-900 bg-clip-text text-transparent bg-gradient-to-r from-orange-600 to-red-600">
-                            {t.features.header?.highlight || "Growth 🚀"}
+                            {(t as any).features.header?.highlight || "Growth 🚀"}
                         </span>
                     </div>
 
@@ -54,10 +54,10 @@ export default function FeaturesGrid() {
                             The old title was "No fake followers". 
                             I'll render the old subtitle still.
                         */}
-                        {t.features.title}
+                        {(t as any).features.title}
                     </h2>
                     <p className="text-slate-600 text-lg md:text-xl leading-relaxed max-w-2xl mx-auto">
-                        {t.features.subtitle}
+                        {(t as any).features.subtitle}
                     </p>
                 </div>
 

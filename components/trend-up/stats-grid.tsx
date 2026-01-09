@@ -41,7 +41,7 @@ export default function StatsGrid() {
     const { t } = useI18n()
 
     // Defensive check
-    if (!t?.hero?.statsGrid) return null
+    if (!(t?.hero as any)?.statsGrid) return null
 
     const stats = [
         {

@@ -1,10 +1,14 @@
 "use client";
 
-import { useEffect } from "react";
-import { ArrowRight, ShieldCheck, Lock } from "lucide-react";
-import { motion } from "framer-motion";
+
+import { useEffect } from "react"
+import { motion, useAnimation } from "framer-motion" // Reduced imports
+import { useI18n } from "@/lib/i18n/context"
+// Removed lucide-react icons that are no longer needed, added Activity/BarChart if needed for visual
+import { Activity, BarChart3, ShieldCheck, Zap } from "lucide-react"
 
 export default function Hero() {
+    const { t } = useI18n()
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -17,104 +21,267 @@ export default function Hero() {
         }
     };
 
+    // Animation variants for the console visual
+    const barVariants = {
+        initial: { width: "0%" },
+        animate: (custom: number) => ({
+            width: `${custom}%`,
+            transition: { duration: 1.5, ease: "easeOut", delay: 0.5 }
+        })
+    }
+
     return (
-        <section className="relative min-h-[90vh] flex flex-col justify-center items-center bg-[#050505] text-white overflow-hidden px-6 border-b border-white/5 pt-24 md:pt-32">
+        <section className="relative min-h-screen flex flex-col bg-[#050505] text-white overflow-hidden">
 
-            {/* Header: Logo & Badge */}
-            <motion.header
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8 }}
-                className="absolute top-0 w-full py-6 md:py-8 flex flex-col items-center gap-3 z-50"
-            >
-                <img src="/assets/tdt-logo-gold.png" alt="Trend Digital Trade" className="h-10 md:h-14 object-contain drop-shadow-[0_0_15px_rgba(197,160,89,0.3)]" />
-                <span className="text-[9px] md:text-[10px] font-mono text-[#C5A059] tracking-[0.3em] uppercase opacity-80">
-                    ARTIFICIAL INTELLIGENCE ENGINE
-                </span>
-            </motion.header>
+            {/* 1. HEADER: Minimal, Logo Only */}
+            <header className="w-full py-6 px-6 md:px-12 flex items-center justify-start z-50 absolute top-0 left-0 bg-transparent">
+                <img src="/assets/tdt-logo-gold.png" alt="Trend Digital Trade" className="h-8 md:h-10 object-contain drop-shadow-[0_0_10px_rgba(197,160,89,0.2)]" />
+            </header>
 
-            {/* Background Texture */}
-            <div className="absolute inset-0 pointer-events-none opacity-40">
-                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20" />
-                <div className="absolute top-[-20%] left-[-20%] w-[80%] h-[80%] bg-[#C5A059] opacity-[0.05] blur-[150px] rounded-full" />
-                <div className="absolute bottom-[-20%] right-[-20%] w-[80%] h-[80%] bg-white opacity-[0.02] blur-[150px] rounded-full" />
-            </div>
+            <div className="flex-1 container mx-auto px-6 h-full flex flex-col md:flex-row items-center justify-center pt-24 md:pt-0 gap-12 md:gap-24 relative z-10">
 
-            <div className="relative z-10 max-w-6xl mx-auto text-center space-y-10 flex flex-col items-center mt-8">
+                {/* 2. TEXT CONTENT (Left Desktop) */}
+                {/* Mobile Order: 1. Title, 2. Subtitle */}
+                <div className="flex-1 flex flex-col justify-center text-left space-y-8 order-1 md:order-1 w-full relative">
 
-                {/* Badge: System Status */}
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.8, delay: 0.1 }}
-                >
-                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/5 bg-white/5 backdrop-blur-sm">
-                        <ShieldCheck className="w-3 h-3 text-[#C5A059]" />
-                        <span className="text-[9px] font-mono text-white/50 tracking-widest uppercase">
-                            AI Neural Core v4.0 Online
-                        </span>
-                    </div>
-                </motion.div>
+                    {/* H1 */}
+                    <motion.h1
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8 }}
+                        className="text-4xl md:text-5xl lg:text-6xl font-serif font-medium leading-[1.1] tracking-tight text-white max-w-2xl"
+                    >
+                        {t.hero.title}
+                    </motion.h1>
 
-                {/* Headline: Elegant Serif */}
-                <div className="space-y-6">
-                    <h1 className="text-4xl md:text-6xl lg:text-7xl font-serif font-medium tracking-tight leading-[1.1] max-w-5xl mx-auto">
-                        <motion.span
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 1, delay: 0.2 }}
-                            className="block text-white"
-                        >
-                            Vence al Algoritmo con
-                        </motion.span>
-                        <motion.span
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 1, delay: 0.4 }}
-                            className="block text-transparent bg-clip-text bg-gradient-to-r from-[#C5A059] via-[#E5D57B] to-[#C5A059] drop-shadow-[0_0_30px_rgba(197,160,89,0.2)] py-2"
-                        >
-                            Inteligencia Artificial
-                        </motion.span>
-                    </h1>
-
+                    {/* Subtitle */}
                     <motion.p
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        transition={{ duration: 1, delay: 0.6 }}
-                        className="text-sm md:text-base font-sans font-light text-white/80 max-w-2xl mx-auto leading-relaxed tracking-wide"
+                        transition={{ duration: 0.8, delay: 0.2 }}
+                        className="text-base md:text-lg font-sans text-white/60 leading-relaxed max-w-xl"
                     >
-                        Sin bots. Sin cuentas falsas. Solo crecimiento orgánico segmentado por género y ubicación en tiempo récord mediante <b>tecnología forense avanzada.</b>
+                        {t.hero.subtitle}
                     </motion.p>
+
+                    {/* Mobile Order adjustment: Visual comes here in mobile (order-2), but in code structure it's cleaner to keep separate cols. 
+                        We will use flex order classes. 
+                        Request: Mobile: H1 -> Sub -> Visual -> Diff -> CTA.
+                        So Visual needs to be strictly between Sub and Micro-copy ("Diff").
+                        
+                        Actually, doing this with flex order in a 2-col layout is tricky if visual is in the other col.
+                        Solution: Duplicate Visual for mobile? No, bad practice.
+                        Better: Use `display: contents` or strict flex ordering if everything is in one flow? 
+                        The prompt asks for "Hero - Visual (Lado Derecho Desktop)".
+                        
+                         Let's stick to the 2-col structure for Desktop.
+                         Mobile: H1 (Left col) -> Sub (Left col) -> Visual (Right col? No, usually stacked).
+                         If we stack, Left Col comes first: H1, Sub, [Micro-copy, CTA].
+                         Right Col: Visual.
+                         
+                         Standard Stack: H1 -> Sub -> [Micro, CTA] -> Visual.
+                         User wants: H1 -> Sub -> Visual -> Diff (Micro) -> CTA.
+                         
+                         To achieve H1 -> Sub -> Visual -> Diff -> CTA on mobile with 2 columns on desktop:
+                         It's easier to interleave them or use `grid-template-areas`.
+                         
+                         Let's try a single Grid container.
+                    */}
                 </div>
 
-                {/* Primary Button */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 1, delay: 0.8 }}
-                    className="pt-2 w-full max-w-xs flex flex-col items-center gap-4"
-                >
-                    <button
-                        onClick={scrollToAnalyzer}
-                        className="w-full bg-gradient-to-br from-[#D4AF37] to-[#B38F2D] text-black h-14 text-xs font-bold tracking-[0.2em] uppercase shadow-[0_0_20px_rgba(197,160,89,0.5)] hover:shadow-[0_0_40px_rgba(197,160,89,0.7)] transition-all duration-500 relative overflow-hidden group rounded-sm"
-                    >
-                        <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out" />
-                        <span className="relative z-10 flex items-center justify-center gap-3">
-                            INICIAR ANÁLISIS DE IA
-                            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                        </span>
-                    </button>
 
-                    <div className="flex items-center space-x-2 text-[10px] text-white/30 font-mono uppercase tracking-widest">
-                        <Lock className="w-3 h-3" />
-                        <span>100% Secure Analysis</span>
+                {/* 
+                    RE-STRUCTURING FOR EXACT VISUAL ORDER Requirement
+                    Desktop: Left (Text), Right (Visual).
+                    Mobile: Title, Sub, Visual, Diff, CTA.
+                 */}
+            </div>
+
+            {/* Actual implementation using Grid for precise placement */}
+            <div className="flex-1 container mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-center pt-24 pb-12">
+
+                {/* COL 1: TEXT PARTS */}
+                <div className="flex flex-col space-y-6 md:space-y-8 contents md:flex md:flex-col justify-center">
+
+                    {/* H1 */}
+                    <motion.h1
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8 }}
+                        className="text-3xl md:text-5xl lg:text-6xl font-serif font-medium leading-[1.1] tracking-tight text-white md:max-w-2xl order-1 md:order-1"
+                    >
+                        {t.hero.title}
+                    </motion.h1>
+
+                    {/* Subtitle */}
+                    <motion.p
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.8, delay: 0.2 }}
+                        className="text-sm md:text-lg font-sans text-white/60 leading-relaxed md:max-w-xl order-2 md:order-2"
+                    >
+                        {t.hero.subtitle}
+                    </motion.p>
+
+                    {/* VISUAL (Mobile Place: Order 3) - Only visible on mobile here? 
+                        No, we need one instance.
+                        Let's place the Visual component in the grid and use `order` classes.
+                    */}
+
+                    {/* MICRO-COPY (Diff) */}
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.8, delay: 0.4 }}
+                        className="order-4 md:order-3"
+                    >
+                        <p className="text-xs md:text-sm font-mono text-[#C5A059] uppercase tracking-wider mb-2">
+                            — {t.hero.microCopy}
+                        </p>
+                    </motion.div>
+
+                    {/* CTA */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8, delay: 0.6 }}
+                        className="order-5 md:order-4 flex flex-col items-start gap-4"
+                    >
+                        <button
+                            onClick={scrollToAnalyzer}
+                            className="bg-gradient-to-r from-[#D4AF37] to-[#C5A059] text-black px-8 py-4 text-xs md:text-sm font-bold tracking-[0.2em] uppercase shadow-[0_0_20px_rgba(197,160,89,0.3)] hover:shadow-[0_0_30px_rgba(197,160,89,0.5)] transition-all duration-300 w-full md:w-auto rounded-sm"
+                        >
+                            {t.hero.cta}
+                        </button>
+                        <span className="text-[10px] text-white/40 font-sans tracking-wide">
+                            {t.hero.ctaSub}
+                        </span>
+                    </motion.div>
+                </div>
+
+                {/* COL 2: VISUAL (Order 3 on Mobile, Order 2 on Desktop (Col 2)) */}
+                <motion.div
+                    className="order-3 md:order-last w-full flex justify-center md:justify-end"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.8, delay: 0.4 }}
+                >
+                    {/* DASHBOARD MOCKUP */}
+                    <div className="w-full max-w-md bg-[#0A0A0A] border border-white/10 rounded-lg p-6 shadow-2xl relative overflow-hidden backdrop-blur-sm">
+                        {/* Header of Mockup */}
+                        <div className="flex items-center justify-between mb-6 border-b border-white/5 pb-4">
+                            <div className="flex items-center gap-2">
+                                <div className="w-2 h-2 rounded-full bg-red-500/50" />
+                                <div className="w-2 h-2 rounded-full bg-yellow-500/50" />
+                                <div className="w-2 h-2 rounded-full bg-green-500/50" />
+                            </div>
+                            <div className="text-[10px] font-mono text-white/30 uppercase">
+                                {t.hero.visual?.systemStatus || "SYSTEM_READY"}
+                            </div>
+                        </div>
+
+                        {/* Profile Placeholder */}
+                        <div className="flex items-center gap-4 mb-8">
+                            <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
+                                <span className="text-white/20 text-xs">IMG</span>
+                            </div>
+                            <div className="space-y-1.5 w-full">
+                                <div className="h-2 w-24 bg-white/10 rounded animate-pulse" />
+                                <div className="h-1.5 w-16 bg-white/5 rounded" />
+                            </div>
+                        </div>
+
+                        {/* Analysis Bars */}
+                        <div className="space-y-5">
+                            {/* Visibility */}
+                            <div>
+                                <div className="flex justify-between text-[10px] uppercase tracking-wider text-white/50 mb-1.5">
+                                    <span>{t.hero.visual?.visibility}</span>
+                                    <span className="text-[#C5A059]">68%</span>
+                                </div>
+                                <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                                    <motion.div
+                                        className="h-full bg-white/20"
+                                        variants={barVariants}
+                                        custom={68}
+                                        initial="initial"
+                                        animate="animate"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Reach */}
+                            <div>
+                                <div className="flex justify-between text-[10px] uppercase tracking-wider text-white/50 mb-1.5">
+                                    <span>{t.hero.visual?.reach}</span>
+                                    <span className="text-[#C5A059]">74%</span>
+                                </div>
+                                <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                                    <motion.div
+                                        className="h-full bg-gradient-to-r from-white/20 to-[#C5A059]/50"
+                                        variants={barVariants}
+                                        custom={74}
+                                        initial="initial"
+                                        animate="animate"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Performance */}
+                            <div>
+                                <div className="flex justify-between text-[10px] uppercase tracking-wider text-white/50 mb-1.5">
+                                    <span>{t.hero.visual?.performance}</span>
+                                    <span className="text-[#C5A059]">42%</span>
+                                </div>
+                                <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                                    <motion.div
+                                        className="h-full bg-white/20"
+                                        variants={barVariants}
+                                        custom={42}
+                                        initial="initial"
+                                        animate="animate"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Optimization */}
+                            <div>
+                                <div className="flex justify-between text-[10px] uppercase tracking-wider text-white/50 mb-1.5">
+                                    <span>{t.hero.visual?.optimization}</span>
+                                    <div className="flex items-center gap-1 text-[#C5A059]">
+                                        <Activity className="w-3 h-3" />
+                                        <span>LOW</span>
+                                    </div>
+                                </div>
+                                <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                                    <motion.div
+                                        className="h-full bg-red-500/40"
+                                        variants={barVariants}
+                                        custom={30}
+                                        initial="initial"
+                                        animate="animate"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Terminal Footer */}
+                        <div className="mt-8 pt-4 border-t border-white/5 font-mono text-[9px] text-[#C5A059]/70 leading-relaxed">
+                            &gt; {t.hero.visual?.analyzing || "INITIALIZING_SCAN..."}<br />
+                            &gt; DETECTING_ALGORITHMIC_FRICTION... <span className="animate-pulse">_</span>
+                        </div>
+
+                        {/* Glass Overlay Check */}
+                        <div className="absolute top-0 right-0 p-4 opacity-20">
+                            <ShieldCheck className="w-12 h-12 text-[#C5A059]" />
+                        </div>
                     </div>
                 </motion.div>
 
             </div>
 
-            {/* Bottom Fade */}
-            <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-black to-transparent z-20" />
+            {/* Bottom Fade for smooth transition */}
+            <div className="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-[#050505] to-transparent pointer-events-none" />
 
         </section>
     );

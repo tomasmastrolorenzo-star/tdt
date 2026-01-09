@@ -1,26 +1,26 @@
 export const en = {
     // Hero
     hero: {
+        title: "Artificial Intelligence applied to digital profile analysis and optimization",
+        subtitle: "We analyze your profile, metrics, and goals to identify what's limiting your reach, visibility, and growth, and define an aligned algorithmic optimization.",
+        microCopy: "Effective growth starts with precise analysis.",
+        cta: "START AI ANALYSIS →",
+        ctaSub: "Automated Audit · Non-invasive Analysis · Personalized Results",
         badgeChristmas: "🎄 Christmas came to TDT",
         badgeNewYear: "🎉 New Year Offer",
         badge: "Christmas came to TDT",
-        title: "Beat the Algorithm and Connect with",
-        titleHighlight: "Real Audiences",
-        titleEnd: "using AI",
-        subtitle:
-            "No bots, no fake accounts. Just organic growth targeted by gender and location in record time.",
-        problem: "Tired of the algorithm hiding your account?",
-        solution: "TDT uses Artificial Intelligence to put your content in front of real people interested in content like yours. Just select gender, target audience location, and our AI takes care of the rest.",
-        solutionHighlight: "You'll start seeing real growth in hours.",
-        trustBadge: "Not bots or fake accounts. Real people.",
-        trustLine: "Loved by over *80,000* fans",
-        guarantee: "💯 Satisfaction guarantee or your money back",
-        cta: "Boost my account with AI →",
-        ctaSecondary: "How It Works",
         stats: {
             clients: "Satisfied Clients",
             followers: "Followers Delivered",
             support: "Support Available",
+        },
+        visual: {
+            visibility: "Visibility",
+            reach: "Reach",
+            performance: "Performance",
+            optimization: "Optimization",
+            systemStatus: "SYSTEM_READY",
+            analyzing: "ANALYZING_METADATA...",
         },
         statsGrid: {
             monthlyGrowth: "Monthly follower increase",
@@ -28,6 +28,72 @@ export const en = {
             rating: "Based on real client reviews",
             userBase: "Current TDT user base",
         },
+    },
+    // Stage 2: Authority Validation (English Fallback)
+    authority: {
+        title: "We operate under standards used by high-level digital teams",
+        subtext: "Our analysis and optimization systems follow technical criteria applied in corporate environments, agencies, and high-exposure brands.",
+        badges: {
+            dataDriven: "Data-driven",
+            aiAssisted: "AI-assisted",
+            algorithmSafe: "Algorithm-safe",
+            privacyFirst: "Privacy-first",
+            nonInvasive: "Non-invasive",
+        },
+        finalPhrase: "Digital authority is not built with volume, but with criteria.",
+    },
+    // Stage 3: Capabilities (English)
+    capabilities: {
+        title: "A system designed to analyze, optimize, and scale digital profiles.",
+        subtext: "Trend Digital Trade combines artificial intelligence, controlled automation, and strategic supervision to improve digital profile performance.",
+        blocks: {
+            segmentation: {
+                title: "Algorithmic Segmentation",
+                desc: "The system identifies geographic and cultural patterns relevant to your profile.",
+            },
+            coherence: {
+                title: "Linguistic Coherence",
+                desc: "Interaction aligns with the real language and context of your target audience.",
+            },
+            demographics: {
+                title: "Demographic Context",
+                desc: "Profiles are optimized according to age, interests, and content consumption behavior.",
+            },
+            affinity: {
+                title: "Niche Affinity",
+                desc: "Authority is built by connecting with audiences aligned with your theme.",
+            },
+            supervision: {
+                title: "Strategic Supervision",
+                desc: "Each process operates under strategic control and validation criteria.",
+            }
+        }
+    },
+    protocol: {
+        header: "The Authority Protocol",
+        phases: {
+            phase1: {
+                title: "Audit",
+                desc: "Technical analysis of current profile structure and limitation detection.",
+            },
+            phase2: {
+                title: "Restructuring",
+                desc: "Optimization of follower base and elimination of algorithmic friction.",
+            },
+            phase3: {
+                title: "Scaling",
+                desc: "Progressive activation of interactions to increase profile relevance.",
+            },
+            phase4: {
+                title: "Shielding",
+                desc: "Continuous monitoring to ensure account stability and security.",
+            }
+        },
+        privacy: {
+            title: "Absolute Privacy Guarantee",
+            desc: "Our protocol operates externally. We do not require passwords or account access.",
+            cta: "View SSL Certificate"
+        }
     },
     // Platform selector
     platform: {
@@ -400,17 +466,137 @@ export const en = {
             locations: {
                 us: "United States",
                 latam: "Latin America",
-                europe: "Europe",
-                asia: "Asia",
-                emirates: "UAE",
-                global: "Global",
+                // Selectors
+                selectors: {
+                    locations: {
+                        us: "United States",
+                        latam: "Latin America",
+                        europe: "Europe",
+                        asia: "Asia",
+                        emirates: "UAE",
+                        global: "Global",
+                    },
+                    interests: {
+                        fashion: "Fashion",
+                        art: "Art",
+                        business: "Business",
+                        trading: "Trading",
+                        fitness: "Fitness",
+                        sports: "Sports",
+                        motherhood: "Motherhood",
+                        agriculture: "Agriculture",
+                        food: "Food",
+                        travel: "Travel",
+                        tech: "Technology",
+                        lifestyle: "Lifestyle",
+                    },
+                    genders: {
+                        any: "Any",
+                        male: "Men",
+                        female: "Women",
+                    }
+                },
+                trust: {
+                    encrypted: "Encrypted Data",
+                    noPassword: "No Passwords",
+                    guarantee: "Full Guarantee",
+                },
             },
-            interests: {
-                fashion: "Fashion",
-                art: "Art",
-                business: "Business",
-                trading: "Trading",
-                fitness: "Fitness",
+            // Checkout Redesign
+            checkout: {
+                orderBump: {
+                    headline: "🚀 One-Time Offer: Priority Processing",
+                    copy: "Yes, add priority processing for $3.99.",
+                    price: "+$3.99",
+                },
+                mysteryUpsell: {
+                    title: "Wait! Do not close this page...",
+                    subtitle: "Our AI suggests boosting your order to maximize retention.",
+                    offer: "Get Double the Followers for only 50% of the cost?",
+                    ctaAccept: "Yes, Upgrade My Order Instantly",
+                    ctaReject: "No thanks, I'll keep my small growth",
+                },
+                visualValidator: {
+                    valid: "Account Found",
+                    checking: "Validating with AI...",
+                },
+                paymentButton: {
+                    text: "Start Growth Now",
+                    subtext: "Guaranteed Delivery within 24h",
+                },
+                noPassword: "🔒 We never ask for your password",
+                secureLogos: "100% Secure & Encrypted Payments",
+                legal: {
+                    title: "Terms of Service & Refund Policy",
+                    checkbox: "I agree to the Terms of Service and understand that this purchase is non-refundable.",
+                    sections: {
+                        refund: {
+                            title: "1. NO-REFUND POLICY",
+                            content: "Due to the nature of digital marketing services and intangible goods, Trend Digital Trade (TDT) does not offer monetary refunds once the order processing has begun.\n\nDigital Nature: You acknowledge that by purchasing a plan, you are paying for a digital promotional campaign that consumes server resources and ad spend immediately. These costs are non-recoverable.\n\nThe Remedy: In the event of followers dropping or delivery delays, TDT offers a 30-Day Free Refill Guarantee. We will restore any lost numbers automatically. Refills are the sole remedy; monetary refunds are not permitted."
+                        },
+                        chargeback: {
+                            title: "2. CHARGEBACK & DISPUTE CLAUSE",
+                            content: "By completing a purchase, you agree that you will not file a chargeback or dispute with your payment provider.\n\nBreach of Contract: Filing a dispute without contacting our support team first is considered a breach of these Terms.\n\nConsequences: In the event of an unauthorized chargeback, TDT reserves the right to:\n- Ban your account and IP address permanently.\n- Report your details to global merchant blacklists.\n- Remove all delivered followers/likes instantly using our reversal algorithm."
+                        },
+                        disclaimer: {
+                            title: "3. SERVICE DISCLAIMER",
+                            content: "TDT is an independent digital strategy agency and is not affiliated with Instagram, TikTok, or Meta.\n\nPlatform Updates: We are not responsible for damages, bans, or blocks caused by updates to Instagram/TikTok algorithms. You use our services at your own risk.\n\nDelivery Speed: Delivery times are estimates. 'Instant Start' implies the campaign setup begins immediately, but full delivery may take time to ensure organic safety."
+                        },
+                        cancellation: {
+                            title: "4. SUBSCRIPTION CANCELLATION",
+                            content: "You may cancel your monthly subscription at any time via your dashboard or by contacting support.\n\nTiming: Cancellations must be requested at least 24 hours before the next billing cycle.\n\nPartial Months: No refunds will be issued for partial months of service if you cancel mid-cycle. The service will continue until the end of the paid period."
+                        }
+                    }
+                },
+            },
+            // Social Proof Ticker
+            socialProofTicker: {
+                analyzed: "analyzed their profile 🔍",
+                requested: "requested strategy 📈",
+                time: {
+                    min: "min",
+                    hour: "h",
+                    ago: "ago",
+                },
+            },
+            // Impact Section
+            impact: {
+                lovedBy: "Loved by over 80,000 fans",
+                title: "Dominate Your Niche",
+                titleHighlight: "with Data-Driven Precision",
+                titleEnd: "",
+                cta: "Start Now",
+                card: {
+                    followers: "Followers",
+                    growth: "Growth",
+                    reach: "Account reach",
+                    engagement: "Engagement",
+                    sales: "Monthly sales",
+                }
+            },
+            // Hero Section
+            hero: {
+                visual: {
+                    visibility: "Visibility",
+                    reach: "Reach",
+                    performance: "Performance",
+                    optimization: "Optimization",
+                    systemStatus: "SYSTEM_READY",
+                    analyzing: "ANALYZING_METADATA...",
+                },
+                statsGrid: {
+                    monthlyGrowth: "Monthly follower increase",
+                    hoursSaved: "Hours saved for clients",
+                    rating: "Based on real client reviews",
+                    userBase: "Current TDT user base",
+                },
+                badgeChristmas: "🎄 Christmas came to TDT",
+                badgeNewYear: "🎉 New Year Offer",
+                stats: {
+                    clients: "Satisfied Clients",
+                    followers: "Followers Delivered",
+                    support: "Support Available",
+                },
                 sports: "Sports",
                 motherhood: "Motherhood",
                 agriculture: "Agriculture",

@@ -31,10 +31,10 @@ export default function TestimonialsSection() {
                 <div className="text-center mb-16 max-w-3xl mx-auto">
                     <div className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-500/10 to-orange-500/5 text-orange-400 px-4 py-1.5 rounded-full text-sm font-bold mb-6 border border-orange-500/10 animate-fade-in">
                         <Star className="w-4 h-4 fill-orange-500 text-orange-500" />
-                        <span>{t.testimonialsSection?.badge || "Love from customers"}</span>
+                        <span>{(t.testimonialsSection as any)?.badge || "Love from customers"}</span>
                     </div>
                     <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight">
-                        {t.testimonialsSection?.title || "Clients love our growth tool"}
+                        {(t.testimonialsSection as any)?.title || "Clients love our growth tool"}
                     </h2>
                     <p className="text-slate-400 text-lg md:text-xl leading-relaxed">
                         {t.testimonialsSection?.subtitle || "See why top influencers and brands trust us."}

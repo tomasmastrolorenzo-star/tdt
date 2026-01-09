@@ -1,26 +1,18 @@
 export const es = {
     // Hero
     hero: {
-        badgeChristmas: "🎄 Navidad llegó a TDT",
-        badgeNewYear: "🎉 Oferta de Año Nuevo",
-        badge: "🎄 Navidad llegó a TDT",
-        title: "Vence al Algoritmo y Conecta con",
-        titleHighlight: "Audiencias Reales",
-        titleEnd: "mediante IA",
-        subtitle:
-            "Sin bots, sin cuentas falsas. Solo crecimiento orgánico segmentado por género y ubicación en tiempo récord.",
-        problem: "¿Cansado que el algoritmo esconda tu cuenta?",
-        solution: "TDT usa Inteligencia Artificial para poner tu contenido en frente de personas reales interesadas en contenido como el tuyo. Solo selecciona género, ubicación del público objetivo, y nuestra IA se encarga del resto.",
-        solutionHighlight: "Empezarás a ver crecimiento real en horas.",
-        trustBadge: "No son bots ni cuentas fake. Es gente real.",
-        trustLine: "Amado por más de *80,000* fans",
-        guarantee: "💯 Garantía de satisfacción o te devolvemos tu dinero",
-        cta: "Impulsar mi cuenta con IA →",
-        ctaSecondary: "Cómo Funciona",
-        stats: {
-            clients: "Clientes Satisfechos",
-            followers: "Seguidores Entregados",
-            support: "Soporte Disponible",
+        title: "Inteligencia Artificial aplicada al análisis y optimización de perfiles digitales",
+        subtitle: "Analizamos su perfil, métricas y objetivos para identificar qué está limitando su alcance, visibilidad y crecimiento, y definir una optimización algorítmica alineada.",
+        microCopy: "El crecimiento efectivo comienza con un análisis preciso.",
+        cta: "INICIAR ANÁLISIS DE IA →",
+        ctaSub: "Auditoría automatizada · Análisis no invasivo · Resultados personalizados",
+        visual: {
+            visibility: "Visibilidad",
+            reach: "Alcance",
+            performance: "Rendimiento",
+            optimization: "Optimización",
+            systemStatus: "SYSTEM_READY",
+            analyzing: "ANALYZING_METADATA...",
         },
         statsGrid: {
             monthlyGrowth: "Aumento mensual de seguidores",
@@ -28,6 +20,80 @@ export const es = {
             rating: "Basado en opiniones reales",
             userBase: "Base actual de usuarios de TDT",
         },
+        badgeChristmas: "🎄 La Navidad llegó a TDT",
+        badgeNewYear: "🎉 Oferta de Año Nuevo",
+        stats: {
+            clients: "Clientes Satisfechos",
+            followers: "Seguidores Entregados",
+            support: "Soporte Disponible",
+        }
+    },
+    // Stage 2: Authority Validation
+    authority: {
+        title: "Operamos bajo estándares utilizados por equipos digitales de alto nivel",
+        subtext: "Nuestros sistemas de análisis y optimización siguen criterios técnicos aplicados en entornos corporativos, agencias y marcas con alta exposición digital.",
+        badges: {
+            dataDriven: "Data-driven",
+            aiAssisted: "AI-assisted",
+            algorithmSafe: "Algorithm-safe",
+            privacyFirst: "Privacy-first",
+            nonInvasive: "Non-invasive",
+        },
+        finalPhrase: "La autoridad digital no se construye con volumen, sino con criterio.",
+    },
+    // Stage 3: Capabilities
+    capabilities: {
+        title: "Un sistema diseñado para analizar, optimizar y escalar perfiles digitales. Sin humo.",
+        subtext: "Trend Digital Trade combina inteligencia artificial, automatización controlada y supervisión estratégica para mejorar el rendimiento de perfiles digitales.",
+        blocks: {
+            segmentation: {
+                title: "Segmentación Algorítmica",
+                desc: "El sistema identifica patrones geográficos y culturales relevantes para su perfil.",
+            },
+            coherence: {
+                title: "Coherencia Lingüística",
+                desc: "La interacción se alinea con el idioma y contexto real de su audiencia objetivo.",
+            },
+            demographics: {
+                title: "Contexto Demográfico",
+                desc: "Los perfiles se optimizan según edad, intereses y comportamiento de consumo de contenido.",
+            },
+            affinity: {
+                title: "Afinidad por Nicho",
+                desc: "La autoridad se construye conectando con audiencias alineadas a su temática.",
+            },
+            supervision: {
+                title: "Supervisión Estratégica",
+                desc: "Cada proceso opera bajo criterios de control y validación estratégica.",
+            }
+        }
+    },
+    // Stage 4: Protocol Refinement
+    protocol: {
+        header: "El Protocolo de Autoridad",
+        phases: {
+            phase1: {
+                title: "Auditoría",
+                desc: "Análisis técnico de la estructura actual del perfil y detección de limitaciones.",
+            },
+            phase2: {
+                title: "Reestructuración",
+                desc: "Optimización de la base de seguidores y eliminación de fricción algorítmica.",
+            },
+            phase3: {
+                title: "Escalado",
+                desc: "Activación progresiva de interacciones para aumentar la relevancia del perfil.",
+            },
+            phase4: {
+                title: "Blindaje",
+                desc: "Monitoreo continuo para asegurar la estabilidad y seguridad de la cuenta.",
+            }
+        },
+        privacy: {
+            title: "Garantía de Privacidad Absoluta",
+            desc: "Nuestro protocolo opera de forma externa. No requerimos contraseñas ni acceso a su cuenta.",
+            cta: "Ver Certificado SSL"
+        }
     },
     // Platform selector
     platform: {

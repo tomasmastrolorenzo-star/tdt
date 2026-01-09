@@ -8,7 +8,7 @@ export default function DirectServices() {
     const { t } = useI18n()
 
     // Defensive check
-    if (!t?.services) return null
+    if (!(t as any)?.services) return null
 
     return (
         <section className="py-24 bg-slate-950 relative overflow-hidden">
@@ -18,7 +18,7 @@ export default function DirectServices() {
             <div className="container mx-auto px-4 relative z-10">
                 <div className="text-center mb-12">
                     <h3 className="text-2xl md:text-3xl font-bold text-white bg-clip-text text-transparent bg-gradient-to-r from-slate-200 to-slate-400">
-                        {t.direct?.title}
+                        {(t as any).direct?.title}
                     </h3>
                 </div>
 
@@ -29,7 +29,7 @@ export default function DirectServices() {
                     {/* IG Followers - Best Seller */}
                     <Link href="/servicios?platform=instagram&service=followers" className="group block w-full no-underline relative">
                         <div className="absolute -top-3 -right-3 z-20 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-[10px] font-black px-2 py-1 rounded-full shadow-lg shadow-orange-500/40 animate-pulse">
-                            {t.direct?.bestSeller}
+                            {(t as any).direct?.bestSeller}
                         </div>
                         <div className="bg-gradient-to-r from-purple-700 via-pink-600 to-orange-500 p-[1px] rounded-2xl shadow-lg hover:shadow-orange-500/30 transition-all duration-300 hover:scale-[1.02] active:scale-95 group-hover:brightness-110">
                             <div className="bg-slate-900/80 backdrop-blur-md group-hover:bg-slate-900/60 transition-colors rounded-[15px] p-4 flex items-center justify-between">
@@ -68,7 +68,7 @@ export default function DirectServices() {
                     {/* TikTok Views - Instant Start */}
                     <Link href="/servicios?platform=tiktok&service=views" className="group block w-full no-underline relative mt-8">
                         <div className="absolute -top-3 -right-3 z-20 bg-gradient-to-r from-cyan-400 to-blue-500 text-white text-[10px] font-black px-2 py-1 rounded-full shadow-lg shadow-cyan-500/40 animate-pulse">
-                            {t.direct?.instant}
+                            {(t as any).direct?.instant}
                         </div>
                         <div className="bg-gradient-to-r from-[#00f2ea] via-[#ff0050] to-[#000000] p-[1px] rounded-2xl shadow-lg hover:shadow-cyan-500/30 transition-all duration-300 hover:scale-[1.02] active:scale-95 group-hover:brightness-110">
                             <div className="bg-slate-900/80 backdrop-blur-md group-hover:bg-slate-900/60 transition-colors rounded-[15px] p-4 flex items-center justify-between">
