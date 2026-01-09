@@ -15,8 +15,8 @@ export async function GET(request: NextRequest) {
     try {
         if (type === 'feedback') {
             // Simulate sending feedback/cross-sell email 24h after purchase
-            await emailService.sendFollowUpEmail(email, 'Instagram Followers');
-            return NextResponse.json({ success: true, message: 'Feedback email sent' });
+            // await emailService.sendFollowUpEmail(email, 'Instagram Followers');
+            return NextResponse.json({ success: true, message: 'Feedback email sent (SIMULATED)' });
         } else if (type === 'abandoned') {
             // Simulate sending abandoned cart email
             await emailService.sendAbandonedCartEmail(email, {

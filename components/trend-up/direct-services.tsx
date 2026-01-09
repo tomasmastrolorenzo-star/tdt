@@ -38,7 +38,7 @@ export default function DirectServices() {
                                         <Instagram className="w-6 h-6 text-white group-hover:text-pink-300 transition-colors group-hover:drop-shadow-[0_0_8px_rgba(244,114,182,0.8)]" />
                                     </div>
                                     <div>
-                                        <span className="block text-white font-bold text-lg leading-tight">{t.services?.instagram?.followers}</span>
+                                        <span className="block text-white font-bold text-lg leading-tight">{(t as any).services?.instagram?.followers}</span>
                                         <span className="text-slate-400 text-xs font-medium">High Quality Profiles</span>
                                     </div>
                                 </div>
@@ -58,7 +58,7 @@ export default function DirectServices() {
                                     <div className="bg-white/10 p-3 rounded-xl group-hover:bg-white/20 transition-colors">
                                         <Heart className="w-6 h-6 text-white text-white group-hover:text-red-400 fill-transparent group-hover:fill-red-400/50 transition-all group-hover:drop-shadow-[0_0_8px_rgba(248,113,113,0.8)]" />
                                     </div>
-                                    <span className="text-white font-bold text-lg">{t.services?.instagram?.likes}</span>
+                                    <span className="text-white font-bold text-lg">{(t as any).services?.instagram?.likes}</span>
                                 </div>
                                 <ArrowRight className="w-5 h-5 text-slate-400 group-hover:text-white group-hover:translate-x-1 transition-transform duration-300" />
                             </div>
@@ -77,7 +77,7 @@ export default function DirectServices() {
                                         <Eye className="w-6 h-6 text-white group-hover:text-cyan-300 transition-colors group-hover:drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
                                     </div>
                                     <div>
-                                        <span className="block text-white font-bold text-lg leading-tight">{t.services?.tiktok?.views}</span>
+                                        <span className="block text-white font-bold text-lg leading-tight">{(t as any).services?.tiktok?.views}</span>
                                         <span className="text-slate-400 text-xs font-medium">Viral Boost</span>
                                     </div>
                                 </div>
@@ -94,7 +94,7 @@ export default function DirectServices() {
                                     <div className="bg-white/10 p-3 rounded-xl group-hover:bg-white/20 transition-colors">
                                         <Music className="w-6 h-6 text-white group-hover:text-pink-400 transition-colors group-hover:drop-shadow-[0_0_8px_rgba(244,63,94,0.8)]" />
                                     </div>
-                                    <span className="text-white font-bold text-lg">{t.services?.tiktok?.followers}</span>
+                                    <span className="text-white font-bold text-lg">{(t as any).services?.tiktok?.followers}</span>
                                 </div>
                                 <ArrowRight className="w-5 h-5 text-slate-400 group-hover:text-white group-hover:translate-x-1 transition-transform duration-300" />
                             </div>
