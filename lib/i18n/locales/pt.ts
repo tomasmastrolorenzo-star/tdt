@@ -22,6 +22,12 @@ export const pt = {
             followers: "Seguidores Entregues",
             support: "Suporte Disponível",
         },
+        statsGrid: {
+            monthlyGrowth: "Aumento mensal de seguidores",
+            hoursSaved: "Horas ahorradas para los clientes",
+            rating: "Basado en opiniones reales",
+            userBase: "Base actual de usuarios",
+        },
     },
     // Platform selector
     platform: {
@@ -59,6 +65,7 @@ export const pt = {
             supportDesc: "Sempre estamos aqui para ajudar",
             secure: "Pagamento seguro",
             secureDesc: "Criptografía de nivel bancário",
+            refund: "Reembolso garantido",
             refundDesc: "Sem perguntas em 30 dias",
         },
     },
@@ -440,6 +447,184 @@ export const pt = {
         title: "Precisa de um impulso rápido? Explore soluções individuais.",
         bestSeller: "Mais Vendido",
         instant: "Início Instantâneo",
+    },
+    // Profile Analyzer (Spanish Fallback)
+    profileAnalyzer: {
+        title: "Dispara tu Crecimiento en",
+        titleHighlight: "Redes Sociales",
+        subtitle: "y vuélvete Viral 🚀",
+        formTitle: "Grow with TDT",
+        formSubtitle: "Ingresa tu usuario de Instagram para comenzar",
+        online: "Online",
+        change: "Cambiar",
+        verified: "Perfil verificado y apto",
+        input: {
+            placeholder: "tuusuariodeinstagram",
+            button: "Continuar →",
+            loading: "Analizando...",
+            analyzing: "Analizando perfil...",
+            error: "Por favor ingresa un nombre de usuario",
+            errorFetch: "No se pudo cargar el perfil. Verifica el nombre de usuario.",
+        },
+        trust: {
+            organic: "Crecimiento Orgánico",
+            safe: "100% Seguro",
+            results: "Resultados en 24-48h",
+        },
+        goals: {
+            title: "¿Qué quieres lograr?",
+            subtitle: "Selecciona un objetivo y te mostraremos el mejor camino",
+            followers: {
+                title: "Ganar Seguidores",
+                desc: "Crece con seguidores reales y comprometidos",
+            },
+            viral: {
+                title: "Volverse Viral",
+                desc: "Aumenta tu alcance y visibilidad exponencialmente",
+            },
+            monetize: {
+                title: "Monetizar",
+                desc: "Monetiza tu contenido y trabaja con marcas",
+            },
+            recommended: "RECOMENDADO",
+            continue: "Continuar al Plan de Crecimiento →",
+        },
+        profile: {
+            analyze: "Analizar Perfil",
+            followers: "seguidores",
+            following: "siguiendo",
+        }
+    },
+    // Consultant (Spanish Fallback)
+    consultant: {
+        badge: "✨ AI Growth Consultant",
+        title: "Diseña tu Estrategia",
+        titleHighlight: "Personalizada",
+        subtitle: "Nuestra IA analiza tu perfil y diseña el plan perfecto para tu crecimiento. Solo selecciona tus preferencias.",
+        step1: {
+            title: "1. ¿Cuál es tu objetivo de alcance?",
+            subtitle: "Selecciona tu plataforma y objetivo para comenzar el análisis.",
+            followers: "Seguidores Objetivo",
+            micro: "Micro Influencer",
+            influencer: "Influencer",
+            continue: "Continuar",
+            loading: {
+                analyzing: "Analizando tendencias de {niche} en {location}...",
+                optimizing: "Optimizando estrategia de crecimiento GPT-4o...",
+            },
+            ranges: {
+                foundation: "Perfecto para construir una base sólida.",
+                authority: "Ideal para acelerar la autoridad de marca.",
+                dominance: "Nivel élite para dominio global del mercado.",
+            },
+        },
+        step2: {
+            title: "2. Define tu Audiencia Ideal",
+            subtitle: "Selecciona las características de tu público objetivo",
+            genderLabel: "Género del Público",
+            locationLabel: "Ubicación del Público",
+            interestLabel: "Nicho / Interés",
+            back: "Atrás",
+            cta: "Ver Opciones",
+        },
+        selectors: {
+            locations: {
+                us: "Estados Unidos",
+                latam: "Latinoamérica",
+                europe: "Europa",
+                asia: "Asia",
+                emirates: "Emiratos Árabes",
+                global: "Global",
+            },
+            interests: {
+                fashion: "Moda",
+                art: "Arte",
+                business: "Negocios",
+                trading: "Trading",
+                fitness: "Fitness",
+                sports: "Deportes",
+                motherhood: "Maternidad",
+                agriculture: "Agricultura",
+                food: "Comida",
+                travel: "Viajes",
+                tech: "Tecnología",
+                lifestyle: "Estilo de Vida",
+            },
+            genders: {
+                any: "Cualquiera",
+                male: "Hombres",
+                female: "Mujeres",
+            }
+        },
+        trust: {
+            encrypted: "Datos Encriptados",
+            noPassword: "Sin Contraseñas",
+            guarantee: "Garantía Total",
+        },
+    },
+    // Social Proof Ticker (Spanish Fallback)
+    socialProofTicker: {
+        analyzed: "analizó su perfil 🔍",
+        requested: "solicitó estrategia 📈",
+        time: {
+            min: "min",
+            hour: "h",
+            ago: "hace",
+        },
+    },
+    subscription_v2: {
+        title: "Tu Estrategia de Crecimiento con IA está lista.",
+        subtitle: "Selecciona tu plan de aceleración mensual. Cancela cuando quieras.",
+        monthly: "Mensual",
+        quarterly: "Trimestral",
+        save20: "Ahorra 20%",
+        tiers: {
+            starter: {
+                name: "INFLUENCER STARTER",
+                price: "97",
+                description: "Perfecto para creadores construyendo su base inicial.",
+                features: [
+                    "🚀 2,500 Seguidores Reales (Crecimiento Mensual)",
+                    "✨ Auto-Likes en todos los nuevos posts",
+                    "👁️ Auto-Views para Reels/TikToks",
+                    "🛡️ Protección de Recarga 30 Días"
+                ],
+                cta: "Comenzar Crecimiento",
+            },
+            pro: {
+                badge: "🔥 MÁS POPULAR",
+                name: "PRO AUTHORITY",
+                price: "249",
+                description: "Velocidad dominante para marcas y marcas personales serias.",
+                features: [
+                    "🚀 10,000 Seguidores Reales (Crecimiento Mensual)",
+                    "🔥 Impulso VIP de Likes (Mayor retención)",
+                    "⚡ Vistas de Velocidad Viral",
+                    "💎 Soporte Prioritario WhatsApp",
+                    "🔒 No Requiere Contraseña"
+                ],
+                anchor: "Equivalente a una Agencia de $2,000/mes.",
+                cta: "Activar Plan Pro",
+            },
+            celebrity: {
+                name: "CELEBRITY STATUS",
+                price: "497",
+                description: "Máxima exposición y gestión dedicada.",
+                features: [
+                    "🚀 25,000+ Seguidores Reales (Crecimiento Agresivo)",
+                    "🤖 Estrategia de Comentarios con IA",
+                    "🌟 Acceso a Red de Power-Likes",
+                    "👨‍💼 Account Manager Dedicado",
+                    "📈 Reporte Mensual de Rendimiento"
+                ],
+                cta: "Aplicar Estatus Socio",
+            }
+        },
+        guarantee: {
+            secure: "Pago Seguro SSL",
+            moneyBack: "Garantía de Reembolso 14 Días",
+            cancel: "Cancela Cuando Quieras"
+        }
     },
     footer_v2: {
         tagline: "Impulsione sua presença digital",

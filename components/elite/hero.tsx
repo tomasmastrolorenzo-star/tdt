@@ -29,7 +29,7 @@ export default function Hero() {
             >
                 <img src="/assets/tdt-logo-gold.png" alt="Trend Digital Trade" className="h-10 md:h-14 object-contain drop-shadow-[0_0_15px_rgba(197,160,89,0.3)]" />
                 <span className="text-[9px] md:text-[10px] font-mono text-[#C5A059] tracking-[0.3em] uppercase opacity-80">
-                    Elite Authority Protocol
+                    ARTIFICIAL INTELLIGENCE ENGINE
                 </span>
             </motion.header>
 
@@ -51,29 +51,29 @@ export default function Hero() {
                     <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/5 bg-white/5 backdrop-blur-sm">
                         <ShieldCheck className="w-3 h-3 text-[#C5A059]" />
                         <span className="text-[9px] font-mono text-white/50 tracking-widest uppercase">
-                            System v4.0 Online
+                            AI Neural Core v4.0 Online
                         </span>
                     </div>
                 </motion.div>
 
                 {/* Headline: Elegant Serif */}
                 <div className="space-y-6">
-                    <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif font-medium tracking-tight leading-[1.0] max-w-5xl mx-auto">
+                    <h1 className="text-4xl md:text-6xl lg:text-7xl font-serif font-medium tracking-tight leading-[1.1] max-w-5xl mx-auto">
                         <motion.span
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 1, delay: 0.2 }}
                             className="block text-white"
                         >
-                            Ingeniería de
+                            Vence al Algoritmo con
                         </motion.span>
                         <motion.span
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 1, delay: 0.4 }}
-                            className="block text-transparent bg-clip-text bg-gradient-to-r from-[#C5A059] via-[#E5D57B] to-[#C5A059] drop-shadow-[0_0_30px_rgba(197,160,89,0.2)]"
+                            className="block text-transparent bg-clip-text bg-gradient-to-r from-[#C5A059] via-[#E5D57B] to-[#C5A059] drop-shadow-[0_0_30px_rgba(197,160,89,0.2)] py-2"
                         >
-                            Estatus Digital
+                            Inteligencia Artificial
                         </motion.span>
                     </h1>
 
@@ -81,9 +81,9 @@ export default function Hero() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ duration: 1, delay: 0.6 }}
-                        className="text-sm md:text-base font-sans font-light text-white/60 max-w-2xl mx-auto leading-relaxed tracking-wide"
+                        className="text-sm md:text-base font-sans font-light text-white/80 max-w-2xl mx-auto leading-relaxed tracking-wide"
                     >
-                        Transformamos perfiles pasivos en activos de autoridad global. Sin contraseñas. Sin bots. Solo posicionamiento algorítmico de élite.
+                        Sin bots. Sin cuentas falsas. Solo crecimiento orgánico segmentado por género y ubicación en tiempo récord mediante <b>tecnología forense avanzada.</b>
                     </motion.p>
                 </div>
 
@@ -100,7 +100,7 @@ export default function Hero() {
                     >
                         <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out" />
                         <span className="relative z-10 flex items-center justify-center gap-3">
-                            INICIAR Auditoría Gratuita
+                            INICIAR ANÁLISIS DE IA
                             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                         </span>
                     </button>

@@ -65,6 +65,7 @@ export const es = {
             supportDesc: "Siempre estamos para ayudarte",
             secure: "Pago seguro",
             secureDesc: "Encriptación de nivel bancario",
+            refund: "Reembolso garantizado",
             refundDesc: "Sin preguntas en 30 días",
         },
     },
