@@ -38,7 +38,7 @@ export default function Hero() {
 
             {/* 1. HEADER: Minimal, Logo Only */}
             <header className="w-full py-6 px-6 md:px-12 flex items-center justify-start z-50 absolute top-0 left-0 bg-transparent">
-                <img src="/assets/tdt-logo-gold.png" alt="Trend Digital Trade" className="h-8 md:h-10 object-contain drop-shadow-[0_0_10px_rgba(197,160,89,0.2)]" />
+                <img src="/assets/tdt-logo-gold.png" alt="Trend Digital Trade" className="h-10 md:h-14 object-contain drop-shadow-[0_0_10px_rgba(197,160,89,0.2)]" />
             </header>
 
             {/* Actual implementation using Grid for precise placement */}
