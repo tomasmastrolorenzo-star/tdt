@@ -26,7 +26,7 @@ export default function LanguageSelector() {
           onClick={() => {
             setIsLangOpen(!isLangOpen)
           }}
-          className="flex items-center gap-2 bg-slate-900/80 backdrop-blur-lg border border-slate-700 rounded-full px-3 py-2 text-white hover:bg-slate-800 transition-all duration-300 shadow-lg"
+          className="flex items-center gap-2 bg-black/40 backdrop-blur-md border border-white/10 hover:border-[#C5A059]/50 rounded-full px-4 py-2 text-white/80 hover:text-[#C5A059] transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.5)]"
         >
           <span className="text-xl">{currentLang?.flag}</span>
           <span className="text-sm hidden sm:inline">{currentLang?.name}</span>
@@ -34,7 +34,7 @@ export default function LanguageSelector() {
         </button>
 
         {isLangOpen && (
-          <div className="absolute bottom-full mb-2 md:bottom-auto md:top-full md:mt-2 left-0 md:left-auto md:right-0 bg-slate-900/95 backdrop-blur-lg border border-slate-700 rounded-xl overflow-hidden shadow-xl min-w-[150px]">
+          <div className="absolute bottom-full mb-2 md:bottom-auto md:top-full md:mt-2 left-0 md:left-auto md:right-0 bg-[#0A0A0A] backdrop-blur-xl border border-white/10 rounded-xl overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.8)] min-w-[150px]">
             {languages.map((lang) => (
               <button
                 key={lang.code}
@@ -43,8 +43,8 @@ export default function LanguageSelector() {
                   setIsLangOpen(false)
                 }}
                 className={cn(
-                  "w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-slate-800 transition-colors",
-                  language === lang.code ? "bg-pink-500/20 text-pink-400" : "text-white",
+                  "w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-white/5 transition-colors font-mono text-xs uppercase tracking-wider",
+                  language === lang.code ? "text-[#C5A059] bg-[#C5A059]/10" : "text-white/60",
                 )}
               >
                 <span className="text-xl">{lang.flag}</span>
