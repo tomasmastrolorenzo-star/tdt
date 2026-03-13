@@ -25,7 +25,7 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // Protected routes: require authenticated session
-  const protectedPaths = ["/office", "/gate", "/admin", "/dashboard"]
+  const protectedPaths = ["/office", "/gate", "/admin", "/dashboard", "/pending"]
   const isProtected = protectedPaths.some((p) => pathname.startsWith(p))
 
   if (isProtected && !user) {
@@ -34,26 +34,72 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl)
   }
 
-  // Admin-only routes
-  if (pathname.startsWith("/admin") && user) {
+  if (user && isProtected) {
+    // Determine exact state against database
     const { data: profile } = await supabase
       .from("users")
-      .select("community_role, role")
+      .select("community_role, role, bingx_uid, bingx_verified")
       .eq("id", user.id)
       .single()
 
-    if (profile?.community_role !== "admin" && profile?.role !== "CEO") {
+    const isAdmin = profile?.community_role === "admin" || profile?.role === "CEO"
+    const hasUid = !!profile?.bingx_uid
+    const isVerified = !!profile?.bingx_verified
+
+    // Admin role check for /admin path
+    if (pathname.startsWith("/admin") && !isAdmin) {
       const officeUrl = request.nextUrl.clone()
       officeUrl.pathname = "/office"
       return NextResponse.redirect(officeUrl)
     }
+
+    // Role-based path enforcement for NON-admins
+    if (!isAdmin) {
+      // 1. Trying to access /office without verification
+      if (pathname.startsWith("/office") && !isVerified) {
+        const redirectUrl = request.nextUrl.clone()
+        redirectUrl.pathname = hasUid ? "/pending" : "/gate"
+        return NextResponse.redirect(redirectUrl)
+      }
+
+      // 2. Trying to access /gate when already submitted
+      if (pathname.startsWith("/gate") && hasUid) {
+        const redirectUrl = request.nextUrl.clone()
+        redirectUrl.pathname = isVerified ? "/office" : "/pending"
+        return NextResponse.redirect(redirectUrl)
+      }
+
+      // 3. Trying to access /pending when fully verified or missing UID
+      if (pathname.startsWith("/pending")) {
+        if (isVerified) {
+          const redirectUrl = request.nextUrl.clone()
+          redirectUrl.pathname = "/office"
+          return NextResponse.redirect(redirectUrl)
+        }
+        if (!hasUid) {
+          const redirectUrl = request.nextUrl.clone()
+          redirectUrl.pathname = "/gate"
+          return NextResponse.redirect(redirectUrl)
+        }
+      }
+    }
   }
 
-  // Redirect authenticated users away from login/register
+  // Redirect authenticated users away from auth pages
   if ((pathname === "/login" || pathname === "/register") && user) {
-    const officeUrl = request.nextUrl.clone()
-    officeUrl.pathname = "/office"
-    return NextResponse.redirect(officeUrl)
+    const { data: profile } = await supabase
+      .from("users")
+      .select("community_role, role, bingx_uid, bingx_verified")
+      .eq("id", user.id)
+      .single()
+
+    let dest = "/office"
+    if (profile?.community_role === "admin" || profile?.role === "CEO") dest = "/admin"
+    else if (!profile?.bingx_verified) dest = profile?.bingx_uid ? "/pending" : "/gate"
+    
+    const redirectUrl = request.nextUrl.clone()
+    redirectUrl.pathname = dest
+    return NextResponse.redirect(redirectUrl)
   }
 
   return supabaseResponse

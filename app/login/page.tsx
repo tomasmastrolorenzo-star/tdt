@@ -26,17 +26,32 @@ export default function LoginPage() {
 
     try {
       const supabase = createClient()
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data: authData, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       })
 
-      if (error) {
-        setError(error.message)
+      if (error || !authData.user) {
+        setError(error?.message || "Error al iniciar sesión")
         return
       }
 
-      router.push("/office")
+      const { data: profile } = await supabase
+        .from("users")
+        .select("community_role, role, bingx_uid, bingx_verified")
+        .eq("id", authData.user.id)
+        .single()
+
+      if (profile?.community_role === "admin" || profile?.role === "CEO") {
+        router.push("/admin")
+      } else if (profile?.bingx_verified) {
+        router.push("/office")
+      } else if (!profile?.bingx_uid) {
+        router.push("/gate")
+      } else {
+        router.push("/pending")
+      }
+      
       router.refresh()
     } catch {
       setError("Error al iniciar sesión")
