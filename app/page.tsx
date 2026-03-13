@@ -33,19 +33,19 @@ export default function LandingPage() {
           </p>
           <h1 className="text-5xl md:text-7xl font-black tracking-tighter leading-none mb-8 text-white">
             Vive donde quieras.<br />
-            <span className="text-zinc-500">Opera cuando quieras.</span>
+            <span className="text-zinc-500">Opera con criterio.</span>
           </h1>
           <p className="text-lg md:text-xl text-zinc-400 max-w-2xl mx-auto leading-relaxed mb-12">
-            Una comunidad privada de traders que combinan libertad geográfica, análisis institucional
+            Una comunidad privada de operadores que combinan libertad geográfica, análisis real
             y mentalidad de largo plazo. Sin ruido. Sin promesas vacías.
           </p>
           <a
             href="/register"
             className="inline-block bg-white text-black text-sm font-black tracking-widest uppercase px-10 py-4 hover:bg-zinc-200 transition-colors"
           >
-            Unirse a la Manada
+            SOLICITAR ACCESO
           </a>
-          <p className="mt-4 text-xs text-zinc-600">Acceso limitado · Solo por invitación</p>
+          <p className="mt-4 text-xs text-zinc-600 font-medium">El Gate validará tu acceso al sistema.</p>
         </div>
       </section>
 
@@ -58,23 +58,23 @@ export default function LandingPage() {
                 El Movimiento
               </p>
               <h2 className="text-4xl md:text-5xl font-black tracking-tighter leading-tight mb-6 text-white">
-                El mercado no espera. Nosotros tampoco.
+                TDT nace de una idea simple.
               </h2>
               <p className="text-zinc-400 leading-relaxed mb-4">
-                TDT nació de una convicción simple: los traders que operan con disciplina institucional,
-                rodeados de la tribu correcta, tienen una ventaja estructural sobre el mercado.
+                Los operadores que combinan criterio, disciplina y la comunidad correcta
+                tienen una ventaja estructural en el mercado.
               </p>
               <p className="text-zinc-400 leading-relaxed">
-                No somos un grupo de señales aleatorias. Somos un sistema: análisis de mercado,
-                gestión de riesgo probada y una comunidad que se exige mutuamente.
+                No somos un canal de señales.<br />
+                Somos un sistema.
               </p>
             </div>
             <div className="grid grid-cols-2 gap-4">
               {[
                 { num: "100%", label: "Digital & Remoto" },
                 { num: "24/7", label: "Mercados activos" },
-                { num: "BingX", label: "Exchange oficial" },
-                { num: "∞", label: "Sin límite geográfico" },
+                { num: "Pro", label: "Infraestructura de mercado" },
+                { num: "Global", label: "Sin límite geográfico" },
               ].map((item) => (
                 <div key={item.label} className="border border-zinc-800 bg-zinc-950/50 p-6">
                   <div className="text-3xl font-black tracking-tighter mb-1 text-white">{item.num}</div>
@@ -97,18 +97,18 @@ export default function LandingPage() {
             {[
               {
                 icon: "📡",
-                title: "Señales & Análisis",
-                desc: "Canal privado de Telegram con alertas en tiempo real. Niveles institucionales, zonas de demanda y contexto de mercado antes de que el retail lo vea.",
+                title: "Operaciones",
+                desc: "Canal privado donde se comparten oportunidades estructuradas y contexto de mercado.",
               },
               {
                 icon: "🐺",
                 title: "La Manada",
-                desc: "Grupo privado de la comunidad. Traders activos, accountability diario y un espacio donde el nivel de conversación está por encima de la media.",
+                desc: "Comunidad privada donde operadores comparten proceso, disciplina y evolución.",
               },
               {
                 icon: "📚",
                 title: "Academia TDT",
-                desc: "Guías descargables: desde crear tu cuenta en BingX hasta construir tu marca personal como trader. Todo lo que necesitas para comenzar bien.",
+                desc: "Guías prácticas para dominar desde configuración hasta mentalidad operativa.",
               },
             ].map((mod) => (
               <div key={mod.title} className="bg-black border border-zinc-800 p-8 hover:border-zinc-600 transition-colors">
@@ -130,14 +130,18 @@ export default function LandingPage() {
                 El Fundador
               </p>
               <h2 className="text-4xl font-black tracking-tighter mb-6 text-white">
-                Transparencia total. Resultados reales.
+                Transparencia total. Proceso real.
               </h2>
               <p className="text-zinc-400 leading-relaxed mb-4">
-                TDT no es un proyecto anónimo. Hay una persona detrás, con nombre, cara y reputación
-                en juego. La transparencia del fundador es la primera garantía de la comunidad.
+                Trend Digital Trade no es un proyecto anónimo.
+                Hay una persona detrás con nombre, reputación y operativa real.
               </p>
-              <p className="text-zinc-400 leading-relaxed mb-8">
-                Trader activo. Nómada digital. Construyendo este movimiento desde adentro.
+              <p className="text-zinc-400 leading-relaxed mb-2">
+                El fundador es trader activo y nómada digital por elección, no por moda.
+                Este movimiento nace desde la práctica diaria del mercado, no desde teoría.
+              </p>
+              <p className="text-zinc-200 font-semibold mb-8">
+                Aquí no se prometen resultados. Se comparte proceso.
               </p>
               <div className="flex gap-4">
                 <a
@@ -173,18 +177,19 @@ export default function LandingPage() {
         <div className="max-w-2xl mx-auto">
           <p className="text-xs font-black tracking-[0.3em] text-zinc-500 uppercase mb-6">Acceso Limitado</p>
           <h2 className="text-5xl md:text-6xl font-black tracking-tighter mb-8 text-white">
-            ¿Estás listo para operar con propósito?
+            El mercado no necesita más espectadores.
+            <span className="block text-zinc-500 mt-2">Necesita operadores.</span>
           </h2>
           <p className="text-zinc-400 mb-12 leading-relaxed">
-            El primer paso es registrarte y conectar tu cuenta de BingX.
-            Desde ahí, la manada te guía.
+            Si buscas atajos, este no es tu lugar. Si buscas estructura, criterio y comunidad, puedes solicitar acceso.
           </p>
           <a
             href="/register"
             className="inline-block bg-white text-black text-sm font-black tracking-widest uppercase px-10 py-4 hover:bg-zinc-200 transition-colors"
           >
-            Unirse a la Manada →
+            SOLICITAR ACCESO AL GATE
           </a>
+          <p className="mt-4 text-xs text-zinc-600 font-medium">El acceso a la comunidad se abre en ciclos limitados.</p>
         </div>
       </section>
 
