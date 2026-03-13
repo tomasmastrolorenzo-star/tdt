@@ -4,6 +4,7 @@ import { LogOut, User } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
 import { useState } from "react"
+import { Logo } from "@/components/ui/logo"
 
 interface OfficeHeaderProps {
     userName: string
@@ -26,6 +27,7 @@ export function OfficeHeader({ userName, userEmail }: OfficeHeaderProps) {
         <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-zinc-100">
             <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
                 <div className="flex items-center gap-4">
+                    <Logo className="w-6 h-6 text-black" />
                     <span className="text-xl font-black tracking-tighter">TDT</span>
                     <span className="hidden md:block text-xs font-bold text-zinc-300">|</span>
                     <span className="hidden md:block text-xs font-black tracking-widest uppercase text-zinc-400">

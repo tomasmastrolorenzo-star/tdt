@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { Logo } from "@/components/ui/logo"
 
 export const metadata: Metadata = {
   title: "Trend Digital Trade — Vive donde quieras. Opera cuando quieras.",
@@ -11,7 +12,10 @@ export default function LandingPage() {
       {/* ── HEADER ── */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-sm border-b border-zinc-900">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <span className="text-xl font-black tracking-tighter text-white">TDT</span>
+          <div className="flex items-center gap-3">
+            <Logo className="w-8 h-8 text-white" />
+            <span className="text-xl font-black tracking-tighter text-white">TDT</span>
+          </div>
           <a
             href="/login"
             className="text-sm font-semibold text-zinc-400 hover:text-white transition-colors"
@@ -154,9 +158,9 @@ export default function LandingPage() {
                 </a>
               </div>
             </div>
-            <div className="order-1 md:order-2 bg-zinc-950 border border-zinc-900 aspect-square flex items-center justify-center">
-              <div className="text-center">
-                <div className="text-7xl font-black tracking-tighter text-zinc-800 mb-2">TDT</div>
+            <div className="order-1 md:order-2 bg-zinc-950 border border-zinc-900 aspect-square flex items-center justify-center p-12">
+              <div className="text-center w-full max-w-xs">
+                <Logo className="w-full h-auto text-zinc-800 mb-6 drop-shadow-2xl" />
                 <p className="text-xs text-zinc-600 uppercase tracking-widest font-bold">Trend Digital Trade</p>
               </div>
             </div>

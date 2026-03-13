@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Loader2, CheckCircle } from "lucide-react"
 import Link from "next/link"
+import { Logo } from "@/components/ui/logo"
 
 export default function RegisterPage() {
   const [email, setEmail] = useState("")
@@ -57,8 +58,9 @@ export default function RegisterPage() {
   if (success) {
     return (
       <div className="min-h-screen bg-zinc-50 flex flex-col items-center justify-center p-4 text-black">
-        <Link href="/" className="text-2xl font-black tracking-tighter mb-10 hover:opacity-70 transition-opacity">
-          TDT.
+        <Link href="/" className="flex items-center gap-3 mb-10 hover:opacity-70 transition-opacity">
+          <Logo className="w-8 h-8 text-black" />
+          <span className="text-2xl font-black tracking-tighter">TDT</span>
         </Link>
         <div className="w-full max-w-sm bg-white border border-zinc-200 p-8 text-center space-y-6">
           <CheckCircle className="w-16 h-16 text-black mx-auto" />
@@ -78,8 +80,9 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen bg-zinc-50 flex flex-col items-center justify-center p-4 text-black">
-      <Link href="/" className="text-2xl font-black tracking-tighter mb-10 hover:opacity-70 transition-opacity">
-        TDT.
+      <Link href="/" className="flex items-center gap-3 mb-10 hover:opacity-70 transition-opacity">
+        <Logo className="w-8 h-8 text-black" />
+        <span className="text-2xl font-black tracking-tighter">TDT</span>
       </Link>
       
       <div className="w-full max-w-sm bg-white border border-zinc-200 p-8">
