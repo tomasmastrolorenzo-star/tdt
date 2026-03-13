@@ -1,5 +1,6 @@
 export type UserRole = "CEO" | "OPERATOR" | "VENDOR"
-export type OrderStatus = "PENDING_PAYMENT" | "PAYMENT_REJECTED" | "PAYMENT_CONFIRMED" | "PROCESSING" | "COMPLETED"
+export type CommunityRole = "admin" | "member"
+export type AcademyCategory = "novatos" | "estrategia" | "marca_personal"
 
 export interface Level {
   id: string
@@ -14,9 +15,13 @@ export interface User {
   email: string
   name: string | null
   role: UserRole
+  community_role: CommunityRole
   level_id: string | null
   nda_signed: boolean
   nda_signed_at: string | null
+  telegram_username: string | null
+  bingx_uid: string | null
+  bingx_verified: boolean
   created_at: string
   updated_at: string
   levels?: Level
@@ -30,48 +35,29 @@ export interface Wallet {
   updated_at: string
 }
 
-export interface Service {
+export interface AcademyResource {
   id: string
-  name: string
+  title: string
   description: string | null
-  base_price: number
-  is_active: boolean
-  created_at: string
-}
-
-export interface Order {
-  id: string
-  seller_id: string
-  service_id: string
-  client_name: string
-  client_email: string | null
-  link: string | null
-  price_final: number
-  seller_commission: number
-  margin_trenzo: number
-  status: OrderStatus
-  notes: string | null
-  jap_order_id: number | null
+  category: AcademyCategory
+  file_url: string
+  thumbnail_url: string | null
+  order_index: number
+  is_published: boolean
   created_at: string
   updated_at: string
-  services?: Service
-  users?: User
 }
 
-// Additional types for compatibility
 export interface Profile {
   id: string
   email: string
   full_name: string | null
   role: string
+  community_role: CommunityRole
+  telegram_username: string | null
+  bingx_uid: string | null
+  bingx_verified: boolean
   created_at: string
-}
-
-export interface Credit {
-  id: string
-  user_id: string
-  balance: number
-  updated_at: string
 }
 
 export interface Transaction {
@@ -92,35 +78,10 @@ export interface Database {
         Insert: Omit<User, "id" | "created_at" | "updated_at">
         Update: Partial<Omit<User, "id" | "created_at">>
       }
-      levels: {
-        Row: Level
-        Insert: Omit<Level, "id" | "created_at">
-        Update: Partial<Omit<Level, "id" | "created_at">>
-      }
-      wallets: {
-        Row: Wallet
-        Insert: Omit<Wallet, "id" | "created_at" | "updated_at">
-        Update: Partial<Omit<Wallet, "id" | "created_at">>
-      }
-      services: {
-        Row: Service
-        Insert: Omit<Service, "id" | "created_at">
-        Update: Partial<Omit<Service, "id" | "created_at">>
-      }
-      orders: {
-        Row: Order
-        Insert: Omit<Order, "id" | "created_at" | "updated_at">
-        Update: Partial<Omit<Order, "id" | "created_at">>
-      }
-      profiles: {
-        Row: Profile
-        Insert: Omit<Profile, "id" | "created_at">
-        Update: Partial<Omit<Profile, "id" | "created_at">>
-      }
-      credits: {
-        Row: Credit
-        Insert: Omit<Credit, "id" | "updated_at">
-        Update: Partial<Omit<Credit, "id">>
+      academy_resources: {
+        Row: AcademyResource
+        Insert: Omit<AcademyResource, "id" | "created_at" | "updated_at">
+        Update: Partial<Omit<AcademyResource, "id" | "created_at">>
       }
       transactions: {
         Row: Transaction
