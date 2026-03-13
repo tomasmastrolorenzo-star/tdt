@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
 import { Loader2 } from "lucide-react"
+import { Logo } from "@/components/ui/logo"
 
 export default function GatePage() {
     const router = useRouter()
@@ -52,7 +53,8 @@ export default function GatePage() {
         <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center px-6">
             <div className="w-full max-w-md">
                 {/* Logo */}
-                <div className="text-center mb-12">
+                <div className="text-center flex flex-col items-center justify-center mb-12">
+                    <Logo className="w-16 h-16 text-white mb-4" />
                     <h1 className="text-5xl font-black tracking-tighter mb-2">TDT</h1>
                     <p className="text-xs font-black tracking-[0.3em] text-zinc-500 uppercase">
                         Trend Digital Trade
