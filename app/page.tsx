@@ -1,210 +1,230 @@
-import type { Metadata } from "next"
-import { Logo } from "@/components/ui/logo"
+"use client";
 
-export const metadata: Metadata = {
-  title: "Trend Digital Trade — Vive donde quieras. Opera cuando quieras.",
-  description: "TDT es una comunidad de traders y nómadas digitales. Señales en vivo, educación y una tribu que opera desde cualquier lugar del mundo.",
-}
+import { useState } from "react";
+import { Instagram, MessageCircle, ArrowRight, TrendingUp, Users, Target, CheckCircle2 } from "lucide-react";
+import { toast } from "sonner"; 
 
-export default function LandingPage() {
+const IG_LINK = "https://www.instagram.com/trendigitaltrade/";
+const WA_LINK = "https://wa.me/message/LAOREV7O4KONP1";
+
+export default function LandingMVP() {
+  const [username, setUsername] = useState("");
+  const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!username) return;
+    setStatus("loading");
+    
+    try {
+      const res = await fetch("/api/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, source: "landing_mvp" }),
+      });
+      
+      if (!res.ok) throw new Error("Failed to submit");
+      
+      setStatus("success");
+      setUsername("");
+      toast.success("Profile submitted successfully! We'll be in touch.");
+    } catch (err) {
+      setStatus("idle");
+      toast.error("Something went wrong. Please try again or message us directly.");
+    }
+  };
+
   return (
-    <main className="min-h-screen bg-black text-white font-sans">
+    <main className="min-h-screen bg-black text-white font-sans selection:bg-zinc-800">
       {/* ── HEADER ── */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-sm border-b border-zinc-900">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Logo className="w-8 h-8 text-white" />
-            <span className="text-xl font-black tracking-tighter text-white">TDT</span>
+      <header className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-md border-b border-zinc-900">
+        <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+          <span className="text-xl font-black tracking-tighter text-white">TDT</span>
+          <div className="flex items-center gap-4">
+            <a href={IG_LINK} target="_blank" rel="noopener noreferrer" className="text-zinc-400 hover:text-white transition-colors">
+              <Instagram className="w-5 h-5" />
+            </a>
           </div>
-          <a
-            href="/login"
-            className="text-sm font-semibold text-zinc-400 hover:text-white transition-colors"
-          >
-            Acceder →
-          </a>
         </div>
       </header>
 
       {/* ── HERO ── */}
-      <section className="pt-32 pb-24 px-6 border-b border-zinc-900">
-        <div className="max-w-4xl mx-auto text-center">
-          <p className="text-xs font-black tracking-[0.3em] text-zinc-500 uppercase mb-6">
-            Trend Digital Trade
-          </p>
-          <h1 className="text-5xl md:text-7xl font-black tracking-tighter leading-none mb-8 text-white">
-            Vive donde quieras.<br />
-            <span className="text-zinc-500">Opera con criterio.</span>
+      <section className="pt-32 pb-20 px-6">
+        <div className="max-w-3xl mx-auto text-center">
+          <h1 className="text-5xl md:text-6xl font-black tracking-tighter leading-tight mb-6 text-white">
+            We help you grow your audience and boost your engagement.
           </h1>
-          <p className="text-lg md:text-xl text-zinc-400 max-w-2xl mx-auto leading-relaxed mb-12">
-            Una comunidad privada de operadores que combinan libertad geográfica, análisis real
-            y mentalidad de largo plazo. Sin ruido. Sin promesas vacías.
+          <p className="text-lg md:text-xl text-zinc-400 mb-10 max-w-2xl mx-auto">
+            Build a stronger profile, attract more opportunities and stand out.
           </p>
-          <a
-            href="/register"
-            className="inline-block bg-white text-black text-sm font-black tracking-widest uppercase px-10 py-4 hover:bg-zinc-200 transition-colors"
-          >
-            SOLICITAR ACCESO
-          </a>
-          <p className="mt-4 text-xs text-zinc-600 font-medium">El Gate validará tu acceso al sistema.</p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <a 
+              href={IG_LINK} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-white text-black px-8 py-4 rounded-full font-bold hover:bg-zinc-200 transition-colors"
+            >
+              <Instagram className="w-5 h-5" />
+              Message us on Instagram
+            </a>
+            <a 
+              href={WA_LINK} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-zinc-900 text-white px-8 py-4 rounded-full font-bold hover:bg-zinc-800 transition-colors border border-zinc-800"
+            >
+              <MessageCircle className="w-5 h-5" />
+              Chat on WhatsApp
+            </a>
+          </div>
         </div>
       </section>
 
-      {/* ── EL MOVIMIENTO ── */}
-      <section className="py-24 px-6 border-b border-zinc-900">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-16 items-center">
-            <div>
-              <p className="text-xs font-black tracking-[0.3em] text-zinc-500 uppercase mb-4">
-                El Movimiento
-              </p>
-              <h2 className="text-4xl md:text-5xl font-black tracking-tighter leading-tight mb-6 text-white">
-                TDT nace de una idea simple.
-              </h2>
-              <p className="text-zinc-400 leading-relaxed mb-4">
-                Los operadores que combinan criterio, disciplina y la comunidad correcta
-                tienen una ventaja estructural en el mercado.
-              </p>
-              <p className="text-zinc-400 leading-relaxed">
-                No somos un canal de señales.<br />
-                Somos un sistema.
-              </p>
+      {/* ── SOCIAL PROOF ── */}
+      <section className="py-20 px-6 border-y border-zinc-900 bg-zinc-950/50">
+        <div className="max-w-4xl mx-auto text-center">
+          <p className="text-sm font-bold tracking-widest text-zinc-500 uppercase mb-12">Real Results</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="p-6 bg-black border border-zinc-900 rounded-2xl">
+              <p className="text-zinc-500 text-sm font-semibold mb-2">Account Growth</p>
+              <div className="flex items-center justify-center gap-3 text-3xl font-black">
+                <span className="text-zinc-400">12K</span>
+                <ArrowRight className="w-6 h-6 text-zinc-600" />
+                <span className="text-white">105K</span>
+              </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              {[
-                { num: "100%", label: "Digital & Remoto" },
-                { num: "24/7", label: "Mercados activos" },
-                { num: "Pro", label: "Infraestructura de mercado" },
-                { num: "Global", label: "Sin límite geográfico" },
-              ].map((item) => (
-                <div key={item.label} className="border border-zinc-800 bg-zinc-950/50 p-6">
-                  <div className="text-3xl font-black tracking-tighter mb-1 text-white">{item.num}</div>
-                  <div className="text-xs text-zinc-500 font-semibold uppercase tracking-widest">{item.label}</div>
-                </div>
-              ))}
+            <div className="p-6 bg-black border border-zinc-900 rounded-2xl">
+              <p className="text-zinc-500 text-sm font-semibold mb-2">Engagement Rate</p>
+              <div className="flex items-center justify-center gap-3 text-3xl font-black">
+                <span className="text-zinc-400">1.2%</span>
+                <ArrowRight className="w-6 h-6 text-zinc-600" />
+                <span className="text-white">6.8%</span>
+              </div>
+            </div>
+            <div className="p-6 bg-black border border-zinc-900 rounded-2xl">
+              <p className="text-zinc-500 text-sm font-semibold mb-2">Monthly Views</p>
+              <div className="flex items-center justify-center gap-3 text-3xl font-black">
+                <span className="text-zinc-400">50K</span>
+                <ArrowRight className="w-6 h-6 text-zinc-600" />
+                <span className="text-white">2.4M</span>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── QUÉ OBTIENES (3 módulos) ── */}
-      <section className="py-24 px-6 bg-zinc-950 border-b border-zinc-900">
-        <div className="max-w-6xl mx-auto">
+      {/* ── HOW IT WORKS ── */}
+      <section className="py-20 px-6">
+        <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16">
-            <p className="text-xs font-black tracking-[0.3em] text-zinc-500 uppercase mb-4">Tu Acceso</p>
-            <h2 className="text-4xl font-black tracking-tighter text-white">Tres herramientas. Un propósito.</h2>
+            <h2 className="text-3xl md:text-4xl font-black tracking-tighter text-white">How it works</h2>
           </div>
-          <div className="grid md:grid-cols-3 gap-6">
-            {[
-              {
-                icon: "📡",
-                title: "Operaciones",
-                desc: "Canal privado donde se comparten oportunidades estructuradas y contexto de mercado.",
-              },
-              {
-                icon: "🐺",
-                title: "La Manada",
-                desc: "Comunidad privada donde operadores comparten proceso, disciplina y evolución.",
-              },
-              {
-                icon: "📚",
-                title: "Academia TDT",
-                desc: "Guías prácticas para dominar desde configuración hasta mentalidad operativa.",
-              },
-            ].map((mod) => (
-              <div key={mod.title} className="bg-black border border-zinc-800 p-8 hover:border-zinc-600 transition-colors">
-                <div className="text-4xl mb-6">{mod.icon}</div>
-                <h3 className="text-xl font-black tracking-tighter mb-3 text-white">{mod.title}</h3>
-                <p className="text-zinc-400 text-sm leading-relaxed">{mod.desc}</p>
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="w-16 h-16 mx-auto bg-zinc-900 border border-zinc-800 rounded-full flex items-center justify-center mb-6">
+                <span className="text-2xl font-black text-white">1</span>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── CEO / ABOUT ── */}
-      <section className="py-24 px-6 border-b border-zinc-900">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-16 items-center">
-            <div className="order-2 md:order-1">
-              <p className="text-xs font-black tracking-[0.3em] text-zinc-500 uppercase mb-4">
-                El Fundador
-              </p>
-              <h2 className="text-4xl font-black tracking-tighter mb-6 text-white">
-                Transparencia total. Proceso real.
-              </h2>
-              <p className="text-zinc-400 leading-relaxed mb-4">
-                Trend Digital Trade no es un proyecto anónimo.
-                Hay una persona detrás con nombre, reputación y operativa real.
-              </p>
-              <p className="text-zinc-400 leading-relaxed mb-2">
-                El fundador es trader activo y nómada digital por elección, no por moda.
-                Este movimiento nace desde la práctica diaria del mercado, no desde teoría.
-              </p>
-              <p className="text-zinc-200 font-semibold mb-8">
-                Aquí no se prometen resultados. Se comparte proceso.
-              </p>
-              <div className="flex gap-4">
-                <a
-                  href="https://instagram.com/trenddigitaltrade"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm font-black tracking-widest uppercase border border-zinc-800 px-5 py-2 hover:bg-white hover:text-black hover:border-white transition-all text-zinc-300"
-                >
-                  Instagram
-                </a>
-                <a
-                  href="https://t.me/trenddigitaltrade"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm font-black tracking-widest uppercase border border-zinc-800 px-5 py-2 hover:bg-white hover:text-black hover:border-white transition-all text-zinc-300"
-                >
-                  Telegram
-                </a>
-              </div>
+              <h3 className="text-xl font-bold mb-3 text-white">We analyze your profile</h3>
+              <p className="text-zinc-400">Deep dive into your current metrics, content strategy, and target audience.</p>
             </div>
-            <div className="order-1 md:order-2 bg-zinc-950 border border-zinc-900 aspect-square flex items-center justify-center p-12">
-              <div className="text-center w-full max-w-xs">
-                <Logo className="w-full h-auto text-zinc-800 mb-6 drop-shadow-2xl" />
-                <p className="text-xs text-zinc-600 uppercase tracking-widest font-bold">Trend Digital Trade</p>
+            <div className="text-center">
+              <div className="w-16 h-16 mx-auto bg-zinc-900 border border-zinc-800 rounded-full flex items-center justify-center mb-6">
+                <span className="text-2xl font-black text-white">2</span>
               </div>
+              <h3 className="text-xl font-bold mb-3 text-white">We create a strategy</h3>
+              <p className="text-zinc-400">Custom roadmap designed specifically to attract and retain your ideal followers.</p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 mx-auto bg-zinc-900 border border-zinc-800 rounded-full flex items-center justify-center mb-6">
+                <span className="text-2xl font-black text-white">3</span>
+              </div>
+              <h3 className="text-xl font-bold mb-3 text-white">We boost your audience</h3>
+              <p className="text-zinc-400">Execution and optimization to rapidly scale your engagement and reach.</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── CTA FINAL ── */}
-      <section className="py-32 px-6 bg-zinc-950 text-center">
+      {/* ── SERVICES ── */}
+      <section className="py-20 px-6 bg-zinc-950/50 border-y border-zinc-900">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-black tracking-tighter text-white">Services</h2>
+          </div>
+          <div className="max-w-2xl mx-auto space-y-4">
+            <div className="flex items-center gap-4 p-6 bg-black border border-zinc-900 rounded-2xl">
+              <div className="p-3 bg-zinc-900 text-white rounded-xl"><Users className="w-6 h-6" /></div>
+              <span className="text-lg font-bold text-white">Follower growth</span>
+            </div>
+            <div className="flex items-center gap-4 p-6 bg-black border border-zinc-900 rounded-2xl">
+              <div className="p-3 bg-zinc-900 text-white rounded-xl"><TrendingUp className="w-6 h-6" /></div>
+              <span className="text-lg font-bold text-white">Engagement boost</span>
+            </div>
+            <div className="flex items-center gap-4 p-6 bg-black border border-zinc-900 rounded-2xl">
+              <div className="p-3 bg-zinc-900 text-white rounded-xl"><Target className="w-6 h-6" /></div>
+              <span className="text-lg font-bold text-white">Profile positioning</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── FINAL CTA & LEAD CAPTURE ── */}
+      <section className="py-24 px-6 text-center">
         <div className="max-w-2xl mx-auto">
-          <p className="text-xs font-black tracking-[0.3em] text-zinc-500 uppercase mb-6">Acceso Limitado</p>
-          <h2 className="text-5xl md:text-6xl font-black tracking-tighter mb-8 text-white">
-            El mercado no necesita más espectadores.
-            <span className="block text-zinc-500 mt-2">Necesita operadores.</span>
-          </h2>
-          <p className="text-zinc-400 mb-12 leading-relaxed">
-            Si buscas atajos, este no es tu lugar. Si buscas estructura, criterio y comunidad, puedes solicitar acceso.
-          </p>
-          <a
-            href="/register"
-            className="inline-block bg-white text-black text-sm font-black tracking-widest uppercase px-10 py-4 hover:bg-zinc-200 transition-colors"
-          >
-            SOLICITAR ACCESO AL GATE
-          </a>
-          <p className="mt-4 text-xs text-zinc-600 font-medium">El acceso a la comunidad se abre en ciclos limitados.</p>
-        </div>
-      </section>
+          <h2 className="text-4xl md:text-5xl font-black tracking-tighter mb-4 text-white">We can start today.</h2>
+          <p className="text-xl text-zinc-400 mb-10">Message us and we'll analyze your profile.</p>
 
-      {/* ── FOOTER ── */}
-      <footer className="border-t border-zinc-900 bg-black py-8 px-6">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <span className="text-zinc-700 text-xs font-black tracking-widest">
-            © 2026 TREND DIGITAL TRADE
-          </span>
-          <div className="flex gap-6">
-            <a href="/terms" className="text-zinc-600 text-xs hover:text-white transition-colors">Términos</a>
-            <a href="/privacy" className="text-zinc-600 text-xs hover:text-white transition-colors">Privacidad</a>
+          <form onSubmit={handleSubmit} className="max-w-md mx-auto mb-16">
+            <div className="flex flex-col gap-3">
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 font-bold">@</span>
+                <input 
+                  type="text" 
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="Instagram username" 
+                  disabled={status === "loading" || status === "success"}
+                  className="w-full bg-zinc-900 border border-zinc-800 rounded-xl py-4 pl-10 pr-4 text-white placeholder-zinc-500 focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-all"
+                  required
+                />
+              </div>
+              <button 
+                type="submit" 
+                disabled={status === "loading" || status === "success" || !username}
+                className="w-full flex items-center justify-center gap-2 bg-white text-black py-4 rounded-xl font-bold hover:bg-zinc-200 transition-colors disabled:opacity-50"
+              >
+                {status === "loading" ? "Analyzing..." : status === "success" ? <><CheckCircle2 className="w-5 h-5"/> Request Received</> : "Analyze my profile"}
+              </button>
+            </div>
+          </form>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <a 
+              href={IG_LINK} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-zinc-900 text-white px-8 py-4 rounded-full font-bold hover:bg-zinc-800 transition-colors border border-zinc-800"
+            >
+              <Instagram className="w-5 h-5" />
+              Instagram
+            </a>
+            <a 
+              href={WA_LINK} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-zinc-900 text-white px-8 py-4 rounded-full font-bold hover:bg-zinc-800 transition-colors border border-zinc-800"
+            >
+              <MessageCircle className="w-5 h-5" />
+              WhatsApp
+            </a>
           </div>
         </div>
+      </section>
+      
+      {/* ── FOOTER ── */}
+      <footer className="py-8 px-6 border-t border-zinc-900 text-center">
+        <p className="text-zinc-600 text-sm font-bold tracking-widest uppercase">© 2026 Trend Digital Trade</p>
       </footer>
     </main>
-  )
+  );
 }
