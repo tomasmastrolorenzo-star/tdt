@@ -24,11 +24,7 @@ export default async function AdminLeadsPage() {
 
   const { data: leads, error } = await supabase
     .from('leads')
-    .select(`
-      *,
-      interactions (count),
-      events_log (count)
-    `)
+    .select('*')
     .order('created_at', { ascending: false });
 
   if (error) {
