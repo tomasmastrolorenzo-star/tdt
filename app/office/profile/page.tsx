@@ -13,7 +13,7 @@ export default function ProfilePage() {
     const [message, setMessage] = useState("")
     const [userName, setUserName] = useState("")
     const [userEmail, setUserEmail] = useState("")
-    const [form, setForm] = useState({ telegram_username: "", bingx_uid: "", name: "" })
+    const [form, setForm] = useState({ telegram_username: "", name: "" })
 
     useEffect(() => {
         const load = async () => {
@@ -25,7 +25,7 @@ export default function ProfilePage() {
 
             const { data: profile } = await supabase
                 .from("users")
-                .select("name, telegram_username, bingx_uid")
+                .select("name, telegram_username")
                 .eq("id", user.id)
                 .single()
 
@@ -34,7 +34,6 @@ export default function ProfilePage() {
                 setForm({
                     name: profile.name || "",
                     telegram_username: profile.telegram_username || "",
-                    bingx_uid: profile.bingx_uid || "",
                 })
             }
             setLoading(false)
@@ -58,7 +57,6 @@ export default function ProfilePage() {
             .update({
                 name: form.name,
                 telegram_username: cleanTelegram,
-                bingx_uid: form.bingx_uid,
             })
             .eq("id", user.id)
 
@@ -84,7 +82,6 @@ export default function ProfilePage() {
             <OfficeHeader userName={userName} userEmail={userEmail} />
 
             <main className="max-w-2xl mx-auto px-6 pt-28 pb-16">
-                {/* Breadcrumb */}
                 <div className="flex items-center gap-2 text-xs text-zinc-400 font-bold mb-8">
                     <a href="/office" className="hover:text-black transition-colors">La Oficina</a>
                     <span>›</span>
@@ -121,20 +118,6 @@ export default function ProfilePage() {
                             placeholder="@tuusuario"
                             className="w-full border border-zinc-200 px-4 py-3 text-sm focus:outline-none focus:border-black transition-colors"
                         />
-                    </div>
-
-                    <div>
-                        <label className="block text-xs font-black tracking-widest uppercase text-zinc-400 mb-2">
-                            UID de BingX
-                        </label>
-                        <input
-                            type="text"
-                            value={form.bingx_uid}
-                            onChange={(e) => setForm({ ...form, bingx_uid: e.target.value })}
-                            placeholder="Ej: 123456789"
-                            className="w-full border border-zinc-200 px-4 py-3 text-sm focus:outline-none focus:border-black transition-colors"
-                        />
-                        <p className="mt-1 text-xs text-zinc-400">BingX → Perfil → Mi UID</p>
                     </div>
 
                     <div className="flex items-center justify-between pt-2">

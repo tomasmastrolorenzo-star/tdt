@@ -1,138 +1,121 @@
-"use client"
+"use client";
 
-import type React from "react"
-
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { createClient } from "@/lib/supabase/client"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Loader2 } from "lucide-react"
-import Link from "next/link"
-import { Logo } from "@/components/ui/logo"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { createBrowserClient } from "@supabase/ssr";
+import { Loader2 } from "lucide-react";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const router = useRouter()
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  
+  const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setError(null)
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
 
     try {
-      const supabase = createClient()
-      const { data: authData, error } = await supabase.auth.signInWithPassword({
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+      
+      if (!supabaseUrl || !supabaseKey) {
+        throw new Error("Missing secure environment configuration.");
+      }
+
+      // Safe Client-side Supabase SSR init
+      const supabase = createBrowserClient(supabaseUrl, supabaseKey);
+
+      const { data, error: authError } = await supabase.auth.signInWithPassword({
         email,
         password,
-      })
+      });
 
-      if (error || !authData.user) {
-        setError(error?.message || "Error al iniciar sesión")
-        return
+      if (authError) {
+        // Specific user-oriented edge cases
+        if (authError.message.includes("Invalid login credentials")) {
+          throw new Error("Incorrect email or password. Please try again.");
+        }
+        throw new Error(authError.message);
       }
 
-      const { data: profile } = await supabase
-        .from("users")
-        .select("community_role, role, bingx_uid, bingx_verified")
-        .eq("id", authData.user.id)
-        .single()
-
-      if (profile?.community_role === "admin" || profile?.role === "CEO") {
-        router.push("/admin")
-      } else if (profile?.bingx_verified) {
-        router.push("/office")
-      } else if (!profile?.bingx_uid) {
-        router.push("/gate")
-      } else {
-        router.push("/pending")
+      if (data.session) {
+        // Essential to refresh router cache after obtaining the session properly
+        router.refresh();
+        router.push("/office");
       }
-      
-      router.refresh()
-    } catch {
-      setError("Error al iniciar sesión")
+
+    } catch (err: any) {
+      setError(err.message || "An unexpected system error occurred.");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
-    <div className="min-h-screen bg-zinc-50 flex flex-col items-center justify-center p-4 text-black">
-      <Link href="/" className="flex items-center gap-3 mb-10 hover:opacity-70 transition-opacity">
-        <Logo className="w-8 h-8 text-black" />
-        <span className="text-2xl font-black tracking-tighter">TDT</span>
-      </Link>
-      
-      <div className="w-full max-w-sm bg-white border border-zinc-200 p-8">
-        <div className="text-center mb-8">
-          <p className="text-xs font-black tracking-[0.3em] text-zinc-400 uppercase mb-2">Acceso a la Manada</p>
-          <h1 className="text-3xl font-black tracking-tighter mb-2">Bienvenido</h1>
-          <p className="text-zinc-500 text-sm">Ingresa tus credenciales para continuar.</p>
+    <main className="min-h-screen flex items-center justify-center bg-black text-white font-sans selection:bg-zinc-800 p-6">
+      <div className="w-full max-w-md bg-zinc-950 border border-zinc-900 rounded-2xl p-8">
+        <div className="text-center mb-10">
+          <h1 className="text-3xl font-black tracking-tighter mb-2">TDT Access</h1>
+          <p className="text-zinc-500 text-sm font-bold uppercase tracking-widest">Internal Control System</p>
         </div>
-        
-        <form onSubmit={handleLogin} className="space-y-6">
-          {error && (
-            <div className="p-3 border border-red-200 bg-red-50 text-red-600 text-xs font-semibold text-center">
-              {error}
-            </div>
-          )}
-          
-          <div className="space-y-2">
-            <Label htmlFor="email" className="text-xs font-black tracking-widest text-zinc-400 uppercase">
-              Email
-            </Label>
-            <Input
-              id="email"
+
+        <form onSubmit={handleLogin} className="space-y-5">
+          <div>
+            <label className="block text-xs font-bold text-zinc-400 uppercase tracking-widest mb-2">
+              Email Address
+            </label>
+            <input
               type="email"
-              placeholder="tu@email.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              disabled={loading}
               required
-              className="bg-white border-zinc-200 rounded-none focus:border-black transition-colors"
+              className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-4 text-white focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-all disabled:opacity-50"
+              placeholder="operator@trendigitaltrade.com"
             />
           </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="password" className="text-xs font-black tracking-widest text-zinc-400 uppercase">
-              Contraseña
-            </Label>
-            <Input
-              id="password"
+
+          <div>
+            <label className="block text-xs font-bold text-zinc-400 uppercase tracking-widest mb-2">
+              Password
+            </label>
+            <input
               type="password"
-              placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              disabled={loading}
               required
-              className="bg-white border-zinc-200 rounded-none focus:border-black transition-colors"
+              className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-4 text-white focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-all disabled:opacity-50"
+              placeholder="••••••••"
             />
           </div>
-          
-          <Button 
-            type="submit" 
-            className="w-full bg-black text-white hover:bg-zinc-800 rounded-none text-xs font-black tracking-widest uppercase py-6"
-            disabled={loading}
+
+          {error && (
+            <div className="p-4 bg-red-950/50 border border-red-900 rounded-xl">
+              <p className="text-sm font-semibold text-red-500 text-center">{error}</p>
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={loading || !email || !password}
+            className="w-full flex items-center justify-center gap-2 bg-white text-black font-black py-4 rounded-xl hover:bg-zinc-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-4"
           >
             {loading ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <>
+                <Loader2 className="w-5 h-5 animate-spin" />
+                Validating...
+              </>
             ) : (
-              "Ingresar a la Oficina"
+              "Secure Login"
             )}
-          </Button>
+          </button>
         </form>
-
-        <div className="mt-8 text-center">
-          <p className="text-xs text-zinc-500">
-            ¿No tienes cuenta? {" "}
-            <Link href="/register" className="font-bold text-black hover:underline">
-              Únete aquí
-            </Link>
-          </p>
-        </div>
       </div>
-    </div>
-  )
+    </main>
+  );
 }

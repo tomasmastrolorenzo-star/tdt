@@ -3,19 +3,18 @@ import { createClient } from "@/lib/supabase/server"
 import { OfficeHeader } from "@/components/office/office-header"
 import { AcademyCard } from "@/components/office/academy-card"
 import type { Metadata } from "next"
-import type { AcademyCategory } from "@/lib/supabase/types"
 
 export const metadata: Metadata = {
     title: "Academia TDT — Recursos y Guías",
 }
 
-const CATEGORY_ORDER: AcademyCategory[] = ["novatos", "estrategia", "marca_personal"]
+const CATEGORY_ORDER = ["novatos", "estrategia", "marca_personal"]
 
-const CATEGORY_META: Record<AcademyCategory, { label: string; icon: string; desc: string }> = {
+const CATEGORY_META = {
     novatos: {
-        label: "Configuración Inicial",
+        label: "Fundamentos Iniciales",
         icon: "🚀",
-        desc: "Todo lo que necesitas para arrancar: desde crear tu cuenta BingX hasta entender los conceptos base del mercado.",
+        desc: "Módulos esenciales para entender los conceptos base del mercado.",
     },
     estrategia: {
         label: "Estrategia de Mercado",
@@ -42,9 +41,9 @@ export default async function AcademyPage() {
         .eq("is_published", true)
         .order("order_index", { ascending: true })
 
-    const byCategory: Record<string, typeof resources> = {}
+    const byCategory: any = {}
     for (const cat of CATEGORY_ORDER) {
-        byCategory[cat] = (resources || []).filter((r) => r.category === cat)
+        byCategory[cat] = (resources || []).filter((r: any) => r.category === cat)
     }
 
     return (
@@ -52,7 +51,6 @@ export default async function AcademyPage() {
             <OfficeHeader userName={profile?.name || ""} userEmail={user.email || ""} />
 
             <main className="max-w-5xl mx-auto px-6 pt-28 pb-16">
-                {/* Breadcrumb */}
                 <div className="flex items-center gap-2 text-xs text-zinc-400 font-bold mb-8">
                     <a href="/office" className="hover:text-black transition-colors">La Oficina</a>
                     <span>›</span>
@@ -67,9 +65,8 @@ export default async function AcademyPage() {
                     </p>
                 </div>
 
-                {/* Categories */}
-                {CATEGORY_ORDER.map((cat) => {
-                    const meta = CATEGORY_META[cat]
+                {CATEGORY_ORDER.map((cat: any) => {
+                    const meta: any = (CATEGORY_META as any)[cat]
                     const items = byCategory[cat] || []
                     return (
                         <section key={cat} className="mb-14">
@@ -86,7 +83,7 @@ export default async function AcademyPage() {
                                 </div>
                             ) : (
                                 <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
-                                    {items.map((resource, idx) => (
+                                    {items.map((resource: any, idx: number) => (
                                         <AcademyCard
                                             key={resource.id}
                                             title={resource.title}
