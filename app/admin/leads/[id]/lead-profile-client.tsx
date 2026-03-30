@@ -6,13 +6,16 @@ import { toast } from "sonner";
 import { Loader2, Send, Save, CheckCircle, ArrowRight, User, Sparkles, Copy, CalendarCog, Crown, ChevronLeft, ChevronRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-export function LeadProfileClient({ initialLead, initialInteractions, initialEvents, initialClient, prevId, nextId }: any) {
+export function LeadProfileClient({ initialLead, initialInteractions, initialEvents, initialLeadInteractions, initialClient, initialScripts, prevId, nextId }: any) {
   const router = useRouter();
   const [lead, setLead] = useState(initialLead);
   const [interactions, setInteractions] = useState(initialInteractions);
   const [events, setEvents] = useState(initialEvents);
+  const [leadInteractions, setLeadInteractions] = useState(initialLeadInteractions || []);
   const [clientProfile, setClientProfile] = useState(initialClient);
-  
+  const scripts: any[] = initialScripts || [];
+  const [activeScriptEtapa, setActiveScriptEtapa] = useState('cold_dm');
+
   // High-Speed Keyboard Navigation Hook (Phase 13)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -72,6 +75,21 @@ export function LeadProfileClient({ initialLead, initialInteractions, initialEve
     }
   };
 
+  // POST to lead_interactions (spec table)
+  const addLeadInteraction = async (tipo: string, contenido: string) => {
+    try {
+      const res = await fetch('/api/admin/lead-interactions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ lead_id: lead.id, tipo, contenido })
+      });
+      const data = await res.json();
+      if (res.ok && data.interaction) {
+        setLeadInteractions((prev: any[]) => [data.interaction, ...prev]);
+      }
+    } catch {}
+  };
+
   const addNote = async () => {
     if (!noteContent.trim()) return;
     setSavingNote(true);
@@ -90,6 +108,8 @@ export function LeadProfileClient({ initialLead, initialInteractions, initialEve
       if (!res.ok) throw new Error(data.error);
       
       setInteractions([data.interaction, ...interactions]);
+      // Also log to lead_interactions spec table
+      await addLeadInteraction('nota', noteContent);
       setNoteContent("");
       if (followUpDays) {
          setLead({ ...lead, next_action_date: new Date(Date.now() + parseInt(followUpDays) * 24 * 60 * 60 * 1000).toISOString() });
@@ -442,7 +462,7 @@ export function LeadProfileClient({ initialLead, initialInteractions, initialEve
                        </div>
                        
                        {isEvent ? (
-                         <div className="text-xs text-zinc-500 font-medium">Pipeline shifted from <span className="bg-black border border-zinc-800 px-1.5 py-0.5 rounded text-zinc-400 mx-1">{item.metadata?.from_status}</span> to <span className="text-white font-black bg-zinc-900 border border-zinc-700 px-1.5 py-0.5 rounded mx-1 shadow-[0_0_10px_rgba(255,255,255,0.05)]">{item.metadata?.to_status}</span> by Root System</div>
+                         <div className="text-xs text-zinc-500 font-medium">Pipeline shifted from <span className="bg-black border border-zinc-800 px-1.5 py-0.5 rounded text-zinc-400 mx-1">{item.metadata?.from_status}</span> to <span className="text-white font-black bg-zinc-900 border border-zinc-700 px-1.5 py-0.5 rounded mx-1">{item.metadata?.to_status}</span> by Root System</div>
                        ) : (
                          <p className="text-sm text-zinc-300 font-medium whitespace-pre-wrap leading-relaxed">{item.content?.note || JSON.stringify(item.content)}</p>
                        )}
@@ -452,6 +472,58 @@ export function LeadProfileClient({ initialLead, initialInteractions, initialEve
              })}
            </div>
         </div>
+
+        {/* SCRIPT SUGGESTIONS PANEL */}
+        {scripts.length > 0 && (
+          <div className="bg-zinc-950 border border-zinc-900 rounded-2xl p-5 shadow-xl shrink-0">
+            <div className="flex items-center justify-between mb-4 border-b border-zinc-900 pb-3">
+              <h3 className="text-[10px] uppercase font-black tracking-widest text-yellow-500 flex items-center gap-2">
+                <Sparkles className="w-3.5 h-3.5" /> Script Suggestions — {lead.niche || 'General'}
+              </h3>
+              <a href="/admin/scripts" className="text-[9px] font-black uppercase tracking-widest text-zinc-600 hover:text-white transition-colors">Full Library →</a>
+            </div>
+            {/* Etapa tabs */}
+            <div className="flex gap-1.5 mb-4 overflow-x-auto pb-1">
+              {['cold_dm', 'followup_1', 'followup_2', 'oferta', 'cierre', 'reengagement'].map(etapa => {
+                const count = scripts.filter((s: any) => s.etapa === etapa).length;
+                if (count === 0) return null;
+                const labels: Record<string, string> = { cold_dm: 'Cold DM', followup_1: 'FU 1', followup_2: 'FU 2', oferta: 'Oferta', cierre: 'Cierre', reengagement: 'Reengage' };
+                return (
+                  <button key={etapa} onClick={() => setActiveScriptEtapa(etapa)}
+                    className={`shrink-0 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all border ${activeScriptEtapa === etapa ? 'bg-zinc-800 border-zinc-600 text-white' : 'bg-black border-zinc-900 text-zinc-500 hover:text-zinc-300'}`}
+                  >
+                    {labels[etapa]} ({count})
+                  </button>
+                );
+              })}
+            </div>
+            {/* Scripts for active etapa */}
+            <div className="space-y-3 max-h-[300px] overflow-y-auto custom-scrollbar">
+              {scripts
+                .filter((s: any) => s.etapa === activeScriptEtapa)
+                .sort((a: any, b: any) => (b.es_ganador ? 1 : 0) - (a.es_ganador ? 1 : 0))
+                .map((script: any) => (
+                  <div key={script.id} className={`p-4 rounded-xl border relative ${script.es_ganador ? 'bg-yellow-950/10 border-yellow-900/40' : 'bg-black border-zinc-900'}`}>
+                    {script.es_ganador && (
+                      <span className="absolute top-2 right-2 text-yellow-400 text-[8px] font-black uppercase tracking-widest">⭐ Winner</span>
+                    )}
+                    <p className="text-sm text-zinc-300 font-medium leading-relaxed whitespace-pre-wrap pr-16">{script.contenido}</p>
+                    <button
+                      onClick={() => { navigator.clipboard.writeText(script.contenido); toast.success("Script copied!"); }}
+                      className="mt-3 flex items-center gap-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-white px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-colors"
+                    >
+                      <Copy className="w-3 h-3" /> Copy
+                    </button>
+                  </div>
+                ))}
+              {scripts.filter((s: any) => s.etapa === activeScriptEtapa).length === 0 && (
+                <div className="text-center py-6 text-zinc-700 text-[9px] font-black uppercase tracking-widest border border-dashed border-zinc-900 rounded-xl">
+                  No scripts for this stage yet
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
       </div>
     </div>

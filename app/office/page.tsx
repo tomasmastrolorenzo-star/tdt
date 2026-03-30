@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { LogoutButton } from "@/components/auth/logout-button";
-import { ShieldAlert, Crosshair, HeartPulse, Clock, ArrowRight } from "lucide-react";
+import { ShieldAlert, Crosshair, HeartPulse, Clock, ArrowRight, BookOpen, Upload } from "lucide-react";
 import { QuickAddLead } from '@/components/admin/quick-add-lead';
 import Link from "next/link";
 
@@ -92,6 +92,34 @@ export default async function OfficePage() {
               <div>
                  <h2 className="text-3xl font-black text-white mb-2">Financial Ledger</h2>
                  <p className="text-zinc-400 text-sm font-bold leading-relaxed">Track locked clients, active subscriptions, automated delivery 48h windows and rigorous dynamic retention algorithms organically.</p>
+              </div>
+            </Link>
+
+            {/* Script Library */}
+            <Link href="/admin/scripts" className="group bg-gradient-to-br from-yellow-950/20 to-black border border-yellow-900/40 p-8 rounded-3xl shadow-xl hover:shadow-[0_0_30px_rgba(234,179,8,0.1)] hover:border-yellow-500/40 transition-all flex flex-col justify-between h-[280px]">
+              <div className="flex items-start justify-between">
+                <div className="bg-yellow-500/10 p-4 rounded-full border border-yellow-500/20">
+                   <BookOpen className="w-8 h-8 text-yellow-400 group-hover:scale-110 transition-transform" />
+                </div>
+                <ArrowRight className="w-6 h-6 text-zinc-600 group-hover:text-yellow-400 -translate-x-2 group-hover:translate-x-0 transition-all" />
+              </div>
+              <div>
+                 <h2 className="text-3xl font-black text-white mb-2">Script Library</h2>
+                 <p className="text-zinc-400 text-sm font-bold leading-relaxed">Validated message templates organized by niche and stage. Winner scripts, tasa de éxito, and AI generation.</p>
+              </div>
+            </Link>
+
+            {/* Bulk Import */}
+            <Link href="/admin/leads/import" className="group bg-gradient-to-br from-cyan-950/20 to-black border border-cyan-900/40 p-8 rounded-3xl shadow-xl hover:shadow-[0_0_30px_rgba(6,182,212,0.1)] hover:border-cyan-500/40 transition-all flex flex-col justify-between h-[280px]">
+              <div className="flex items-start justify-between">
+                <div className="bg-cyan-500/10 p-4 rounded-full border border-cyan-500/20">
+                   <Upload className="w-8 h-8 text-cyan-400 group-hover:scale-110 transition-transform" />
+                </div>
+                <ArrowRight className="w-6 h-6 text-zinc-600 group-hover:text-cyan-400 -translate-x-2 group-hover:translate-x-0 transition-all" />
+              </div>
+              <div>
+                 <h2 className="text-3xl font-black text-white mb-2">Bulk Import</h2>
+                 <p className="text-zinc-400 text-sm font-bold leading-relaxed">Drag and drop a CSV to mass-import leads into the pipeline. Validates, previews, and skips duplicates automatically.</p>
               </div>
             </Link>
 

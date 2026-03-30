@@ -37,6 +37,9 @@ export function LeadsClientRenderer({ initialLeads }: { initialLeads: Lead[] }) 
   const [leads, setLeads] = useState<Lead[]>(initialLeads);
   const [search, setSearch] = useState("");
   const [sourceFilter, setSourceFilter] = useState("all");
+  const [nichoFilter, setNichoFilter] = useState("all");
+  const [followersFilter, setFollowersFilter] = useState("all");
+  const [moneyOnly, setMoneyOnly] = useState(false);
   
   // Track active mutations to disable matching cards gracefully (preventing race conditions)
   const [updating, setUpdating] = useState<string | null>(null);
@@ -79,10 +82,14 @@ export function LeadsClientRenderer({ initialLeads }: { initialLeads: Lead[] }) 
   // Aggressive Performance Filtering & AI Priority Sorting
   const priorityScore: Record<string, number> = { high: 3, medium: 2, low: 1 };
   
+  const moneyStatuses = ['offer_sent', 'payment_pending'];
   const filteredLeads = leads.filter(l => {
     const matchSearch = l.instagram_username.toLowerCase().includes(search.toLowerCase());
     const matchSource = sourceFilter === "all" || l.source === sourceFilter;
-    return matchSearch && matchSource;
+    const matchNicho = nichoFilter === "all" || l.niche === nichoFilter;
+    const matchFollowers = followersFilter === "all" || l.followers_range === followersFilter;
+    const matchMoney = !moneyOnly || moneyStatuses.includes(l.status);
+    return matchSearch && matchSource && matchNicho && matchFollowers && matchMoney;
   }).sort((a, b) => {
      const pA = priorityScore[a.priority || 'medium'] || 0;
      const pB = priorityScore[b.priority || 'medium'] || 0;
@@ -116,17 +123,40 @@ export function LeadsClientRenderer({ initialLeads }: { initialLeads: Lead[] }) 
           </div>
           <div className="relative">
             <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
-            <select 
-              value={sourceFilter}
-              onChange={e => setSourceFilter(e.target.value)}
+            <select value={sourceFilter} onChange={e => setSourceFilter(e.target.value)}
               className="bg-zinc-900 border border-zinc-800 text-sm font-bold text-zinc-300 rounded-lg pl-9 pr-4 py-2 focus:outline-none focus:border-zinc-600 appearance-none cursor-pointer uppercase tracking-widest transition-colors"
             >
-              <option value="all">ALL SOURCES</option>
-              <option value="landing">LANDING</option>
-              <option value="setter">SETTER</option>
-              <option value="inbound">INBOUND</option>
+              <option value="all">All Sources</option>
+              <option value="dm">DM</option>
+              <option value="referido">Referido</option>
+              <option value="landing">Landing</option>
+              <option value="ads">Ads</option>
             </select>
           </div>
+          <select value={nichoFilter} onChange={e => setNichoFilter(e.target.value)}
+            className="bg-zinc-900 border border-zinc-800 text-sm font-bold text-zinc-300 rounded-lg px-3 py-2 focus:outline-none focus:border-zinc-600 appearance-none cursor-pointer uppercase tracking-widest transition-colors"
+          >
+            <option value="all">All Niches</option>
+            <option value="fitness">Fitness</option>
+            <option value="emprendedor">Emprendedor</option>
+            <option value="modelo">Modelo</option>
+            <option value="otro">Otro</option>
+          </select>
+          <select value={followersFilter} onChange={e => setFollowersFilter(e.target.value)}
+            className="bg-zinc-900 border border-zinc-800 text-sm font-bold text-zinc-300 rounded-lg px-3 py-2 focus:outline-none focus:border-zinc-600 appearance-none cursor-pointer uppercase tracking-widest transition-colors"
+          >
+            <option value="all">All Followers</option>
+            <option value="5k_20k">5K–20K</option>
+            <option value="20k_100k">20K–100K</option>
+            <option value="100k_200k">100K–200K</option>
+          </select>
+          <button onClick={() => setMoneyOnly(!moneyOnly)}
+            className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all border ${
+              moneyOnly ? 'bg-green-950/40 border-green-500 text-green-400 shadow-[0_0_15px_rgba(34,197,94,0.2)]' : 'bg-zinc-900 border-zinc-800 text-zinc-500 hover:text-white'
+            }`}
+          >
+            💰 Money Only
+          </button>
         </div>
 
         <div className="flex items-center gap-6 text-xs text-zinc-400 font-bold tracking-widest uppercase">
