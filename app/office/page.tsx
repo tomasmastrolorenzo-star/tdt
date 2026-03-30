@@ -3,6 +3,7 @@ import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { LogoutButton } from "@/components/auth/logout-button";
 import { ShieldAlert, Crosshair, HeartPulse, Clock, ArrowRight } from "lucide-react";
+import { QuickAddLead } from '@/components/admin/quick-add-lead';
 import Link from "next/link";
 
 export default async function OfficePage() {
@@ -25,7 +26,10 @@ export default async function OfficePage() {
              <div className="w-10 h-10 bg-white text-black flex items-center justify-center font-black text-xl rounded-xl">T</div>
              <h1 className="text-3xl font-black tracking-tighter">Office<span className="text-zinc-500">Hub</span></h1>
           </div>
-          <LogoutButton />
+          <div className="flex items-center gap-3">
+            <QuickAddLead />
+            <LogoutButton />
+          </div>
         </header>
 
         <main className="w-full">

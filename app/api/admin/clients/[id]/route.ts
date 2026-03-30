@@ -21,6 +21,7 @@ export async function PATCH(req: Request, props: { params: Promise<{ id: string 
     safePayload.status = payload.status;
   }
   if (payload.notes !== undefined) safePayload.notes = payload.notes;
+  if (payload.delivery_notes !== undefined) safePayload.delivery_notes = payload.delivery_notes;
   if (payload.renewal_date !== undefined) safePayload.renewal_date = payload.renewal_date;
   
   // Specific Native System Timestamp Command ('check_now')

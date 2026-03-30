@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import { LogoutButton } from '@/components/auth/logout-button';
 import { Activity, ShieldAlert, BadgeDollarSign, HeartPulse, UserCircle2, Clock, ArrowRight } from 'lucide-react';
 import { DailyDmsClient } from './daily-dms-client';
+import { NotificationBell } from '@/components/admin/notification-bell';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -78,7 +79,10 @@ export default async function CEODashboard() {
                 <a href="/admin/daily" className="text-zinc-500 hover:text-white text-[10px] uppercase font-black tracking-widest transition-colors flex items-center gap-1.5"><Clock className="w-3 h-3"/> Daily Routine</a>
              </nav>
            </div>
-           <LogoutButton />
+           <div className="flex items-center gap-3">
+             <NotificationBell />
+             <LogoutButton />
+           </div>
         </header>
 
         {/* 1. MAIN METRICS GRID (MÓDULO 5 Spec) */}
@@ -202,6 +206,65 @@ export default async function CEODashboard() {
            </div>
 
          </div>
+
+          </div>
+
+         {/* MRR / CHURN ANALYTICS BLOCK */}
+         {(() => {
+           // Build last 6 months MRR from clients
+           const months: { label: string; mrr: number; count: number }[] = [];
+           for (let i = 5; i >= 0; i--) {
+             const d = new Date();
+             d.setMonth(d.getMonth() - i);
+             const label = d.toLocaleString('default', { month: 'short' });
+             const y = d.getFullYear(); const m = d.getMonth();
+             const monthClients = clients.filter((c: any) => {
+               const cd = new Date(c.created_at);
+               return cd.getFullYear() === y && cd.getMonth() === m;
+             });
+             months.push({ label, mrr: monthClients.reduce((s: number, c: any) => s + (Number(c.payment_amount)||0), 0), count: monthClients.length });
+           }
+           const maxMRR = Math.max(...months.map(m => m.mrr), 1);
+           const totalActive = clients.filter((c: any) => (c.status || 'active') === 'active').length;
+           const totalInactive = clients.filter((c: any) => c.status === 'inactive').length;
+           const churnRate = clients.length > 0 ? ((totalInactive / clients.length) * 100).toFixed(1) : '0.0';
+           const currentMRR = months[months.length - 1].mrr;
+           const prevMRR = months[months.length - 2].mrr;
+           const mrrGrowth = prevMRR > 0 ? (((currentMRR - prevMRR) / prevMRR) * 100).toFixed(1) : null;
+
+           return (
+             <div className="bg-zinc-950 border border-zinc-900 rounded-2xl p-6 shadow-xl overflow-hidden relative">
+               <div className="flex items-center justify-between mb-6">
+                 <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-white">MRR & Retention Analytics</h3>
+                 <div className="flex items-center gap-4">
+                   <div className="text-right">
+                     <div className="text-[9px] font-black uppercase tracking-widest text-zinc-500">Current MRR</div>
+                     <div className="text-xl font-black text-green-400">${currentMRR.toLocaleString()}</div>
+                     {mrrGrowth && <div className={`text-[9px] font-black ${parseFloat(mrrGrowth) >= 0 ? 'text-green-500' : 'text-red-500'}`}>{parseFloat(mrrGrowth) >= 0 ? '+' : ''}{mrrGrowth}% vs prev month</div>}
+                   </div>
+                   <div className="text-right">
+                     <div className="text-[9px] font-black uppercase tracking-widest text-zinc-500">Churn Rate</div>
+                     <div className={`text-xl font-black ${parseFloat(churnRate) > 20 ? 'text-red-400' : 'text-white'}`}>{churnRate}%</div>
+                     <div className="text-[9px] font-black text-zinc-600">{totalInactive} churned / {clients.length} total</div>
+                   </div>
+                 </div>
+               </div>
+               {/* Bar Chart */}
+               <div className="flex items-end gap-2 h-24">
+                 {months.map((m, i) => (
+                   <div key={i} className="flex flex-col items-center flex-1 gap-1">
+                     <div className="text-[8px] font-black text-zinc-500">${m.mrr > 0 ? m.mrr >= 1000 ? `${(m.mrr/1000).toFixed(1)}k` : m.mrr : '0'}</div>
+                     <div
+                       className={`w-full rounded-t-lg transition-all ${i === months.length - 1 ? 'bg-green-500' : 'bg-zinc-800'}`}
+                       style={{ height: `${Math.max((m.mrr / maxMRR) * 64, m.mrr > 0 ? 4 : 0)}px` }}
+                     />
+                     <div className="text-[8px] font-black text-zinc-600">{m.label}</div>
+                   </div>
+                 ))}
+               </div>
+             </div>
+           );
+         })()}
 
       </div>
     </div>

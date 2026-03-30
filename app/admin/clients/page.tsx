@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import { LogoutButton } from '@/components/auth/logout-button';
 import { Vault, CalendarClock, Briefcase } from 'lucide-react';
 import { ClientsClient } from './clients-client';
+import { NotificationBell } from '@/components/admin/notification-bell';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -45,6 +46,7 @@ export default async function ClientsPage() {
            </div>
            
            <div className="flex gap-4 items-center">
+              <NotificationBell />
               <LogoutButton />
            </div>
         </header>
