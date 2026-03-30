@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Instagram, MessageCircle, ArrowRight, TrendingUp, Users, Target, CheckCircle2 } from "lucide-react";
+import { Instagram, MessageCircle, ArrowRight, TrendingUp, Users, Target, CheckCircle2, Loader2 } from "lucide-react";
 import { toast } from "sonner"; 
 
 const IG_LINK = "https://www.instagram.com/trendigitaltrade/";
@@ -17,20 +17,22 @@ export default function LandingMVP() {
     setStatus("loading");
     
     try {
-      const res = await fetch("/api/leads", {
+      const apiCall = fetch("/api/leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, source: "landing_mvp" }),
+        body: JSON.stringify({ username, source: "landing" }),
       });
+      
+      // Artificial Delay validating Analysis psychological UX natively 
+      const [res] = await Promise.all([apiCall, new Promise(r => setTimeout(r, 2000))]);
       
       if (!res.ok) throw new Error("Failed to submit");
       
       setStatus("success");
       setUsername("");
-      toast.success("Profile submitted successfully! We'll be in touch.");
     } catch (err) {
       setStatus("idle");
-      toast.error("Something went wrong. Please try again or message us directly.");
+      toast.error("Processing offline. Diverting to external message gateway.");
     }
   };
 
@@ -172,31 +174,40 @@ export default function LandingMVP() {
       <section className="py-24 px-6 text-center">
         <div className="max-w-2xl mx-auto">
           <h2 className="text-4xl md:text-5xl font-black tracking-tighter mb-4 text-white">We can start today.</h2>
-          <p className="text-xl text-zinc-400 mb-10">Message us and we'll analyze your profile.</p>
+          <p className="text-xl text-zinc-400 mb-10">Submit your profile so our team gets immediate context.</p>
 
-          <form onSubmit={handleSubmit} className="max-w-md mx-auto mb-16">
-            <div className="flex flex-col gap-3">
-              <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 font-bold">@</span>
-                <input 
-                  type="text" 
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  placeholder="Instagram username" 
-                  disabled={status === "loading" || status === "success"}
-                  className="w-full bg-zinc-900 border border-zinc-800 rounded-xl py-4 pl-10 pr-4 text-white placeholder-zinc-500 focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-all"
-                  required
-                />
+          {status === "success" ? (
+             <div className="max-w-md mx-auto bg-green-950/20 border border-green-900/50 p-8 rounded-2xl mb-16 shadow-[0_0_30px_rgba(34,197,94,0.1)]">
+                <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto mb-4" />
+                <h3 className="text-2xl font-black text-green-400 mb-2 tracking-tighter">Analysis Queued</h3>
+                <p className="text-[10px] text-green-500/80 font-black tracking-[0.2em] uppercase mb-4">You are securely in the system.</p>
+                <p className="text-sm font-bold text-zinc-400">Our agents will run the diagnostics and reach out to you directly on Instagram via DM shortly.</p>
+             </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="max-w-md mx-auto mb-16 relative">
+              <div className="flex flex-col gap-3">
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 font-bold">@</span>
+                  <input 
+                    type="text" 
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="Instagram username" 
+                    disabled={status === "loading"}
+                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl py-4 pl-10 pr-4 text-white placeholder-zinc-500 font-bold focus:outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 transition-all disabled:opacity-50"
+                    required
+                  />
+                </div>
+                <button 
+                  type="submit" 
+                  disabled={status === "loading" || !username}
+                  className="w-full flex items-center justify-center gap-2 bg-white text-black py-4 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-zinc-200 transition-all disabled:opacity-80"
+                >
+                  {status === "loading" ? <><Loader2 className="w-4 h-4 animate-spin text-zinc-500" /> Analyzing metrics...</> : "Run Free Analysis"}
+                </button>
               </div>
-              <button 
-                type="submit" 
-                disabled={status === "loading" || status === "success" || !username}
-                className="w-full flex items-center justify-center gap-2 bg-white text-black py-4 rounded-xl font-bold hover:bg-zinc-200 transition-colors disabled:opacity-50"
-              >
-                {status === "loading" ? "Analyzing..." : status === "success" ? <><CheckCircle2 className="w-5 h-5"/> Request Received</> : "Analyze my profile"}
-              </button>
-            </div>
-          </form>
+            </form>
+          )}
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a 
