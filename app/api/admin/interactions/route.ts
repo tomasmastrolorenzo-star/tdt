@@ -22,8 +22,10 @@ export async function POST(req: Request) {
 
   const { data, error } = await supabase.from('interactions').insert({
     lead_id,
+    user_id: user.id, // Phase 8: Setter Tracking Assignment natively locked
     type, 
-    content 
+    content,
+    created_at: new Date().toISOString()
   }).select().single();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
