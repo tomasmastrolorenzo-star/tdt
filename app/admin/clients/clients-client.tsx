@@ -3,19 +3,21 @@
 import { useState } from "react";
 import { formatDistanceToNow, format } from "date-fns";
 import { toast } from "sonner";
-import { Loader2, DollarSign, Package, PackageCheck, CheckCircle2, UserCheck, UserX, Clock, Tag, Save } from "lucide-react";
+import { Loader2, DollarSign, Package, PackageCheck, CheckCircle2, UserCheck, UserX, Clock, Tag, Save, LayoutGrid, List } from "lucide-react";
+import { FulfillmentBoard } from "./fulfillment-board";
 
 export function ClientsClient({ initialClients }: any) {
   const [clients, setClients] = useState(initialClients || []);
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [filter, setFilter] = useState<'active' | 'inactive'>('active');
+  const [viewMode, setViewMode] = useState<'fulfillment' | 'ledger'>('fulfillment');
 
   const filteredClients = clients.filter((c: any) => (c.status || 'active') === filter);
 
   // Core Financial Engine Metrics
   const totalRevenue = clients.reduce((sum: number, client: any) => sum + (Number(client.payment_amount) || 0), 0);
   const totalActive = clients.filter((c: any) => (c.status || 'active') === 'active').length;
-  const pendingDeliveries = clients.filter((c: any) => c.delivery_status === 'pending' && (c.status || 'active') === 'active').length;
+  const pendingDeliveries = clients.filter((c: any) => c.delivery_status === 'pending' || c.delivery_status === 'processing').length;
 
   const toggleDelivery = async (clientId: string, currentStatus: string) => {
     setLoadingId(clientId + '-delivery');
@@ -34,17 +36,28 @@ export function ClientsClient({ initialClients }: any) {
   const updateClientField = async (clientId: string, payload: any) => {
     setLoadingId(clientId + '-update');
     try {
+      // If we are updating delivery_status, use the pure delivery endpoint for trigger safety
+      if (payload.delivery_status !== undefined) {
+          const res = await fetch(`/api/admin/clients/${clientId}/delivery`, {
+              method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload)
+          });
+          if (!res.ok) throw new Error(await res.text());
+          setClients(clients.map((c: any) => c.id === clientId ? { ...c, delivery_status: payload.delivery_status } : c));
+          toast.success("Delivery stage synced to Postgres.");
+          return;
+      }
+      
       const res = await fetch(`/api/admin/clients/${clientId}`, {
         method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload)
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
       
-      setClients(clients.map((c: any) => c.id === clientId ? { ...c, ...data.client } : c));
+      setClients(clients.map((c: any) => c.id === clientId ? { ...c, ...data.client, ...payload } : c));
       
       if (payload.action === 'check_now') toast.success("Operation visually tracked for today.");
       if (payload.status) toast.success(`Client shifted to ${payload.status}`);
-      if (payload.notes !== undefined) toast.success("Post-Venta notes synced perfectly.");
+      if (payload.notes !== undefined || payload.delivery_notes !== undefined) toast.success("Post-Venta notes synced perfectly.");
       if (payload.renewal_date !== undefined) toast.success("Renewal Date locked.");
     } catch (err: any) { toast.error(err.message); } finally { setLoadingId(null); }
   };
@@ -76,8 +89,30 @@ export function ClientsClient({ initialClients }: any) {
         </div>
       </div>
 
-      {/* ── FILTERING ── */}
-      <div className="flex items-center gap-4 mb-6">
+      {/* ── VIEW MODE TOGGLE ── */}
+      <div className="flex justify-center mb-8">
+         <div className="bg-black border border-zinc-900 rounded-2xl p-1.5 flex gap-2">
+            <button 
+              onClick={() => setViewMode('fulfillment')}
+              className={`flex items-center gap-2 px-6 py-2 rounded-xl text-[10px] uppercase font-black tracking-widest transition-all ${viewMode === 'fulfillment' ? 'bg-zinc-900 text-white shadow-lg' : 'text-zinc-500 hover:text-white'}`}
+            >
+              <LayoutGrid className="w-3.5 h-3.5" /> Fulfillment Board
+            </button>
+            <button 
+              onClick={() => setViewMode('ledger')}
+              className={`flex items-center gap-2 px-6 py-2 rounded-xl text-[10px] uppercase font-black tracking-widest transition-all ${viewMode === 'ledger' ? 'bg-zinc-900 text-white shadow-lg' : 'text-zinc-500 hover:text-white'}`}
+            >
+              <List className="w-3.5 h-3.5" /> Financial Ledger
+            </button>
+         </div>
+      </div>
+
+      {viewMode === 'fulfillment' ? (
+         <FulfillmentBoard clients={clients} updateClientField={updateClientField} />
+      ) : (
+         <div>
+            {/* ── FILTERING (Only visible in Ledger) ── */}
+            <div className="flex items-center gap-4 mb-6">
          <button 
            onClick={() => setFilter('active')} 
            className={`px-6 py-3 rounded-xl text-[10px] uppercase font-black tracking-[0.2em] transition-all ${filter === 'active' ? 'bg-white text-black shadow-[0_0_20px_rgba(255,255,255,0.1)]' : 'bg-zinc-900 border border-zinc-800 text-zinc-500 hover:text-white'}`}
@@ -235,6 +270,7 @@ export function ClientsClient({ initialClients }: any) {
           );
         })}
       </div>
+     </div>
     </div>
   );
 }
