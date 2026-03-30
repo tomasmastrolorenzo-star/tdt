@@ -3,132 +3,202 @@
 import { useState } from "react";
 import { formatDistanceToNow, format } from "date-fns";
 import { toast } from "sonner";
-import { Loader2, DollarSign, Package, PackageCheck, CheckCircle2 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { Loader2, DollarSign, Package, PackageCheck, CheckCircle2, UserCheck, UserX, Clock, Tag, Save } from "lucide-react";
 
 export function ClientsClient({ initialClients }: any) {
-  const router = useRouter();
   const [clients, setClients] = useState(initialClients || []);
   const [loadingId, setLoadingId] = useState<string | null>(null);
+  const [filter, setFilter] = useState<'active' | 'inactive'>('active');
 
-  // Financial Engine Metrics
+  const filteredClients = clients.filter((c: any) => (c.status || 'active') === filter);
+
+  // Core Financial Engine Metrics
   const totalRevenue = clients.reduce((sum: number, client: any) => sum + (Number(client.payment_amount) || 0), 0);
-  const pendingDeliveries = clients.filter((c: any) => c.delivery_status === 'pending').length;
+  const totalActive = clients.filter((c: any) => (c.status || 'active') === 'active').length;
+  const pendingDeliveries = clients.filter((c: any) => c.delivery_status === 'pending' && (c.status || 'active') === 'active').length;
 
   const toggleDelivery = async (clientId: string, currentStatus: string) => {
-    setLoadingId(clientId);
+    setLoadingId(clientId + '-delivery');
     const newStatus = currentStatus === 'pending' ? 'delivered' : 'pending';
     try {
       const res = await fetch(`/api/admin/clients/${clientId}/delivery`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ delivery_status: newStatus })
+        method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ delivery_status: newStatus })
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
-
-      // Optimistic update over UI rendering instantly
       setClients(clients.map((c: any) => c.id === clientId ? { ...c, delivery_status: newStatus } : c));
-      toast.success(newStatus === 'delivered' ? "Service marked successfully delivered." : "Delivery rolled back to pending.");
-    } catch (err: any) {
-      toast.error(err.message);
-    } finally {
-      setLoadingId(null);
-    }
+      toast.success(newStatus === 'delivered' ? "Delivery Complete." : "Rolled back to Pending.");
+    } catch (err: any) { toast.error(err.message); } finally { setLoadingId(null); }
+  };
+
+  const updateClientField = async (clientId: string, payload: any) => {
+    setLoadingId(clientId + '-update');
+    try {
+      const res = await fetch(`/api/admin/clients/${clientId}`, {
+        method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      
+      setClients(clients.map((c: any) => c.id === clientId ? { ...c, ...data.client } : c));
+      
+      if (payload.action === 'check_now') toast.success("Operation visually tracked for today.");
+      if (payload.status) toast.success(`Client shifted to ${payload.status}`);
+      if (payload.notes !== undefined) toast.success("Post-Venta notes synced perfectly.");
+      if (payload.renewal_date !== undefined) toast.success("Renewal Date locked.");
+    } catch (err: any) { toast.error(err.message); } finally { setLoadingId(null); }
   };
 
   return (
-    <div className="pb-16">
-      {/* FINANCIAL TOP ROW */}
+    <div className="pb-16 pt-4">
+      
+      {/* ── TOP FINANCIAL FRAMEWORK ── */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-        
         <div className="bg-zinc-950 border border-zinc-900 rounded-2xl p-6 shadow-2xl relative overflow-hidden">
            <div className="absolute top-[-30px] right-[-30px] w-32 h-32 bg-green-500/10 blur-[50px] pointer-events-none"></div>
            <div className="flex items-center gap-3 mb-2 opacity-50 text-[10px] uppercase font-black tracking-widest text-green-400">
-             <DollarSign className="w-4 h-4" /> System Revenue Total
+             <DollarSign className="w-4 h-4" /> System Total Yield
            </div>
            <h2 className="text-4xl font-black text-white relative z-10">${totalRevenue.toLocaleString()}</h2>
         </div>
-
         <div className="bg-zinc-950 border border-zinc-900 rounded-2xl p-6 shadow-2xl relative overflow-hidden">
            <div className="flex items-center gap-3 mb-2 opacity-50 text-[10px] uppercase font-black tracking-widest text-white">
-             <CheckCircle2 className="w-4 h-4" /> Active Converted Clients
+             <CheckCircle2 className="w-4 h-4" /> Active Subscriptions
            </div>
-           <h2 className="text-4xl font-black text-white relative z-10">{clients.length}</h2>
+           <h2 className="text-4xl font-black text-white relative z-10">{totalActive}</h2>
         </div>
-
         <div className="bg-zinc-950 border border-zinc-900 rounded-2xl p-6 shadow-2xl relative overflow-hidden">
            <div className={`absolute top-[-30px] right-[-30px] w-32 h-32 ${pendingDeliveries > 0 ? 'bg-orange-500/10' : 'bg-cyan-500/10'} blur-[50px] pointer-events-none`}></div>
            <div className={`flex items-center gap-3 mb-2 opacity-50 text-[10px] uppercase font-black tracking-widest ${pendingDeliveries > 0 ? 'text-orange-400' : 'text-cyan-400'}`}>
-             <Package className="w-4 h-4" /> Pending Deliverables
+             <Package className="w-4 h-4" /> Operations Pending
            </div>
            <h2 className="text-4xl font-black text-white relative z-10">{pendingDeliveries}</h2>
         </div>
-
       </div>
 
-      {/* CORE LEDGER VIEW */}
-      <div className="bg-zinc-950 border border-zinc-900 rounded-2xl shadow-xl overflow-hidden">
-         <div className="overflow-x-auto">
-           <table className="w-full text-left border-collapse">
-             <thead>
-               <tr className="bg-zinc-900 text-zinc-400 text-[10px] uppercase font-black tracking-widest border-b border-zinc-800">
-                 <th className="p-5 font-bold">Client Target</th>
-                 <th className="p-5 font-bold">Service / Deal</th>
-                 <th className="p-5 font-bold">Payment Value</th>
-                 <th className="p-5 font-bold">Conversion Date</th>
-                 <th className="p-5 font-bold text-center">Delivery Action</th>
-               </tr>
-             </thead>
-             <tbody className="divide-y divide-zinc-900">
-               {clients.length === 0 && (
-                  <tr>
-                    <td colSpan={5} className="p-10 text-center text-zinc-600 font-bold text-sm">Financial ledger empty. Convert leads to populate data.</td>
-                  </tr>
-               )}
-               {clients.map((client: any) => (
-                 <tr key={client.id} className="hover:bg-zinc-900/30 transition-colors">
-                   <td className="p-5">
-                     <div className="flex items-center gap-3">
-                       <div className="w-8 h-8 rounded-full bg-zinc-900 flex items-center justify-center shrink-0 border border-zinc-800">
-                         <CheckCircle2 className="w-3.5 h-3.5 text-zinc-500" />
-                       </div>
-                       <span className="font-bold text-white">@{client.instagram}</span>
+      {/* ── FILTERING ── */}
+      <div className="flex items-center gap-4 mb-6">
+         <button 
+           onClick={() => setFilter('active')} 
+           className={`px-6 py-3 rounded-xl text-[10px] uppercase font-black tracking-[0.2em] transition-all ${filter === 'active' ? 'bg-white text-black shadow-[0_0_20px_rgba(255,255,255,0.1)]' : 'bg-zinc-900 border border-zinc-800 text-zinc-500 hover:text-white'}`}
+         >
+           🟢 Activos ({totalActive})
+         </button>
+         <button 
+           onClick={() => setFilter('inactive')} 
+           className={`px-6 py-3 rounded-xl text-[10px] uppercase font-black tracking-[0.2em] transition-all ${filter === 'inactive' ? 'bg-red-950 text-red-500 border border-red-900 shadow-[0_0_20px_rgba(220,38,38,0.1)]' : 'bg-zinc-900 border border-zinc-800 text-zinc-500 hover:text-white'}`}
+         >
+           ⛔ Inactivos ({clients.length - totalActive})
+         </button>
+      </div>
+
+      {/* ── LEDGER GRID (DELIVERY SYSTEM) ── */}
+      <div className="grid grid-cols-1 gap-6">
+        {filteredClients.length === 0 && (
+          <div className="text-center bg-zinc-950 border border-zinc-900 py-16 rounded-2xl text-[10px] uppercase tracking-widest font-black text-zinc-600">
+             No records in {filter} pipeline state
+          </div>
+        )}
+
+        {filteredClients.map((client: any) => {
+          const isUpdating = loadingId?.startsWith(client.id);
+          
+          return (
+            <div key={client.id} className="bg-zinc-950 border border-zinc-900 rounded-2xl p-6 shadow-xl relative overflow-hidden flex flex-col xl:flex-row gap-6 items-start xl:items-center" style={{ opacity: isUpdating ? 0.6 : 1 }}>
+               {/* IDENTITY & DEAL */}
+               <div className="w-full xl:w-2/12 shrink-0">
+                  <div className="flex items-start gap-3 mb-3">
+                     <div className="w-8 h-8 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center shrink-0">
+                       <CheckCircle2 className="w-4 h-4 text-green-500" />
                      </div>
-                   </td>
-                   <td className="p-5 text-zinc-400 text-sm font-medium">{client.service_type || 'Custom Service'}</td>
-                   <td className="p-5">
-                      <span className="bg-green-950/30 text-green-400 border border-green-900/50 px-3 py-1.5 rounded-lg text-xs font-black tracking-wider">
-                        ${Number(client.payment_amount).toLocaleString()}
-                      </span>
-                   </td>
-                   <td className="p-5 text-zinc-500 text-xs font-bold tracking-wider uppercase">
-                      {format(new Date(client.created_at), "MMM d, yyyy")}
-                   </td>
-                   <td className="p-5 text-center">
-                     <button
-                       onClick={() => toggleDelivery(client.id, client.delivery_status || 'pending')}
-                       disabled={loadingId === client.id}
-                       className={`inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all
-                         ${(client.delivery_status === 'delivered') 
-                           ? 'bg-cyan-950/20 text-cyan-500 border border-cyan-900/40 hover:bg-cyan-900/40' 
-                           : 'bg-orange-950/20 text-orange-500 border border-orange-900/40 hover:bg-orange-900/40'}
-                         disabled:opacity-50`}
-                     >
-                       {loadingId === client.id ? (
-                         <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                       ) : client.delivery_status === 'delivered' ? (
-                         <><PackageCheck className="w-3.5 h-3.5" /> Delivered</>
-                       ) : (
-                         <><Package className="w-3.5 h-3.5" /> Pending</>
-                       )}
-                     </button>
-                   </td>
-                 </tr>
-               ))}
-             </tbody>
-           </table>
-         </div>
+                     <div>
+                       <h3 className="text-white font-black truncate max-w-[150px]">@{client.instagram}</h3>
+                       <span className="text-[10px] uppercase tracking-widest font-black text-green-500/80 bg-green-950/30 border border-green-900/50 px-2 rounded-sm inline-block mt-1">
+                         ${Number(client.payment_amount).toLocaleString()}
+                       </span>
+                     </div>
+                  </div>
+                  <div className="flex gap-2 text-xs font-bold text-zinc-500">
+                     <Tag className="w-3.5 h-3.5" />
+                     <span className="truncate max-w-[130px]">{client.service_type || 'General Deal'}</span>
+                  </div>
+               </div>
+
+               {/* DATE CORE */}
+               <div className="w-full xl:w-3/12 shrink-0 flex flex-col gap-3 p-4 bg-black border border-zinc-800/60 rounded-xl">
+                  <div className="flex justify-between items-center text-[10px] font-black tracking-widest uppercase">
+                    <span className="text-zinc-500">Start Date</span>
+                    <span className="text-white bg-zinc-900 px-2 py-0.5 rounded border border-zinc-800">{format(new Date(client.created_at), "dd MMM, yy")}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-[10px] font-black tracking-widest uppercase">
+                    <span className="text-zinc-500 whitespace-nowrap mr-3">Renewal / End</span>
+                    <input 
+                      type="date"
+                      value={client.renewal_date ? new Date(client.renewal_date).toISOString().split('T')[0] : ''}
+                      onChange={(e) => updateClientField(client.id, { renewal_date: e.target.value ? new Date(e.target.value).toISOString() : null })}
+                      className="bg-black border border-cyan-900/50 text-cyan-500 font-bold px-2 py-1 rounded w-[115px] focus:outline-none focus:border-cyan-500 cursor-pointer text-right"
+                    />
+                  </div>
+               </div>
+
+               {/* POST-SALE MAINTENANCE (Last Check & Delivery) */}
+               <div className="w-full xl:w-3/12 shrink-0 flex flex-col gap-3 p-4 bg-zinc-900/40 border border-zinc-800/80 rounded-xl">
+                 <div className="flex items-center justify-between">
+                   <span className="text-[10px] uppercase font-black tracking-widest text-zinc-500 flex items-center gap-1.5"><Clock className="w-3.5 h-3.5" /> Last Check</span>
+                   {client.last_check ? (
+                     <span className="text-xs font-black text-cyan-400">{formatDistanceToNow(new Date(client.last_check))} ago</span>
+                   ) : <span className="text-xs font-black text-red-500/70">Never Checked</span>}
+                 </div>
+                 <div className="flex gap-2">
+                    <button 
+                      onClick={() => updateClientField(client.id, { action: 'check_now' })}
+                      className="flex-1 bg-cyan-950/30 border border-cyan-900/50 hover:bg-cyan-900/50 text-cyan-400 font-black uppercase tracking-widest text-[9px] py-2 rounded-lg transition-colors flex justify-center items-center gap-1.5"
+                    >
+                      <CheckCircle2 className="w-3 h-3" /> Check Today
+                    </button>
+                    <button
+                      onClick={() => toggleDelivery(client.id, client.delivery_status || 'pending')}
+                      className={`flex-1 font-black uppercase tracking-widest text-[9px] py-2 rounded-lg transition-colors flex items-center justify-center gap-1.5 border
+                        ${(client.delivery_status === 'delivered') ? 'bg-green-950/20 text-green-500 border-green-900/40' : 'bg-orange-950/20 text-orange-500 border-orange-900/40'}`}
+                    >
+                      {(client.delivery_status === 'delivered') ? <><PackageCheck className="w-3 h-3"/> Delivered</> : <><Package className="w-3 h-3"/> Pending</>}
+                    </button>
+                 </div>
+               </div>
+
+               {/* NOTES LOG */}
+               <div className="w-full xl:flex-1 relative">
+                 <textarea 
+                   defaultValue={client.notes || ''}
+                   onBlur={(e) => updateClientField(client.id, { notes: e.target.value })}
+                   placeholder="Post-Venta notes, complaints, service iterations..."
+                   className="w-full h-[85px] bg-black border border-zinc-800 rounded-xl p-3 text-sm font-medium text-zinc-300 placeholder:text-zinc-700 resize-none focus:outline-none focus:border-zinc-500 transition-colors custom-scrollbar"
+                 />
+                 <Save className="w-3.5 h-3.5 text-zinc-700 absolute bottom-3 right-3 pointer-events-none" />
+               </div>
+
+               {/* KILL SWITCH (Active/Inactive) */}
+               <div className="w-full xl:w-[60px] shrink-0 flex xl:flex-col gap-2">
+                 {client.status === 'inactive' ? (
+                   <button 
+                     onClick={() => updateClientField(client.id, { status: 'active' })}
+                     className="flex-1 xl:h-[85px] bg-green-950/30 border border-green-900/50 hover:bg-green-900/50 text-green-500 rounded-xl flex items-center justify-center transition-colors" title="Reactivate Client"
+                   >
+                     <UserCheck className="w-5 h-5" />
+                   </button>
+                 ) : (
+                   <button 
+                     onClick={() => updateClientField(client.id, { status: 'inactive' })}
+                     className="flex-1 xl:h-[85px] bg-red-950/20 border border-red-900/30 hover:bg-red-900/50 text-red-500 rounded-xl flex items-center justify-center transition-colors" title="Deactivate Client"
+                   >
+                     <UserX className="w-5 h-5" />
+                   </button>
+                 )}
+               </div>
+
+            </div>
+          );
+        })}
       </div>
     </div>
   );
