@@ -19,7 +19,7 @@ export async function POST(req: Request, props: { params: Promise<{ id: string }
   }
 
   // Baseline Pull
-  const { data: lead, error: fetchErr } = await supabase.from('leads').select('follow_up_count').eq('id', id).single();
+  const { data: lead, error: fetchErr } = await supabase.from('leads').select('follow_up_count, priority').eq('id', id).single();
   if (fetchErr || !lead) return NextResponse.json({ error: 'System lead disconnected' }, { status: 404 });
 
   const now = new Date();
@@ -33,8 +33,10 @@ export async function POST(req: Request, props: { params: Promise<{ id: string }
       newFollowUpCount += 1;
       interactionLogMsg = 'Standard interaction sent. Lead pushed automatically +2 days back into queue.';
   } else if (action_type === 'defer') {
-      nextActionDate = new Date(now.getTime() + 1 * 24 * 60 * 60 * 1000).toISOString(); // +1 Day
-      interactionLogMsg = 'Action deferred directly natively by +1 day.';
+      const p = lead.priority || 'medium';
+      const deferDays = p === 'low' ? 3 : 1;
+      nextActionDate = new Date(now.getTime() + deferDays * 24 * 60 * 60 * 1000).toISOString();
+      interactionLogMsg = `Action explicitly deferred by +${deferDays} day(s) based on systemic Priority rules (${p}).`;
   } else if (action_type === 'discard') {
       nextActionDate = null; // Purge from Radar completely
       interactionLogMsg = 'Lead physically discarded from active tracking routines.';

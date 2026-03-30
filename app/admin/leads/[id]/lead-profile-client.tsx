@@ -25,10 +25,12 @@ export function LeadProfileClient({ initialLead, initialInteractions, initialEve
 
   const [converting, setConverting] = useState(false);
 
-  // TDT AI Sales Assistant State
-  const [aiType, setAiType] = useState("start");
-  const [aiLoading, setAiLoading] = useState(false);
-  const [aiResult, setAiResult] = useState("");
+  // TDT Smart Automation State (PHASE 9)
+  const [smartLoading, setSmartLoading] = useState(false);
+  const aiDrafts = lead.metadata?.ai_drafts || null;
+  const priority = lead.priority || 'medium';
+  const niche = lead.metadata?.niche || 'Undetermined';
+  const [activeDraftTab, setActiveDraftTab] = useState<'start' | 'follow_up' | 'close'>('start');
 
   // Deep merged structural timeline combining system audits with custom logs chronologically
   const timeline = [...interactions.map((i: any) => ({ ...i, __type: 'interaction' })), ...events.map((e: any) => ({ ...e, __type: 'event' }))]
@@ -112,31 +114,20 @@ export function LeadProfileClient({ initialLead, initialInteractions, initialEve
     }
   };
 
-  const generateMessage = async () => {
-    setAiLoading(true);
-    setAiResult("");
-    try {
-      const res = await fetch(`/api/ai/generate-message`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ lead_id: lead.id, message_type: aiType })
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error); // E.g. Missing OPENAI_API_KEY block
-      
-      setAiResult(data.text);
-      toast.success("AI DM Payload Generated");
-    } catch (err: any) {
-      toast.error(err.message);
-    } finally {
-      setAiLoading(false);
-    }
-  };
+  const runSmartIntake = async () => {
+     if(!confirm("Execute Smart Automation Intake? This will overwrite Context and generate 3 explicit AI Drafts natively.")) return;
+     setSmartLoading(true);
+     try {
+       const pl = { lead_id: lead.id, instagram: lead.instagram_username, status: lead.status, metadata: lead.metadata, interactions };
+       const res = await fetch("/api/ai/smart-intake", { method: "POST", headers:{ "Content-Type": "application/json" }, body: JSON.stringify(pl)});
+       const data = await res.json();
+       if(!res.ok) throw new Error(data.error);
 
-  const copyToClipboard = () => {
-    if (!aiResult) return;
-    navigator.clipboard.writeText(aiResult);
-    toast.success("Text snapped to native clipboard!");
+       setLead({ ...lead, priority: data.ai_data.priority, metadata: data.metadata });
+       setSalesContext({ ...salesContext, buyer_type: data.ai_data.buyer_type, interest_level: data.ai_data.interest_level });
+       setActiveDraftTab('start');
+       toast.success("Intelligence Payload integrated flawlessly.");
+     } catch (err: any) { toast.error(err.message); } finally { setSmartLoading(false); }
   };
 
   const isClosed = lead.status === "closed" || clientProfile;
@@ -180,45 +171,57 @@ export function LeadProfileClient({ initialLead, initialInteractions, initialEve
           </div>
         </div>
 
-        {/* TDT AI SALES ASSISTANT (PHASE 5) */}
-        <div className="bg-zinc-950 border border-zinc-800/60 rounded-2xl p-6 shadow-[0_0_30px_rgba(6,182,212,0.03)] relative overflow-hidden">
-           <div className="absolute top-[-50px] right-[-50px] w-48 h-48 bg-cyan-500/10 blur-[60px] pointer-events-none"></div>
+        {/* SMART AUTOMATION ENGINE (PHASE 9) */}
+        <div className="bg-zinc-950 border border-zinc-800/60 rounded-2xl p-6 shadow-[0_0_30px_rgba(139,92,246,0.03)] relative overflow-hidden">
+           <div className="absolute top-[-50px] right-[-50px] w-48 h-48 bg-violet-500/10 blur-[60px] pointer-events-none"></div>
            
-           <h3 className="text-[10px] uppercase font-black tracking-widest text-cyan-500 mb-4 flex items-center gap-2 relative z-10">
-             <Sparkles className="w-3.5 h-3.5" /> Closer Copilot
-           </h3>
-           
-           <div className="flex gap-2 mb-3 relative z-10">
-             <select 
-               value={aiType} 
-               onChange={e => setAiType(e.target.value)} 
-               disabled={aiLoading || isClosed}
-               className="flex-1 bg-black border border-zinc-800 rounded-xl px-3 py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-50 focus:border-cyan-900/50 outline-none transition-colors appearance-none"
-             >
-               <option value="start">Icebreaker (Start)</option>
-               <option value="follow_up">Check-In (Follow Up)</option>
-               <option value="close">Urgency Pitch (Close)</option>
-               <option value="reengage">Revive (Re-engage)</option>
-             </select>
+           <div className="flex items-center justify-between mb-4 relative z-10">
+             <h3 className="text-[10px] uppercase font-black tracking-widest text-violet-500 flex items-center gap-2">
+               <Sparkles className="w-3.5 h-3.5" /> Intelligence Engine
+             </h3>
              <button 
-               onClick={generateMessage}
-               disabled={aiLoading || isClosed}
-               className="bg-cyan-950 hover:bg-cyan-900 text-cyan-400 font-bold uppercase tracking-widest text-[9px] px-4 py-2 rounded-xl transition-all disabled:opacity-50"
+               onClick={runSmartIntake}
+               disabled={smartLoading || isClosed}
+               className="bg-violet-950/40 hover:bg-violet-900/60 border border-violet-900/50 text-violet-400 font-bold uppercase tracking-widest text-[9px] px-3 py-1.5 rounded-lg transition-all disabled:opacity-50 flex items-center gap-2"
              >
-               {aiLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Generar'}
+               {smartLoading ? <Loader2 className="w-3 h-3 animate-spin"/> : <CalendarCog className="w-3 h-3"/>} Run Intake
              </button>
            </div>
 
-           {aiResult && (
+           {/* Metrics Overlay */}
+           <div className="flex gap-2 mb-4 relative z-10">
+              <span className={`text-[9px] uppercase font-black tracking-widest px-2 py-1 rounded border 
+                ${priority === 'high' ? 'bg-red-950/30 border-red-900 text-red-500' : 
+                  priority === 'medium' ? 'bg-orange-950/30 border-orange-900 text-orange-500' : 
+                  'bg-zinc-900 border-zinc-800 text-zinc-500'}`}>
+                Priority: {priority}
+              </span>
+              <span className="text-[9px] uppercase font-black tracking-widest px-2 py-1 rounded border bg-zinc-900 border-zinc-800 text-zinc-400">
+                Niche: {niche}
+              </span>
+           </div>
+           
+           {aiDrafts ? (
              <div className="relative mt-2 z-10 animate-in fade-in slide-in-from-top-2 duration-300">
-                <textarea 
-                  readOnly
-                  value={aiResult}
-                  className="w-full bg-black border border-cyan-900/30 rounded-xl p-4 text-xs font-medium text-cyan-50/90 resize-none h-32 focus:outline-none custom-scrollbar"
-                />
-                <button onClick={copyToClipboard} className="absolute bottom-3 right-3 bg-zinc-800 hover:bg-zinc-700 text-white p-2.5 rounded-lg transition-colors shadow-lg">
-                  <Copy className="w-3.5 h-3.5" />
-                </button>
+                <div className="flex gap-1 mb-2">
+                  <button onClick={() => setActiveDraftTab('start')} className={`flex-1 text-[9px] uppercase font-black tracking-widest py-2 rounded-t-lg transition-colors ${activeDraftTab==='start' ? 'bg-violet-900/30 border-t border-x border-violet-900/50 text-violet-300' : 'text-zinc-600 border-b border-zinc-800'}`}>Start</button>
+                  <button onClick={() => setActiveDraftTab('follow_up')} className={`flex-1 text-[9px] uppercase font-black tracking-widest py-2 rounded-t-lg transition-colors ${activeDraftTab==='follow_up' ? 'bg-violet-900/30 border-t border-x border-violet-900/50 text-violet-300' : 'text-zinc-600 border-b border-zinc-800'}`}>Follow Up</button>
+                  <button onClick={() => setActiveDraftTab('close')} className={`flex-1 text-[9px] uppercase font-black tracking-widest py-2 rounded-t-lg transition-colors ${activeDraftTab==='close' ? 'bg-violet-900/30 border-t border-x border-violet-900/50 text-violet-300' : 'text-zinc-600 border-b border-zinc-800'}`}>Close</button>
+                </div>
+                <div className="relative">
+                  <textarea 
+                    readOnly
+                    value={aiDrafts[activeDraftTab]}
+                    className="w-full bg-black border border-violet-900/30 rounded-b-xl p-4 text-xs font-medium text-violet-50/90 resize-none h-32 focus:outline-none custom-scrollbar rounded-tr-xl"
+                  />
+                  <button onClick={() => { navigator.clipboard.writeText(aiDrafts[activeDraftTab]); toast.success("Draft snapped to clipboard!"); }} className="absolute bottom-3 right-3 bg-zinc-800 hover:bg-zinc-700 text-white p-2.5 rounded-lg transition-colors shadow-lg">
+                    <Copy className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+             </div>
+           ) : (
+             <div className="text-center py-6 border border-dashed border-zinc-800/50 rounded-xl mt-2 z-10 relative">
+               <p className="text-[10px] text-zinc-600 font-bold uppercase tracking-widest">No Intelligence Drafts Rendered</p>
              </div>
            )}
         </div>

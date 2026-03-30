@@ -76,11 +76,17 @@ export function LeadsClientRenderer({ initialLeads }: { initialLeads: Lead[] }) 
     }
   };
 
-  // Aggressive Performance Filtering
+  // Aggressive Performance Filtering & AI Priority Sorting
+  const priorityScore: Record<string, number> = { high: 3, medium: 2, low: 1 };
+  
   const filteredLeads = leads.filter(l => {
     const matchSearch = l.instagram_username.toLowerCase().includes(search.toLowerCase());
     const matchSource = sourceFilter === "all" || l.source === sourceFilter;
     return matchSearch && matchSource;
+  }).sort((a, b) => {
+     const pA = priorityScore[a.priority || 'medium'] || 0;
+     const pB = priorityScore[b.priority || 'medium'] || 0;
+     return pB - pA;
   });
 
   const grouped: Record<string, Lead[]> = {};
@@ -150,14 +156,19 @@ export function LeadsClientRenderer({ initialLeads }: { initialLeads: Lead[] }) 
 
               {/* CARDS LIST */}
               <div className="flex-1 overflow-y-auto p-3 space-y-3 custom-scrollbar">
-                {stageLeads.map(lead => (
-                  <div key={lead.id} className={`bg-black border border-zinc-800 p-4 rounded-xl shadow-lg hover:border-zinc-600 transition-all ${updating === lead.id ? 'opacity-50 blur-[1px] pointer-events-none scale-[0.98]' : ''}`}>
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="font-bold truncate text-[15px]">@{lead.instagram_username}</div>
-                      <span className="text-[10px] bg-zinc-900 border border-zinc-800 px-2 py-1 rounded-md uppercase font-black tracking-widest text-zinc-400 ml-2 shrink-0">
-                        {lead.source}
-                      </span>
-                    </div>
+                {stageLeads.map(lead => {
+                  const p = lead.priority || 'medium';
+                  return (
+                    <div key={lead.id} className={`bg-black border border-zinc-800 p-4 rounded-xl shadow-lg hover:border-zinc-600 transition-all ${updating === lead.id ? 'opacity-50 blur-[1px] pointer-events-none scale-[0.98]' : ''}`}>
+                      <div className="flex items-start justify-between mb-2">
+                        <a href={`/admin/leads/${lead.id}`} target="_blank" className="font-bold truncate text-[15px] hover:text-cyan-400 hover:underline transition-colors block">@{lead.instagram_username}</a>
+                        <span className={`text-[8px] uppercase font-black tracking-widest px-2 py-0.5 rounded ml-2 shrink-0 border
+                           ${p === 'high' ? 'bg-red-950/30 text-red-500 border-red-900/50' : 
+                             p === 'medium' ? 'bg-orange-950/30 text-orange-500 border-orange-900/50' : 
+                             'bg-zinc-900 text-zinc-500 border-zinc-800'}`}>
+                           {p}
+                        </span>
+                      </div>
                     
                     <div className="flex items-center justify-between text-[11px] font-bold text-zinc-500 mb-4 tracking-wide uppercase">
                       <span>{formatDistanceToNow(new Date(lead.updated_at), { addSuffix: true })}</span>
@@ -176,7 +187,8 @@ export function LeadsClientRenderer({ initialLeads }: { initialLeads: Lead[] }) 
                       <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 opacity-50 pointer-events-none" />
                     </div>
                   </div>
-                ))}
+                );
+               })}
 
                 {stageLeads.length === 0 && (
                    <div className="h-24 mx-1 flex items-center justify-center border-2 border-dashed border-zinc-800/50 rounded-xl">
