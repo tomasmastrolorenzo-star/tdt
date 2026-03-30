@@ -124,9 +124,15 @@ export function ClientsClient({ initialClients }: any) {
                   </div>
                </div>
 
-               {/* DATE CORE */}
-               <div className="w-full xl:w-3/12 shrink-0 flex flex-col gap-3 p-4 bg-black border border-zinc-800/60 rounded-xl">
-                  <div className="flex justify-between items-center text-[10px] font-black tracking-widest uppercase">
+               {/* DATE CORE & RENEWAL SYSTEM (PHASE 11) */}
+               <div className={`w-full xl:w-3/12 shrink-0 flex flex-col gap-3 p-4 border rounded-xl relative transition-all ${client.renewal_date && new Date(client.renewal_date).getTime() <= Date.now() ? 'bg-red-950/20 border-red-900/50 shadow-[0_0_20px_rgba(220,38,38,0.1)]' : 'bg-black border-zinc-800/60'}`}>
+                  {client.renewal_date && new Date(client.renewal_date).getTime() <= Date.now() && (
+                     <div className="absolute -top-3 left-3 bg-red-600 text-white font-black uppercase tracking-[0.2em] text-[8px] px-2 py-0.5 rounded shadow-lg animate-pulse">
+                        Suscripción Vencida
+                     </div>
+                  )}
+
+                  <div className="flex justify-between items-center text-[10px] font-black tracking-widest uppercase mt-1">
                     <span className="text-zinc-500">Start Date</span>
                     <span className="text-white bg-zinc-900 px-2 py-0.5 rounded border border-zinc-800">{format(new Date(client.created_at), "dd MMM, yy")}</span>
                   </div>
@@ -136,8 +142,37 @@ export function ClientsClient({ initialClients }: any) {
                       type="date"
                       value={client.renewal_date ? new Date(client.renewal_date).toISOString().split('T')[0] : ''}
                       onChange={(e) => updateClientField(client.id, { renewal_date: e.target.value ? new Date(e.target.value).toISOString() : null })}
-                      className="bg-black border border-cyan-900/50 text-cyan-500 font-bold px-2 py-1 rounded w-[115px] focus:outline-none focus:border-cyan-500 cursor-pointer text-right"
+                      className={`bg-black font-bold px-2 py-1 rounded w-[115px] focus:outline-none cursor-pointer text-right transition-colors border ${client.renewal_date && new Date(client.renewal_date).getTime() <= Date.now() ? 'border-red-900/50 text-red-500 focus:border-red-500' : 'border-cyan-900/50 text-cyan-500 focus:border-cyan-500'}`}
                     />
+                  </div>
+
+                  {/* Operational Action */}
+                  <div className="flex gap-2 mt-1">
+                     <button
+                       onClick={async () => {
+                         setLoadingId(client.id + '-coll');
+                         try {
+                           const prompt = `System Alert: Write an Instagram DM for @${client.instagram || 'client'} whose subscription for ${client.service_type || 'services'} expired on ${client.renewal_date}. Ask strictly for renewal payment casually without sounding like a corporate robot.`;
+                           navigator.clipboard.writeText(prompt);
+                           toast.success("Prompt natively snapped to clipboard! (Collection Route Active)");
+                         } finally { setLoadingId(null); }
+                       }}
+                       className={`flex-1 font-black uppercase tracking-widest text-[9px] py-2 rounded-lg transition-colors flex justify-center items-center gap-1.5 border
+                          ${client.renewal_date && new Date(client.renewal_date).getTime() <= Date.now() ? 'bg-red-900/40 border-red-900/80 text-white hover:bg-red-600' : 'bg-zinc-900 border-zinc-800 text-zinc-500 hover:text-white'}`}
+                     >
+                       <DollarSign className="w-3 h-3" /> Request
+                     </button>
+                     <button
+                       onClick={() => {
+                          if(!client.renewal_date) return;
+                          const nextMonth = new Date(client.renewal_date);
+                          nextMonth.setMonth(nextMonth.getMonth() + 1);
+                          updateClientField(client.id, { renewal_date: nextMonth.toISOString() });
+                       }}
+                       className="flex-1 bg-green-950/30 border border-green-900/50 hover:bg-green-900/60 text-green-500 font-black uppercase tracking-widest text-[9px] py-2 rounded-lg transition-colors flex justify-center items-center gap-1.5"
+                     >
+                        +1 Month
+                     </button>
                   </div>
                </div>
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Instagram, MessageCircle, ArrowRight, TrendingUp, Users, Target, CheckCircle2, Loader2 } from "lucide-react";
+import { Instagram, MessageCircle, ArrowRight, CheckCircle2, Loader2, Zap, Rocket, Crown } from "lucide-react";
 import { toast } from "sonner"; 
 
 const IG_LINK = "https://www.instagram.com/trendigitaltrade/";
@@ -23,7 +23,6 @@ export default function LandingMVP() {
         body: JSON.stringify({ username, source: "landing" }),
       });
       
-      // Artificial Delay validating Analysis psychological UX natively 
       const [res] = await Promise.all([apiCall, new Promise(r => setTimeout(r, 2000))]);
       
       if (!res.ok) throw new Error("Failed to submit");
@@ -36,174 +35,206 @@ export default function LandingMVP() {
     }
   };
 
+  const scrollToPacks = () => {
+     document.getElementById('packs-matrix')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <main className="min-h-screen bg-black text-white font-sans selection:bg-zinc-800">
       {/* ── HEADER ── */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-md border-b border-zinc-900">
-        <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
-          <span className="text-xl font-black tracking-tighter text-white">TDT</span>
+        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+          <span className="text-xl font-black tracking-tighter text-white">TDT.</span>
           <div className="flex items-center gap-4">
-            <a href={IG_LINK} target="_blank" rel="noopener noreferrer" className="text-zinc-400 hover:text-white transition-colors">
+             <button onClick={scrollToPacks} className="text-[10px] hidden md:block uppercase font-black tracking-[0.2em] text-zinc-400 hover:text-white transition-colors">Sistemas</button>
+            <a href={IG_LINK} target="_blank" rel="noopener noreferrer" className="text-zinc-400 hover:text-white transition-colors ml-4">
               <Instagram className="w-5 h-5" />
             </a>
           </div>
         </div>
       </header>
 
-      {/* ── HERO ── */}
-      <section className="pt-32 pb-20 px-6">
-        <div className="max-w-3xl mx-auto text-center">
-          <h1 className="text-5xl md:text-6xl font-black tracking-tighter leading-tight mb-6 text-white">
-            We help you grow your audience and boost your engagement.
+      {/* ── AGGRESSIVE HERO ── */}
+      <section className="pt-40 md:pt-48 pb-20 px-6 relative overflow-hidden">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-red-900/10 blur-[120px] pointer-events-none rounded-full"></div>
+        <div className="max-w-4xl mx-auto text-center relative z-10">
+          <h1 className="text-5xl md:text-7xl font-black tracking-tighter leading-[1.1] mb-8 text-white">
+            Dominamos la atención.<br/>
+            Escalamos tu <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500">facturación</span>.
           </h1>
-          <p className="text-lg md:text-xl text-zinc-400 mb-10 max-w-2xl mx-auto">
-            Build a stronger profile, attract more opportunities and stand out.
+          <p className="text-lg md:text-xl text-zinc-400 mb-12 max-w-2xl mx-auto font-medium">
+            Sistemas predecibles de crecimiento, tráfico altamente calificado y estructuras de cierre para creadores y marcas que no quieren depender del algoritmo.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <button 
+              onClick={scrollToPacks}
+              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-white text-black px-10 py-4 rounded-full font-black uppercase tracking-widest text-[11px] hover:scale-[1.02] transition-transform shadow-[0_0_40px_rgba(255,255,255,0.15)]"
+            >
+              Aplicar ahora
+            </button>
             <a 
               href={IG_LINK} 
               target="_blank" 
               rel="noopener noreferrer"
-              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-white text-black px-8 py-4 rounded-full font-bold hover:bg-zinc-200 transition-colors"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-zinc-900 text-white px-8 py-4 rounded-full font-bold uppercase tracking-widest text-[11px] hover:bg-zinc-800 transition-colors border border-zinc-800"
             >
-              <Instagram className="w-5 h-5" />
-              Message us on Instagram
-            </a>
-            <a 
-              href={WA_LINK} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-zinc-900 text-white px-8 py-4 rounded-full font-bold hover:bg-zinc-800 transition-colors border border-zinc-800"
-            >
-              <MessageCircle className="w-5 h-5" />
-              Chat on WhatsApp
+              <Instagram className="w-4 h-4" />
+              Ver Resultados
             </a>
           </div>
         </div>
       </section>
 
-      {/* ── SOCIAL PROOF ── */}
-      <section className="py-20 px-6 border-y border-zinc-900 bg-zinc-950/50">
-        <div className="max-w-4xl mx-auto text-center">
-          <p className="text-sm font-bold tracking-widest text-zinc-500 uppercase mb-12">Real Results</p>
+      {/* ── HARD SOCIAL PROOF ── */}
+      <section className="py-24 px-6 border-y border-zinc-900 bg-zinc-950/30">
+        <div className="max-w-5xl mx-auto text-center">
+          <p className="text-[10px] font-black tracking-[0.3em] text-red-500/80 uppercase mb-16 flex items-center justify-center gap-3">
+             <span className="w-8 h-[1px] bg-red-900/50"></span>
+             Métricas de Escalamiento Real
+             <span className="w-8 h-[1px] bg-red-900/50"></span>
+          </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="p-6 bg-black border border-zinc-900 rounded-2xl">
-              <p className="text-zinc-500 text-sm font-semibold mb-2">Account Growth</p>
-              <div className="flex items-center justify-center gap-3 text-3xl font-black">
-                <span className="text-zinc-400">12K</span>
-                <ArrowRight className="w-6 h-6 text-zinc-600" />
+            <div className="p-8 bg-black/60 border border-zinc-900 rounded-3xl hover:border-zinc-800 transition-colors">
+              <p className="text-zinc-500 text-xs font-black uppercase tracking-widest mb-4">Captación Masiva</p>
+              <div className="flex items-center justify-center gap-4 text-4xl md:text-5xl font-black">
+                <span className="text-zinc-500 line-through decoration-zinc-800 decoration-4">12K</span>
+                <ArrowRight className="w-6 h-6 text-red-500" />
                 <span className="text-white">105K</span>
               </div>
+              <p className="text-zinc-600 mt-4 text-[10px] uppercase font-bold tracking-widest">+ Seguidores cualificados</p>
             </div>
-            <div className="p-6 bg-black border border-zinc-900 rounded-2xl">
-              <p className="text-zinc-500 text-sm font-semibold mb-2">Engagement Rate</p>
-              <div className="flex items-center justify-center gap-3 text-3xl font-black">
-                <span className="text-zinc-400">1.2%</span>
-                <ArrowRight className="w-6 h-6 text-zinc-600" />
+            <div className="p-8 bg-black/60 border border-zinc-900 rounded-3xl hover:border-zinc-800 transition-colors">
+              <p className="text-zinc-500 text-xs font-black uppercase tracking-widest mb-4">Retención & Eng.</p>
+              <div className="flex items-center justify-center gap-4 text-4xl md:text-5xl font-black">
+                <span className="text-zinc-500 line-through decoration-zinc-800 decoration-4">1.2%</span>
+                <ArrowRight className="w-6 h-6 text-orange-500" />
                 <span className="text-white">6.8%</span>
               </div>
+              <p className="text-zinc-600 mt-4 text-[10px] uppercase font-bold tracking-widest">+ Interacción diaria directa</p>
             </div>
-            <div className="p-6 bg-black border border-zinc-900 rounded-2xl">
-              <p className="text-zinc-500 text-sm font-semibold mb-2">Monthly Views</p>
-              <div className="flex items-center justify-center gap-3 text-3xl font-black">
-                <span className="text-zinc-400">50K</span>
-                <ArrowRight className="w-6 h-6 text-zinc-600" />
-                <span className="text-white">2.4M</span>
+            <div className="p-8 bg-black/60 border border-zinc-900 rounded-3xl hover:border-zinc-800 transition-colors">
+              <p className="text-zinc-500 text-xs font-black uppercase tracking-widest mb-4">Facturación Base</p>
+              <div className="flex items-center justify-center gap-4 text-4xl md:text-5xl font-black">
+                <span className="text-zinc-500 line-through decoration-zinc-800 decoration-4">$2k</span>
+                <ArrowRight className="w-6 h-6 text-green-500" />
+                <span className="text-white">$15k+</span>
               </div>
+              <p className="text-zinc-600 mt-4 text-[10px] uppercase font-bold tracking-widest">+ Cashflow MRR validado</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── HOW IT WORKS ── */}
-      <section className="py-20 px-6">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-black tracking-tighter text-white">How it works</h2>
+      {/* ── CLEAR PACKS (PHASE 10 PRICING MATRIX) ── */}
+      <section id="packs-matrix" className="py-32 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-20">
+            <h2 className="text-4xl md:text-5xl font-black tracking-tighter text-white mb-6">Sistemas de Operación</h2>
+            <p className="text-zinc-400 max-w-xl mx-auto">No vendemos cursos. Implementamos infraestructuras de negocio hiper-eficientes directamente en tu biografía.</p>
           </div>
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="w-16 h-16 mx-auto bg-zinc-900 border border-zinc-800 rounded-full flex items-center justify-center mb-6">
-                <span className="text-2xl font-black text-white">1</span>
-              </div>
-              <h3 className="text-xl font-bold mb-3 text-white">We analyze your profile</h3>
-              <p className="text-zinc-400">Deep dive into your current metrics, content strategy, and target audience.</p>
+          
+          <div className="grid lg:grid-cols-3 gap-8 items-start">
+            
+            {/* PACK 1 */}
+            <div className="bg-zinc-950 border border-zinc-900 rounded-3xl p-8 hover:border-zinc-800 transition-all">
+               <div className="w-12 h-12 bg-zinc-900 rounded-2xl flex items-center justify-center text-zinc-400 mb-6">
+                 <Zap className="w-6 h-6" />
+               </div>
+               <h3 className="text-2xl font-black text-white mb-2">Growth Boost</h3>
+               <p className="text-zinc-500 text-sm font-medium mb-6 min-h-[40px]">Inyección táctica de atención para revivir métricas congeladas.</p>
+               <div className="mb-8">
+                  <span className="text-3xl font-black text-white">$149</span>
+                  <span className="text-xs uppercase font-bold tracking-widest text-zinc-600 ml-2">/ Una vez</span>
+               </div>
+               <ul className="space-y-4 mb-8 text-sm text-zinc-400 font-medium">
+                 <li className="flex items-start gap-3"><CheckCircle2 className="w-4 h-4 text-zinc-600 shrink-0 mt-0.5" /> Auditoría forense de perfil.</li>
+                 <li className="flex items-start gap-3"><CheckCircle2 className="w-4 h-4 text-zinc-600 shrink-0 mt-0.5" /> Plan de reestructuración de imagen.</li>
+                 <li className="flex items-start gap-3"><CheckCircle2 className="w-4 h-4 text-zinc-600 shrink-0 mt-0.5" /> 14 Días de Growth acelerado masivo.</li>
+               </ul>
+               <button onClick={() => document.getElementById('capture-form')?.scrollIntoView({ behavior: 'smooth' })} className="w-full py-4 rounded-xl border border-zinc-800 text-xs font-black uppercase tracking-widest hover:bg-zinc-900 transition-colors">Start Boost</button>
             </div>
-            <div className="text-center">
-              <div className="w-16 h-16 mx-auto bg-zinc-900 border border-zinc-800 rounded-full flex items-center justify-center mb-6">
-                <span className="text-2xl font-black text-white">2</span>
-              </div>
-              <h3 className="text-xl font-bold mb-3 text-white">We create a strategy</h3>
-              <p className="text-zinc-400">Custom roadmap designed specifically to attract and retain your ideal followers.</p>
+
+            {/* PACK 2 (MOST POPULAR) */}
+            <div className="bg-gradient-to-br from-red-950/40 to-black border border-red-900/50 rounded-3xl p-8 relative shadow-2xl scale-[1.02] z-10">
+               <div className="absolute top-0 right-10 translate-y-[-50%] bg-red-600 text-white text-[9px] font-black uppercase tracking-[0.2em] px-3 py-1.5 rounded-full shadow-[0_0_20px_rgba(220,38,38,0.4)]">
+                 El Estándar
+               </div>
+               <div className="w-12 h-12 bg-red-500/10 rounded-2xl flex items-center justify-center text-red-500 mb-6">
+                 <Rocket className="w-6 h-6" />
+               </div>
+               <h3 className="text-2xl font-black text-white mb-2">Monthly Growth + Setter</h3>
+               <p className="text-red-500/80 text-sm font-medium mb-6 min-h-[40px]">La maquinaria que transforma atención bruta en llamadas agendadas todos los días.</p>
+               <div className="mb-8">
+                  <span className="text-4xl font-black text-white">$300</span>
+                  <span className="text-xs text-zinc-500 uppercase font-black tracking-widest ml-2">/ mes</span>
+               </div>
+               <ul className="space-y-4 mb-8 text-sm text-zinc-300 font-medium">
+                 <li className="flex items-start gap-3"><CheckCircle2 className="w-4 h-4 text-red-500 shrink-0 mt-0.5" /> Operador táctico (Setter) 24/7.</li>
+                 <li className="flex items-start gap-3"><CheckCircle2 className="w-4 h-4 text-red-500 shrink-0 mt-0.5" /> Scripting dinámico de ventas (DM).</li>
+                 <li className="flex items-start gap-3"><CheckCircle2 className="w-4 h-4 text-red-500 shrink-0 mt-0.5" /> Flujo perpetuo de contenido base.</li>
+                 <li className="flex items-start gap-3"><CheckCircle2 className="w-4 h-4 text-red-500 shrink-0 mt-0.5" /> Calificación estricta de leads diarios.</li>
+               </ul>
+               <button onClick={() => document.getElementById('capture-form')?.scrollIntoView({ behavior: 'smooth' })} className="w-full py-4 rounded-xl bg-white text-black text-xs font-black uppercase tracking-widest hover:scale-[1.02] hover:bg-zinc-200 transition-all shadow-[0_0_20px_rgba(255,255,255,0.1)]">Postular Negocio</button>
             </div>
-            <div className="text-center">
-              <div className="w-16 h-16 mx-auto bg-zinc-900 border border-zinc-800 rounded-full flex items-center justify-center mb-6">
-                <span className="text-2xl font-black text-white">3</span>
-              </div>
-              <h3 className="text-xl font-bold mb-3 text-white">We boost your audience</h3>
-              <p className="text-zinc-400">Execution and optimization to rapidly scale your engagement and reach.</p>
+
+            {/* PACK 3 */}
+            <div className="bg-zinc-950 border border-zinc-900 rounded-3xl p-8 hover:border-zinc-800 transition-all">
+               <div className="w-12 h-12 bg-zinc-900 rounded-2xl flex items-center justify-center text-zinc-400 mb-6">
+                 <Crown className="w-6 h-6" />
+               </div>
+               <h3 className="text-2xl font-black text-white mb-2">TDT Full System</h3>
+               <p className="text-zinc-500 text-sm font-medium mb-6 min-h-[40px]">Delegación operativa total. IA, automatizaciones y un equipo agresivo a tu disposición.</p>
+               <div className="mb-8">
+                  <span className="text-3xl font-black text-white">$500+</span>
+                  <span className="text-xs uppercase font-bold tracking-widest text-zinc-600 ml-2">/ Custom</span>
+               </div>
+               <ul className="space-y-4 mb-8 text-sm text-zinc-400 font-medium">
+                 <li className="flex items-start gap-3"><CheckCircle2 className="w-4 h-4 text-zinc-600 shrink-0 mt-0.5" /> Creación del Offer Irresistible.</li>
+                 <li className="flex items-start gap-3"><CheckCircle2 className="w-4 h-4 text-zinc-600 shrink-0 mt-0.5" /> Ads management y control CPA.</li>
+                 <li className="flex items-start gap-3"><CheckCircle2 className="w-4 h-4 text-zinc-600 shrink-0 mt-0.5" /> Integración CRM TDT a medida.</li>
+                 <li className="flex items-start gap-3"><CheckCircle2 className="w-4 h-4 text-zinc-600 shrink-0 mt-0.5" /> Growth + Setter + Consultoría 1-1.</li>
+               </ul>
+               <button onClick={() => document.getElementById('capture-form')?.scrollIntoView({ behavior: 'smooth' })} className="w-full py-4 rounded-xl border border-zinc-800 text-xs font-black uppercase tracking-widest hover:bg-zinc-900 transition-colors">Solicitar Acceso</button>
             </div>
+
           </div>
         </div>
       </section>
 
-      {/* ── SERVICES ── */}
-      <section className="py-20 px-6 bg-zinc-950/50 border-y border-zinc-900">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-black tracking-tighter text-white">Services</h2>
-          </div>
-          <div className="max-w-2xl mx-auto space-y-4">
-            <div className="flex items-center gap-4 p-6 bg-black border border-zinc-900 rounded-2xl">
-              <div className="p-3 bg-zinc-900 text-white rounded-xl"><Users className="w-6 h-6" /></div>
-              <span className="text-lg font-bold text-white">Follower growth</span>
-            </div>
-            <div className="flex items-center gap-4 p-6 bg-black border border-zinc-900 rounded-2xl">
-              <div className="p-3 bg-zinc-900 text-white rounded-xl"><TrendingUp className="w-6 h-6" /></div>
-              <span className="text-lg font-bold text-white">Engagement boost</span>
-            </div>
-            <div className="flex items-center gap-4 p-6 bg-black border border-zinc-900 rounded-2xl">
-              <div className="p-3 bg-zinc-900 text-white rounded-xl"><Target className="w-6 h-6" /></div>
-              <span className="text-lg font-bold text-white">Profile positioning</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── FINAL CTA & LEAD CAPTURE ── */}
-      <section className="py-24 px-6 text-center">
-        <div className="max-w-2xl mx-auto">
-          <h2 className="text-4xl md:text-5xl font-black tracking-tighter mb-4 text-white">We can start today.</h2>
-          <p className="text-xl text-zinc-400 mb-10">Submit your profile so our team gets immediate context.</p>
+      {/* ── FINAL DIRECT CTA & LEAD CAPTURE ── */}
+      <section id="capture-form" className="py-24 px-6 text-center bg-black">
+        <div className="max-w-2xl mx-auto border-t border-zinc-900 pt-24">
+          <h2 className="text-4xl md:text-5xl font-black tracking-tighter mb-4 text-white">Escalamos hoy.</h2>
+          <p className="text-xl text-zinc-400 mb-12">No agarramos cuentas muertas sin potencial. Ingresa tu usuario para evaluar si podemos estructurarte.</p>
 
           {status === "success" ? (
-             <div className="max-w-md mx-auto bg-green-950/20 border border-green-900/50 p-8 rounded-2xl mb-16 shadow-[0_0_30px_rgba(34,197,94,0.1)]">
-                <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto mb-4" />
-                <h3 className="text-2xl font-black text-green-400 mb-2 tracking-tighter">Analysis Queued</h3>
-                <p className="text-[10px] text-green-500/80 font-black tracking-[0.2em] uppercase mb-4">You are securely in the system.</p>
-                <p className="text-sm font-bold text-zinc-400">Our agents will run the diagnostics and reach out to you directly on Instagram via DM shortly.</p>
+             <div className="max-w-md mx-auto bg-green-950/20 border border-green-900/50 p-10 rounded-3xl mb-16 shadow-[0_0_40px_rgba(34,197,94,0.1)]">
+                <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto mb-6" />
+                <h3 className="text-3xl font-black text-white mb-2 tracking-tighter">Cuenta en Revisión</h3>
+                <p className="text-[10px] text-green-500/80 font-black tracking-[0.3em] uppercase mb-6">Autorización exitosa de sistema</p>
+                <div className="bg-black/50 border border-green-900/30 p-4 rounded-xl text-sm font-medium text-zinc-400">Nuestro equipo está ejecutando el análisis estructural de tu perfil. En caso de ser aceptado, un operador de TDT te hablará nativamente por Instagram.</div>
              </div>
           ) : (
             <form onSubmit={handleSubmit} className="max-w-md mx-auto mb-16 relative">
-              <div className="flex flex-col gap-3">
-                <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 font-bold">@</span>
+              <div className="flex flex-col gap-4">
+                <div className="relative group">
+                  <span className="absolute left-5 top-1/2 -translate-y-1/2 text-zinc-500 font-bold group-focus-within:text-white transition-colors">@</span>
                   <input 
                     type="text" 
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    placeholder="Instagram username" 
+                    placeholder="Tu usuario de Instagram" 
                     disabled={status === "loading"}
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl py-4 pl-10 pr-4 text-white placeholder-zinc-500 font-bold focus:outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 transition-all disabled:opacity-50"
+                    className="w-full bg-zinc-950 border border-zinc-800 hover:border-zinc-700 rounded-2xl py-5 pl-12 pr-6 text-white placeholder-zinc-600 font-bold text-lg focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-all disabled:opacity-50"
                     required
                   />
                 </div>
                 <button 
                   type="submit" 
                   disabled={status === "loading" || !username}
-                  className="w-full flex items-center justify-center gap-2 bg-white text-black py-4 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-zinc-200 transition-all disabled:opacity-80"
+                  className="w-full flex items-center justify-center gap-3 bg-white text-black py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-xs hover:bg-zinc-200 transition-all disabled:opacity-80 shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(255,255,255,0.2)]"
                 >
-                  {status === "loading" ? <><Loader2 className="w-4 h-4 animate-spin text-zinc-500" /> Analyzing metrics...</> : "Run Free Analysis"}
+                  {status === "loading" ? <><Loader2 className="w-4 h-4 animate-spin text-zinc-500" /> Computando Métricas...</> : "Aplicar para Trabajar Juntos"}
                 </button>
               </div>
             </form>
@@ -214,27 +245,25 @@ export default function LandingMVP() {
               href={IG_LINK} 
               target="_blank" 
               rel="noopener noreferrer"
-              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-zinc-900 text-white px-8 py-4 rounded-full font-bold hover:bg-zinc-800 transition-colors border border-zinc-800"
+              className="w-full sm:w-auto flex items-center justify-center gap-3 bg-zinc-900 text-white px-8 py-4 rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-zinc-800 transition-colors border border-zinc-700"
             >
-              <Instagram className="w-5 h-5" />
-              Instagram
+              <Instagram className="w-4 h-4 text-zinc-400" /> Seguir en Instagram
             </a>
             <a 
               href={WA_LINK} 
               target="_blank" 
               rel="noopener noreferrer"
-              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-zinc-900 text-white px-8 py-4 rounded-full font-bold hover:bg-zinc-800 transition-colors border border-zinc-800"
+              className="w-full sm:w-auto flex items-center justify-center gap-3 bg-zinc-900 text-white px-8 py-4 rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-zinc-800 transition-colors border border-zinc-700"
             >
-              <MessageCircle className="w-5 h-5" />
-              WhatsApp
+              <MessageCircle className="w-4 h-4 text-zinc-400" /> Directo a WhatsApp
             </a>
           </div>
         </div>
       </section>
       
       {/* ── FOOTER ── */}
-      <footer className="py-8 px-6 border-t border-zinc-900 text-center">
-        <p className="text-zinc-600 text-sm font-bold tracking-widest uppercase">© 2026 Trend Digital Trade</p>
+      <footer className="py-10 px-6 border-t border-zinc-900 text-center bg-black">
+        <p className="text-zinc-600 text-[10px] font-black tracking-[0.3em] uppercase">© 2026 Trend Digital Trade • Elite Scaling</p>
       </footer>
     </main>
   );

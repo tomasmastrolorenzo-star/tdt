@@ -2,7 +2,7 @@ import { createServerClient } from '@supabase/ssr';
 import { cookies } from "next/headers";
 import { redirect } from 'next/navigation';
 import { LogoutButton } from '@/components/auth/logout-button';
-import { Activity, ShieldAlert, BadgeDollarSign, HeartPulse, UserCircle2, Clock } from 'lucide-react';
+import { Activity, ShieldAlert, BadgeDollarSign, HeartPulse, UserCircle2, Clock, ArrowRight } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -141,6 +141,70 @@ export default async function CEODashboard() {
 
         <div className="grid lg:grid-cols-12 gap-8">
            
+           {/* 1.5 CONVERSION PIPELINE FUNNEL (PHASE 12) */}
+           <div className="lg:col-span-12 bg-zinc-950 border border-zinc-900 rounded-2xl shadow-xl overflow-hidden mb-4 p-6 flex flex-col xl:flex-row gap-8 items-center justify-between">
+             <div className="w-full xl:w-1/3">
+                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-500 mb-2">Macro Funnel Array</h3>
+                <p className="text-zinc-500 text-xs font-bold leading-relaxed">System tracking exact performance drops from raw lead logic to client activation. Evaluates systemic bottlenecks real-time.</p>
+             </div>
+             
+             {(() => {
+                const step1Leads = leads.length;
+                const step2Contacted = leads.filter(l => l.status !== 'new').length;
+                const step3Qualified = leads.filter(l => ['qualified', 'offer_sent', 'payment_pending', 'closed'].includes(l.status)).length;
+                const step4Closed = clients.length;
+
+                const drop1 = step1Leads > 0 ? Math.round((step2Contacted / step1Leads) * 100) : 0;
+                const drop2 = step2Contacted > 0 ? Math.round((step3Qualified / step2Contacted) * 100) : 0;
+                const drop3 = step3Qualified > 0 ? Math.round((step4Closed / step3Qualified) * 100) : 0;
+
+                return (
+                   <div className="w-full xl:w-2/3 flex flex-col sm:flex-row items-center gap-2 sm:gap-4 justify-end shrink-0">
+                      
+                      {/* Step 1 */}
+                      <div className="flex flex-col items-center bg-black border border-zinc-800 rounded-xl p-4 w-full sm:w-[140px] shadow-lg">
+                        <span className="text-[9px] uppercase font-black tracking-widest text-zinc-500 mb-2">1. Raw Load</span>
+                        <span className="text-2xl font-black text-white">{step1Leads}</span>
+                      </div>
+                      
+                      <div className="hidden sm:flex flex-col items-center gap-1">
+                        <ArrowRight className="w-4 h-4 text-zinc-700" />
+                        <span className={`text-[8px] font-black ${drop1 < 50 ? 'text-red-500' : 'text-zinc-500'}`}>{drop1}%</span>
+                      </div>
+
+                      {/* Step 2 */}
+                      <div className="flex flex-col items-center bg-zinc-900/50 border border-zinc-800 rounded-xl p-4 w-full sm:w-[140px] shadow-lg">
+                        <span className="text-[9px] uppercase font-black tracking-widest text-blue-500 mb-2">2. Engaged</span>
+                        <span className="text-2xl font-black text-blue-400">{step2Contacted}</span>
+                      </div>
+
+                      <div className="hidden sm:flex flex-col items-center gap-1">
+                        <ArrowRight className="w-4 h-4 text-zinc-700" />
+                        <span className={`text-[8px] font-black ${drop2 < 20 ? 'text-red-500' : 'text-zinc-500'}`}>{drop2}%</span>
+                      </div>
+
+                      {/* Step 3 */}
+                      <div className="flex flex-col items-center bg-indigo-950/20 border border-indigo-900/40 rounded-xl p-4 w-full sm:w-[140px] shadow-lg">
+                        <span className="text-[9px] uppercase font-black tracking-widest text-indigo-500 mb-2">3. Qualified</span>
+                        <span className="text-2xl font-black text-indigo-400">{step3Qualified}</span>
+                      </div>
+
+                      <div className="hidden sm:flex flex-col items-center gap-1">
+                        <ArrowRight className="w-4 h-4 text-zinc-700" />
+                        <span className={`text-[8px] font-black ${drop3 < 30 ? 'text-red-500' : 'text-zinc-500'}`}>{drop3}%</span>
+                      </div>
+
+                      {/* Step 4 */}
+                      <div className="flex flex-col items-center bg-green-950/20 border border-green-900/40 rounded-xl p-4 w-full sm:w-[140px] shadow-[0_0_20px_rgba(34,197,94,0.1)]">
+                        <span className="text-[9px] uppercase font-black tracking-widest text-green-500 mb-2">4. Closed Won</span>
+                        <span className="text-2xl font-black text-green-400">{step4Closed}</span>
+                      </div>
+
+                   </div>
+                )
+             })()}
+           </div>
+
            {/* 2. SETTER PERFORMANCE MATRIX */}
            <div className="lg:col-span-8 bg-zinc-950 border border-zinc-900 rounded-2xl shadow-xl overflow-hidden self-start">
              <div className="p-6 border-b border-zinc-900 flex items-center gap-3 bg-zinc-950/50">
