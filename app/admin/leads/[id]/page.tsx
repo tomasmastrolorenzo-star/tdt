@@ -33,6 +33,24 @@ export default async function LeadProfilePage(props: { params: Promise<{ id: str
   const { data: events } = await supabase.from('events_log').select('*').eq('entity_id', leadId).order('created_at', { ascending: false });
   const { data: client } = await supabase.from('clients').select('*').eq('lead_id', leadId).single();
 
+  // Fast Travel Algorithm (Execution Speed Protocol)
+  const { data: siblingLeads } = await supabase.from('leads').select('id, priority').eq('status', lead.status);
+  let prevId = null;
+  let nextId = null;
+  
+  if (siblingLeads) {
+    const priorityScore: Record<string, number> = { high: 3, medium: 2, low: 1 };
+    const sorted = siblingLeads.sort((a, b) => {
+        const pA = priorityScore[a.priority || 'medium'] || 0;
+        const pB = priorityScore[b.priority || 'medium'] || 0;
+        return pB - pA;
+    });
+    
+    const idx = sorted.findIndex(l => l.id === leadId);
+    if (idx > 0) prevId = sorted[idx - 1].id;
+    if (idx !== -1 && idx < sorted.length - 1) nextId = sorted[idx + 1].id;
+  }
+
   return (
     <div className="min-h-screen bg-black text-white font-sans selection:bg-zinc-800">
       <div className="max-w-[1400px] mx-auto px-6 pt-12">
@@ -49,6 +67,8 @@ export default async function LeadProfilePage(props: { params: Promise<{ id: str
            initialInteractions={interactions || []}
            initialEvents={events || []}
            initialClient={client || null}
+           prevId={prevId}
+           nextId={nextId}
         />
       </div>
     </div>

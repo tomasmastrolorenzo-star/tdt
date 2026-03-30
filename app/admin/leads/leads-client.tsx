@@ -158,19 +158,35 @@ export function LeadsClientRenderer({ initialLeads }: { initialLeads: Lead[] }) 
               <div className="flex-1 overflow-y-auto p-3 space-y-3 custom-scrollbar">
                 {stageLeads.map(lead => {
                   const p = lead.priority || 'medium';
+                  
+                  // Money Priority Heuristic
+                  const isMoney = ['offer_sent', 'payment_pending'].includes(lead.status) || 
+                                  /precio|price|payment|pago|comprar|send|envia|transferencia|tarjeta/i.test(`${lead.notes || ''} ${JSON.stringify(lead.metadata || {})}`);
+
                   return (
-                    <div key={lead.id} className={`bg-black border border-zinc-800 p-4 rounded-xl shadow-lg hover:border-zinc-600 transition-all ${updating === lead.id ? 'opacity-50 blur-[1px] pointer-events-none scale-[0.98]' : ''}`}>
-                      <div className="flex items-start justify-between mb-2">
-                        <a href={`/admin/leads/${lead.id}`} target="_blank" className="font-bold truncate text-[15px] hover:text-cyan-400 hover:underline transition-colors block">@{lead.instagram_username}</a>
-                        <span className={`text-[8px] uppercase font-black tracking-widest px-2 py-0.5 rounded ml-2 shrink-0 border
-                           ${p === 'high' ? 'bg-red-950/30 text-red-500 border-red-900/50' : 
-                             p === 'medium' ? 'bg-orange-950/30 text-orange-500 border-orange-900/50' : 
-                             'bg-zinc-900 text-zinc-500 border-zinc-800'}`}>
-                           {p}
-                        </span>
+                    <div key={lead.id} className={`bg-black border p-4 rounded-xl shadow-lg hover:scale-[1.01] transition-all relative overflow-hidden ${updating === lead.id ? 'opacity-50 blur-[1px] pointer-events-none' : ''} ${isMoney ? 'border-green-500 shadow-[0_0_20px_rgba(34,197,94,0.15)] bg-green-950/10' : 'border-zinc-800 hover:border-zinc-600'}`}>
+                      {isMoney && <div className="absolute -top-6 -right-6 w-16 h-16 bg-green-500/20 rounded-full blur-[20px] pointer-events-none"></div>}
+                      
+                      <div className="flex items-start justify-between mb-2 relative z-10">
+                        <a href={`/admin/leads/${lead.id}`} target="_blank" className="font-bold truncate text-[15px] hover:text-cyan-400 hover:underline transition-colors block max-w-[120px]">@{lead.instagram_username}</a>
+                        
+                        <div className="flex gap-1.5 shrink-0">
+                          {isMoney ? (
+                             <span className="text-[9px] uppercase font-black tracking-widest px-2 py-0.5 rounded border bg-green-950/40 text-green-500 border-green-500/50 shadow-[0_0_10px_rgba(34,197,94,0.3)] animate-pulse">
+                                $$$
+                             </span>
+                          ) : (
+                             <span className={`text-[8px] uppercase font-black tracking-widest px-2 py-0.5 rounded border
+                                ${p === 'high' ? 'bg-red-950/30 text-red-500 border-red-900/50' : 
+                                  p === 'medium' ? 'bg-orange-950/30 text-orange-500 border-orange-900/50' : 
+                                  'bg-zinc-900 text-zinc-500 border-zinc-800'}`}>
+                                {p}
+                             </span>
+                          )}
+                        </div>
                       </div>
                     
-                    <div className="flex items-center justify-between text-[11px] font-bold text-zinc-500 mb-4 tracking-wide uppercase">
+                    <div className="flex items-center justify-between text-[11px] font-bold text-zinc-500 mb-4 tracking-wide uppercase relative z-10">
                       <span>{formatDistanceToNow(new Date(lead.updated_at), { addSuffix: true })}</span>
                       {updating === lead.id && <Loader2 className="w-3.5 h-3.5 text-zinc-400 animate-spin"/>}
                     </div>

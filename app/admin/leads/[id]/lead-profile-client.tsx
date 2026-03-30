@@ -1,17 +1,28 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { formatDistanceToNow, format } from "date-fns";
 import { toast } from "sonner";
-import { Loader2, Send, Save, CheckCircle, ArrowRight, User, Sparkles, Copy, CalendarCog } from "lucide-react";
+import { Loader2, Send, Save, CheckCircle, ArrowRight, User, Sparkles, Copy, CalendarCog, Crown, ChevronLeft, ChevronRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-export function LeadProfileClient({ initialLead, initialInteractions, initialEvents, initialClient }: any) {
+export function LeadProfileClient({ initialLead, initialInteractions, initialEvents, initialClient, prevId, nextId }: any) {
   const router = useRouter();
   const [lead, setLead] = useState(initialLead);
   const [interactions, setInteractions] = useState(initialInteractions);
   const [events, setEvents] = useState(initialEvents);
   const [clientProfile, setClientProfile] = useState(initialClient);
+  
+  // High-Speed Keyboard Navigation Hook (Phase 13)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes((e.target as HTMLElement).tagName)) return;
+      if (e.key === 'ArrowLeft' && prevId) router.push(`/admin/leads/${prevId}`);
+      if (e.key === 'ArrowRight' && nextId) router.push(`/admin/leads/${nextId}`);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [prevId, nextId, router]);
   
   // Strict Nested Context Initialization mapped to API Logic
   const defaultSales = lead.metadata?.sales_context || { buyer_type: "", interest_level: "", offer_discussed: "", estimated_value: "" };
@@ -137,6 +148,26 @@ export function LeadProfileClient({ initialLead, initialInteractions, initialEve
       
       {/* LEFT COLUMN: IDENTITY & SALES METRICS */}
       <div className="lg:col-span-4 flex flex-col gap-6">
+
+        {/* FAST TRAVEL COMMAND BAR */}
+        {(prevId || nextId) && (
+           <div className="flex gap-2">
+              <button 
+                onClick={() => prevId && router.push(`/admin/leads/${prevId}`)} 
+                disabled={!prevId}
+                className="flex-1 bg-zinc-950 border border-zinc-900 rounded-xl p-3 flex items-center justify-center gap-2 hover:bg-zinc-900 hover:border-zinc-700 disabled:opacity-30 transition-all font-black text-[10px] uppercase tracking-widest text-zinc-400 group"
+              >
+                 <ChevronLeft className="w-4 h-4 text-zinc-600 group-hover:text-white transition-colors" /> Prev Target
+              </button>
+              <button 
+                onClick={() => nextId && router.push(`/admin/leads/${nextId}`)} 
+                disabled={!nextId}
+                className="flex-1 bg-zinc-950 border border-zinc-900 rounded-xl p-3 flex items-center justify-center gap-2 hover:bg-zinc-900 hover:border-zinc-700 disabled:opacity-30 transition-all font-black text-[10px] uppercase tracking-widest text-zinc-400 group"
+              >
+                 Next Target <ChevronRight className="w-4 h-4 text-zinc-600 group-hover:text-white transition-colors" />
+              </button>
+           </div>
+        )}
         
         {/* HEADER */}
         <div className="bg-zinc-950 border border-zinc-900 rounded-2xl p-6 shadow-xl relative overflow-hidden">
@@ -214,9 +245,28 @@ export function LeadProfileClient({ initialLead, initialInteractions, initialEve
                     value={aiDrafts[activeDraftTab]}
                     className="w-full bg-black border border-violet-900/30 rounded-b-xl p-4 text-xs font-medium text-violet-50/90 resize-none h-32 focus:outline-none custom-scrollbar rounded-tr-xl"
                   />
-                  <button onClick={() => { navigator.clipboard.writeText(aiDrafts[activeDraftTab]); toast.success("Draft snapped to clipboard!"); }} className="absolute bottom-3 right-3 bg-zinc-800 hover:bg-zinc-700 text-white p-2.5 rounded-lg transition-colors shadow-lg">
-                    <Copy className="w-3.5 h-3.5" />
-                  </button>
+                  
+                  <div className="absolute bottom-3 right-3 flex items-center gap-2">
+                     <button
+                       onClick={async () => {
+                          try {
+                            const pl = { lead_id: lead.id, type: "winning_script", content: { message: aiDrafts[activeDraftTab], type: activeDraftTab, niche: niche || "Unknown", result: "Manually tracked as winner by Exec", date: new Date().toISOString() }};
+                            const res = await fetch(`/api/admin/interactions`, { method: "POST", headers:{ "Content-Type": "application/json" }, body: JSON.stringify(pl)});
+                            const data = await res.json();
+                            if(!res.ok) throw new Error(data.error);
+                            setInteractions([data.interaction, ...interactions]);
+                            toast.success("🏆 AI Script mapped to Winner Database");
+                          } catch (err: any) { toast.error(err.message); }
+                       }}
+                       className="bg-yellow-950/40 border border-yellow-900/50 hover:bg-yellow-900/60 text-yellow-500 p-2.5 rounded-lg transition-colors shadow-lg"
+                       title="Archive as Winner"
+                     >
+                       <Crown className="w-3.5 h-3.5" />
+                     </button>
+                     <button onClick={() => { navigator.clipboard.writeText(aiDrafts[activeDraftTab]); toast.success("Draft snapped to clipboard!"); }} className="bg-zinc-800 hover:bg-zinc-700 text-white p-2.5 rounded-lg transition-colors shadow-lg" title="Copy Message">
+                       <Copy className="w-3.5 h-3.5" />
+                     </button>
+                  </div>
                 </div>
              </div>
            ) : (

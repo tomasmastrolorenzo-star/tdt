@@ -60,18 +60,29 @@ export function TodayClient({ initialLeads }: any) {
        {leads.map((lead: any) => {
          const isProcessing = processingId === lead.id;
          const p = lead.priority || 'medium';
+         const isMoney = ['offer_sent', 'payment_pending'].includes(lead.status) || 
+                         /precio|price|payment|pago|comprar|send|envia|transferencia|tarjeta/i.test(`${lead.notes || ''} ${JSON.stringify(lead.metadata || {})}`);
+
          return (
-            <div key={lead.id} className="bg-zinc-950 border border-zinc-900 rounded-2xl p-6 shadow-2xl relative overflow-hidden flex flex-col justify-between transition-opacity" style={{ opacity: isProcessing ? 0.5 : 1 }}>
-               <div>
+            <div key={lead.id} className={`bg-zinc-950 border rounded-2xl p-6 shadow-2xl relative overflow-hidden flex flex-col justify-between transition-opacity ${isMoney ? 'border-green-500 shadow-[0_0_30px_rgba(34,197,94,0.15)]' : 'border-zinc-900'} `} style={{ opacity: isProcessing ? 0.5 : 1 }}>
+               {isMoney && <div className="absolute -top-6 -right-6 w-20 h-20 bg-green-500/20 rounded-full blur-[25px] pointer-events-none"></div>}
+               
+               <div className="relative z-10">
                  <div className="flex items-start justify-between mb-5">
                     <a href={`/admin/leads/${lead.id}`} target="_blank" className="text-lg font-black text-white hover:text-cyan-400 transition-colors truncate max-w-[70%]">@{lead.instagram_username}</a>
-                    <div className="flex gap-2">
-                      <span className={`text-[8px] uppercase font-black tracking-widest px-2 py-1 rounded border
-                         ${p === 'high' ? 'bg-red-950/30 text-red-500 border-red-900/50' : 
-                           p === 'medium' ? 'bg-orange-950/30 text-orange-500 border-orange-900/50' : 
-                           'bg-zinc-900 text-zinc-500 border-zinc-800'}`}>
-                         {p}
-                      </span>
+                    <div className="flex gap-2 shrink-0">
+                      {isMoney ? (
+                         <span className="text-[10px] uppercase font-black tracking-widest px-2 py-1 rounded border bg-green-950/40 text-green-500 border-green-500/50 shadow-[0_0_15px_rgba(34,197,94,0.3)] animate-pulse">
+                            $$$
+                         </span>
+                      ) : (
+                         <span className={`text-[8px] uppercase font-black tracking-widest px-2 py-1 rounded border
+                            ${p === 'high' ? 'bg-red-950/30 text-red-500 border-red-900/50' : 
+                              p === 'medium' ? 'bg-orange-950/30 text-orange-500 border-orange-900/50' : 
+                              'bg-zinc-900 text-zinc-500 border-zinc-800'}`}>
+                            {p}
+                         </span>
+                      )}
                     </div>
                  </div>
                  
