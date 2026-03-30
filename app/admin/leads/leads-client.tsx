@@ -167,9 +167,15 @@ export function LeadsClientRenderer({ initialLeads }: { initialLeads: Lead[] }) 
                     <div 
                       key={lead.id} 
                       onClick={() => window.open(`/admin/leads/${lead.id}`, '_blank')}
-                      className={`bg-black border p-4 rounded-xl shadow-lg hover:scale-[1.01] transition-all relative overflow-hidden cursor-pointer cursor-crosshair group flex flex-col gap-3 ${updating === lead.id ? 'opacity-50 blur-[1px] pointer-events-none' : ''} ${isMoney ? 'border-green-500 shadow-[0_0_20px_rgba(34,197,94,0.15)] bg-green-950/10' : 'border-zinc-800 hover:border-zinc-500'}`}
+                      className={`bg-black border p-4 rounded-xl shadow-lg hover:scale-[1.01] transition-all relative overflow-hidden cursor-pointer cursor-crosshair group flex flex-col gap-3 
+                      ${updating === lead.id ? 'opacity-50 blur-[1px] pointer-events-none' : ''} 
+                      ${isMoney ? 'border-green-500 shadow-[0_0_20px_rgba(34,197,94,0.15)] bg-green-950/10' : 
+                        (lead.status === 'contacted' && ((Date.now() - new Date(lead.updated_at).getTime()) / (1000 * 60 * 60)) > 96) ? 'border-red-500 shadow-[0_0_20px_rgba(239,68,68,0.15)] bg-red-950/10' :
+                        (lead.status === 'contacted' && ((Date.now() - new Date(lead.updated_at).getTime()) / (1000 * 60 * 60)) > 48) ? 'border-orange-500 shadow-[0_0_20px_rgba(249,115,22,0.15)] bg-orange-950/10' :
+                        'border-zinc-800 hover:border-zinc-500'}`}
                     >
                       {isMoney && <div className="absolute -top-6 -right-6 w-16 h-16 bg-green-500/20 rounded-full blur-[20px] pointer-events-none"></div>}
+                      {(lead.status === 'contacted' && ((Date.now() - new Date(lead.updated_at).getTime()) / (1000 * 60 * 60)) > 96) && <div className="absolute -top-6 -right-6 w-16 h-16 bg-red-500/20 rounded-full blur-[20px] pointer-events-none"></div>}
                       
                       {/* IDENTITY HEADER */}
                       <div className="flex items-start justify-between relative z-10">
