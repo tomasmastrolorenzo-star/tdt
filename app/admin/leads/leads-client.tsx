@@ -164,12 +164,16 @@ export function LeadsClientRenderer({ initialLeads }: { initialLeads: Lead[] }) 
                                   /precio|price|payment|pago|comprar|send|envia|transferencia|tarjeta/i.test(`${lead.notes || ''} ${JSON.stringify(lead.metadata || {})}`);
 
                   return (
-                    <div key={lead.id} className={`bg-black border p-4 rounded-xl shadow-lg hover:scale-[1.01] transition-all relative overflow-hidden ${updating === lead.id ? 'opacity-50 blur-[1px] pointer-events-none' : ''} ${isMoney ? 'border-green-500 shadow-[0_0_20px_rgba(34,197,94,0.15)] bg-green-950/10' : 'border-zinc-800 hover:border-zinc-600'}`}>
+                    <div 
+                      key={lead.id} 
+                      onClick={() => window.open(`/admin/leads/${lead.id}`, '_blank')}
+                      className={`bg-black border p-4 rounded-xl shadow-lg hover:scale-[1.01] transition-all relative overflow-hidden cursor-pointer cursor-crosshair group flex flex-col gap-3 ${updating === lead.id ? 'opacity-50 blur-[1px] pointer-events-none' : ''} ${isMoney ? 'border-green-500 shadow-[0_0_20px_rgba(34,197,94,0.15)] bg-green-950/10' : 'border-zinc-800 hover:border-zinc-500'}`}
+                    >
                       {isMoney && <div className="absolute -top-6 -right-6 w-16 h-16 bg-green-500/20 rounded-full blur-[20px] pointer-events-none"></div>}
                       
-                      <div className="flex items-start justify-between mb-2 relative z-10">
-                        <a href={`/admin/leads/${lead.id}`} target="_blank" className="font-bold truncate text-[15px] hover:text-cyan-400 hover:underline transition-colors block max-w-[120px]">@{lead.instagram_username}</a>
-                        
+                      {/* IDENTITY HEADER */}
+                      <div className="flex items-start justify-between relative z-10">
+                        <span className="font-bold truncate text-[15px] group-hover:text-cyan-400 transition-colors block max-w-[120px]">@{lead.instagram_username}</span>
                         <div className="flex gap-1.5 shrink-0">
                           {isMoney ? (
                              <span className="text-[9px] uppercase font-black tracking-widest px-2 py-0.5 rounded border bg-green-950/40 text-green-500 border-green-500/50 shadow-[0_0_10px_rgba(34,197,94,0.3)] animate-pulse">
@@ -186,17 +190,25 @@ export function LeadsClientRenderer({ initialLeads }: { initialLeads: Lead[] }) 
                         </div>
                       </div>
                     
-                    <div className="flex items-center justify-between text-[11px] font-bold text-zinc-500 mb-4 tracking-wide uppercase relative z-10">
-                      <span>{formatDistanceToNow(new Date(lead.updated_at), { addSuffix: true })}</span>
+                    {/* CONTEXT ROW */}
+                    <div className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-zinc-400 relative z-10 border-b border-zinc-800/50 pb-2">
+                       <span className="bg-zinc-900 border border-zinc-800 px-2 py-0.5 rounded">{lead.metadata?.niche || 'General'}</span>
+                       {lead.metadata?.followers && <span className="text-zinc-500">{lead.metadata.followers} Followers</span>}
+                    </div>
+
+                    {/* METRICS ROW */}
+                    <div className="flex items-center justify-between text-[10px] font-bold text-zinc-500 tracking-wide uppercase relative z-10">
+                      <span>{formatDistanceToNow(new Date(lead.updated_at))} in {stage.replace('_', ' ')}</span>
                       {updating === lead.id && <Loader2 className="w-3.5 h-3.5 text-zinc-400 animate-spin"/>}
                     </div>
 
-                    <div className="relative">
+                    {/* SELECTOR */}
+                    <div className="relative mt-1" onClick={(e) => e.stopPropagation()}>
                       <select 
                         value={lead.status}
                         onChange={(e) => handleStatusChange(lead.id, e.target.value)}
                         disabled={updating === lead.id}
-                        className={`w-full bg-zinc-900 border text-[11px] font-black uppercase tracking-[0.2em] rounded-lg pl-3 pr-8 py-3 outline-none cursor-pointer transition-colors appearance-none flex items-center ${colorClass.split(' ')[0]} ${colorClass.split(' ')[1]}`}
+                        className={`w-full bg-zinc-900 border text-[11px] font-black uppercase tracking-[0.2em] rounded-lg pl-3 pr-8 py-2 outline-none cursor-pointer transition-colors appearance-none flex items-center ${colorClass.split(' ')[0]} ${colorClass.split(' ')[1]}`}
                       >
                          {PIPELINE_STAGES.map(s => <option key={s} value={s}>{s.replace('_', ' ')}</option>)}
                       </select>

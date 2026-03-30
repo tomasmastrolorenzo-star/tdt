@@ -219,17 +219,31 @@ export function LeadProfileClient({ initialLead, initialInteractions, initialEve
              </button>
            </div>
 
-           {/* Metrics Overlay */}
-           <div className="flex gap-2 mb-4 relative z-10">
-              <span className={`text-[9px] uppercase font-black tracking-widest px-2 py-1 rounded border 
-                ${priority === 'high' ? 'bg-red-950/30 border-red-900 text-red-500' : 
-                  priority === 'medium' ? 'bg-orange-950/30 border-orange-900 text-orange-500' : 
-                  'bg-zinc-900 border-zinc-800 text-zinc-500'}`}>
-                Priority: {priority}
-              </span>
-              <span className="text-[9px] uppercase font-black tracking-widest px-2 py-1 rounded border bg-zinc-900 border-zinc-800 text-zinc-400">
-                Niche: {niche}
-              </span>
+           {/* Metrics Overlay (Phase 14 V1.1 Qualification) */}
+           <div className="flex flex-col gap-3 mb-4 relative z-10">
+              <div className="flex gap-2">
+                <span className={`text-[9px] uppercase font-black tracking-widest px-2 py-1 rounded border 
+                  ${priority === 'high' ? 'bg-red-950/30 border-red-900 text-red-500' : 
+                    priority === 'medium' ? 'bg-orange-950/30 border-orange-900 text-orange-500' : 
+                    'bg-zinc-900 border-zinc-800 text-zinc-500'}`}>
+                  Priority: {priority}
+                </span>
+                <span className="text-[9px] uppercase font-black tracking-widest px-2 py-1 rounded border bg-zinc-900 border-zinc-800 text-zinc-400">
+                  Niche: {niche}
+                </span>
+              </div>
+
+              {lead.metadata && lead.metadata.is_qualified === true && (
+                 <div className="bg-green-950/20 border border-green-500/50 shadow-[0_0_20px_rgba(34,197,94,0.15)] rounded-lg p-2.5 flex justify-center mt-1">
+                    <span className="text-[10px] uppercase font-black tracking-[0.3em] text-green-400">✅ TDT Target Qualified (V1.1)</span>
+                 </div>
+              )}
+              {lead.metadata && lead.metadata.is_qualified === false && (
+                 <div className="bg-red-950/20 border border-red-900/50 rounded-lg p-2.5 flex flex-col justify-center mt-1">
+                    <span className="text-[10px] uppercase font-black tracking-[0.2em] text-red-500 text-center mb-1">⛔ Disqualified (Failed criteria)</span>
+                    <span className="text-[9px] font-bold text-red-400/60 text-center uppercase tracking-widest">{lead.metadata.disqualification_reason}</span>
+                 </div>
+              )}
            </div>
            
            {aiDrafts ? (

@@ -17,16 +17,26 @@ export async function POST(req: Request) {
      return NextResponse.json({ error: 'OpenAI integration offline. Key restricted.' }, { status: 500 });
   }
 
-  // System Prompt for Unified Native Smart Automation
+  // System Prompt for Unified Native Smart Automation (V1.1 TDT Qualification)
   const systemPrompt = `
-You are the elite "TDT Central Brain". Your job is to strictly classify the given lead and preemptively write 3 highly converting Instagram DM outreach messages natively for the user to copy. 
+You are the elite "TDT Central Brain". Your job is to classify the given lead and preemptively write 3 highly converting Instagram DM outreach messages natively for the user to copy. 
 The messages MUST sound like natural Instagram chat from a young entrepreneur (TDT founder). Short, no caps, no corporate talk, zero emojis. 
+
+CRITICAL SOP: CRITERIO DE LEAD CALIFICADO TDT (VERSIÓN 1.1)
+Evaluate the lead using these 4 traits. If ANY are missing, the lead is NOT qualified.
+1. PERFIL: 5K-200K followers, active (<7 days), real engagement, NO agency in bio.
+2. RESPUESTA: Responded at least once, did not explicitly reject (e.g., "sí", "cómo funciona" = valid; "no gracias" = invalid).
+3. INTENCIÓN: MUST show signal (wants to grow, asks for results/price, wants to work on profile, asks how it works). If no signal -> NOT qualified.
+4. FIT: Fitness, Entrepreneur/Trading, Model/Lifestyle. If not -> downgrade priority.
+
 Your output MUST be plain raw JSON, exactly matching following schema:
 {
-  "niche": (guess based on instagram username or interactions, single noun, e.g. "fitness", "agencia", "desconocido"),
-  "interest_level": ("high", "medium", "low"),
-  "priority": ("high", "medium", "low"),
-  "buyer_type": ("b2b", "b2c", "unknown"),
+  "is_qualified": boolean,
+  "disqualification_reason": "if is_qualified is false, state why in max 5 words. Leave blank if true",
+  "niche": "guess based on instagram username or interactions, single noun, e.g. fitness, agencia, desconocido",
+  "interest_level": "high, medium, or low",
+  "priority": "high, medium, or low. Force 'high' if is_qualified is true",
+  "buyer_type": "b2b, b2c, or unknown",
   "draft_start": "...",
   "draft_follow_up": "...",
   "draft_close": "..."
@@ -71,6 +81,8 @@ Recent Interactions: ${interactions?.slice(0,5).map((i:any) => i.content).join('
      
      const newMetadata = {
        ...currentMetadata,
+       is_qualified: aiClassification.is_qualified,
+       disqualification_reason: aiClassification.disqualification_reason,
        sales_context: {
          ...currentSalesContext,
          buyer_type: aiClassification.buyer_type,
@@ -84,12 +96,20 @@ Recent Interactions: ${interactions?.slice(0,5).map((i:any) => i.content).join('
        }
      };
 
+     // Auto-escalate status and priority if structurally qualified (V1.1 Protocol)
+     const finalPriority = aiClassification.is_qualified ? 'high' : aiClassification.priority;
+     const payloadParams: any = { 
+        metadata: newMetadata, 
+        priority: finalPriority 
+     };
+     // Hard-move qualified targets into "Conversación activa / qualified"
+     if (aiClassification.is_qualified && status !== 'closed' && status !== 'payment_pending') {
+         payloadParams.status = 'qualified';
+     }
+
      const { error: updateError } = await supabase
        .from('leads')
-       .update({ 
-          metadata: newMetadata, 
-          priority: aiClassification.priority 
-       })
+       .update(payloadParams)
        .eq('id', lead_id);
 
      if (updateError) throw new Error(updateError.message);
