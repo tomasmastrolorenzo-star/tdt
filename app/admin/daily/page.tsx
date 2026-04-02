@@ -21,9 +21,15 @@ export default async function DailyRoutinePage() {
 
   const [
     { data: leads },
+    { data: actionableLeads },
     { data: todayReport }
   ] = await Promise.all([
     supabase.from('leads').select('id, status, updated_at, created_at'),
+    supabase.from('leads')
+      .select('*')
+      .not('status', 'in', '("closed","lost","reengage")')
+      .lte('next_action_date', new Date().toISOString())
+      .order('next_action_date', { ascending: true }),
     supabase.from('daily_reports').select('*').eq('report_date', todayStr).maybeSingle()
   ]);
 
@@ -38,7 +44,10 @@ export default async function DailyRoutinePage() {
            <div className="flex gap-12 items-center">
              <div className="flex items-center gap-3">
                 <Clock className="w-8 h-8 text-orange-500" />
-                <h1 className="text-3xl font-black tracking-tighter">Daily Execution</h1>
+                <div>
+                  <h1 className="text-3xl font-black tracking-tighter">Operaciones Diarias</h1>
+                  <p className="text-zinc-500 mt-2">Tu motor de ejecución. Cada acción importa.</p>
+                </div>
              </div>
              <nav className="hidden md:flex gap-6 items-center">
                 <a href="/admin/ceo" className="text-zinc-500 hover:text-white text-[10px] uppercase font-black tracking-widest transition-colors">CEO Control</a>
@@ -48,7 +57,11 @@ export default async function DailyRoutinePage() {
            <LogoutButton />
         </header>
 
-        <DailyRoutineClient initialLeads={leads} initialReport={todayReport} />
+        <DailyRoutineClient 
+          initialLeads={leads} 
+          initialActionableLeads={actionableLeads}
+          initialReport={todayReport} 
+        />
       </div>
     </div>
   );

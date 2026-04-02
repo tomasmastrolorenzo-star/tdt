@@ -6,29 +6,20 @@ import { formatDistanceToNow } from "date-fns";
 import { Search, Filter, Loader2, ChevronDown } from "lucide-react";
 
 // The organically ordered stages of the CRM Pipeline
+// The organically ordered stages of the CRM Pipeline - Simplified for TDT Reset
 const PIPELINE_STAGES = [
-  "new", 
-  "contacted", 
-  "responded", 
-  "qualified", 
-  "offer_sent", 
-  "payment_pending", 
-  "closed",
-  "lost",
-  "reengage"
+  "nuevo", 
+  "respondio", 
+  "cerrado", 
+  "perdido"
 ];
 
 // Structural UI coloring for Kanban columns
 const STATUS_COLORS: Record<string, string> = {
-  new: "border-blue-500 text-blue-400 bg-blue-950/20",
-  contacted: "border-purple-500 text-purple-400 bg-purple-950/20",
-  responded: "border-indigo-500 text-indigo-400 bg-indigo-950/20",
-  qualified: "border-orange-500 text-orange-400 bg-orange-950/20",
-  offer_sent: "border-yellow-500 text-yellow-400 bg-yellow-950/20",
-  payment_pending: "border-amber-500 text-amber-400 bg-amber-950/20",
-  closed: "border-green-500 text-green-400 bg-green-950/20",
-  lost: "border-red-500 text-red-500 bg-red-950/20",
-  reengage: "border-pink-500 text-pink-400 bg-pink-950/20"
+  nuevo: "border-blue-500 text-blue-400 bg-blue-950/20",
+  respondio: "border-orange-500 text-orange-400 bg-orange-950/20",
+  cerrado: "border-green-500 text-green-400 bg-green-950/20",
+  perdido: "border-red-500 text-red-500 bg-red-950/20"
 };
 
 type Lead = any; 
@@ -69,9 +60,9 @@ export function LeadsClientRenderer({ initialLeads }: { initialLeads: Lead[] }) 
         throw new Error(payload.error || "Failed to execute atomic track sequence");
       }
       
-      toast.success("Pipeline updated securely.");
+      toast.success("Estado actualizado.");
     } catch(err: any) {
-      toast.error(err.message || "Failed to execute transition. Rolling back.");
+      toast.error(err.message || "Error al actualizar. Revirtiendo.");
       // Rollback pipeline
       setLeads(current => current.map(l => l.id === leadId ? { ...l, status: originalLead.status, updated_at: originalLead.updated_at } : l));
     } finally {
@@ -82,13 +73,13 @@ export function LeadsClientRenderer({ initialLeads }: { initialLeads: Lead[] }) 
   // Aggressive Performance Filtering & AI Priority Sorting
   const priorityScore: Record<string, number> = { high: 3, medium: 2, low: 1 };
   
-  const moneyStatuses = ['offer_sent', 'payment_pending'];
+  const moneyStatuses = ['cerrado']; // Closest to money in simple view
   const filteredLeads = leads.filter(l => {
     const matchSearch = l.instagram_username.toLowerCase().includes(search.toLowerCase());
     const matchSource = sourceFilter === "all" || l.source === sourceFilter;
     const matchNicho = nichoFilter === "all" || l.niche === nichoFilter;
     const matchFollowers = followersFilter === "all" || l.followers_range === followersFilter;
-    const matchMoney = !moneyOnly || moneyStatuses.includes(l.status);
+    const matchMoney = !moneyOnly || l.status === 'cerrado';
     return matchSearch && matchSource && matchNicho && matchFollowers && matchMoney;
   }).sort((a, b) => {
      const pA = priorityScore[a.priority || 'medium'] || 0;
@@ -99,10 +90,18 @@ export function LeadsClientRenderer({ initialLeads }: { initialLeads: Lead[] }) 
   const grouped: Record<string, Lead[]> = {};
   PIPELINE_STAGES.forEach(stage => grouped[stage] = []);
   filteredLeads.forEach(lead => {
-    if (grouped[lead.status]) {
-      grouped[lead.status].push(lead);
+    // Map legacy English statuses to new Spanish ones for the UI if needed
+    let uiStatus = lead.status;
+    if (uiStatus === 'new') uiStatus = 'nuevo';
+    if (['contacted', 'responded', 'qualified', 'offer_sent', 'payment_pending', 'reengage'].includes(uiStatus)) uiStatus = 'respondio';
+    if (uiStatus === 'closed') uiStatus = 'cerrado';
+    if (uiStatus === 'lost') uiStatus = 'perdido';
+
+    if (grouped[uiStatus]) {
+      grouped[uiStatus].push(lead);
     } else {
-      grouped[lead.status] = [lead];
+      // Default to responded if unknown
+      grouped['respondio'].push(lead);
     }
   });
 
@@ -115,7 +114,7 @@ export function LeadsClientRenderer({ initialLeads }: { initialLeads: Lead[] }) 
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
             <input 
               type="text" 
-              placeholder="Search leads..." 
+              placeholder="Buscar prospectos..." 
               value={search}
               onChange={e => setSearch(e.target.value)}
               className="w-full bg-zinc-900 border border-zinc-800 text-sm text-white rounded-lg pl-9 pr-4 py-2 focus:outline-none focus:border-zinc-600 transition-colors"
@@ -126,7 +125,7 @@ export function LeadsClientRenderer({ initialLeads }: { initialLeads: Lead[] }) 
             <select value={sourceFilter} onChange={e => setSourceFilter(e.target.value)}
               className="bg-zinc-900 border border-zinc-800 text-sm font-bold text-zinc-300 rounded-lg pl-9 pr-4 py-2 focus:outline-none focus:border-zinc-600 appearance-none cursor-pointer uppercase tracking-widest transition-colors"
             >
-              <option value="all">All Sources</option>
+              <option value="all">Todas las fuentes</option>
               <option value="dm">DM</option>
               <option value="referido">Referido</option>
               <option value="landing">Landing</option>
@@ -136,7 +135,7 @@ export function LeadsClientRenderer({ initialLeads }: { initialLeads: Lead[] }) 
           <select value={nichoFilter} onChange={e => setNichoFilter(e.target.value)}
             className="bg-zinc-900 border border-zinc-800 text-sm font-bold text-zinc-300 rounded-lg px-3 py-2 focus:outline-none focus:border-zinc-600 appearance-none cursor-pointer uppercase tracking-widest transition-colors"
           >
-            <option value="all">All Niches</option>
+            <option value="all">Todos los nichos</option>
             <option value="fitness">Fitness</option>
             <option value="emprendedor">Emprendedor</option>
             <option value="modelo">Modelo</option>
@@ -145,7 +144,7 @@ export function LeadsClientRenderer({ initialLeads }: { initialLeads: Lead[] }) 
           <select value={followersFilter} onChange={e => setFollowersFilter(e.target.value)}
             className="bg-zinc-900 border border-zinc-800 text-sm font-bold text-zinc-300 rounded-lg px-3 py-2 focus:outline-none focus:border-zinc-600 appearance-none cursor-pointer uppercase tracking-widest transition-colors"
           >
-            <option value="all">All Followers</option>
+            <option value="all">Seguidores (Todos)</option>
             <option value="5k_20k">5K–20K</option>
             <option value="20k_100k">20K–100K</option>
             <option value="100k_200k">100K–200K</option>
@@ -155,16 +154,16 @@ export function LeadsClientRenderer({ initialLeads }: { initialLeads: Lead[] }) 
               moneyOnly ? 'bg-green-950/40 border-green-500 text-green-400 shadow-[0_0_15px_rgba(34,197,94,0.2)]' : 'bg-zinc-900 border-zinc-800 text-zinc-500 hover:text-white'
             }`}
           >
-            💰 Money Only
+            💰 Cerrados
           </button>
         </div>
 
         <div className="flex items-center gap-6 text-xs text-zinc-400 font-bold tracking-widest uppercase">
           <span className="bg-zinc-900 px-3 py-1.5 rounded-lg border border-zinc-800">
-            Active: {filteredLeads.filter(l => !['closed', 'lost'].includes(l.status)).length}
+            En Proceso: {filteredLeads.filter(l => !['closed', 'lost', 'cerrado', 'perdido'].includes(l.status)).length}
           </span>
           <span className="bg-green-950/30 text-green-500 px-3 py-1.5 rounded-lg border border-green-900/50">
-            Closed/Won: {filteredLeads.filter(l => l.status === 'closed').length}
+            Cerrados: {filteredLeads.filter(l => ['closed', 'cerrado'].includes(l.status)).length}
           </span>
         </div>
       </div>

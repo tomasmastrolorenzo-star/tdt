@@ -42,7 +42,38 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl)
   }
 
-  // 2. If already logged in but visiting auth routes or landing -> Redirect to dashboard
+  // 2. Role-based Access Control (RBAC)
+  if (user && isProtected) {
+    // Fetch profile for role verification
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single()
+
+    const role = profile?.role?.toLowerCase()
+    
+    // Restricted routes for Setters (vendors)
+    const CEO_ONLY_ROUTES = [
+      '/admin/ceo',
+      '/admin/clients',
+      '/admin/daily',
+      '/admin/traffic',
+      '/admin/scripts',
+      '/admin/scripts/generate',
+      '/admin/leads/import'
+    ]
+
+    const isCeoRoute = CEO_ONLY_ROUTES.some(p => pathname.startsWith(p))
+
+    if (role === 'vendor' && isCeoRoute) {
+      const redirectUrl = request.nextUrl.clone()
+      redirectUrl.pathname = "/admin/leads"
+      return NextResponse.redirect(redirectUrl)
+    }
+  }
+
+  // 3. If already logged in but visiting auth routes or landing -> Redirect to dashboard
   if (user && (pathname === "/login" || pathname === "/register" || pathname === "/")) {
     const redirectUrl = request.nextUrl.clone()
     redirectUrl.pathname = "/office"

@@ -52,3 +52,77 @@ export async function PATCH(req: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+export async function POST(req: Request) {
+  try {
+    const { handle_ig, fuente, nicho, seguidores } = await req.json();
+
+    if (!handle_ig) {
+      return NextResponse.json({ error: 'Missing handle_ig' }, { status: 400 });
+    }
+
+    const cookieStore = await cookies();
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+
+    const supabase = createServerClient(supabaseUrl, supabaseKey, {
+      cookies: {
+        getAll() { return cookieStore.getAll() },
+        setAll() {}
+      }
+    });
+
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+    // Role check for assignment
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single();
+
+    const role = profile?.role?.toLowerCase();
+    
+    // Check if duplicate exists
+    const { data: existing } = await supabase
+      .from('leads')
+      .select('id')
+      .eq('instagram_username', handle_ig)
+      .maybeSingle();
+
+    if (existing) {
+      return NextResponse.json({ error: `Lead @${handle_ig} already exists in pipeline.` }, { status: 409 });
+    }
+
+    // Prepare lead data
+    const leadData: any = {
+      instagram_username: handle_ig,
+      status: 'new',
+      metadata: { 
+        source: fuente || 'manual', 
+        niche: nicho, 
+        follower_range: seguidores 
+      }
+    };
+
+    // Auto-assignment for vendors
+    if (role === 'vendor') {
+      leadData.assigned_to = user.id;
+    }
+
+    const { data: lead, error: insertError } = await supabase
+      .from('leads')
+      .insert(leadData)
+      .select()
+      .single();
+
+    if (insertError) throw insertError;
+
+    return NextResponse.json({ success: true, lead });
+
+  } catch (error: any) {
+    console.error('Create Lead Error:', error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}

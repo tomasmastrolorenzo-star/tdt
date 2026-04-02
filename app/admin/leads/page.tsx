@@ -22,10 +22,28 @@ export default async function AdminLeadsPage() {
     }
   });
 
-  const { data: leads, error } = await supabase
-    .from('leads')
-    .select('*')
-    .order('created_at', { ascending: false });
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    return <div className="p-8 text-white bg-black h-screen">Unauthorized access. Please login.</div>;
+  }
+
+  // Fetch role for filtering
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single();
+
+  const role = profile?.role?.toLowerCase();
+  
+  let query = supabase.from('leads').select('*');
+  
+  // Filter by assignment if user is a Setter (vendor)
+  if (role === 'vendor') {
+    query = query.eq('assigned_to', user.id);
+  }
+
+  const { data: leads, error } = await query.order('created_at', { ascending: false });
 
   if (error) {
     return <div className="p-8 text-red-500 bg-black h-screen">Error loading leads: {error.message}</div>;
@@ -36,8 +54,8 @@ export default async function AdminLeadsPage() {
       <div className="max-w-6xl mx-auto">
         <header className="flex items-center justify-between mb-8 border-b border-zinc-900 pb-6">
           <div>
-            <h1 className="text-3xl font-black tracking-tighter">Data Core: Leads</h1>
-            <p className="text-zinc-500 mt-2">Central system foundation. All actions are tracked.</p>
+            <h1 className="text-3xl font-black tracking-tighter">Gestor de Prospectos</h1>
+            <p className="text-zinc-500 mt-2">Sistema central de captación. Cada acción es rastreada.</p>
           </div>
           <LogoutButton />
         </header>

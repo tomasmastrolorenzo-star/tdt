@@ -207,8 +207,6 @@ export default async function CEODashboard() {
 
          </div>
 
-          </div>
-
          {/* MRR / CHURN ANALYTICS BLOCK */}
          {(() => {
            // Build last 6 months MRR from clients

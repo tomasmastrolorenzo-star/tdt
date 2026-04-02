@@ -31,7 +31,10 @@ export default async function ClientsPage() {
            <div className="flex gap-12 items-center">
              <div className="flex items-center gap-3">
                 <Vault className="w-8 h-8 text-green-500" />
-                <h1 className="text-3xl font-black tracking-tighter">Financial Core</h1>
+                <div>
+                  <h1 className="text-3xl font-black tracking-tighter">Control de Ingresos</h1>
+                  <p className="text-zinc-500 mt-2">Seguimiento financiero y post-venta en tiempo real.</p>
+                </div>
              </div>
 
              {/* NATIVE NAVIGATION MENUS FOR TDT */}
@@ -39,8 +42,8 @@ export default async function ClientsPage() {
                 <a href="/admin/leads" className="text-zinc-500 hover:text-white text-[10px] uppercase font-black tracking-widest flex items-center gap-2 transition-colors">
                   <Briefcase className="w-3.5 h-3.5" /> CRM Pipeline
                 </a>
-                <a href="/admin/today" className="text-zinc-500 hover:text-white text-[10px] uppercase font-black tracking-widest flex items-center gap-2 transition-colors">
-                  <CalendarClock className="w-3.5 h-3.5" /> Daily Tracker
+                <a href="/admin/daily" className="text-zinc-500 hover:text-white text-[10px] uppercase font-black tracking-widest flex items-center gap-2 transition-colors">
+                  <CalendarClock className="w-3.5 h-3.5" /> Daily Operations
                 </a>
              </nav>
            </div>

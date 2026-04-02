@@ -27,8 +27,22 @@ export async function POST(req: Request) {
     updated_at: now,
   }));
 
-  const { data, error } = await supabase.from('leads').insert(rows).select('id');
+  let inserted = 0;
+  let skipped = 0;
+  const errors: string[] = [];
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json({ success: data?.length || 0, failed: leads.length - (data?.length || 0) });
+  for (const row of rows) {
+    const { error } = await supabase.from('leads').insert(row);
+    if (error) {
+      if (error.code === '23505') {
+        skipped++;
+      } else {
+        errors.push(`@${row.instagram_username}: ${error.message}`);
+      }
+    } else {
+      inserted++;
+    }
+  }
+
+  return NextResponse.json({ inserted, skipped, errors });
 }

@@ -502,20 +502,48 @@ export function LeadProfileClient({ initialLead, initialInteractions, initialEve
               {scripts
                 .filter((s: any) => s.etapa === activeScriptEtapa)
                 .sort((a: any, b: any) => (b.es_ganador ? 1 : 0) - (a.es_ganador ? 1 : 0))
-                .map((script: any) => (
-                  <div key={script.id} className={`p-4 rounded-xl border relative ${script.es_ganador ? 'bg-yellow-950/10 border-yellow-900/40' : 'bg-black border-zinc-900'}`}>
-                    {script.es_ganador && (
-                      <span className="absolute top-2 right-2 text-yellow-400 text-[8px] font-black uppercase tracking-widest">⭐ Winner</span>
-                    )}
-                    <p className="text-sm text-zinc-300 font-medium leading-relaxed whitespace-pre-wrap pr-16">{script.contenido}</p>
-                    <button
-                      onClick={() => { navigator.clipboard.writeText(script.contenido); toast.success("Script copied!"); }}
-                      className="mt-3 flex items-center gap-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-white px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-colors"
-                    >
-                      <Copy className="w-3 h-3" /> Copy
-                    </button>
-                  </div>
-                ))}
+                .map((script: any) => {
+                  const recordActivity = async (type: 'usage' | 'conversion') => {
+                    try {
+                      const res = await fetch(`/api/admin/scripts/${script.id}`, {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ type })
+                      });
+                      if (!res.ok) throw new Error("Failed logging script efficiency");
+                      toast.success(type === 'conversion' ? "Script Conversion Marked! Winner flag active." : "Usage Logged.");
+                      // Optional: update local script state if needed, here we just show toast
+                    } catch (err: any) { toast.error(err.message); }
+                  };
+
+                  return (
+                    <div key={script.id} className={`p-4 rounded-xl border relative ${script.es_ganador ? 'bg-yellow-950/10 border-yellow-900/40' : 'bg-black border-zinc-900'}`}>
+                      {script.es_ganador && (
+                        <span className="absolute top-2 right-2 text-yellow-400 text-[8px] font-black uppercase tracking-widest">⭐ Winner Script</span>
+                      )}
+                      <p className="text-sm text-zinc-300 font-medium leading-relaxed whitespace-pre-wrap pr-16">{script.contenido}</p>
+                      
+                      <div className="mt-4 flex items-center gap-2 flex-wrap">
+                        <button
+                          onClick={() => { navigator.clipboard.writeText(script.contenido); toast.success("Script copied!"); recordActivity('usage'); }}
+                          className="flex items-center gap-1.5 bg-white text-black px-4 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest hover:scale-[1.05] transition-transform"
+                        >
+                          <Copy className="w-3.5 h-3.5" /> Copy & Use
+                        </button>
+                        <button
+                          onClick={() => recordActivity('conversion')}
+                          className="flex items-center gap-1.5 bg-yellow-600/20 border border-yellow-600/40 text-yellow-500 hover:bg-yellow-600/40 px-3 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-colors"
+                        >
+                          <Crown className="w-3.5 h-3.5" /> Mark Won
+                        </button>
+                        <div className="flex gap-3 ml-auto opacity-50">
+                           <span className="text-[8px] font-black uppercase tracking-widest text-zinc-500">Usos: {script.usos || 0}</span>
+                           <span className="text-[8px] font-black uppercase tracking-widest text-green-500">Conv: {script.conversiones || 0}</span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
               {scripts.filter((s: any) => s.etapa === activeScriptEtapa).length === 0 && (
                 <div className="text-center py-6 text-zinc-700 text-[9px] font-black uppercase tracking-widest border border-dashed border-zinc-900 rounded-xl">
                   No scripts for this stage yet
