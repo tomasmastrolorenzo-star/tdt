@@ -57,7 +57,6 @@ export async function middleware(request: NextRequest) {
     const CEO_ONLY_ROUTES = [
       '/admin/ceo',
       '/admin/clients',
-      '/admin/daily',
       '/admin/traffic',
       '/admin/scripts',
       '/admin/scripts/generate',

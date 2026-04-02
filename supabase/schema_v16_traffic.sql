@@ -1,6 +1,6 @@
 -- DDL: Actualizaciones a marketing_content para Bloque 3 (Traffic Module Kanban)
 
--- 1. Renombrar columnas existentes si aplicaba (ignorar errores si ya no existen o se crearon así)
+-- 1. Renombrar columnas existentes si aplicaba
 DO $$
 BEGIN
   IF EXISTS(SELECT *
@@ -25,7 +25,11 @@ BEGIN
   END IF;
 END $$;
 
--- 2. Agregar columnas estructurales
+-- 2. Eliminar viejos constraints que estén bloqueando el insert
+ALTER TABLE marketing_content DROP CONSTRAINT IF EXISTS marketing_content_status_check;
+ALTER TABLE marketing_content DROP CONSTRAINT IF EXISTS marketing_content_format_check;
+
+-- 3. Agregar columnas estructurales
 ALTER TABLE marketing_content
 ADD COLUMN IF NOT EXISTS tipo text CHECK (tipo IN ('reel','carrusel','story','foto')),
 ADD COLUMN IF NOT EXISTS nicho text CHECK (nicho IN ('fitness','emprendedor','modelo','general')),
@@ -36,7 +40,7 @@ ADD COLUMN IF NOT EXISTS resultado_alcance integer DEFAULT 0,
 ADD COLUMN IF NOT EXISTS resultado_leads integer DEFAULT 0,
 ADD COLUMN IF NOT EXISTS es_winner boolean DEFAULT false;
 
--- 3. Banco Inicial de Contenidos (Run only once)
+-- 4. Banco Inicial de Contenidos
 INSERT INTO marketing_content (titulo, tipo, nicho, estado, hook, cta) VALUES
 ('Mejor before/after — resultado real', 'reel', 'general', 'Ideas', '47,000 followers in 60 days.', 'DM me GROW if you want the same for your profile.'),
 ('Por qué tus reels mueren a las 200 vistas', 'carrusel', 'emprendedor', 'Ideas', 'Stop blaming the algorithm. You are doing this wrong.', 'Save this post for your next upload.'),

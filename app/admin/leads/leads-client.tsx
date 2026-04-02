@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { formatDistanceToNow } from "date-fns";
-import { Search, Filter, Loader2, ChevronDown } from "lucide-react";
+import { Search, Filter, Loader2, ChevronDown, UserSquare2, MessageSquarePlus, Activity, CheckCircle2 } from "lucide-react";
 
 // The organically ordered stages of the CRM Pipeline
 // The organically ordered stages of the CRM Pipeline - Simplified for TDT Reset
@@ -107,6 +107,42 @@ export function LeadsClientRenderer({ initialLeads }: { initialLeads: Lead[] }) 
 
   return (
     <div className="flex flex-col flex-1 h-full min-h-[700px] overflow-hidden pb-4">
+      
+      {/* ── SETTER STATUS BAR (UI ONLY) ── */}
+      <div className="bg-zinc-950 border border-zinc-900 rounded-xl p-4 mb-4 flex flex-col md:flex-row items-center justify-between gap-6 shrink-0 shadow-lg">
+         <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-[#1D9E75]/20 rounded-full flex items-center justify-center">
+               <UserSquare2 className="w-5 h-5 text-[#1D9E75]" />
+            </div>
+            <div>
+               <h3 className="text-white font-black text-sm">Setter 1 (Active)</h3>
+               <p className="text-[10px] text-zinc-500 uppercase font-black tracking-widest">Bucket Status</p>
+            </div>
+         </div>
+
+         <div className="flex gap-6 items-center">
+            <div className="flex flex-col text-center">
+               <span className="text-[9px] uppercase font-black tracking-widest text-zinc-600 mb-1">Touched Today</span>
+               <span className="text-lg font-black text-white flex items-center justify-center gap-1"><Activity className="w-4 h-4 text-zinc-500"/> 24</span>
+            </div>
+            <div className="flex flex-col text-center">
+               <span className="text-[9px] uppercase font-black tracking-widest text-zinc-600 mb-1">DMs Sent</span>
+               <span className="text-lg font-black text-blue-400 flex items-center justify-center gap-1"><MessageSquarePlus className="w-4 h-4 text-blue-500"/> 12</span>
+            </div>
+            <div className="flex flex-col text-center">
+               <span className="text-[9px] uppercase font-black tracking-widest text-zinc-600 mb-1">Qualified</span>
+               <span className="text-lg font-black text-[#1D9E75] flex items-center justify-center gap-1"><CheckCircle2 className="w-4 h-4 text-[#1D9E75]"/> 3</span>
+            </div>
+         </div>
+
+         <button 
+           onClick={() => toast.success("Mock: Auto-Asignando 10 prospectos frescos a tu bucket...")}
+           className="bg-[#1D9E75] text-white px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#168260] hover:scale-[1.02] transition-transform shadow-[0_0_15px_rgba(29,158,117,0.2)]"
+         >
+           Auto-Assign 10 Leads
+         </button>
+      </div>
+
       {/* STRATEGIC COMMAND HEADER */}
       <div className="bg-zinc-950 border border-zinc-900 p-4 rounded-xl mb-6 flex flex-col md:flex-row items-center justify-between gap-4 shrink-0">
         <div className="flex items-center gap-4 w-full md:w-auto">
