@@ -12,14 +12,16 @@ export async function POST(req: Request) {
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const body = await req.json();
-  const { title, format, budget, leads_generated } = body;
+  const { titulo, tipo, nicho, estado } = body;
 
   const { data, error } = await supabase.from('marketing_content').insert({
-    title,
-    format,
-    budget: budget || 0,
-    leads_generated: leads_generated || 0,
-    status: 'ideas'
+    titulo,
+    tipo,
+    nicho,
+    estado: estado || 'Ideas',
+    resultado_alcance: 0,
+    resultado_leads: 0,
+    es_winner: false
   }).select().single();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
@@ -35,12 +37,21 @@ export async function PATCH(req: Request) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const { id, status, budget, leads_generated } = await req.json();
+  const { id, ...updates } = await req.json();
 
   const updatePayload: any = {};
-  if (status) updatePayload.status = status;
-  if (budget !== undefined) updatePayload.budget = budget;
-  if (leads_generated !== undefined) updatePayload.leads_generated = leads_generated;
+  
+  // Aceptamos cualquier campo permitido en el schema v15+ Bloque 3
+  const allowedFields = [
+    'estado', 'titulo', 'tipo', 'nicho', 'semana_programada', 
+    'hook', 'cta', 'resultado_alcance', 'resultado_leads', 'es_winner'
+  ];
+
+  for (const field of allowedFields) {
+    if (updates[field] !== undefined) {
+       updatePayload[field] = updates[field];
+    }
+  }
 
   const { data, error } = await supabase.from('marketing_content').update(updatePayload).eq('id', id).select().single();
 
