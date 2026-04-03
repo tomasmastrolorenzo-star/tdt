@@ -7,7 +7,8 @@ export default function LandingPage() {
   const [name, setName] = useState("");
   const [handle, setHandle] = useState("");
   const [goal, setGoal] = useState("");
-  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "scanning" | "saving" | "success" | "error">("idle");
+  const [scanStep, setScanStep] = useState(0);
 
   const igHandle = process.env.NEXT_PUBLIC_IG_HANDLE || "trendigitaltrade";
   const IG_LINK = `https://www.instagram.com/${igHandle}/`;
@@ -16,25 +17,51 @@ export default function LandingPage() {
     e.preventDefault();
     if (name.length < 2 || !handle || !goal) return;
 
-    setStatus("loading");
-    const cleanHandle = handle.trim().startsWith('@') ? handle.trim() : `@${handle.trim()}`;
+    setStatus("scanning");
+    const cleanHandle = handle.trim().startsWith('@') ? handle.trim().substring(1) : handle.trim();
+
+    // Visual progression simulation during Apify Boot
+    const interval = setInterval(() => {
+       setScanStep(prev => prev < 4 ? prev + 1 : prev);
+    }, 4500);
 
     try {
+      // 1. Forensics 
+      const igRes = await fetch("/api/forensic/instagram", {
+         method: "POST", headers: { "Content-Type": "application/json" },
+         body: JSON.stringify({ handle: cleanHandle })
+      });
+      const igData = await igRes.json();
+      
+      clearInterval(interval);
+      setScanStep(5);
+      setStatus("saving");
+
+      const enrichedMetadata = {
+         name, 
+         goal,
+         followers: igData?.data?.followers || 0,
+         isPrivate: igData?.data?.isPrivate || false,
+         engagementProxy: igData?.data?.engagement_proxy || 0
+      };
+
+      // 2. Lead Intake (Phase 23: Analizado)
       const res = await fetch("/api/leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           instagram_username: cleanHandle,
           source: "landing",
-          status: "new",
-          metadata: { name, goal }
+          status: "analizado", // Auto-dropped into Screener column logic later
+          metadata: enrichedMetadata
         }),
       });
 
-      if (!res.ok) throw new Error("Failed to submit");
+      if (!res.ok) throw new Error("Failed to submit lead");
 
       setStatus("success");
     } catch (err) {
+      clearInterval(interval);
       setStatus("error");
     }
   };
@@ -77,6 +104,12 @@ export default function LandingPage() {
       {/* ── SECCIÓN 2 — SOCIAL PROOF ── */}
       <section className="py-24 px-6 border-y border-zinc-900/50 bg-black/50 relative z-10">
         <div className="max-w-5xl mx-auto">
+          
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-black text-white mb-4 tracking-tighter">Don't take our word for it.</h2>
+            <p className="text-zinc-500 uppercase font-black tracking-widest text-[10px]">Look at the numbers.</p>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="p-8 border border-zinc-900 rounded-3xl bg-[#050505]">
                <div className="flex items-center gap-4 text-3xl font-black text-white font-mono mb-4">
@@ -97,9 +130,43 @@ export default function LandingPage() {
                <p className="text-xs uppercase font-bold tracking-widest text-zinc-500">Lifestyle creator · 45 days</p>
             </div>
           </div>
-          <p className="text-center mt-12 text-[10px] uppercase font-bold tracking-widest text-zinc-600">
-            These are real accounts. Real numbers. No inflated claims.
-          </p>
+
+          {/* WALL OF LOVE (TESTIMONIALS PLACEHOLDER) */}
+          <div className="mt-20 pt-20 border-t border-zinc-900">
+             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+                {/* Placeholder 1: Video Review */}
+                <div className="aspect-[9/16] bg-zinc-950 border border-zinc-900 rounded-2xl relative overflow-hidden group flex items-center justify-center cursor-pointer">
+                   <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10"></div>
+                   <div className="text-zinc-700 font-bold uppercase tracking-widest text-[10px] z-20 flex flex-col items-center gap-2">
+                     <Instagram className="w-6 h-6 opacity-50" />
+                     Upload Vertical Video
+                   </div>
+                   <div className="absolute bottom-6 left-6 z-20">
+                      <p className="text-white font-black text-lg shadow-black drop-shadow-md">Client Name</p>
+                      <p className="text-[#1D9E75] font-black text-[10px] uppercase tracking-widest shadow-black drop-shadow-md">+30,000 in 1 month</p>
+                   </div>
+                </div>
+
+                {/* Placeholder 2: Before/After Profile Grid */}
+                <div className="aspect-[9/16] bg-zinc-950 border border-zinc-900 rounded-2xl relative overflow-hidden group flex items-center justify-center">
+                   <div className="text-zinc-700 font-bold uppercase tracking-widest text-[10px] flex flex-col items-center gap-2">
+                     <span className="w-8 h-8 rounded border border-dashed border-zinc-700 mb-1"></span>
+                     Upload Before / After (1080x1080 grid format)
+                   </div>
+                </div>
+
+                {/* Placeholder 3: DM Conversation Proof */}
+                <div className="aspect-[9/16] bg-zinc-950 border border-zinc-900 rounded-2xl relative overflow-hidden group flex items-center justify-center">
+                   <div className="text-zinc-700 font-bold uppercase tracking-widest text-[10px] flex flex-col items-center gap-2">
+                     <span className="bg-[#1D9E75]/20 text-[#1D9E75] px-2 py-1 rounded">WhatsApp / DM Screenshot</span>
+                     Upload Social Proof chat
+                   </div>
+                </div>
+
+             </div>
+          </div>
+
         </div>
       </section>
 
@@ -243,14 +310,27 @@ export default function LandingPage() {
 
               <button 
                 type="submit" 
-                disabled={status === "loading" || !isFormValid}
-                className="w-full mt-4 bg-[#1D9E75] text-white font-black uppercase tracking-widest text-[11px] py-5 rounded-xl hover:bg-[#168260] transition-colors flex items-center justify-center gap-3 disabled:opacity-50 disabled:hover:bg-[#1D9E75]"
+                disabled={status === "scanning" || status === "saving" || !isFormValid}
+                className="w-full mt-4 bg-[#1D9E75] text-white font-black uppercase tracking-widest text-[11px] py-5 rounded-xl hover:bg-[#168260] transition-colors flex flex-col items-center justify-center gap-1 disabled:opacity-80 disabled:hover:bg-[#1D9E75] relative overflow-hidden"
               >
-                {status === "loading" ? <Loader2 className="w-5 h-5 animate-spin" /> : "Send My Profile for Review"}
+                {(status === "scanning" || status === "saving") && (
+                  <div className="absolute inset-0 bg-[#0c5940] w-full animate-pulse transition-all"></div>
+                )}
+                
+                <div className="relative z-10 flex items-center gap-3">
+                  {status === "scanning" || status === "saving" ? <Loader2 className="w-5 h-5 animate-spin" /> : null}
+                  {status === "idle" || status === "error" ? "Run Profile Audit" : 
+                   status === "scanning" && scanStep === 0 ? "Mounting Apify Proxy..." :
+                   status === "scanning" && scanStep === 1 ? "Extracting Footprint..." :
+                   status === "scanning" && scanStep === 2 ? "Analyzing Engagement Graph..." :
+                   status === "scanning" && scanStep >= 3 ? "Compiling Audit Report..." :
+                   "Finalizing Profile Review..."
+                  }
+                </div>
               </button>
               
               <p className="text-center text-[10px] uppercase font-bold tracking-widest text-zinc-600 mt-2">
-                We review every profile manually. You'll hear from us within 24 hours.
+                Scanning takes approximately 30 seconds. Do not close this window.
               </p>
             </form>
           )}
