@@ -28,12 +28,8 @@ export async function POST(req: Request) {
     const run = await client.actor("apify/instagram-scraper").call({
       addParentData: false,
       directUrls: [`https://www.instagram.com/${cleanHandle}/`],
-      enhanceUserSearchWithFacebookPage: false,
-      isUserTaggedFeedURL: false,
       resultsLimit: 1,
-      resultsType: "details",
-      searchLimit: 1,
-      searchType: "hashtag"
+      resultsType: "details"
     });
 
     // 3. Fetch Data
