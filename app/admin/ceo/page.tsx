@@ -21,25 +21,18 @@ export default async function CEODashboard() {
   // Parallel Raw Data Extraction (High-Speed Analytics Array - Phase 14)
   const todayStr = new Date().toISOString().split('T')[0];
   const [
-    { data: clients, error: clientsErr },
-    { data: leads, error: leadsErr },
-    { data: dailyReport, error: dailyErr },
-    { data: actions, error: actionsErr }
+    { data: clients },
+    { data: leads },
+    { data: dailyReport },
+    { data: actions }
   ] = await Promise.all([
     supabase.from('clients').select('*'),
-    supabase.from('leads').select('id, status, created_at, updated_at, next_action_date, instagram_username'),
+    supabase.from('leads').select('id, status, created_at, updated_at, instagram_username'),
     supabase.from('daily_reports').select('dms_sent').eq('report_date', todayStr).maybeSingle(),
     supabase.from('scheduled_actions').select('id, status, execute_at, action_type')
   ]);
 
-  if (!clients || !leads || clientsErr || leadsErr) {
-    return (
-      <div className="p-10 text-white font-black text-left text-sm bg-red-950">
-        Analytics Database Unreachable. Note: Execute V14 Migrations first.
-        <pre className="mt-4">{JSON.stringify({ clientsErr, leadsErr, dailyErr, actionsErr }, null, 2)}</pre>
-      </div>
-    );
-  }
+  if (!clients || !leads) return <div className="p-10 text-white font-black text-center text-xl bg-red-950">Analytics Database Unreachable. Note: Execute V14 Migrations first.</div>;
 
   const now = new Date();
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
