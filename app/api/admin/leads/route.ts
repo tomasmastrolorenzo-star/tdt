@@ -47,6 +47,31 @@ export async function PATCH(req: Request) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
+    // --- BLOQUE 5: REFERRAL SOP AUTOMÁTICO ---
+    if (new_status === 'cerrado' || new_status === 'closed') {
+      try {
+         const executeAt = new Date();
+         executeAt.setHours(executeAt.getHours() + 72); // +72 horas exactas
+
+         const messagePayload = {
+           lead_ref: lead_id,
+           template: "Hey, ha sido un gran arranque. Si conoces a otro creador que necesite este mismo escalado, pásame su @ y te hago un descuento en el próximo mes."
+         };
+
+         // Creamos el event en el cron system sin bloquear el retorno del webhook
+         await supabase.from('scheduled_actions').insert({
+           action_type: 'referral_request',
+           execute_at: executeAt.toISOString(),
+           status: 'pending',
+           message_payload: messagePayload
+           // Omitimos client_id foreign key constraint para evitar carrera asincrónica con la inserción de CRM,
+           // la conexión semántica se mantiene segura vía payload
+         });
+      } catch(cronErr) {
+         console.warn("Silent Fail over Referral Cron:", cronErr);
+      }
+    }
+
     return NextResponse.json({ success: true, data });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
