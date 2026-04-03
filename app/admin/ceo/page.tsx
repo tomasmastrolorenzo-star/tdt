@@ -40,11 +40,11 @@ export default async function CEODashboard() {
   // 1. Core Mathematical Deductions (Módulo 5 Strict Spec)
   const revenue_today = clients
     .filter(c => new Date(c.created_at).toISOString().split('T')[0] === todayStr)
-    .reduce((sum, c) => sum + (Number(c.payment_amount) || 0), 0);
+    .reduce((sum, c) => sum + (Number(c.net_revenue) || Number(c.payment_amount) || 0), 0);
 
   const revenue_month = clients
     .filter(c => new Date(c.created_at).getTime() >= startOfMonth)
-    .reduce((sum, c) => sum + (Number(c.payment_amount) || 0), 0);
+    .reduce((sum, c) => sum + (Number(c.net_revenue) || Number(c.payment_amount) || 0), 0);
 
   const active_clients = clients.filter(c => c.delivery_status !== 'delivered').length;
   
@@ -74,9 +74,10 @@ export default async function CEODashboard() {
                 <h1 className="text-3xl font-black tracking-tighter">CEO Control</h1>
              </div>
              <nav className="hidden md:flex gap-6 items-center">
-                <a href="/admin/leads" className="text-zinc-500 hover:text-white text-[10px] uppercase font-black tracking-widest transition-colors">CRM Pipeline</a>
-                <a href="/admin/clients" className="text-zinc-500 hover:text-white text-[10px] uppercase font-black tracking-widest transition-colors">Financial Ledger</a>
-                <a href="/admin/daily" className="text-zinc-500 hover:text-white text-[10px] uppercase font-black tracking-widest transition-colors flex items-center gap-1.5"><Clock className="w-3 h-3"/> Daily Routine</a>
+                <a href="/admin/leads" className="text-zinc-500 hover:text-white text-[10px] uppercase font-black tracking-widest transition-colors">CRM</a>
+                <a href="/admin/sales" className="text-zinc-500 hover:text-white text-[10px] uppercase font-black tracking-widest transition-colors">Sales</a>
+                <a href="/admin/clients" className="text-zinc-500 hover:text-white text-[10px] uppercase font-black tracking-widest transition-colors">Ledger</a>
+                <a href="/admin/daily" className="text-zinc-500 hover:text-white text-[10px] uppercase font-black tracking-widest transition-colors flex items-center gap-1.5"><Clock className="w-3 h-3"/> Daily</a>
              </nav>
            </div>
            <div className="flex items-center gap-3">
@@ -220,7 +221,7 @@ export default async function CEODashboard() {
                const cd = new Date(c.created_at);
                return cd.getFullYear() === y && cd.getMonth() === m;
              });
-             months.push({ label, mrr: monthClients.reduce((s: number, c: any) => s + (Number(c.payment_amount)||0), 0), count: monthClients.length });
+             months.push({ label, mrr: monthClients.reduce((s: number, c: any) => s + (Number(c.net_revenue) || Number(c.payment_amount) || 0), 0), count: monthClients.length });
            }
            const maxMRR = Math.max(...months.map(m => m.mrr), 1);
            const totalActive = clients.filter((c: any) => (c.status || 'active') === 'active').length;
