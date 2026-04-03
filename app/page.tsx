@@ -264,7 +264,7 @@ export default function LandingPage() {
                   onChange={(e) => setName(e.target.value)}
                   placeholder="John Doe"
                   className="w-full bg-[#050505] border border-zinc-800 rounded-xl py-4 px-5 text-white placeholder:text-zinc-700 focus:outline-none focus:border-[#1D9E75] transition-colors disabled:opacity-50"
-                  disabled={status === "loading"}
+                  disabled={status === "scanning" || status === "saving"}
                 />
               </div>
 
@@ -278,7 +278,7 @@ export default function LandingPage() {
                     onChange={(e) => setHandle(e.target.value.replace('@',''))}
                     placeholder="username"
                     className="w-full bg-[#050505] border border-zinc-800 rounded-xl py-4 pl-10 pr-5 text-white placeholder:text-zinc-700 focus:outline-none focus:border-[#1D9E75] transition-colors disabled:opacity-50"
-                    disabled={status === "loading"}
+                    disabled={status === "scanning" || status === "saving"}
                   />
                 </div>
               </div>
@@ -289,7 +289,7 @@ export default function LandingPage() {
                   value={goal}
                   onChange={(e) => setGoal(e.target.value)}
                   className="w-full bg-[#050505] border border-zinc-800 rounded-xl py-4 px-5 text-white focus:outline-none focus:border-[#1D9E75] transition-colors disabled:opacity-50 appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2224%22%20height%3D%2224%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M7%2010l5%205%205-5%22%20fill%3D%22none%22%20stroke%3D%22%2371717A%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E')] bg-[position:calc(100%_-_1rem)_center] bg-no-repeat"
-                  disabled={status === "loading"}
+                  disabled={status === "scanning" || status === "saving"}
                 >
                   <option value="" disabled>Select an option</option>
                   <option value="Grow my followers">Grow my followers</option>

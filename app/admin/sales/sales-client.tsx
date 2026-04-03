@@ -81,6 +81,23 @@ export function SalesClient({ pending, ledger }: { pending: any[], ledger: any[]
 
       if (patchErr) throw patchErr;
 
+      // 4. Trigger SMM Gateway (Zero-Touch Fulfillment)
+      try {
+          const smmReq = await fetch('/api/admin/smm', {
+             method: 'POST',
+             headers: { 'Content-Type': 'application/json' },
+             body: JSON.stringify({ clientId: onboardingClient.id })
+          });
+          const smmRes = await smmReq.json();
+          if (!smmReq.ok) {
+             toast.error(`SMM Warning: ${smmRes.error}. (Client saved anyway)`);
+          } else {
+             toast.success(`SMM Fulfillment Dispatched. Order: ${smmRes.order}`);
+          }
+      } catch (smmNetworkErr) {
+          toast.error("Network issue reaching SMM Gateway.");
+      }
+
       toast.success("Onboarding Financiero completado exitosamente");
       window.location.reload(); // Refresh to resync SSR containers
     } catch (err: any) {
