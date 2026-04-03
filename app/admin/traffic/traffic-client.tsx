@@ -86,7 +86,7 @@ export function TrafficClient({ initialContent }: any) {
   const generateAIHooks = async () => {
     setAddingId("ai");
     try {
-      const res = await fetch("/api/admin/traffic/generate", { method: "POST" });
+      const res = await fetch("/api/admin/traffic/generate-ideas", { method: "POST" });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
       toast.success(`Cerebro Digital: ${data.generated} nuevos hooks ideados en base a Winners.`);

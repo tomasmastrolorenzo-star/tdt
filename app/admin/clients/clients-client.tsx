@@ -63,6 +63,30 @@ export function ClientsClient({ initialClients }: any) {
     } catch (err: any) { toast.error(err.message); } finally { setLoadingId(null); }
   };
 
+  const triggerSmm = async (client: any) => {
+    setLoadingId(client.id + '-smm');
+    try {
+      const res = await fetch("/api/admin/smm/order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+           client_id: client.id,
+           instagram_handle: client.instagram_username,
+           service_type: client.service_type || 'followers_10k'
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      
+      toast.success(`Orden enviada al panel. SMM_ID: ${data.order}`);
+      setClients((prev: any) => prev.map((c: any) => c.id === client.id ? { ...c, delivery_status: 'processing', smm_order_id: data.order } : c));
+    } catch (err: any) {
+      toast.error(`Error SMM: ${err.message}`);
+    } finally {
+      setLoadingId(null);
+    }
+  };
+
   return (
     <div className="pb-16 pt-4">
       
@@ -199,13 +223,24 @@ export function ClientsClient({ initialClients }: any) {
                            <span className="text-xs font-black text-cyan-400">{formatDistanceToNow(new Date(client.last_check), { addSuffix: true })}</span>
                          ) : <span className="text-xs font-black text-red-500/70">Nunca verificado</span>}
                        </div>
-                       <div className="flex gap-2">
-                          <button onClick={() => updateClientField(client.id, { action: 'check_now' })} className="flex-1 bg-cyan-950/30 border border-cyan-900/50 hover:bg-cyan-900/50 text-cyan-400 font-black uppercase tracking-widest text-[9px] py-2 rounded-lg transition-colors flex justify-center items-center gap-1.5">
+                       <div className="flex flex-col gap-2">
+                          <button onClick={() => updateClientField(client.id, { action: 'check_now' })} className="w-full bg-cyan-950/30 border border-cyan-900/50 hover:bg-cyan-900/50 text-cyan-400 font-black uppercase tracking-widest text-[9px] py-1.5 rounded-lg transition-colors flex justify-center items-center gap-1.5">
                             <CheckCircle2 className="w-3 h-3" /> Verificar Hoy
                           </button>
-                          <button onClick={() => toggleDelivery(client.id, client.delivery_status || 'pending')} className={`flex-1 font-black uppercase tracking-widest text-[9px] py-2 rounded-lg transition-colors flex items-center justify-center gap-1.5 border ${(client.delivery_status === 'delivered') ? 'bg-green-950/20 text-green-500 border-green-900/40' : 'bg-orange-950/20 text-orange-500 border-orange-900/40'}`}>
-                            {(client.delivery_status === 'delivered') ? <><PackageCheck className="w-3" /> Entregado</> : <><Package className="w-3 h-3" /> Pendiente</>}
-                          </button>
+                          
+                          {client.delivery_status === 'pending' ? (
+                            <button 
+                              onClick={() => triggerSmm(client)}
+                              disabled={loadingId === client.id + '-smm'}
+                              className="w-full bg-orange-950/40 text-orange-500 font-black uppercase tracking-widest text-[9px] py-2 rounded-lg transition-colors flex items-center justify-center gap-1.5 border border-orange-900/60 hover:bg-orange-600 hover:text-white"
+                            >
+                              {loadingId === client.id + '-smm' ? 'Enviando...' : <><Package className="w-3 h-3" /> Send to SMM</>}
+                            </button>
+                          ) : (
+                            <button onClick={() => toggleDelivery(client.id, client.delivery_status || 'processing')} className={`w-full font-black uppercase tracking-widest text-[9px] py-2 rounded-lg transition-colors flex items-center justify-center gap-1.5 border ${(client.delivery_status === 'delivered') ? 'bg-green-950/20 text-green-500 border-green-900/40' : 'bg-blue-950/20 text-blue-500 border-blue-900/40'}`}>
+                              {(client.delivery_status === 'delivered') ? <><PackageCheck className="w-3" /> Entregado</> : <><Package className="w-3 h-3" /> Processing SMM</>}
+                            </button>
+                          )}
                        </div>
                      </div>
 

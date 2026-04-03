@@ -148,19 +148,39 @@ export default function LandingPage() {
                    </div>
                 </div>
 
-                {/* Placeholder 2: Before/After Profile Grid */}
-                <div className="aspect-[9/16] bg-zinc-950 border border-zinc-900 rounded-2xl relative overflow-hidden group flex items-center justify-center">
-                   <div className="text-zinc-700 font-bold uppercase tracking-widest text-[10px] flex flex-col items-center gap-2">
-                     <span className="w-8 h-8 rounded border border-dashed border-zinc-700 mb-1"></span>
-                     Upload Before / After (1080x1080 grid format)
+                {/* High-Impact Proof 1 */}
+                <div className="aspect-[9/16] bg-zinc-950 border border-zinc-900 rounded-2xl relative overflow-hidden group">
+                   <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10 opacity-80"></div>
+                   <img 
+                     src="/tdt-assets/before-after/Screenshot_20250819-231756.png" 
+                     alt="Explosion result 1" 
+                     className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                   />
+                   <div className="absolute bottom-6 left-6 z-20">
+                      <p className="text-[#1D9E75] font-black text-[10px] uppercase tracking-widest shadow-black drop-shadow-md bg-black/50 px-2 py-1 rounded">Visual Proof</p>
                    </div>
                 </div>
 
-                {/* Placeholder 3: DM Conversation Proof */}
-                <div className="aspect-[9/16] bg-zinc-950 border border-zinc-900 rounded-2xl relative overflow-hidden group flex items-center justify-center">
-                   <div className="text-zinc-700 font-bold uppercase tracking-widest text-[10px] flex flex-col items-center gap-2">
-                     <span className="bg-[#1D9E75]/20 text-[#1D9E75] px-2 py-1 rounded">WhatsApp / DM Screenshot</span>
-                     Upload Social Proof chat
+                {/* High-Impact Proof 2 */}
+                <div className="aspect-[9/16] bg-zinc-950 border border-zinc-900 rounded-2xl relative overflow-hidden group">
+                   <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10 opacity-80"></div>
+                   <img 
+                     src="/tdt-assets/before-after/Screenshot_20260401-222934.Instagram.png" 
+                     alt="Explosion result 2" 
+                     className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                   />
+                </div>
+
+                {/* High-Impact Proof 3 */}
+                <div className="aspect-[9/16] bg-zinc-950 border border-zinc-900 rounded-2xl relative overflow-hidden group hidden lg:block">
+                   <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10 opacity-80"></div>
+                   <img 
+                     src="/tdt-assets/before-after/Screenshot_20251002-094547.Instagram.png" 
+                     alt="Explosion result 3" 
+                     className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                   />
+                   <div className="absolute bottom-6 right-6 z-20">
+                      <p className="text-[#1D9E75] font-black text-[10px] uppercase tracking-widest shadow-black drop-shadow-md bg-black/50 px-2 py-1 rounded">Real Growth</p>
                    </div>
                 </div>
 

@@ -13,10 +13,12 @@ VALUES ('sales_assets', 'sales_assets', true)
 ON CONFLICT (id) DO NOTHING;
 
 -- Configuracion de politicas agresivas para lectura publica y escritura administrativa
+DROP POLICY IF EXISTS "Public Assets View" ON storage.objects;
 CREATE POLICY "Public Assets View" 
 ON storage.objects FOR SELECT 
 USING (bucket_id = 'sales_assets');
 
+DROP POLICY IF EXISTS "Admin Uploads" ON storage.objects;
 CREATE POLICY "Admin Uploads" 
 ON storage.objects FOR INSERT 
 WITH CHECK (bucket_id = 'sales_assets' AND auth.role() = 'authenticated');
