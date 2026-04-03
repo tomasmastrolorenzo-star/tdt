@@ -83,6 +83,21 @@ export function TrafficClient({ initialContent }: any) {
   const totalWinners = content.filter((c:any) => c.es_winner).length;
   const totalLeads = content.reduce((acc: number, cur: any) => acc + Number(cur.resultado_leads || 0), 0);
 
+  const generateAIHooks = async () => {
+    setAddingId("ai");
+    try {
+      const res = await fetch("/api/admin/traffic/generate", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      toast.success(`Cerebro Digital: ${data.generated} nuevos hooks ideados en base a Winners.`);
+      window.location.reload(); // Quick refresh to pull the newly inserted items
+    } catch (err: any) {
+      toast.error(err.message || 'Error en generación AI');
+    } finally {
+      setAddingId(null);
+    }
+  };
+
   return (
     <div className="flex flex-col h-full bg-[#050505]">
        
@@ -134,6 +149,19 @@ export function TrafficClient({ initialContent }: any) {
                <span className="text-[9px] uppercase font-black tracking-widest text-zinc-600 mb-1">Leads Generados</span>
                <span className="text-2xl font-black text-[#1D9E75]">{totalLeads}</span>
             </div>
+            
+            {/* AI Generator Button */}
+            <div className="h-full flex items-center xl:pl-4 xl:border-l xl:border-zinc-900 border-t border-zinc-900 xl:border-t-0 pt-4 xl:pt-0 mt-4 xl:mt-0 w-full xl:w-auto justify-center">
+              <button
+                onClick={generateAIHooks}
+                disabled={addingId === "ai"}
+                className="flex items-center gap-2 bg-[#1b624a] hover:bg-[#168260] text-white px-5 py-3 rounded-xl text-[9px] uppercase font-black tracking-widest transition-colors shadow-[0_0_20px_rgba(29,158,117,0.2)] disabled:opacity-50 disabled:animate-pulse"
+              >
+                {addingId === "ai" ? <Loader2 className="w-4 h-4 animate-spin" /> : <Rocket className="w-4 h-4 text-green-300" />}
+                Auto-Idear (AI)
+              </button>
+            </div>
+
          </div>
        </div>
 
