@@ -50,18 +50,8 @@ export default async function AdminLeadsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white p-8 font-sans selection:bg-zinc-800">
-      <div className="max-w-6xl mx-auto">
-        <header className="flex items-center justify-between mb-8 border-b border-zinc-900 pb-6">
-          <div>
-            <h1 className="text-3xl font-black tracking-tighter">Gestor de Prospectos</h1>
-            <p className="text-zinc-500 mt-2">Sistema central de captación. Cada acción es rastreada.</p>
-          </div>
-          <LogoutButton />
-        </header>
-
-        <LeadsClientRenderer initialLeads={leads || []} />
-      </div>
+    <div className="p-4 lg:p-10">
+      <LeadsClientRenderer initialLeads={leads || []} />
     </div>
   );
 }

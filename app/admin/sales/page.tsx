@@ -35,28 +35,8 @@ export default async function SalesOnboardingPage() {
   const onboardedClients = rawClients.filter(c => c.payment_method);
 
   return (
-    <div className="min-h-screen bg-black text-white font-sans selection:bg-zinc-800">
-      <div className="max-w-[1200px] mx-auto px-6 py-12">
-        
-        <header className="flex items-center justify-between mb-12 pb-6 border-b border-zinc-900">
-           <div className="flex items-center gap-4">
-             <div className="w-12 h-12 bg-[#1b624a] rounded-xl flex items-center justify-center border border-[#1D9E75]/30">
-                <Banknote className="w-6 h-6 text-[#1D9E75]" />
-             </div>
-             <div>
-                <h1 className="text-3xl font-black tracking-tighter">Sales Ledger</h1>
-                <p className="text-[10px] uppercase font-bold tracking-widest text-zinc-500">Financial Onboarding & Accounting</p>
-             </div>
-           </div>
-           <div className="flex items-center gap-3">
-             <NotificationBell />
-             <LogoutButton />
-           </div>
-        </header>
-
-        <SalesClient pending={pendingOnboarding} ledger={onboardedClients} />
-
-      </div>
+    <div className="p-4 lg:p-10">
+      <SalesClient pending={pendingOnboarding} ledger={onboardedClients} />
     </div>
   );
 }
