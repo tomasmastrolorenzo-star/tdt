@@ -115,24 +115,14 @@ export function LeadsClientRenderer({ initialLeads }: { initialLeads: Lead[] }) 
   };
 
   return (
-    <div className="flex flex-col flex-1 h-full min-h-screen bg-[#050505] p-6 overflow-hidden">
+    <div className="flex flex-col flex-1 h-full min-h-screen bg-transparent p-2 overflow-hidden">
       
-      {/* ── CEO EXECUTIVE HEADER ── */}
-      <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6 mb-10">
-        <div>
-           <div className="flex items-center gap-2 mb-1">
-             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-             <span className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500">TDT Operations Command</span>
-           </div>
-           <h1 className="text-4xl font-black text-white tracking-tighter">Control de Leads</h1>
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full xl:w-auto">
-           <StatCard icon={Flame} label="Hot Leads" value={stats.hot} color="text-red-500" />
-           <StatCard icon={Users} label="Pipeline" value={stats.active} color="text-blue-500" />
-           <StatCard icon={TrendingUp} label="Efficiency" value="84%" color="text-emerald-500" />
-           <StatCard icon={Target} label="Next Close" value="+$500" color="text-amber-500" />
-        </div>
+      {/* ── INTERNAL KPI STRIP ── */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+         <StatCard icon={Flame} label="Hot Leads" value={stats.hot} color="text-red-500" />
+         <StatCard icon={Users} label="Pipeline" value={stats.active} color="text-blue-500" />
+         <StatCard icon={TrendingUp} label="Efficiency" value="84%" color="text-emerald-500" />
+         <StatCard icon={Target} label="Next Close" value="+$500" color="text-amber-500" />
       </div>
 
       {/* ── FILTERS & COMMANDS ── */}

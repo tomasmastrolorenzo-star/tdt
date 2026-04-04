@@ -94,7 +94,7 @@ export function SalesClient({ pending, ledger }: { pending: any[], ledger: any[]
   };
 
   return (
-    <div className="flex flex-col gap-10 p-6 bg-[#050505] min-h-screen">
+    <div className="flex flex-col gap-10 p-2 bg-transparent min-h-screen">
       
       {/* ── TOP STATS ── */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

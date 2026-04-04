@@ -45,22 +45,8 @@ export function VaultClient({ initialConfig }: { initialConfig: any[] }) {
   };
 
   return (
-    <div className="p-8 max-w-4xl mx-auto">
+    <div className="p-2 max-w-4xl mx-auto">
       
-      <div className="flex items-center justify-between mb-12">
-         <div>
-            <div className="flex items-center gap-2 mb-2">
-               <Lock className="w-4 h-4 text-[#1D9E75]" />
-               <span className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500">Security / Financial Ops</span>
-            </div>
-            <h1 className="text-4xl font-black text-white tracking-tighter">The Payment Vault</h1>
-         </div>
-         <div className="flex items-center gap-3 bg-zinc-950 border border-zinc-900 px-4 py-2 rounded-xl">
-            <ShieldCheck className="w-5 h-5 text-[#1D9E75]" />
-            <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Encrypted Session</span>
-         </div>
-      </div>
-
       <div className="grid gap-6">
          {config.map((item: any) => {
             const Icon = icons[item.key] || Key;
