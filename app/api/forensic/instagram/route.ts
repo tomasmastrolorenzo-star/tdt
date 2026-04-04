@@ -15,10 +15,10 @@ export async function POST(req: Request) {
 
     const cleanHandle = handle.replace('@', '').trim();
 
-    // 1. Initialise Apify
-    const APIFY_TOKEN = process.env.APIFY_API_TOKEN;
+    // 1. Initialise Apify (Resilient Token Mapping)
+    const APIFY_TOKEN = process.env.APIFY_API_TOKEN || process.env.APIFY_KEY;
     if (!APIFY_TOKEN) {
-      throw new Error("Missing APIFY_API_TOKEN environment variable");
+      throw new Error("Missing APIFY_API_TOKEN or APIFY_KEY environment variable");
     }
 
     const client = new ApifyClient({ token: APIFY_TOKEN });
