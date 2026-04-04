@@ -135,52 +135,57 @@ export default function LandingPage() {
           <div className="mt-20 pt-20 border-t border-zinc-900">
              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 
-                {/* Placeholder 1: Video Review */}
-                <div className="aspect-[9/16] bg-zinc-950 border border-zinc-900 rounded-2xl relative overflow-hidden group flex items-center justify-center cursor-pointer">
-                   <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10"></div>
-                   <div className="text-zinc-700 font-bold uppercase tracking-widest text-[10px] z-20 flex flex-col items-center gap-2">
-                     <Instagram className="w-6 h-6 opacity-50" />
-                     Upload Vertical Video
-                   </div>
-                   <div className="absolute bottom-6 left-6 z-20">
-                      <p className="text-white font-black text-lg shadow-black drop-shadow-md">Client Name</p>
-                      <p className="text-[#1D9E75] font-black text-[10px] uppercase tracking-widest shadow-black drop-shadow-md">+30,000 in 1 month</p>
-                   </div>
-                </div>
-
-                {/* High-Impact Proof 1 */}
-                <div className="aspect-[9/16] bg-zinc-950 border border-zinc-900 rounded-2xl relative overflow-hidden group">
-                   <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10 opacity-80"></div>
+                {/* SUCCESS STORY 1: FITNESS EXPLOSION */}
+                <div className="aspect-[9/16] bg-zinc-950 border border-zinc-900 rounded-[2.5rem] relative overflow-hidden group shadow-2xl">
+                   <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent z-10"></div>
                    <img 
                      src="/tdt-assets/before-after/Screenshot_20250819-231756.png" 
-                     alt="Explosion result 1" 
-                     className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                     alt="Fitness Growth" 
+                     className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-110"
                    />
-                   <div className="absolute bottom-6 left-6 z-20">
-                      <p className="text-[#1D9E75] font-black text-[10px] uppercase tracking-widest shadow-black drop-shadow-md bg-black/50 px-2 py-1 rounded">Visual Proof</p>
+                   <div className="absolute bottom-8 left-8 z-20">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]"></span>
+                        <p className="text-white font-black text-xs uppercase tracking-widest">Case Study: Fitness</p>
+                      </div>
+                      <p className="text-4xl font-black text-white tracking-tighter">+40K</p>
+                      <p className="text-zinc-400 text-[10px] font-bold uppercase tracking-widest mt-1">Organic reach unlocked</p>
                    </div>
                 </div>
 
-                {/* High-Impact Proof 2 */}
-                <div className="aspect-[9/16] bg-zinc-950 border border-zinc-900 rounded-2xl relative overflow-hidden group">
-                   <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10 opacity-80"></div>
+                {/* SUCCESS STORY 2: ENTREPRENEUR AUTHORITY */}
+                <div className="aspect-[9/16] bg-zinc-950 border border-zinc-900 rounded-[2.5rem] relative overflow-hidden group shadow-2xl">
+                   <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent z-10"></div>
                    <img 
                      src="/tdt-assets/before-after/Screenshot_20260401-222934.Instagram.png" 
-                     alt="Explosion result 2" 
-                     className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                     alt="Business Growth" 
+                     className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-110"
                    />
+                   <div className="absolute bottom-8 left-8 z-20">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_8px_#3b82f6]"></span>
+                        <p className="text-white font-black text-xs uppercase tracking-widest">Personal Brand</p>
+                      </div>
+                      <p className="text-4xl font-black text-white tracking-tighter">Verified</p>
+                      <p className="text-zinc-400 text-[10px] font-bold uppercase tracking-widest mt-1">Positioning & Trust</p>
+                   </div>
                 </div>
 
-                {/* High-Impact Proof 3 */}
-                <div className="aspect-[9/16] bg-zinc-950 border border-zinc-900 rounded-2xl relative overflow-hidden group hidden lg:block">
-                   <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10 opacity-80"></div>
+                {/* SUCCESS STORY 3: LIFESTYLE / MODEL */}
+                <div className="aspect-[9/16] bg-zinc-950 border border-zinc-900 rounded-[2.5rem] relative overflow-hidden group shadow-2xl hidden lg:block">
+                   <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent z-10"></div>
                    <img 
                      src="/tdt-assets/before-after/Screenshot_20251002-094547.Instagram.png" 
-                     alt="Explosion result 3" 
-                     className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                     alt="Lifestyle Growth" 
+                     className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-110"
                    />
-                   <div className="absolute bottom-6 right-6 z-20">
-                      <p className="text-[#1D9E75] font-black text-[10px] uppercase tracking-widest shadow-black drop-shadow-md bg-black/50 px-2 py-1 rounded">Real Growth</p>
+                   <div className="absolute bottom-8 left-8 z-20">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="w-2 h-2 rounded-full bg-purple-500 shadow-[0_0_8px_#a855f7]"></span>
+                        <p className="text-white font-black text-xs uppercase tracking-widest">Creator Growth</p>
+                      </div>
+                      <p className="text-4xl font-black text-white tracking-tighter">10X</p>
+                      <p className="text-zinc-400 text-[10px] font-bold uppercase tracking-widest mt-1">Inbound Leads Surge</p>
                    </div>
                 </div>
 
@@ -268,7 +273,40 @@ export default function LandingPage() {
             </p>
           </div>
 
-          {status === "success" ? (
+          {status === "success" && scanData ? (
+             <div className="bg-zinc-950 border border-zinc-900 p-10 rounded-[2.5rem] shadow-2xl relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-[#1D9E75]/10 blur-3xl pointer-events-none"></div>
+                
+                <div className="flex items-center gap-4 mb-8">
+                   <div className="w-16 h-16 rounded-2xl border-2 border-zinc-800 bg-black overflow-hidden flex-shrink-0">
+                      {scanData.profilePic ? <img src={scanData.profilePic} alt="Profile" className="w-full h-full object-cover" /> : <Instagram className="w-full h-full p-4 text-zinc-800" />}
+                   </div>
+                   <div>
+                      <h3 className="text-2xl font-black text-white">@{scanData.handle}</h3>
+                      <div className="flex gap-2 items-center">
+                        <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded border ${scanData.is_real_data ? 'bg-[#1D9E75]/20 text-[#1D9E75] border-[#1D9E75]/30' : 'bg-amber-500/20 text-amber-500 border-amber-500/30'}`}>
+                           {scanData.is_real_data ? 'Live Scrape Active' : 'Smart Estimate: Simulation Mode'}
+                        </span>
+                      </div>
+                   </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 mb-8">
+                   <div className="bg-black/40 border border-zinc-900 rounded-2xl p-4">
+                      <p className="text-[9px] uppercase font-black text-zinc-600 mb-1">Followers</p>
+                      <p className="text-xl font-black text-white">{scanData.followers?.toLocaleString() || '—'}</p>
+                   </div>
+                   <div className="bg-black/40 border border-zinc-900 rounded-2xl p-4">
+                      <p className="text-[9px] uppercase font-black text-zinc-600 mb-1">Engagement</p>
+                      <p className="text-xl font-black text-[#1D9E75]">{(scanData.engagement_proxy * 100).toFixed(1)}%</p>
+                   </div>
+                </div>
+
+                <div className="bg-[#1D9E75] text-white p-5 rounded-2xl text-center shadow-[0_0_30px_rgba(29,158,117,0.3)]">
+                   <p className="text-xs font-black uppercase tracking-widest">Audit Successful — Lead Sent to CEO</p>
+                </div>
+             </div>
+          ) : status === "success" ? (
              <div className="bg-[#1D9E75]/10 border border-[#1D9E75]/30 p-8 rounded-2xl text-center">
                 <CheckCircle2 className="w-12 h-12 text-[#1D9E75] mx-auto mb-4" />
                 <h3 className="text-xl font-black text-[#1D9E75]">We'll be in touch within 24 hours.</h3>

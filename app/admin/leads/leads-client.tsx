@@ -3,48 +3,47 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { formatDistanceToNow } from "date-fns";
-import { Search, Filter, Loader2, ChevronDown, UserSquare2, MessageSquarePlus, Activity, CheckCircle2 } from "lucide-react";
+import { 
+  Search, Filter, Loader2, ChevronDown, UserSquare2, 
+  MessageSquarePlus, Activity, CheckCircle2, Flame, 
+  Thermometer, Snowflake, MoreHorizontal, LayoutGrid,
+  TrendingUp, Users, Target
+} from "lucide-react";
 
-// The organically ordered stages of the CRM Pipeline
-// The organically ordered stages of the CRM Pipeline - Simplified for TDT Reset
+// TDT Lead Scoring Pipeline - High Velocity Stages
 const PIPELINE_STAGES = [
-  "nuevo", 
-  "respondio", 
-  "cerrado", 
+  "nuevo",
+  "conversando",
+  "oferta_enviada",
+  "cerrado",
   "perdido"
 ];
 
-// Structural UI coloring for Kanban columns
+// Structural UI coloring for Kanban columns (CEO Élite Edition)
 const STATUS_COLORS: Record<string, string> = {
-  nuevo: "border-blue-500 text-blue-400 bg-blue-950/20",
-  respondio: "border-orange-500 text-orange-400 bg-orange-950/20",
-  cerrado: "border-green-500 text-green-400 bg-green-950/20",
-  perdido: "border-red-500 text-red-500 bg-red-950/20"
+  nuevo: "border-blue-500/30 text-blue-400 bg-blue-950/10 backdrop-blur-md",
+  conversando: "border-purple-500/30 text-purple-400 bg-purple-950/10 backdrop-blur-md",
+  oferta_enviada: "border-amber-500/30 text-amber-400 bg-amber-950/10 backdrop-blur-md",
+  cerrado: "border-emerald-500/30 text-emerald-400 bg-emerald-950/10 backdrop-blur-md",
+  perdido: "border-rose-500/30 text-rose-400 bg-rose-950/10 backdrop-blur-md"
 };
 
-type Lead = any; 
+type Lead = any;
 
 export function LeadsClientRenderer({ initialLeads }: { initialLeads: Lead[] }) {
   const [leads, setLeads] = useState<Lead[]>(initialLeads);
   const [search, setSearch] = useState("");
   const [sourceFilter, setSourceFilter] = useState("all");
   const [nichoFilter, setNichoFilter] = useState("all");
-  const [followersFilter, setFollowersFilter] = useState("all");
-  const [moneyOnly, setMoneyOnly] = useState(false);
-  
-  // Track active mutations to disable matching cards gracefully (preventing race conditions)
+  const [temperatureFilter, setTemperatureFilter] = useState("all");
   const [updating, setUpdating] = useState<string | null>(null);
 
   const handleStatusChange = async (leadId: string, newStatus: string) => {
     if (updating === leadId) return;
-    
-    // Identity baseline for optimistic rollbacks
     const originalLead = leads.find(l => l.id === leadId);
     if (!originalLead || originalLead.status === newStatus) return;
 
     setUpdating(leadId);
-
-    // Snapshot applying optimistic UI instantly
     setLeads(current => current.map(l => l.id === leadId ? { ...l, status: newStatus, updated_at: new Date().toISOString() } : l));
 
     try {
@@ -53,253 +52,227 @@ export function LeadsClientRenderer({ initialLeads }: { initialLeads: Lead[] }) 
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ lead_id: leadId, new_status: newStatus })
       });
-      
-      const payload = await res.json();
-      
-      if (!res.ok) {
-        throw new Error(payload.error || "Failed to execute atomic track sequence");
-      }
-      
+      if (!res.ok) throw new Error("Update failure");
       toast.success("Estado actualizado.");
     } catch(err: any) {
-      toast.error(err.message || "Error al actualizar. Revirtiendo.");
-      // Rollback pipeline
-      setLeads(current => current.map(l => l.id === leadId ? { ...l, status: originalLead.status, updated_at: originalLead.updated_at } : l));
+      toast.error("Error al actualizar. Revirtiendo.");
+      setLeads(current => current.map(l => l.id === leadId ? { ...l, status: originalLead.status } : l));
     } finally {
       setUpdating(null);
     }
   };
 
-  // Aggressive Performance Filtering & AI Priority Sorting
-  const priorityScore: Record<string, number> = { high: 3, medium: 2, low: 1 };
-  
-  const moneyStatuses = ['cerrado']; // Closest to money in simple view
+  const handleRevive = async (leadId: string) => {
+    setUpdating(leadId + '-revive');
+    try {
+      const res = await fetch("/api/admin/leads/revive", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ lead_id: leadId })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      
+      navigator.clipboard.writeText(data.message);
+      toast.success("AI Ghost-Buster: Mensaje de reactivación copiado.");
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setUpdating(null);
+    }
+  };
+
   const filteredLeads = leads.filter(l => {
     const matchSearch = l.instagram_username.toLowerCase().includes(search.toLowerCase());
     const matchSource = sourceFilter === "all" || l.source === sourceFilter;
     const matchNicho = nichoFilter === "all" || l.niche === nichoFilter;
-    const matchFollowers = followersFilter === "all" || l.followers_range === followersFilter;
-    const matchMoney = !moneyOnly || l.status === 'cerrado';
-    return matchSearch && matchSource && matchNicho && matchFollowers && matchMoney;
-  }).sort((a, b) => {
-     const pA = priorityScore[a.priority || 'medium'] || 0;
-     const pB = priorityScore[b.priority || 'medium'] || 0;
-     return pB - pA;
+    const matchTemperature = temperatureFilter === "all" || l.temperature === temperatureFilter;
+    return matchSearch && matchSource && matchNicho && matchTemperature;
   });
 
   const grouped: Record<string, Lead[]> = {};
   PIPELINE_STAGES.forEach(stage => grouped[stage] = []);
+  
   filteredLeads.forEach(lead => {
-    // Map legacy English statuses to new Spanish ones for the UI if needed
     let uiStatus = lead.status;
     if (uiStatus === 'new') uiStatus = 'nuevo';
-    if (['contacted', 'responded', 'qualified', 'offer_sent', 'payment_pending', 'reengage'].includes(uiStatus)) uiStatus = 'respondio';
+    if (['contacted', 'responded', 'qualified', 'reengage'].includes(uiStatus)) uiStatus = 'conversando';
+    if (['offer_sent', 'payment_pending'].includes(uiStatus)) uiStatus = 'oferta_enviada';
     if (uiStatus === 'closed') uiStatus = 'cerrado';
     if (uiStatus === 'lost') uiStatus = 'perdido';
 
     if (grouped[uiStatus]) {
       grouped[uiStatus].push(lead);
     } else {
-      // Default to responded if unknown
-      grouped['respondio'].push(lead);
+      grouped['nuevo'].push(lead);
     }
   });
 
+  const stats = {
+    hot: leads.filter(l => l.temperature === 'HOT').length,
+    active: leads.filter(l => l.status !== 'lost' && l.status !== 'closed').length,
+    totalRev: leads.filter(l => l.status === 'closed').length * 250 // Hypothetical avg
+  };
+
   return (
-    <div className="flex flex-col flex-1 h-full min-h-[700px] overflow-hidden pb-4">
+    <div className="flex flex-col flex-1 h-full min-h-screen bg-[#050505] p-6 overflow-hidden">
       
-      {/* ── SETTER STATUS BAR (UI ONLY) ── */}
-      <div className="bg-zinc-950 border border-zinc-900 rounded-xl p-4 mb-4 flex flex-col md:flex-row items-center justify-between gap-6 shrink-0 shadow-lg">
-         <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-[#1D9E75]/20 rounded-full flex items-center justify-center">
-               <UserSquare2 className="w-5 h-5 text-[#1D9E75]" />
-            </div>
-            <div>
-               <h3 className="text-white font-black text-sm">Setter 1 (Active)</h3>
-               <p className="text-[10px] text-zinc-500 uppercase font-black tracking-widest">Bucket Status</p>
-            </div>
-         </div>
+      {/* ── CEO EXECUTIVE HEADER ── */}
+      <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6 mb-10">
+        <div>
+           <div className="flex items-center gap-2 mb-1">
+             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+             <span className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500">TDT Operations Command</span>
+           </div>
+           <h1 className="text-4xl font-black text-white tracking-tighter">Control de Leads</h1>
+        </div>
 
-         <div className="flex gap-6 items-center">
-            <div className="flex flex-col text-center">
-               <span className="text-[9px] uppercase font-black tracking-widest text-zinc-600 mb-1">Touched Today</span>
-               <span className="text-lg font-black text-white flex items-center justify-center gap-1"><Activity className="w-4 h-4 text-zinc-500"/> 24</span>
-            </div>
-            <div className="flex flex-col text-center">
-               <span className="text-[9px] uppercase font-black tracking-widest text-zinc-600 mb-1">DMs Sent</span>
-               <span className="text-lg font-black text-blue-400 flex items-center justify-center gap-1"><MessageSquarePlus className="w-4 h-4 text-blue-500"/> 12</span>
-            </div>
-            <div className="flex flex-col text-center">
-               <span className="text-[9px] uppercase font-black tracking-widest text-zinc-600 mb-1">Qualified</span>
-               <span className="text-lg font-black text-[#1D9E75] flex items-center justify-center gap-1"><CheckCircle2 className="w-4 h-4 text-[#1D9E75]"/> 3</span>
-            </div>
-         </div>
-
-         <button 
-           onClick={() => toast.success("Mock: Auto-Asignando 10 prospectos frescos a tu bucket...")}
-           className="bg-[#1D9E75] text-white px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#168260] hover:scale-[1.02] transition-transform shadow-[0_0_15px_rgba(29,158,117,0.2)]"
-         >
-           Auto-Assign 10 Leads
-         </button>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full xl:w-auto">
+           <StatCard icon={Flame} label="Hot Leads" value={stats.hot} color="text-red-500" />
+           <StatCard icon={Users} label="Pipeline" value={stats.active} color="text-blue-500" />
+           <StatCard icon={TrendingUp} label="Efficiency" value="84%" color="text-emerald-500" />
+           <StatCard icon={Target} label="Next Close" value="+$500" color="text-amber-500" />
+        </div>
       </div>
 
-      {/* STRATEGIC COMMAND HEADER */}
-      <div className="bg-zinc-950 border border-zinc-900 p-4 rounded-xl mb-6 flex flex-col md:flex-row items-center justify-between gap-4 shrink-0">
-        <div className="flex items-center gap-4 w-full md:w-auto">
-          <div className="relative w-full md:w-64">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+      {/* ── FILTERS & COMMANDS ── */}
+      <div className="bg-zinc-950/50 backdrop-blur-xl border border-zinc-900 p-4 rounded-2xl mb-8 flex flex-wrap items-center gap-4 shadow-2xl">
+         <div className="relative flex-1 min-w-[200px]">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-600" />
             <input 
               type="text" 
-              placeholder="Buscar prospectos..." 
+              placeholder="Search handle..." 
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full bg-zinc-900 border border-zinc-800 text-sm text-white rounded-lg pl-9 pr-4 py-2 focus:outline-none focus:border-zinc-600 transition-colors"
+              className="w-full bg-black border border-zinc-800 rounded-xl px-11 py-3 text-sm text-white focus:outline-none focus:border-[#1D9E75] transition-all placeholder:text-zinc-700 font-medium"
             />
-          </div>
-          <div className="relative">
-            <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
-            <select value={sourceFilter} onChange={e => setSourceFilter(e.target.value)}
-              className="bg-zinc-900 border border-zinc-800 text-sm font-bold text-zinc-300 rounded-lg pl-9 pr-4 py-2 focus:outline-none focus:border-zinc-600 appearance-none cursor-pointer uppercase tracking-widest transition-colors"
-            >
-              <option value="all">Todas las fuentes</option>
-              <option value="dm">DM</option>
-              <option value="referido">Referido</option>
-              <option value="landing">Landing</option>
-              <option value="ads">Ads</option>
+         </div>
+         
+         <div className="flex items-center gap-3">
+            <select value={nichoFilter} onChange={e => setNichoFilter(e.target.value)} className="bg-black border border-zinc-800 rounded-xl px-4 py-3 text-[10px] font-black uppercase tracking-widest text-zinc-400 focus:outline-none focus:border-zinc-700 cursor-pointer">
+              <option value="all">Nichos (Todos)</option>
+              {Array.from(new Set(leads.map(l => l.niche).filter(Boolean))).map(n => <option key={n} value={n}>{n}</option>)}
             </select>
-          </div>
-          <select value={nichoFilter} onChange={e => setNichoFilter(e.target.value)}
-            className="bg-zinc-900 border border-zinc-800 text-sm font-bold text-zinc-300 rounded-lg px-3 py-2 focus:outline-none focus:border-zinc-600 appearance-none cursor-pointer uppercase tracking-widest transition-colors"
-          >
-            <option value="all">Todos los nichos</option>
-            <option value="fitness">Fitness</option>
-            <option value="emprendedor">Emprendedor</option>
-            <option value="modelo">Modelo</option>
-            <option value="otro">Otro</option>
-          </select>
-          <select value={followersFilter} onChange={e => setFollowersFilter(e.target.value)}
-            className="bg-zinc-900 border border-zinc-800 text-sm font-bold text-zinc-300 rounded-lg px-3 py-2 focus:outline-none focus:border-zinc-600 appearance-none cursor-pointer uppercase tracking-widest transition-colors"
-          >
-            <option value="all">Seguidores (Todos)</option>
-            <option value="5k_20k">5K–20K</option>
-            <option value="20k_100k">20K–100K</option>
-            <option value="100k_200k">100K–200K</option>
-          </select>
-          <button onClick={() => setMoneyOnly(!moneyOnly)}
-            className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all border ${
-              moneyOnly ? 'bg-green-950/40 border-green-500 text-green-400 shadow-[0_0_15px_rgba(34,197,94,0.2)]' : 'bg-zinc-900 border-zinc-800 text-zinc-500 hover:text-white'
-            }`}
-          >
-            💰 Cerrados
-          </button>
-        </div>
-
-        <div className="flex items-center gap-6 text-xs text-zinc-400 font-bold tracking-widest uppercase">
-          <span className="bg-zinc-900 px-3 py-1.5 rounded-lg border border-zinc-800">
-            En Proceso: {filteredLeads.filter(l => !['closed', 'lost', 'cerrado', 'perdido'].includes(l.status)).length}
-          </span>
-          <span className="bg-green-950/30 text-green-500 px-3 py-1.5 rounded-lg border border-green-900/50">
-            Cerrados: {filteredLeads.filter(l => ['closed', 'cerrado'].includes(l.status)).length}
-          </span>
-        </div>
+            <select value={temperatureFilter} onChange={e => setTemperatureFilter(e.target.value)} className="bg-black border border-zinc-800 rounded-xl px-4 py-3 text-[10px] font-black uppercase tracking-widest text-zinc-400 focus:outline-none focus:border-zinc-700 cursor-pointer">
+              <option value="all">Temp (Todas)</option>
+              <option value="HOT">HOT 🔥</option>
+              <option value="WARM">WARM 🌡️</option>
+              <option value="COLD">COLD ❄️</option>
+            </select>
+            <button className="bg-[#1D9E75] text-white p-3 rounded-xl hover:bg-[#168260] transition-colors shadow-[0_0_20px_rgba(29,158,117,0.2)]">
+              <LayoutGrid className="w-5 h-5" />
+            </button>
+         </div>
       </div>
 
-      {/* HORIZONTAL KANBAN GRID */}
-      <div className="flex-1 overflow-x-auto overflow-y-hidden flex gap-4 pb-4 px-1 custom-scrollbar">
-        {PIPELINE_STAGES.map(stage => {
-          const stageLeads = grouped[stage] || [];
-          const colorClass = STATUS_COLORS[stage] || "border-zinc-500 text-zinc-400 bg-zinc-900/50";
-          
-          return (
-            <div key={stage} className="min-w-[320px] w-[320px] flex flex-col bg-zinc-950/80 rounded-xl overflow-hidden shrink-0 border border-zinc-900">
-              
-              {/* STAGE HEADER */}
-              <div className={`px-4 py-3 border-b-2 ${colorClass} flex items-center justify-between font-black uppercase tracking-widest text-xs shrink-0`}>
-                <span>{stage.replace('_', ' ')}</span>
-                <span className="bg-black/60 px-2 py-1 rounded-md text-[10px]">{stageLeads.length}</span>
+      {/* ── KANBAN BOARD ── */}
+      <div className="flex-1 overflow-x-auto pb-6 custom-scrollbar-horizontal">
+        <div className="flex gap-6 h-full min-w-max px-2">
+          {PIPELINE_STAGES.map(stage => (
+            <div 
+              key={stage} 
+              className={`w-[320px] flex flex-col rounded-[2rem] border transition-all duration-500 ${STATUS_COLORS[stage] || 'border-zinc-900 bg-zinc-950/20'}`}
+            >
+              {/* Column Header */}
+              <div className="p-6 flex items-center justify-between border-b border-white/5">
+                <div className="flex items-center gap-3">
+                   <div className={`w-2 h-2 rounded-full ${stage === 'cerrado' ? 'bg-emerald-500 shadow-[0_0_12px_#10b981]' : 'bg-current opacity-40'}`}></div>
+                   <h3 className="text-xs font-black uppercase tracking-[0.2em]">{stage.replace('_', ' ')}</h3>
+                </div>
+                <span className="text-[10px] font-black opacity-30 bg-black/40 px-3 py-1 rounded-full border border-white/5">{grouped[stage].length}</span>
               </div>
 
-              {/* CARDS LIST */}
-              <div className="flex-1 overflow-y-auto p-3 space-y-3 custom-scrollbar">
-                {stageLeads.map(lead => {
-                  const p = lead.priority || 'medium';
-                  
-                  // Money Priority Heuristic
-                  const isMoney = ['offer_sent', 'payment_pending'].includes(lead.status) || 
-                                  /precio|price|payment|pago|comprar|send|envia|transferencia|tarjeta/i.test(`${lead.notes || ''} ${JSON.stringify(lead.metadata || {})}`);
-
-                  return (
-                    <div 
-                      key={lead.id} 
-                      onClick={() => window.open(`/admin/leads/${lead.id}`, '_blank')}
-                      className={`bg-black border p-4 rounded-xl shadow-lg hover:scale-[1.01] transition-all relative overflow-hidden cursor-pointer cursor-crosshair group flex flex-col gap-3 
-                      ${updating === lead.id ? 'opacity-50 blur-[1px] pointer-events-none' : ''} 
-                      ${isMoney ? 'border-green-500 shadow-[0_0_20px_rgba(34,197,94,0.15)] bg-green-950/10' : 
-                        (lead.status === 'contacted' && ((Date.now() - new Date(lead.updated_at).getTime()) / (1000 * 60 * 60)) > 96) ? 'border-red-500 shadow-[0_0_20px_rgba(239,68,68,0.15)] bg-red-950/10' :
-                        (lead.status === 'contacted' && ((Date.now() - new Date(lead.updated_at).getTime()) / (1000 * 60 * 60)) > 48) ? 'border-orange-500 shadow-[0_0_20px_rgba(249,115,22,0.15)] bg-orange-950/10' :
-                        'border-zinc-800 hover:border-zinc-500'}`}
-                    >
-                      {isMoney && <div className="absolute -top-6 -right-6 w-16 h-16 bg-green-500/20 rounded-full blur-[20px] pointer-events-none"></div>}
-                      {(lead.status === 'contacted' && ((Date.now() - new Date(lead.updated_at).getTime()) / (1000 * 60 * 60)) > 96) && <div className="absolute -top-6 -right-6 w-16 h-16 bg-red-500/20 rounded-full blur-[20px] pointer-events-none"></div>}
-                      
-                      {/* IDENTITY HEADER */}
-                      <div className="flex items-start justify-between relative z-10">
-                        <span className="font-bold truncate text-[15px] group-hover:text-cyan-400 transition-colors block max-w-[120px]">@{lead.instagram_username}</span>
-                        <div className="flex gap-1.5 shrink-0">
-                          {isMoney ? (
-                             <span className="text-[9px] uppercase font-black tracking-widest px-2 py-0.5 rounded border bg-green-950/40 text-green-500 border-green-500/50 shadow-[0_0_10px_rgba(34,197,94,0.3)] animate-pulse">
-                                $$$
-                             </span>
-                          ) : (
-                             <span className={`text-[8px] uppercase font-black tracking-widest px-2 py-0.5 rounded border
-                                ${p === 'high' ? 'bg-red-950/30 text-red-500 border-red-900/50' : 
-                                  p === 'medium' ? 'bg-orange-950/30 text-orange-500 border-orange-900/50' : 
-                                  'bg-zinc-900 text-zinc-500 border-zinc-800'}`}>
-                                {p}
-                             </span>
-                          )}
-                        </div>
-                      </div>
+              {/* Column Content */}
+              <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar min-h-[400px]">
+                {grouped[stage].map(lead => (
+                  <div key={lead.id} className="group bg-zinc-900/40 hover:bg-zinc-900/80 border border-zinc-800/50 hover:border-zinc-700 rounded-2xl p-5 transition-all cursor-pointer relative overflow-hidden">
                     
-                    {/* CONTEXT ROW */}
-                    <div className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-zinc-400 relative z-10 border-b border-zinc-800/50 pb-2">
-                       <span className="bg-zinc-900 border border-zinc-800 px-2 py-0.5 rounded">{lead.metadata?.niche || 'General'}</span>
-                       {lead.metadata?.followers && <span className="text-zinc-500">{lead.metadata.followers} Followers</span>}
+                    {/* Status Glow */}
+                    {lead.temperature === 'HOT' && (
+                       <div className="absolute top-0 right-0 w-24 h-24 bg-red-500/5 blur-2xl pointer-events-none"></div>
+                    )}
+
+                    <div className="flex justify-between items-start mb-4">
+                       <div>
+                          <h4 className="text-white font-black text-sm tracking-tight group-hover:text-[#1D9E75] transition-colors truncate max-w-[140px]">@{lead.instagram_username}</h4>
+                          <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-0.5">{lead.niche || 'General'}</p>
+                       </div>
+                       {lead.temperature && (
+                          <div className={`text-[8px] font-black uppercase tracking-tighter px-2 py-0.5 rounded border ${
+                            lead.temperature === 'HOT' ? 'bg-red-500/10 text-red-500 border-red-500/20' :
+                            lead.temperature === 'WARM' ? 'bg-orange-500/10 text-orange-500 border-orange-500/20' :
+                            'bg-blue-500/10 text-blue-500 border-blue-500/20'
+                          }`}>
+                            {lead.temperature} {lead.score || ''}
+                          </div>
+                       )}
                     </div>
 
-                    {/* METRICS ROW */}
-                    <div className="flex items-center justify-between text-[10px] font-bold text-zinc-500 tracking-wide uppercase relative z-10">
-                      <span>{formatDistanceToNow(new Date(lead.updated_at))} in {stage.replace('_', ' ')}</span>
-                      {updating === lead.id && <Loader2 className="w-3.5 h-3.5 text-zinc-400 animate-spin"/>}
+                    <div className="space-y-3">
+                       <div className="flex justify-between items-center text-[9px] uppercase font-black tracking-widest text-zinc-600">
+                          <span>Followers</span>
+                          <span className="text-zinc-400">{lead.metadata?.followers || lead.followers_range || '—'}</span>
+                       </div>
+                       <div className="flex justify-between items-center text-[9px] uppercase font-black tracking-widest text-zinc-600">
+                          <span>Last Activity</span>
+                          <span className="text-zinc-400">{formatDistanceToNow(new Date(lead.updated_at))} ago</span>
+                       </div>
                     </div>
 
-                    {/* SELECTOR */}
-                    <div className="relative mt-1" onClick={(e) => e.stopPropagation()}>
-                      <select 
-                        value={lead.status}
-                        onChange={(e) => handleStatusChange(lead.id, e.target.value)}
-                        disabled={updating === lead.id}
-                        className={`w-full bg-zinc-900 border text-[11px] font-black uppercase tracking-[0.2em] rounded-lg pl-3 pr-8 py-2 outline-none cursor-pointer transition-colors appearance-none flex items-center ${colorClass.split(' ')[0]} ${colorClass.split(' ')[1]}`}
-                      >
-                         {PIPELINE_STAGES.map(s => <option key={s} value={s}>{s.replace('_', ' ')}</option>)}
-                      </select>
-                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 opacity-50 pointer-events-none" />
+                    {/* Quick Move Selector */}
+                    <div className="mt-5 pt-4 border-t border-zinc-800/50 flex items-center gap-2">
+                       <select 
+                          value={lead.status}
+                          onChange={(e) => handleStatusChange(lead.id, e.target.value)}
+                          disabled={updating?.startsWith(lead.id)}
+                          className="flex-1 bg-black/40 border border-zinc-800 rounded-lg py-1.5 px-3 text-[9px] font-black uppercase tracking-widest text-zinc-500 focus:text-white transition-colors"
+                       >
+                          {PIPELINE_STAGES.map(s => <option key={s} value={s}>{s}</option>)}
+                       </select>
+                       
+                       {/* REVIVE AI BUTTON */}
+                       {(lead.status === 'conversando' || lead.status === 'oferta_enviada') && (
+                          <button 
+                            onClick={() => handleRevive(lead.id)}
+                            disabled={updating === lead.id + '-revive'}
+                            title="Gen AI Ghost-Buster Hook"
+                            className="p-2 hover:bg-red-500/10 text-zinc-600 hover:text-red-500 rounded-lg transition-all border border-transparent hover:border-red-500/20"
+                          >
+                             {updating === lead.id + '-revive' ? <Loader2 className="w-4 h-4 animate-spin" /> : <Flame className="w-4 h-4" />}
+                          </button>
+                       )}
+                       
+                       <button className="p-2 hover:bg-zinc-800 rounded-lg text-zinc-600 transition-colors">
+                          <MoreHorizontal className="w-4 h-4" />
+                       </button>
                     </div>
+
+                    {(updating === lead.id || updating === lead.id + '-revive') && (
+                       <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] flex items-center justify-center rounded-2xl z-20">
+                          <Loader2 className="w-6 h-6 text-[#1D9E75] animate-spin" />
+                       </div>
+                    )}
                   </div>
-                );
-               })}
-
-                {stageLeads.length === 0 && (
-                   <div className="h-24 mx-1 flex items-center justify-center border-2 border-dashed border-zinc-800/50 rounded-xl">
-                      <span className="text-[10px] font-black text-zinc-700 tracking-widest uppercase">Target Unknown</span>
-                   </div>
-                )}
+                ))}
               </div>
-
             </div>
-          )
-        })}
+          ))}
+        </div>
       </div>
+    </div>
+  );
+}
+
+function StatCard({ icon: Icon, label, value, color }: any) {
+  return (
+    <div className="bg-zinc-950/50 border border-zinc-900 rounded-2xl p-4 flex items-center gap-4">
+       <div className={`w-10 h-10 rounded-xl bg-zinc-900 flex items-center justify-center ${color} opacity-80 shadow-inner`}>
+          <Icon className="w-5 h-5" />
+       </div>
+       <div>
+          <p className="text-[9px] font-black uppercase tracking-widest text-zinc-600">{label}</p>
+          <p className="text-xl font-black text-white">{value}</p>
+       </div>
     </div>
   );
 }

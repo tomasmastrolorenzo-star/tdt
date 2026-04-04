@@ -25,6 +25,21 @@ export async function POST(req: Request) {
     .order('created_at', { ascending: false })
     .limit(5);
 
+  // 💳 DYNAMIC PAYMENT VAULT INJECTION
+  const { data: config } = await supabase.from('system_config').select('key, value');
+  const vault: Record<string, string> = {};
+  config?.forEach(c => vault[c.key] = c.value);
+
+  const paymentVaultContext = `
+💳 ACTIVE PAYMENT VAULT (TDT OFFICIAL):
+- CashApp: ${vault.active_cashapp || 'Ask for details'}
+- Zelle: ${vault.active_zelle || 'Ask for details'}
+- USDT TRC20: ${vault.active_usdt_trc20 || 'Ask for address'}
+- Wise: ${vault.active_wise || 'Ask for details'}
+
+🔥 RULE: Use ONLY these active accounts. If the client asks for a method not listed, say "Estamos verificando la liquidez de esa cuenta, te aviso en un momento".
+`;
+
   const openAiKey = process.env.OPENAI_API_KEY;
   if (!openAiKey) return NextResponse.json({ error: 'ENGINE LOCK: OPENAI_API_KEY is completely missing natively in backend (.env.local)' }, { status: 500 });
 
@@ -96,8 +111,8 @@ You are NOT selling followers. You are selling Growth, Engagement, Profile optim
 Every conversation must move forward. You NEVER leave conversations open.
 Every chat ends in: Payment, Clear next step, or Disqualification.
 
-💳 PAYMENT CONTEXT
-Always guide clearly. Preferred methods: USDT TRC20. Alternative: Wise / Stripe. Always clarify network and steps.
+---
+${paymentVaultContext}
 
 🎯 TRUE OBJECTIVE
 Maximize LIFETIME VALUE, not single payment.
