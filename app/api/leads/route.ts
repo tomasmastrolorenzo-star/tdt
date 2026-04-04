@@ -4,10 +4,13 @@ import { createClient } from '@supabase/supabase-js';
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { username, source } = body;
+    const { instagram_username, username, source, status, metadata } = body;
 
-    if (!username) {
-      return NextResponse.json({ error: 'Username is required' }, { status: 400 });
+    // Support both naming conventions for transition safety
+    const targetHandle = instagram_username || username;
+
+    if (!targetHandle) {
+      return NextResponse.json({ error: 'Instagram handle is required' }, { status: 400 });
     }
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -19,17 +22,17 @@ export async function POST(req: Request) {
     }
 
     const supabase = createClient(supabaseUrl, supabaseKey);
-
-    const cleanUsername = username.replace('@', '');
+    const cleanHandle = targetHandle.replace('@', '');
 
     // 1. Create Lead in Data Core
     const { data: lead, error: leadError } = await supabase
       .from('leads')
       .insert([
         { 
-          instagram_username: cleanUsername, 
+          instagram_username: cleanHandle, 
           source: source || 'landing',
-          status: 'new'
+          status: status || 'new',
+          metadata: metadata || {}
         }
       ])
       .select('id')
@@ -47,7 +50,7 @@ export async function POST(req: Request) {
         { 
           lead_id: lead.id,
           type: 'message_sent',
-          content: { note: 'Initial request from landing page' }
+          content: { note: 'Initial request from landing page audit' }
         }
       ]);
     if (ixError) console.error("Data Core Error (ix):", ixError);

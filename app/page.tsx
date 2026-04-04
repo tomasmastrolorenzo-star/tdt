@@ -9,6 +9,7 @@ export default function LandingPage() {
   const [goal, setGoal] = useState("");
   const [status, setStatus] = useState<"idle" | "scanning" | "saving" | "success" | "error">("idle");
   const [scanStep, setScanStep] = useState(0);
+  const [scanData, setScanData] = useState<any>(null);
 
   const igHandle = process.env.NEXT_PUBLIC_IG_HANDLE || "trendigitaltrade";
   const IG_LINK = `https://www.instagram.com/${igHandle}/`;
@@ -59,6 +60,7 @@ export default function LandingPage() {
 
       if (!res.ok) throw new Error("Failed to submit lead");
 
+      setScanData(igData.data);
       setStatus("success");
     } catch (err) {
       clearInterval(interval);
